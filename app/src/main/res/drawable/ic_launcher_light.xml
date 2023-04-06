@@ -9,14 +9,14 @@
       android:translateY="11.7">
     <path
         android:pathData="M33.601,9.856L20.13,14.64V35.005L34.68,29.838C35.323,29.61 35.752,29.001 35.752,28.319V27.965C35.752,28.733 35.28,29.422 34.564,29.7L29.181,31.781V17.918C29.181,17.156 29.647,16.47 30.356,16.189L35.752,14.051V11.374C35.752,10.261 34.65,9.483 33.601,9.856Z"
-        android:fillColor="#000000"
+        android:fillColor="@color/md_theme_light_background"
         android:fillType="evenOdd"/>
     <path
         android:pathData="M30.254,15.995C29.611,16.223 29.181,16.831 29.181,17.514V17.918C29.181,17.156 29.647,16.47 30.356,16.189L35.753,14.051V27.965C35.753,28.733 35.28,29.422 34.564,29.7L29.181,31.781V34.458C29.181,35.572 30.283,36.35 31.332,35.977L43.731,31.574C44.374,31.345 44.804,30.737 44.804,30.055V13.11C44.804,11.997 43.702,11.219 42.653,11.591L30.254,15.995Z"
-        android:fillColor="#000000"
+        android:fillColor="@color/md_theme_light_background"
         android:fillType="evenOdd"/>
     <path
         android:pathData="M16,14L16,14A2,2 0,0 1,18 16L18,50A2,2 0,0 1,16 52L16,52A2,2 0,0 1,14 50L14,16A2,2 0,0 1,16 14z"
-        android:fillColor="#000000"/>
+        android:fillColor="@color/md_theme_light_background"/>
   </group>
 </vector>
