@@ -1,4 +1,4 @@
-package com.polodarb.gmsflags.ui.screens
+package com.polodarb.gmsflags.ui.screens.historyScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +38,7 @@ import com.topjohnwu.superuser.Shell
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PackagesScreen() {
+fun HistoryScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -49,21 +49,12 @@ fun PackagesScreen() {
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Packages",
+                        "History",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 },
                 actions = {
-                    IconButton(onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        Toast.makeText(context, "Suggestions", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_suggestions),
-                            contentDescription = "Localized description"
-                        )
-                    }
                     IconButton(onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
@@ -78,65 +69,13 @@ fun PackagesScreen() {
             )
         }
     ) {
-        val result =
-            Shell.cmd(
-                "cd $DB_PATH",
-                "sqlite3 phenotype.db" +
-                        " \"SELECT DISTINCT packageName FROM Flags LIMIT 30\""
-            ).exec().out
-
         LazyColumn(
             contentPadding = it
         ) {
-            items(result.size) {
-                LazyItem(text = result[it])
+            items(100) {
+                Text(text = "Item $it", modifier = Modifier.padding(16.dp), style = Typography.bodyMedium)
+                Divider()
             }
         }
     }
-}
-
-const val DB_PATH = "data/data/com.google.android.gms/databases/"
-@Composable
-fun LazyItem(text: String) {
-
-    var listIconSelect by remember {
-        mutableStateOf(false)
-    }
-
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconToggleButton(checked = listIconSelect, onCheckedChange = { listIconSelect = it }) {
-                if (listIconSelect) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_save_on),
-                        contentDescription = "Localized description"
-                    )
-                } else {
-                    Icon(
-                        painterResource(id = R.drawable.ic_save_off),
-                        contentDescription = "Localized description"
-                    )
-                }
-            }
-            Column(Modifier.weight(0.9f)) {
-                Text(text = text, style = Typography.bodyMedium)
-                Text(
-                    text = "Flags: 34",
-                    style = Typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
-            Icon(
-                modifier = Modifier
-                    .padding(16.dp),
-                painter = painterResource(id = R.drawable.ic_next),
-                contentDescription = null
-            )
-        }
-    }
-    Divider()
 }
