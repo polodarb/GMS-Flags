@@ -22,12 +22,15 @@ internal sealed class NavBarItem(var title: String, var icon: Int, var screenRou
 }
 
 internal sealed class ScreensDestination(var screenRoute: String) {
+
+    fun createStringRoute(rootRoute: String) = "${rootRoute}/$screenRoute"
+
     object Root : ScreensDestination("root")
     object Suggestions : ScreensDestination("suggest")
-    object FlagChange : ScreensDestination("{flagChange}")
-
-    fun createRoute(flagChange: String): String {
-        return flagChange
+    object FlagChange : ScreensDestination("{flagChange}") {
+        fun createRoute(flagChange: String): String {
+            return "packages/$flagChange"
+        }
     }
 }
 
