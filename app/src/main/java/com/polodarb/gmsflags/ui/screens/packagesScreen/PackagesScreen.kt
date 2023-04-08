@@ -1,6 +1,7 @@
 package com.polodarb.gmsflags.ui.screens.packagesScreen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,9 +34,13 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.polodarb.gmsflags.R
 import com.polodarb.gmsflags.ui.theme.Typography
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val DB_PATH = "data/data/com.google.android.gms/databases/"
 val result =
@@ -46,10 +52,15 @@ val result =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PackagesScreen() {
+fun PackagesScreen(
+    onFlagClick: (packageName: String) -> Unit,
+    onSuggestionsClick: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
+
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -90,7 +101,9 @@ fun PackagesScreen() {
             contentPadding = it
         ) {
             items(result.size) {
-                LazyItem(text = result[it], modifier = Modifier)
+                LazyItem(text = result[it], modifier = Modifier.clickable {
+                    onFlagClick(result[it])
+                })
             }
         }
     }
@@ -122,11 +135,9 @@ fun LazyItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-
     Column {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {

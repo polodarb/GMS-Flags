@@ -1,4 +1,4 @@
-package com.polodarb.gmsflags.ui.screens.flagChangeScreen
+package com.polodarb.gmsflags.ui.screens.suggestionsScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
@@ -19,19 +19,13 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.polodarb.gmsflags.R
-import com.polodarb.gmsflags.ui.navigation.NavBarItem
 import com.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FlagChangeScreen(
-    onBackPressed: () -> Unit,
-    packageName: String?
-) {
+fun SuggestionsScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -42,7 +36,7 @@ fun FlagChangeScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Flag change",
+                        "Suggestions",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
