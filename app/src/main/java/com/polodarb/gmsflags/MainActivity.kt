@@ -23,9 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().setKeepOnScreenCondition(condition = {
-            !Shell.getShell().isAlive
-        })
+        installSplashScreen()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -42,5 +40,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

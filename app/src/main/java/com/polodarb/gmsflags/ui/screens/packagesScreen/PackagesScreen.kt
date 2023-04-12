@@ -48,13 +48,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val DB_PATH = "data/data/com.google.android.gms/databases/"
-val result =
-    Shell.cmd(
-        "cd $DB_PATH",
-        "sqlite3 phenotype.db" +
-                " \"SELECT DISTINCT packageName FROM Flags\""
-    ).exec().out
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

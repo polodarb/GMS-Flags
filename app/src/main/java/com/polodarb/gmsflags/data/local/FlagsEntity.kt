@@ -4,18 +4,21 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "flags_table")
+@Entity(
+    tableName = "flags_table",
+    primaryKeys = ["packageName", "version", "flagType", "partitionId", "user", "name", "committed"]
+)
 data class FlagsEntity(
-    @PrimaryKey val packageName: String,
-    @PrimaryKey val version: UInt,
-    @PrimaryKey val flagType: Int,
-    @PrimaryKey val partitionId: Int,
-    @PrimaryKey val user: String,
-    @PrimaryKey val name: String,
+    val packageName: String,
+    val version: Int,
+    val flagType: Int,
+    val partitionId: Int,
+    val user: String,
+    val name: String,
     val intVal: Int,
     val boolVal: Boolean,
     @ColumnInfo(typeAffinity = ColumnInfo.REAL) val floatVal: Float,
     val stringVal: String,
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val extensionVal: ByteArray,
-    @PrimaryKey val committed: Boolean
+    val committed: Boolean
 )

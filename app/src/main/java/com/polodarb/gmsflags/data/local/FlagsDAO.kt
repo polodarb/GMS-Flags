@@ -7,6 +7,6 @@ import androidx.room.Query
 interface FlagsDAO {
 
     @Query("SELECT DISTINCT user FROM flags_table")
-    fun getListOfAccounts(): List<FlagsEntity>
+    fun getListOfAccounts(): List<FlagsEntity> = emptyList()
 
 }
