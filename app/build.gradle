@@ -1,6 +1,27 @@
+buildscript {
+
+    ext.ksp_version = "1.5.31-1.0.0"
+    ext.kotlin_version = "1.5.31"
+
+    repositories {
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        mavenCentral()
+        gradlePluginPortal()
+        google()
+    }
+
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
+    }
+}
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id "org.jetbrains.kotlin.kapt"
+    id 'com.google.dagger.hilt.android'
+    id 'com.google.devtools.ksp' version "$ksp_version"
 }
 
 android {
@@ -27,11 +48,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         compose true
@@ -48,7 +66,23 @@ android {
 
 dependencies {
 
+//    classpath "com.android.tools.build:gradle:7.4.2"
+//    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     def libsuVersion = '5.0.4'
+    def room_version = '2.5.1'
+
+    // Room
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-paging:$room_version")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // libsu
     implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
@@ -76,4 +110,8 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}
+
+kapt {
+    correctErrorTypes = true
 }

@@ -15,17 +15,10 @@ import androidx.navigation.compose.rememberNavController
 import com.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import com.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import com.topjohnwu.superuser.Shell
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    init {
-//        Shell.enableVerboseLogging = BuildConfig.DEBUG
-        Shell.setDefaultBuilder(
-            Shell.Builder.create()
-                .setFlags(Shell.FLAG_REDIRECT_STDERR)
-                .setTimeout(10)
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -34,10 +34,15 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.polodarb.gmsflags.R
+import com.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import com.polodarb.gmsflags.ui.theme.Typography
+import com.polodarb.gmsflags.ui.viewModel.MainViewModel
 import com.topjohnwu.superuser.Shell
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,11 +55,13 @@ val result =
                 " \"SELECT DISTINCT packageName FROM Flags\""
     ).exec().out
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PackagesScreen(
     onFlagClick: (packageName: String) -> Unit,
-    onSuggestionsClick: () -> Unit
+    onSuggestionsClick: () -> Unit,
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
