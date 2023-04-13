@@ -62,7 +62,8 @@ fun BottomBarUI( // UI realization for BottomBar
                     launchSingleTop = true
                     restoreState = true
                 }
-            }
+            },
+
         )
         NavigationBarItem(
             icon = {

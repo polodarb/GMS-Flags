@@ -36,5 +36,15 @@ internal fun RootAppNavigation(
                 packageName = backStackEntry.arguments?.getString("flagChange")
             )
         }
+        composable(
+            route = ScreensDestination.Settings.screenRoute
+        ) {
+            // TODO: Implement SettingsScreen
+        }
+        composable(
+            route = ScreensDestination.Suggestions.screenRoute
+        ) {
+            // TODO: Implement SuggestionsScreen
+        }
     }
 }

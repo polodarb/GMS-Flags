@@ -32,6 +32,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
             return "packages/$flagChange"
         }
     }
+    object Settings : ScreensDestination("settings")
 }
 
 @Composable
@@ -52,6 +53,9 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 },
                 onSuggestionsClick = {
                     parentNavController.navigate(ScreensDestination.Suggestions.screenRoute)
+                },
+                onSettingsClick = {
+                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 }
             )
         }

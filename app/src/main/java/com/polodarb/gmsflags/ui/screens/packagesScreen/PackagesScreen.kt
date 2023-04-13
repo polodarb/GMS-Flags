@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,12 +49,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val DB_PATH = "data/data/com.google.android.gms/databases/"
+val result =
+    Shell.cmd(
+        "cd $DB_PATH",
+        "sqlite3 phenotype.db" +
+                " \"SELECT DISTINCT packageName FROM Flags LIMIT 30\""
+    ).exec().out
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PackagesScreen(
     onFlagClick: (packageName: String) -> Unit,
     onSuggestionsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -74,13 +82,23 @@ fun PackagesScreen(
                     )
                 },
                 actions = {
+
                     IconButton(onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        Toast.makeText(context, "Suggestions", Toast.LENGTH_SHORT).show()
+                        onSuggestionsClick()
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_suggestions),
                             contentDescription = "Localized description"
+                        )
+                    }
+                    IconButton(onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onSettingsClick()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Settings"
                         )
                     }
                     IconButton(onClick = {
@@ -101,7 +119,7 @@ fun PackagesScreen(
             contentPadding = it
         ) {
             items(result.size) {
-                LazyItem(text = result[it], modifier = Modifier.clickable {
+                LazyItem(packageName = result[it], packagesCount = 0, modifier = Modifier.clickable {
                     onFlagClick(result[it])
                 })
             }
@@ -111,7 +129,8 @@ fun PackagesScreen(
 
 @Composable
 fun LazyItem(
-    text: String,
+    packageName: String,
+    packagesCount: Int,
     modifier: Modifier = Modifier
 ) {
     var checkedState by rememberSaveable {
@@ -119,7 +138,8 @@ fun LazyItem(
     }
 
     LazyItem(
-        text = text,
+        packageName = packageName,
+        packagesCount = packagesCount,
         modifier = modifier,
         checked = checkedState,
         onCheckedChange = { checked ->
@@ -130,7 +150,8 @@ fun LazyItem(
 
 @Composable
 fun LazyItem(
-    text: String,
+    packageName: String,
+    packagesCount: Int,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -155,9 +176,9 @@ fun LazyItem(
                 }
             }
             Column(Modifier.weight(0.9f)) {
-                Text(text = text, style = Typography.bodyMedium)
+                Text(text = packageName, style = Typography.bodyMedium)
                 Text(
-                    text = "Flags: 34",
+                    text = "Flags: $packagesCount",
                     style = Typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline
                 )
