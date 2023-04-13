@@ -1,7 +1,14 @@
 package com.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -10,10 +17,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -21,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.google.android.material.tabs.TabLayout.Tab
+import com.polodarb.gmsflags.ui.navigation.NavBarItem.Apps.title
 import com.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,34 +47,41 @@ fun AppsScreen() {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(
-                        "Apps",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description"
+            Column {
+                LargeTopAppBar(
+                    title = {
+                        Text(
+                            "Apps",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Localized description"
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
+///
+            }
         }
     ) {
         LazyColumn(
             contentPadding = it
         ) {
             items(100) {
-                Text(text = "Item $it", modifier = Modifier.padding(16.dp), style = Typography.bodyMedium)
+                Text(
+                    text = "Item $it",
+                    modifier = Modifier.padding(16.dp),
+                    style = Typography.bodyMedium
+                )
                 Divider()
             }
         }

@@ -4,9 +4,13 @@ import android.animation.ArgbEvaluator
 import android.widget.Toast
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +52,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.R
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -77,6 +83,10 @@ fun SavedScreen() {
     var state by remember { mutableStateOf(0) }
     val titles = listOf("Saved packages", "Saved flags")
 
+    val indicator = @Composable { tabPositions: List<TabPosition> ->
+        CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -104,17 +114,7 @@ fun SavedScreen() {
                 )
                 TabRow(
                     selectedTabIndex = state,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier
-                                .customTabIndicatorOffset(tabPositions[state])
-                                .clip(
-                                    RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                                ),
-                            height = 3.dp,
-                            color =  MaterialTheme.colorScheme.primary,
-                        )
-                    },
+                    indicator = indicator,
                     containerColor = lerp(
                         MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
                         MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
@@ -131,7 +131,11 @@ fun SavedScreen() {
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                            }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp, vertical = 12.dp)
+                                .height(36.dp)
+                                .clip(MaterialTheme.shapes.extraLarge)
                         )
                     }
                 }
@@ -153,3 +157,57 @@ fun SavedScreen() {
     }
 }
 
+@Composable
+fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
+    // Draws a rounded rectangular with border around the Tab, with a 5.dp padding from the edges
+    // Color is passed in as a parameter [color]
+    Box(
+        modifier
+//            .padding(5.dp)
+//            .width(32.dp)
+//            .height(32.dp)
+//            .border(2.dp, color = Color.Cyan)
+            .wrapContentSize(Alignment.BottomCenter)
+            .padding(horizontal = 48.dp)
+            .fillMaxWidth()
+            .height(3.dp)
+            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+            .background(color)
+    )
+}
+
+@Composable
+fun CustomTabIndicatorAnimaton(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+    val transition = updateTransition(selectedTabIndex)
+    val indicatorStart by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 500f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 1500f)
+            }
+        }, label = ""
+    ) {
+        tabPositions[it].left
+    }
+
+    val indicatorEnd by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 1500f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 500f)
+            }
+        }, label = ""
+    ) {
+        tabPositions[it].right
+    }
+
+    CustomTabIndicator(
+        color = MaterialTheme.colorScheme.primary, modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(align = Alignment.BottomStart)
+            .offset(x = indicatorStart)
+            .width(indicatorEnd - indicatorStart)
+    )
+}

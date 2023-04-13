@@ -5,9 +5,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
@@ -17,17 +22,21 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -47,6 +56,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -98,10 +108,15 @@ fun FlagChangeScreen(
 
     var state by remember { mutableStateOf(0) }
     val titles = listOf("All", "Bool", "Int", "Float", "String")
+    val indicator = @Composable { tabPositions: List<TabPosition> ->
+        CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
+    }
+    var textWidthDp by remember {
+        mutableStateOf(0.dp)
+    }
 
     var selectedChips by remember { mutableStateOf(0) }
     val chipsList = listOf("All", "Enabled only", "Disabled only")
-    var chipsWeightDp by remember { mutableStateOf(0.dp) }
 
     val localDensity = LocalDensity.current
 
@@ -158,17 +173,7 @@ fun FlagChangeScreen(
                 )
                 TabRow(
                     selectedTabIndex = state,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier
-                                .customTabIndicatorOffset(tabPositions[state])
-                                .clip(
-                                    RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                                ),
-                            height = 3.dp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    },
+                    indicator = indicator,
                     containerColor = lerp(
                         MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
                         MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
@@ -180,15 +185,23 @@ fun FlagChangeScreen(
                             selected = state == index,
                             onClick = {
                                 state = index
+                                Toast.makeText(context, "Tab - $title\nWidth - $textWidthDp", Toast.LENGTH_LONG).show()
                             },
                             text = {
                                 Text(
                                     text = title,
-                                    maxLines = 2,
+                                    maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                                        textWidthDp = with(localDensity) { coordinates.size.width.toDp() }
+                                    }
                                 )
-                            }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp, vertical = 12.dp)
+                                .height(36.dp)
+                                .clip(MaterialTheme.shapes.extraLarge)
                         )
                     }
                 }
@@ -252,9 +265,57 @@ fun FlagChangeScreen(
     }
 }
 
-fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
-    clickable(indication = null,
-        interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
+@Composable
+fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
+    // Draws a rounded rectangular with border around the Tab, with a 5.dp padding from the edges
+    // Color is passed in as a parameter [color]
+    Box(
+        modifier
+//            .padding(5.dp)
+//            .width(32.dp)
+//            .height(32.dp)
+//            .border(2.dp, color = Color.Cyan)
+            .wrapContentSize(Alignment.BottomCenter)
+            .padding(horizontal = 12.dp)
+            .fillMaxWidth()
+            .height(3.dp)
+            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+            .background(color)
+    )
+}
+
+@Composable
+fun CustomTabIndicatorAnimaton(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+    val transition = updateTransition(selectedTabIndex)
+    val indicatorStart by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 500f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 1500f)
+            }
+        }, label = ""
+    ) {
+        tabPositions[it].left
     }
+
+    val indicatorEnd by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 1500f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 500f)
+            }
+        }, label = ""
+    ) {
+        tabPositions[it].right
+    }
+
+    CustomTabIndicator(
+        color = MaterialTheme.colorScheme.primary, modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(align = Alignment.BottomStart)
+            .offset(x = indicatorStart)
+            .width(indicatorEnd - indicatorStart)
+    )
 }
