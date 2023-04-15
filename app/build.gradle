@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -50,6 +50,9 @@ dependencies {
 
     def libsuVersion = '5.0.5'
     def room_version = '2.5.1'
+
+    // Navigation Animaion
+    implementation ("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
 
     // Room
     implementation("androidx.room:room-runtime:$room_version")
