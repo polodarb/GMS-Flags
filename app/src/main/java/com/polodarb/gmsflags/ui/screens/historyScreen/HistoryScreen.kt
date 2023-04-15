@@ -56,7 +56,7 @@ fun HistoryScreen() {
                 scrollBehavior = scrollBehavior
             )
         }
-    ) {
+    ) { it ->
         LazyColumn(
             contentPadding = it
         ) {

@@ -8,11 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.android.material.bottomappbar.BottomAppBar
 import com.polodarb.gmsflags.R
 import com.polodarb.gmsflags.ui.screens.appsScreen.AppsScreen
 import com.polodarb.gmsflags.ui.screens.historyScreen.HistoryScreen
