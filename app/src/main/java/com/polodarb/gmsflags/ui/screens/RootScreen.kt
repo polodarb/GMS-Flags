@@ -1,5 +1,6 @@
 package com.polodarb.gmsflags.ui.screens
 
+import BottomBarNavigation
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,14 +11,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.polodarb.gmsflags.ui.navigation.BottomBarNavigation
 import com.polodarb.gmsflags.ui.navigation.BottomBarUI
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun RootScreen(
     parentNavController: NavController,
-    childNavController: NavHostController = rememberAnimatedNavController()
+    childNavController: NavHostController = rememberNavController()
 ) {
     Scaffold(
         bottomBar = { BottomBarUI(navController = childNavController) }
