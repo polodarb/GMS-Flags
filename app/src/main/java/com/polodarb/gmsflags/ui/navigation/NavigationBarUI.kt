@@ -25,14 +25,19 @@ fun BottomBarUI( // UI realization for BottomBar
         NavigationBarItem(
             icon = {
                 Icon(
-                    painter = painterResource(NavBarItem.Packages.icon),
-                    contentDescription = "Packages"
+                    painter = painterResource(
+                        if (currentRoute == NavBarItem.Suggestions.screenRoute)
+                            R.drawable.ic_navbar_suggestions_active
+                        else
+                            R.drawable.ic_navbar_suggestions_inactive
+                    ),
+                    contentDescription = "Suggestions"
                 )
             },
-            label = { Text(text = NavBarItem.Packages.title) },
-            selected = currentRoute == NavBarItem.Packages.screenRoute,
+            label = { Text(text = NavBarItem.Suggestions.title) },
+            selected = currentRoute == NavBarItem.Suggestions.screenRoute,
             onClick = {
-                navController.navigate(NavBarItem.Packages.screenRoute) {
+                navController.navigate(NavBarItem.Suggestions.screenRoute) {
                     navController.graph.startDestinationRoute?.let { route ->
                         popUpTo(route) {
                             saveState = true

@@ -9,10 +9,11 @@ import com.polodarb.gmsflags.ui.screens.appsScreen.AppsScreen
 import com.polodarb.gmsflags.ui.screens.historyScreen.HistoryScreen
 import com.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import com.polodarb.gmsflags.ui.screens.savedScreen.SavedScreen
+import com.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreen
 
 internal sealed class NavBarItem(var title: String, var icon: Int, var screenRoute: String) {
 
-    object Packages : NavBarItem("Packages", R.drawable.ic_navbar_packages, "packages")
+    object Suggestions : NavBarItem("Suggestions", R.drawable.ic_navbar_suggestions_active, "packages")
     object Apps : NavBarItem("Apps", R.drawable.ic_navbar_apps, "apps")
     object Saved : NavBarItem("Saved", R.drawable.ic_save_inactive, "saved")
     object History : NavBarItem("History", R.drawable.ic_navbar_history, "history")
@@ -41,17 +42,11 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavBarItem.Packages.screenRoute,
+        startDestination = NavBarItem.Suggestions.screenRoute,
         modifier = modifier
     ) {
-        composable(route = NavBarItem.Packages.screenRoute) {
-            PackagesScreen(
-                onFlagClick = { packageName ->
-                    parentNavController.navigate(ScreensDestination.FlagChange.createRoute(packageName))
-                },
-                onSuggestionsClick = {
-                    parentNavController.navigate(ScreensDestination.Suggestions.screenRoute)
-                },
+        composable(route = NavBarItem.Suggestions.screenRoute) {
+            SuggestionsScreen(
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 }

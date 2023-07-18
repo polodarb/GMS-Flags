@@ -43,7 +43,7 @@ internal fun RootAppNavigation(
             RootScreen(parentNavController = navController)
         }
         composable(
-            route = ScreensDestination.FlagChange.createStringRoute(NavBarItem.Packages.screenRoute),
+            route = ScreensDestination.FlagChange.createStringRoute(NavBarItem.Suggestions.screenRoute),
             arguments =
             listOf(navArgument("flagChange") { type = NavType.StringType })
         ) { backStackEntry ->
@@ -63,11 +63,11 @@ internal fun RootAppNavigation(
                 onBackPressed = navController::navigateUp
             ) // TODO: Implement SettingsScreen
         }
-        composable(
-            route = ScreensDestination.Suggestions.screenRoute
-        ) {
-            SuggestionsScreen() // TODO: Implement SuggestionsScreen
-        }
+//        composable(
+//            route = ScreensDestination.Suggestions.screenRoute
+//        ) {
+//            SuggestionsScreen() // TODO: Implement SuggestionsScreen
+//        }
     }
 }
 
