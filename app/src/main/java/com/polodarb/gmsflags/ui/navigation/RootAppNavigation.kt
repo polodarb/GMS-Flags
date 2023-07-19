@@ -15,6 +15,7 @@ import com.polodarb.gmsflags.ui.animations.exitAnim
 import com.polodarb.gmsflags.ui.screens.RootScreen
 import com.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 import com.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
+import com.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -52,10 +53,15 @@ internal fun RootAppNavigation(
                 onBackPressed = navController::navigateUp
             ) // TODO: Implement SettingsScreen
         }
-//        composable(
-//            route = ScreensDestination.Suggestions.screenRoute
-//        ) {
-//            SuggestionsScreen() // TODO: Implement SuggestionsScreen
-//        }
+        composable(
+            route = ScreensDestination.Packages.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false)},
+        ) {
+            PackagesScreen(
+                onFlagClick = {},
+                onBackPressed = navController::navigateUp
+            ) // TODO: Implement PackagesScreen
+        }
     }
 }

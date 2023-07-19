@@ -25,13 +25,13 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     fun createStringRoute(rootRoute: String) = "${rootRoute}/$screenRoute"
 
     object Root : ScreensDestination("root")
-    object Suggestions : ScreensDestination("suggest")
     object FlagChange : ScreensDestination("{flagChange}") {
         fun createRoute(flagChange: String): String {
             return "packages/$flagChange"
         }
     }
     object Settings : ScreensDestination("settings")
+    object Packages : ScreensDestination("packages")
 }
 
 @Composable
@@ -49,6 +49,9 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             SuggestionsScreen(
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+                },
+                onPackagesClick = {
+                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 }
             )
         }

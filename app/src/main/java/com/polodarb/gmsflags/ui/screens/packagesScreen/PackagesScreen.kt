@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
@@ -60,8 +61,7 @@ val result =
 @Composable
 fun PackagesScreen(
     onFlagClick: (packageName: String) -> Unit,
-    onSuggestionsClick: () -> Unit,
-    onSettingsClick: () -> Unit,
+    onBackPressed: () -> Unit,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -82,31 +82,20 @@ fun PackagesScreen(
                     )
                 },
                 actions = {
-
-                    IconButton(onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onSuggestionsClick()
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_suggestions),
-                            contentDescription = "Localized description"
-                        )
-                    }
-                    IconButton(onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onSettingsClick()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
                     IconButton(onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Localized description"
                         )
                     }

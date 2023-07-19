@@ -44,7 +44,8 @@ import com.polodarb.gmsflags.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuggestionsScreen(
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onPackagesClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
@@ -90,7 +91,7 @@ fun SuggestionsScreen(
                     }
                     IconButton(onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        Toast.makeText(context, "All packages", Toast.LENGTH_SHORT).show()
+                        onPackagesClick()
                     }) {
                         Icon(
                             painterResource(id = R.drawable.ic_packages),
