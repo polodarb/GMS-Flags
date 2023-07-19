@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,7 +74,7 @@ fun SavedScreen() {
 
     val coroutineScope = rememberCoroutineScope()
 
-    val pagerState = rememberPagerState()
+//    val pagerState = rememberPagerState()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -100,62 +101,63 @@ fun SavedScreen() {
                     },
                     scrollBehavior = scrollBehavior
                 )
-                TabRow(
-                    selectedTabIndex = state,
-                    indicator = indicator,
-                    containerColor = lerp(
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
-                        FastOutLinearInEasing.transform(topBarState.collapsedFraction)
-                    )
-                ) {
-                    titles.forEachIndexed { index, title ->
-                        Tab(
-                            selected = state == index,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                                state = index
-                                Toast.makeText(context, pagerState.currentPage.toString(), Toast.LENGTH_SHORT).show()
-                            },
-                            text = {
-                                Text(
-                                    text = title,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            },
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp, vertical = 12.dp)
-                                .height(40.dp)
-                                .clip(MaterialTheme.shapes.extraLarge)
-                        )
-                    }
-                }
+//                TabRow(
+//                    selectedTabIndex = state,
+//                    indicator = indicator,
+//                    containerColor = lerp(
+//                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+//                        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+//                        FastOutLinearInEasing.transform(topBarState.collapsedFraction)
+//                    )
+//                ) {
+//                    titles.forEachIndexed { index, title ->
+//                        Tab(
+//                            selected = state == index,
+//                            onClick = {
+//                                coroutineScope.launch {
+//                                    pagerState.animateScrollToPage(index)
+//                                }
+//                                state = index
+//                                Toast.makeText(context, pagerState.currentPage.toString(), Toast.LENGTH_SHORT).show()
+//                            },
+//                            text = {
+//                                Text(
+//                                    text = title,
+//                                    maxLines = 1,
+//                                    overflow = TextOverflow.Ellipsis,
+//                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+//                                )
+//                            },
+//                            modifier = Modifier
+//                                .padding(horizontal = 24.dp, vertical = 12.dp)
+//                                .height(40.dp)
+//                                .clip(MaterialTheme.shapes.extraLarge)
+//                        )
+//                    }
+//                }
             }
         }
     ) { paddingValues ->
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }.collect { page ->
-                when (page) {
-                    0 -> state = 0
-                    1 -> state = 1
-                }
-            }
-        }
-        HorizontalPager(
-            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding()),
-            pageCount = 2,
-            state = pagerState,
-            verticalAlignment = Alignment.CenterVertically
-        ) { page ->
-            when (page) {
-                0 -> SavedPackagesScreen()
-                1 -> SavedFlagsScreen()
-            }
-        }
+        LazyColumn(contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())) {}
+//        LaunchedEffect(pagerState) {
+//            snapshotFlow { pagerState.currentPage }.collect { page ->
+//                when (page) {
+//                    0 -> state = 0
+//                    1 -> state = 1
+//                }
+//            }
+//        }
+//        HorizontalPager(
+//            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding()),
+//            pageCount = 2,
+//            state = pagerState,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) { page ->
+//            when (page) {
+//                0 -> SavedPackagesScreen()
+//                1 -> SavedFlagsScreen()
+//            }
+//        }
     }
 }
 

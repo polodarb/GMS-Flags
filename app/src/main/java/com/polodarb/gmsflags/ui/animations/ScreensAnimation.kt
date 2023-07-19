@@ -15,14 +15,14 @@ fun enterAnim(
 ) = slideInHorizontally(
     initialOffsetX = { (if (toLeft) 1 else -1) * (it * 0.075).toInt() },
     animationSpec = tween(
-        durationMillis = 300,
-        delayMillis = 100,
+        durationMillis = 350,
+        delayMillis = 150,
         easing = FastOutSlowInEasing
     )
 ) + fadeIn(
     animationSpec = tween(
-        durationMillis = 200,
-        delayMillis = 200,
+        durationMillis = 250,
+        delayMillis = 250,
         easing = FastOutSlowInEasing
     ),
     initialAlpha = 0.0f
@@ -34,13 +34,13 @@ fun exitAnim(
 ) = slideOutHorizontally(
     targetOffsetX = { (if (!toLeft) 1 else -1) * (it * 0.075).toInt() },
     animationSpec = tween(
-        durationMillis = 300,
-        easing = LinearOutSlowInEasing
+        durationMillis = 350,
+        easing = FastOutSlowInEasing
     )
 ) + fadeOut(
     animationSpec = tween(
-        durationMillis = 200,
-        easing = LinearOutSlowInEasing
+        durationMillis = 250,
+        easing = FastOutSlowInEasing
     ),
     targetAlpha = 0.0f
 )
