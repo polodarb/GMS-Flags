@@ -36,7 +36,7 @@ internal fun RootAppNavigation(
             RootScreen(parentNavController = navController)
         }
         composable(
-            route = ScreensDestination.FlagChange.createStringRoute(NavBarItem.Suggestions.screenRoute),
+            route = ScreensDestination.FlagChange.createStringRoute(ScreensDestination.Packages.screenRoute),
             arguments = listOf(navArgument("flagChange") { type = NavType.StringType })
         ) { backStackEntry ->
             FlagChangeScreen(

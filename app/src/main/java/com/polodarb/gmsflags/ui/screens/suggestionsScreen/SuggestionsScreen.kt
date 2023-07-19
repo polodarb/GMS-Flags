@@ -30,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -40,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.polodarb.gmsflags.R
+import com.polodarb.gmsflags.ui.dialogs.FlagReportDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +52,13 @@ fun SuggestionsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
+
+    val showDialog = remember { mutableStateOf(false) }
+    val openDialog = { showDialog.value = true }
+    val closeDialog = { showDialog.value = false }
+    val onButtonClick = {
+        openDialog()
+    }
 
     val listState = rememberLazyListState()
     val expandedFab by remember {
@@ -124,7 +133,7 @@ fun SuggestionsScreen(
                         trailingContent = {
                             Row() {
                                 FilledTonalIconButton(
-                                    onClick = { /* doSomething() */ },
+                                    onClick = { showDialog.value = true },
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 ) {
                                     Icon(
@@ -145,5 +154,9 @@ fun SuggestionsScreen(
                 Spacer(modifier = Modifier.padding(44.dp))
             }
         }
+        FlagReportDialog(
+            showDialog.value,
+            onDismiss = { showDialog.value = false }
+        )
     }
 }
