@@ -17,16 +17,19 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -34,11 +37,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,8 +53,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import ua.polodarb.gmsflags.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -59,16 +67,17 @@ fun SavedScreen() {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
+    // Tabs
     var state by remember { mutableStateOf(0) }
     val titles = listOf("Saved packages", "Saved flags")
-
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
     }
+    val pagerState = rememberPagerState(pageCount = {
+        2
+    })
 
     val coroutineScope = rememberCoroutineScope()
-
-//    val pagerState = rememberPagerState()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -92,6 +101,24 @@ fun SavedScreen() {
                                 contentDescription = "Localized description"
                             )
                         }
+                        IconButton(onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                            onPackagesClick()
+                        }) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_packages),
+                                contentDescription = "Localized description"
+                            )
+                        }
+                        IconButton(onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                            onSettingsClick()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Settings"
+                            )
+                        }
                     },
                     scrollBehavior = scrollBehavior
                 )
@@ -104,54 +131,50 @@ fun SavedScreen() {
                         FastOutLinearInEasing.transform(topBarState.collapsedFraction)
                     )
                 ) {
-//                    titles.forEachIndexed { index, title ->
-//                        Tab(
-//                            selected = state == index,
-//                            onClick = {
-//                                coroutineScope.launch {
-//                                    pagerState.animateScrollToPage(index)
-//                                }
-//                                state = index
-//                                Toast.makeText(context, pagerState.currentPage.toString(), Toast.LENGTH_SHORT).show()
-//                            },
-//                            text = {
-//                                Text(
-//                                    text = title,
-//                                    maxLines = 1,
-//                                    overflow = TextOverflow.Ellipsis,
-//                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-//                                )
-//                            },
-//                            modifier = Modifier
-//                                .padding(horizontal = 24.dp, vertical = 12.dp)
-//                                .height(40.dp)
-//                                .clip(MaterialTheme.shapes.extraLarge)
-//                        )
-//                    }
+                    titles.forEachIndexed { index, title ->
+                        Tab(
+                            selected = state == index,
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                                state = index
+                            },
+                            text = {
+                                Text(
+                                    text = title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp, vertical = 12.dp)
+                                .height(40.dp)
+                                .clip(MaterialTheme.shapes.extraLarge)
+                        )
+                    }
                 }
             }
         }
     ) { paddingValues ->
-        LazyColumn(contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())) {}
-//        LaunchedEffect(pagerState) {
-//            snapshotFlow { pagerState.currentPage }.collect { page ->
-//                when (page) {
-//                    0 -> state = 0
-//                    1 -> state = 1
-//                }
-//            }
-//        }
-//        HorizontalPager(
-//            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding()),
-//            pageCount = 2,
-//            state = pagerState,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) { page ->
-//            when (page) {
-//                0 -> SavedPackagesScreen()
-//                1 -> SavedFlagsScreen()
-//            }
-//        }
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                when (page) {
+                    0 -> state = 0
+                    1 -> state = 1
+                }
+            }
+        }
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
+        ) { page ->
+            when (page) {
+                0 -> SavedPackagesScreen()
+                1 -> SavedFlagsScreen()
+            }
+        }
     }
 }
 

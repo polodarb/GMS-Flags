@@ -180,5 +180,5 @@ fun LazyItem(
             )
         }
     }
-    Divider()
+    Divider(Modifier.padding(horizontal = 16.dp))
 }

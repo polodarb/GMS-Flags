@@ -122,7 +122,7 @@ fun SuggestionsScreen(
                         headlineContent = { Text("The new UI of Google Files") },
                         supportingContent = { Text("Finder: Nikola Brown") },
                         trailingContent = {
-                            Row() {
+                            Row {
                                 FilledTonalIconButton(
                                     onClick = { showDialog.value = true },
                                     modifier = Modifier.padding(horizontal = 16.dp)
