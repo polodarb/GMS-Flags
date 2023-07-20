@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.polodarb.gmsflags"
+    namespace = "ua.polodarb.gmsflags"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.polodarb.gmsflags"
+        applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
         versionCode = 1
