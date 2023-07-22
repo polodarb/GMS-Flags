@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,7 @@ fun SavedFlagsScreen() {
     ) {
         LazyColumn {
             items(20) {
-                LazyFlagsItem(packageName = "45369077")
+                LazyFlagsItem(packageName = "45369077", index = it)
             }
         }
     }
@@ -40,7 +41,8 @@ fun SavedFlagsScreen() {
 @Composable
 fun LazyFlagsItem(
     packageName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    index: Int
 ) {
     var checkedState by rememberSaveable {
         mutableStateOf(false)

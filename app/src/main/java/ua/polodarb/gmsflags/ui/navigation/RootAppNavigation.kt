@@ -35,7 +35,9 @@ internal fun RootAppNavigation(
         }
         composable(
             route = ScreensDestination.FlagChange.createStringRoute(ScreensDestination.Packages.screenRoute),
-            arguments = listOf(navArgument("flagChange") { type = NavType.StringType })
+            arguments = listOf(navArgument("flagChange") { type = NavType.StringType }),
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false)}
         ) { backStackEntry ->
             FlagChangeScreen(
                 onBackPressed = navController::navigateUp,
@@ -54,10 +56,16 @@ internal fun RootAppNavigation(
         composable(
             route = ScreensDestination.Packages.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false)},
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
         ) {
             PackagesScreen(
-                onFlagClick = {},
+                onFlagClick = { packageName ->
+                    navController.navigate(
+                        ScreensDestination.FlagChange.createRoute(packageName)
+                    )
+                },
                 onBackPressed = navController::navigateUp
             ) // TODO: Implement PackagesScreen
         }
