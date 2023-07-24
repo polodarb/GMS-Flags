@@ -17,18 +17,16 @@ fun BottomBarUI( // UI realization for BottomBar
     modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
-    NavigationBar(
-//        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-    ) {
+    NavigationBar {
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+        val currentSelectedItem by navController.currentScreenAsState()
 
         NavigationBarItem(
             icon = {
                 Icon(
                     painter = painterResource(
-                        if (currentRoute == NavBarItem.Suggestions.screenRoute)
+                        if (currentSelectedItem == NavBarItem.Suggestions)
                             R.drawable.ic_navbar_suggestions_active
                         else
                             R.drawable.ic_navbar_suggestions_inactive
@@ -37,7 +35,7 @@ fun BottomBarUI( // UI realization for BottomBar
                 )
             },
             label = { Text(text = NavBarItem.Suggestions.title) },
-            selected = currentRoute == NavBarItem.Suggestions.screenRoute,
+            selected = currentSelectedItem == NavBarItem.Suggestions,
             onClick = {
                 navController.navigate(NavBarItem.Suggestions.screenRoute) {
                     navController.graph.startDestinationRoute?.let { route ->
@@ -58,7 +56,7 @@ fun BottomBarUI( // UI realization for BottomBar
                 )
             },
             label = { Text(text = NavBarItem.Apps.title) },
-            selected = currentRoute == NavBarItem.Apps.screenRoute,
+            selected = currentSelectedItem == NavBarItem.Apps,
             onClick = {
                 navController.navigate(NavBarItem.Apps.screenRoute) {
                     navController.graph.startDestinationRoute?.let { route ->
@@ -76,7 +74,7 @@ fun BottomBarUI( // UI realization for BottomBar
             icon = {
                 Icon(
                     painter = painterResource(
-                        if (currentRoute == NavBarItem.Saved.screenRoute)
+                        if (currentSelectedItem == NavBarItem.Saved)
                             R.drawable.ic_save_active
                         else
                             R.drawable.ic_save_inactive
@@ -85,7 +83,7 @@ fun BottomBarUI( // UI realization for BottomBar
                 )
             },
             label = { Text(text = NavBarItem.Saved.title) },
-            selected = currentRoute == NavBarItem.Saved.screenRoute,
+            selected = currentSelectedItem == NavBarItem.Saved,
             onClick = {
                 navController.navigate(NavBarItem.Saved.screenRoute) {
                     navController.graph.startDestinationRoute?.let { route ->
@@ -106,7 +104,7 @@ fun BottomBarUI( // UI realization for BottomBar
                 )
             },
             label = { Text(text = NavBarItem.History.title) },
-            selected = currentRoute == NavBarItem.History.screenRoute,
+            selected = currentSelectedItem == NavBarItem.History,
             onClick = {
                 navController.navigate(NavBarItem.History.screenRoute) {
                     navController.graph.startDestinationRoute?.let { route ->

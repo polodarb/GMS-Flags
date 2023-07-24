@@ -12,7 +12,7 @@ import ua.polodarb.gmsflags.ui.screens.historyScreen.HistoryScreen
 import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreen
 
-internal sealed class NavBarItem(var title: String, var icon: Int, var screenRoute: String) {
+sealed class NavBarItem(var title: String, var icon: Int, var screenRoute: String) {
 
     object Suggestions : NavBarItem("Suggestions", R.drawable.ic_navbar_suggestions_active, "suggestions")
     object Apps : NavBarItem("Apps", R.drawable.ic_navbar_apps, "apps")
