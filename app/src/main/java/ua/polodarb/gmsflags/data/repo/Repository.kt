@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.data.repository
+package ua.polodarb.gmsflags.data.repo
 
 import javax.inject.Inject
 

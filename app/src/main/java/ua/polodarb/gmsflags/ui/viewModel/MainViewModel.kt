@@ -3,7 +3,7 @@ package ua.polodarb.gmsflags.ui.viewModel
 import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.ShellUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ua.polodarb.gmsflags.data.repository.Repository
+import ua.polodarb.gmsflags.data.repo.Repository
 import javax.inject.Inject
 
 @HiltViewModel

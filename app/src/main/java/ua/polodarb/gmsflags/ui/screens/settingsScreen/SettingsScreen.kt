@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
+import ua.polodarb.gmsflags.MainActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +62,9 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
+            Button(onClick = { (context as MainActivity).rootDatabase.getGmsPackages() }) {
+                Text(text = "Click me!!!")
+            }
             Divider()
             IconButton(
                 onClick = {

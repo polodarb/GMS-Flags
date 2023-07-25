@@ -28,6 +28,9 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -35,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        aidl = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.4"
@@ -47,9 +51,7 @@ android {
 }
 
 dependencies {
-
-
-    // Navigation Animaion
+    // Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
 
     // Hilt
@@ -59,6 +61,8 @@ dependencies {
 
     // libsu
     implementation("com.github.topjohnwu.libsu:core:5.0.5")
+    implementation("com.github.topjohnwu.libsu:service:5.0.5")
+    implementation("com.github.topjohnwu.libsu:nio:5.0.5")
 
     // SystemUIController
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha")
@@ -68,6 +72,8 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.5.3")
+
+    implementation("com.github.requery:sqlite-android:3.42.0")
 
     implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.core:core-ktx:1.10.0")
