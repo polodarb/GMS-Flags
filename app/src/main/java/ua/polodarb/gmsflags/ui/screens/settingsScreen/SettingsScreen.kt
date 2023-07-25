@@ -23,7 +23,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
-import ua.polodarb.gmsflags.MainActivity
+import ua.polodarb.gmsflags.ui.MainActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

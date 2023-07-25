@@ -11,6 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.currentScreenAsState
 
 @Composable
 fun BottomBarUI( // UI realization for BottomBar

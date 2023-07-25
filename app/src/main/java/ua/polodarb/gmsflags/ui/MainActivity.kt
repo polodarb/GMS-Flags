@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags
+package ua.polodarb.gmsflags.ui
 
 import android.content.ComponentName
 import android.content.Intent
@@ -18,6 +18,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 import dagger.hilt.android.AndroidEntryPoint
+import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.data.db.RootDatabase
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
@@ -56,8 +57,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         RootService.bind(intent, service)
-
-
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

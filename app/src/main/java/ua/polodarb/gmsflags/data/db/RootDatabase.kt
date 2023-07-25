@@ -13,6 +13,7 @@ import ua.polodarb.gmsflags.IRootDatabase
 
 @SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
+
     private lateinit var db: SQLiteDatabase
 
     override fun onBind(intent: Intent): IBinder {

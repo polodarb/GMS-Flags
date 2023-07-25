@@ -78,7 +78,7 @@ fun FlagChangeScreen(
     val lazyListState: LazyListState = rememberLazyListState()
 
     var state by remember { mutableStateOf(0) }
-    val titles = listOf("All", "Bool", "Int", "Float", "String")
+    val titles = listOf("Bool", "Int", "Float", "String")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
     }
