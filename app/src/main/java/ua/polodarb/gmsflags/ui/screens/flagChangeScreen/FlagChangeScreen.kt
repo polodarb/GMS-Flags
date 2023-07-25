@@ -9,6 +9,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -36,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
@@ -45,6 +49,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +65,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ua.polodarb.gmsflags.R
@@ -86,8 +92,8 @@ fun FlagChangeScreen(
         mutableStateOf(0.dp)
     }
 
-    var selectedChips by remember { mutableStateOf(0) }
-    val chipsList = listOf("All", "Enabled only", "Disabled only")
+    var selectedChips by remember { mutableIntStateOf(0) }
+    val chipsList = listOf("All", "Enabled", "Disabled", "Changed")
 
     val localDensity = LocalDensity.current
 
@@ -156,7 +162,11 @@ fun FlagChangeScreen(
                             selected = state == index,
                             onClick = {
                                 state = index
-                                Toast.makeText(context, "Tab - $title\nWidth - $textWidthDp", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    context,
+                                    "Tab - $title\nWidth - $textWidthDp",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             },
                             text = {
                                 Text(
@@ -165,7 +175,8 @@ fun FlagChangeScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.onGloballyPositioned { coordinates ->
-                                        textWidthDp = with(localDensity) { coordinates.size.width.toDp() }
+                                        textWidthDp =
+                                            with(localDensity) { coordinates.size.width.toDp() }
                                     }
                                 )
                             },
@@ -179,6 +190,7 @@ fun FlagChangeScreen(
 
                 Row(
                     modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
                         .background(MaterialTheme.colorScheme.background)
                         .fillMaxWidth()
                         .padding(vertical = 12.dp, horizontal = 6.dp)
@@ -192,27 +204,32 @@ fun FlagChangeScreen(
                                 selectedChips = index
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
-                            label = { Text(text = title) },
-                            leadingIcon = if (selectedChips == index) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Filled.Done,
-                                        contentDescription = "Localized Description",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            } else {
-                                null
-                            },
-                            modifier = Modifier
-                                .animateContentSize(
-                                    animationSpec = tween(
-                                        durationMillis = 250,
-                                        easing = LinearOutSlowInEasing
-                                    )
-
+                            colors = SelectableChipColors(
+                                containerColor = Color.Transparent,
+                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                leadingIconColor = Color.Transparent,
+                                trailingIconColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                disabledLabelColor = Color.Transparent,
+                                disabledLeadingIconColor = Color.Transparent,
+                                disabledTrailingIconColor = Color.Transparent,
+                                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                disabledSelectedContainerColor = Color.Transparent,
+                                selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                selectedLeadingIconColor = Color.Transparent,
+                                selectedTrailingIconColor = Color.Transparent
+                            ),
+                            label = {
+                                Text(
+                                    text = title,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
                                 )
-                                .padding(horizontal = 8.dp))
+                            },
+                            leadingIcon = null,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                        )
                     }
                 }
             }
