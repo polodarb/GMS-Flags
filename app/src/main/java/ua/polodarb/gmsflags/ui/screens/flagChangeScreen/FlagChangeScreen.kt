@@ -8,12 +8,15 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +28,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -48,11 +53,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,10 +76,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.screens.savedScreen.LazyFlagsItem
+import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedFlagsScreen
+import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedPackagesScreen
 import ua.polodarb.gmsflags.ui.theme.Typography
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun FlagChangeScreen(
     onBackPressed: () -> Unit,
@@ -88,6 +100,12 @@ fun FlagChangeScreen(
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
     }
+    val pagerState = rememberPagerState(pageCount = {
+        4
+    })
+
+    val coroutineScope = rememberCoroutineScope()
+
     var textWidthDp by remember {
         mutableStateOf(0.dp)
     }
@@ -161,12 +179,10 @@ fun FlagChangeScreen(
                         Tab(
                             selected = state == index,
                             onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
                                 state = index
-                                Toast.makeText(
-                                    context,
-                                    "Tab - $title\nWidth - $textWidthDp",
-                                    Toast.LENGTH_LONG
-                                ).show()
                             },
                             text = {
                                 Text(
@@ -187,15 +203,13 @@ fun FlagChangeScreen(
                         )
                     }
                 }
-
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
                         .background(MaterialTheme.colorScheme.background)
                         .fillMaxWidth()
                         .padding(vertical = 12.dp, horizontal = 6.dp)
-                        .height(36.dp),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
+                        .height(36.dp)
                 ) {
                     chipsList.forEachIndexed { index, title ->
                         FilterChip(
@@ -234,20 +248,62 @@ fun FlagChangeScreen(
                 }
             }
         }
-    ) { it ->
-        LazyColumn(
-            contentPadding = it,
-            state = lazyListState
-        ) {
-            items(100) {
-                Text(
-                    text = "Item $it",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    style = Typography.bodyMedium
-                )
-//                Divider()
+    ) { paddingValues ->
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                when (page) {
+                    0 -> state = 0
+                    1 -> state = 1
+                    2 -> state = 2
+                    3 -> state = 3
+                }
+            }
+        }
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
+        ) { page ->
+            when (page) {
+                0 -> {
+                    LazyColumn {
+                        items(20) {
+                            BoolValItem("flagName", false, { })
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(12.dp))
+                        }
+                    }
+                }
+                1 -> {
+                    LazyColumn {
+                        items(20) {
+                            BoolValItem("flagName", false, { })
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(12.dp))
+                        }
+                    }
+                }
+                2 -> {
+                    LazyColumn {
+                        items(20) {
+                            BoolValItem("flagName", false, { })
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(12.dp))
+                        }
+                    }
+                }
+                3 -> {
+                    LazyColumn {
+                        items(20) {
+                            BoolValItem("flagName", false, { })
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(12.dp))
+                        }
+                    }
+                }
             }
         }
     }
@@ -255,14 +311,8 @@ fun FlagChangeScreen(
 
 @Composable
 fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
-    // Draws a rounded rectangular with border around the Tab, with a 5.dp padding from the edges
-    // Color is passed in as a parameter [color]
     Box(
         modifier
-//            .padding(5.dp)
-//            .width(32.dp)
-//            .height(32.dp)
-//            .border(2.dp, color = Color.Cyan)
             .wrapContentSize(Alignment.BottomCenter)
             .padding(horizontal = 12.dp)
             .fillMaxWidth()
