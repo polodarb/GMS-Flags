@@ -36,18 +36,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.theme.Typography
 import ua.polodarb.gmsflags.ui.viewModel.MainViewModel
 import com.topjohnwu.superuser.Shell
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 const val DB_PATH = "data/data/com.google.android.gms/databases/"
 val result =
@@ -61,8 +53,7 @@ val result =
 @Composable
 fun PackagesScreen(
     onFlagClick: (packageName: String) -> Unit,
-    onBackPressed: () -> Unit,
-    mainViewModel: MainViewModel = hiltViewModel()
+    onBackPressed: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current

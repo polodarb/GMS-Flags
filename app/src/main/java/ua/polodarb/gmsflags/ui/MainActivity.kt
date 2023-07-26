@@ -17,14 +17,12 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
-import dagger.hilt.android.AndroidEntryPoint
 import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.data.db.RootDatabase
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     lateinit var rootDatabase: IRootDatabase
     private var shellInitialized: Boolean = false

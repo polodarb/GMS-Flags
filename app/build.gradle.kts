@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
-    id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
 }
 
@@ -54,11 +52,6 @@ dependencies {
     // Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.45")
-    kapt("com.google.dagger:hilt-android-compiler:2.45")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
-
     // libsu
     implementation("com.github.topjohnwu.libsu:core:5.0.5")
     implementation("com.github.topjohnwu.libsu:service:5.0.5")
@@ -89,8 +82,4 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-}
-
-kapt {
-    correctErrorTypes = true
 }
