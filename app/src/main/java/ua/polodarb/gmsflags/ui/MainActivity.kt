@@ -26,24 +26,25 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     lateinit var rootDatabase: IRootDatabase
+    private var shellInitialized: Boolean = false
 
     init {
-        Shell.setDefaultBuilder(Shell.Builder.create()
-            .setFlags(Shell.FLAG_REDIRECT_STDERR)
-            .setTimeout(10)
-        )
+        if (shellInitialized) {
+            Shell.setDefaultBuilder(Shell.Builder.create()
+                    .setFlags(Shell.FLAG_REDIRECT_STDERR)
+                    .setTimeout(10))
+        }
     }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Shell.getShell()
+        if (!shellInitialized) Shell.getShell { shellInitialized = true }
 
         installSplashScreen().apply {
-
+            setKeepOnScreenCondition { !shellInitialized }
         }
 
         val intent = Intent(this, RootDatabase::class.java)
@@ -75,5 +76,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(::shellInitialized.name, shellInitialized)
+        super.onSaveInstanceState(outState)
+    }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        shellInitialized = savedInstanceState.getBoolean(::shellInitialized.name)
+        super.onRestoreInstanceState(savedInstanceState)
+    }
 }
