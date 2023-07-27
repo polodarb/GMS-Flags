@@ -4,17 +4,17 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.core.view.WindowCompat
 
 
 private val LightColors = lightColorScheme(
@@ -84,8 +84,8 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun GMSFlagsTheme(
-  useDarkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable() () -> Unit
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
 ) {
     val inDarkMode: Boolean = isSystemInDarkTheme()
 
@@ -97,17 +97,13 @@ fun GMSFlagsTheme(
     }
 
     val view = LocalView.current
-    val sysUI = rememberSystemUiController()
 
     SideEffect {
         val window = (view.context as Activity).window
         window.navigationBarColor = Color.Transparent.toArgb()
 
-        if (inDarkMode) {
-            sysUI.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-        } else {
-            sysUI.setStatusBarColor(color = Color.Transparent, darkIcons = true)
-        }
+        window.statusBarColor = Color.Transparent.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !inDarkMode
     }
 
 
@@ -117,4 +113,4 @@ fun GMSFlagsTheme(
     )
 }
 
-fun supportsDynamic() : Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+fun supportsDynamic(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

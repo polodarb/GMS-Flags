@@ -70,7 +70,7 @@ fun BottomBarUI( // UI realization for BottomBar
                 }
             },
 
-        )
+            )
         NavigationBarItem(
             icon = {
                 Icon(

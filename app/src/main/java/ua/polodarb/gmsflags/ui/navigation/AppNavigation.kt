@@ -14,7 +14,9 @@ import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreen
 
 sealed class NavBarItem(var title: String, var icon: Int, var screenRoute: String) {
 
-    object Suggestions : NavBarItem("Suggestions", R.drawable.ic_navbar_suggestions_active, "suggestions")
+    object Suggestions :
+        NavBarItem("Suggestions", R.drawable.ic_navbar_suggestions_active, "suggestions")
+
     object Apps : NavBarItem("Apps", R.drawable.ic_navbar_apps, "apps")
     object Saved : NavBarItem("Saved", R.drawable.ic_save_inactive, "saved")
     object History : NavBarItem("History", R.drawable.ic_navbar_history, "history")
@@ -31,6 +33,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
             return "packages/$flagChange"
         }
     }
+
     object Settings : ScreensDestination("settings")
     object Packages : ScreensDestination("packages")
 }

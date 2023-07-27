@@ -1,16 +1,12 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import android.widget.Toast
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,11 +29,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -78,10 +71,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.savedScreen.LazyFlagsItem
-import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedFlagsScreen
-import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedPackagesScreen
-import ua.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -274,6 +263,7 @@ fun FlagChangeScreen(
                         }
                     }
                 }
+
                 1 -> {
                     LazyColumn {
                         items(20) {
@@ -284,6 +274,7 @@ fun FlagChangeScreen(
                         }
                     }
                 }
+
                 2 -> {
                     LazyColumn {
                         items(20) {
@@ -294,6 +285,7 @@ fun FlagChangeScreen(
                         }
                     }
                 }
+
                 3 -> {
                     LazyColumn {
                         items(20) {

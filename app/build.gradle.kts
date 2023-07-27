@@ -39,7 +39,7 @@ android {
         aidl = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -49,37 +49,32 @@ android {
 }
 
 dependencies {
-    // Navigation Animation
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
 
     // libsu
     implementation("com.github.topjohnwu.libsu:core:5.0.5")
     implementation("com.github.topjohnwu.libsu:service:5.0.5")
     implementation("com.github.topjohnwu.libsu:nio:5.0.5")
 
-    // SystemUIController
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha")
-
     // Splash Screen
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.0-beta02")
+    implementation("androidx.navigation:navigation-compose:2.7.0-rc01")
 
     implementation("com.github.requery:sqlite-android:3.42.0")
 
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.core:core-ktx:1.10.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.0")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha03")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.ui:ui:1.5.0-rc01")
+    implementation("androidx.compose.ui:ui-graphics:1.5.0-rc01")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0-rc01")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.0-rc01")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.0-rc01")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.0-rc01")
 }

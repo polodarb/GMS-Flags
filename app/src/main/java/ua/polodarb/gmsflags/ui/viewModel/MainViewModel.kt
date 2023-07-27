@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.ShellUtils
 import ua.polodarb.gmsflags.data.repo.Repository
 
-class MainViewModel (
+class MainViewModel(
     val repo: Repository
 ) : ViewModel() {
 

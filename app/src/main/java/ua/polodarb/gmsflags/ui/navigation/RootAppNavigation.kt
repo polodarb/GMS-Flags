@@ -5,15 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
 import ua.polodarb.gmsflags.ui.screens.RootScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -21,7 +21,7 @@ internal fun RootAppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
-    AnimatedNavHost(
+    NavHost(
         navController = navController,
         startDestination = ScreensDestination.Root.screenRoute,
         modifier = modifier
@@ -29,7 +29,7 @@ internal fun RootAppNavigation(
         composable(
             route = ScreensDestination.Root.screenRoute,
             enterTransition = { enterAnim(toLeft = false) },
-            exitTransition = { exitAnim(toLeft = true)},
+            exitTransition = { exitAnim(toLeft = true) },
         ) {
             RootScreen(parentNavController = navController)
         }
@@ -37,7 +37,7 @@ internal fun RootAppNavigation(
             route = ScreensDestination.FlagChange.createStringRoute(ScreensDestination.Packages.screenRoute),
             arguments = listOf(navArgument("flagChange") { type = NavType.StringType }),
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false)}
+            exitTransition = { exitAnim(toLeft = false) }
         ) { backStackEntry ->
             FlagChangeScreen(
                 onBackPressed = navController::navigateUp,
@@ -47,7 +47,7 @@ internal fun RootAppNavigation(
         composable(
             route = ScreensDestination.Settings.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false)},
+            exitTransition = { exitAnim(toLeft = false) },
         ) {
             SettingsScreen(
                 onBackPressed = navController::navigateUp

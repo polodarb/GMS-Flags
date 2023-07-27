@@ -60,7 +60,11 @@ fun HistoryScreen() {
             contentPadding = it
         ) {
             items(100) {
-                Text(text = "Item $it", modifier = Modifier.padding(16.dp), style = Typography.bodyMedium)
+                Text(
+                    text = "Item $it",
+                    modifier = Modifier.padding(16.dp),
+                    style = Typography.bodyMedium
+                )
                 Divider()
             }
         }

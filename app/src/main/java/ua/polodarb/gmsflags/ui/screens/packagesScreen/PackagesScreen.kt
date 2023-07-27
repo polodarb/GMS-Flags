@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,10 +35,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.topjohnwu.superuser.Shell
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.theme.Typography
-import ua.polodarb.gmsflags.ui.viewModel.MainViewModel
-import com.topjohnwu.superuser.Shell
 
 const val DB_PATH = "data/data/com.google.android.gms/databases/"
 val result =
@@ -99,9 +97,12 @@ fun PackagesScreen(
             contentPadding = it
         ) {
             items(result.size) {
-                LazyItem(packageName = result[it], packagesCount = 0, modifier = Modifier.clickable {
-                    onFlagClick(result[it])
-                })
+                LazyItem(
+                    packageName = result[it],
+                    packagesCount = 0,
+                    modifier = Modifier.clickable {
+                        onFlagClick(result[it])
+                    })
             }
         }
     }

@@ -14,7 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 import ua.polodarb.gmsflags.IRootDatabase
@@ -29,9 +29,11 @@ class MainActivity : ComponentActivity() {
 
     init {
         if (shellInitialized) {
-            Shell.setDefaultBuilder(Shell.Builder.create()
+            Shell.setDefaultBuilder(
+                Shell.Builder.create()
                     .setFlags(Shell.FLAG_REDIRECT_STDERR)
-                    .setTimeout(10))
+                    .setTimeout(10)
+            )
         }
     }
 
@@ -66,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     RootAppNavigation(
-                        navController = rememberAnimatedNavController(),
+                        navController = rememberNavController(),
                         modifier = Modifier.fillMaxSize()
                     )
                 }
