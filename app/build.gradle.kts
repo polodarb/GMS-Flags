@@ -50,6 +50,9 @@ android {
 
 dependencies {
 
+    // Koin for Android
+    implementation("io.insert-koin:koin-androidx-compose:3.4.5")
+
     // libsu
     implementation("com.github.topjohnwu.libsu:core:5.0.5")
     implementation("com.github.topjohnwu.libsu:service:5.0.5")

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
@@ -24,7 +26,7 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 
 
 class MainActivity : ComponentActivity() {
-    lateinit var rootDatabase: IRootDatabase
+
     private var shellInitialized: Boolean = false
 
     init {
@@ -47,17 +49,9 @@ class MainActivity : ComponentActivity() {
             setKeepOnScreenCondition { !shellInitialized }
         }
 
-        val intent = Intent(this, RootDatabase::class.java)
-        val service = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                rootDatabase = IRootDatabase.Stub.asInterface(service)
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-                TODO("Not yet implemented")
-            }
+        if (!Shell.getShell().isRoot) {
+            Toast.makeText(this, "Root is denied", Toast.LENGTH_SHORT).show()
         }
-        RootService.bind(intent, service)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

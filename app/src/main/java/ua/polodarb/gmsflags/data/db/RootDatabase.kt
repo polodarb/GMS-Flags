@@ -24,17 +24,19 @@ class RootDatabase : RootService() {
             Log.wtf(TAG, e.message)
         }
         return object : IRootDatabase.Stub() {
-            override fun getGmsPackages() = this@RootDatabase.getGmsPackages()
+            override fun getGmsPackages(): MutableList<String> = this@RootDatabase.getGmsPackages()
         }
     }
 
-    private fun getGmsPackages() {
+    private fun getGmsPackages(): MutableList<String>  {
         val cursor = db.rawQuery(GET_GMS_PACKAGES, null)
+        val list = mutableListOf<String>()
         while (cursor.moveToNext()) {
-            Log.e(TAG, cursor.getString(0))
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
         }
-
+        return list
     }
+
     private companion object {
         const val TAG = "RootDatabase"
         const val DB_PATH = "/data/data/com.google.android.gms/databases/phenotype.db"

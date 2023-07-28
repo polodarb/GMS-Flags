@@ -23,6 +23,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.MainActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +66,11 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.padding(it)
         ) {
-            Button(onClick = { (context as MainActivity).rootDatabase.getGmsPackages() }) {
+            Button(onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    (context as GMSApplication).rootDatabase.getGmsPackages()
+                }
+            }) {
                 Text(text = "Click me!!!")
             }
             Divider()

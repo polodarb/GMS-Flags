@@ -1,17 +1,25 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
@@ -21,8 +29,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -35,17 +45,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.topjohnwu.superuser.Shell
+import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.theme.Typography
-
-const val DB_PATH = "data/data/com.google.android.gms/databases/"
-val result =
-    Shell.cmd(
-        "cd $DB_PATH",
-        "sqlite3 phenotype.db" +
-                " \"SELECT DISTINCT packageName FROM Flags LIMIT 30\""
-    ).exec().out
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +55,14 @@ fun PackagesScreen(
     onFlagClick: (packageName: String) -> Unit,
     onBackPressed: () -> Unit
 ) {
+
+    val viewModel = koinViewModel<PackagesScreenViewModel>()
+    val uiState = viewModel.state.collectAsState()
+
+    var list: MutableList<String> by remember {
+        mutableStateOf(mutableListOf())
+    }
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -93,18 +103,76 @@ fun PackagesScreen(
             )
         }
     ) {
-        LazyColumn(
-            contentPadding = it
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = it.calculateTopPadding())
         ) {
-            items(result.size) {
-                LazyItem(
-                    packageName = result[it],
-                    packagesCount = 0,
-                    modifier = Modifier.clickable {
-                        onFlagClick(result[it])
-                    })
+            when (uiState.value) {
+                is PackagesScreenUiStates.Success -> {
+                    list.addAll((uiState.value as PackagesScreenUiStates.Success).data)
+                    Log.e("LIST1", "${list}")
+                    SuccessListItems(
+                        list = list,
+                        onFlagClick = onFlagClick
+                    )
+                }
+
+                is PackagesScreenUiStates.Loading -> {
+                    LoadingProgressBar()
+                }
+
+                is PackagesScreenUiStates.Error -> {
+                    ErrorLoadScreen()
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun SuccessListItems(
+    list: List<String>,
+    onFlagClick: (packageName: String) -> Unit
+) {
+
+    //todo: This code have problems with recompositions
+
+    LazyColumn {
+        itemsIndexed(list) { index, item ->
+            LazyItem(
+                packageName = item.split("|")[0],
+                packagesCount = (item.split("|")[1]).toInt(),
+                modifier = Modifier.clickable {
+                    onFlagClick(item.split("|")[0])
+                }
+            )
+        }
+    }
+
+}
+
+@Composable
+fun LoadingProgressBar() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.primary,
+            strokeWidth = 2.dp,
+            modifier = Modifier.wrapContentSize()
+        )
+    }
+}
+
+@Composable
+fun ErrorLoadScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Data loading error")
     }
 }
 
@@ -172,5 +240,5 @@ fun LazyItem(
             )
         }
     }
-    Divider(Modifier.padding(horizontal = 16.dp))
+    HorizontalDivider(Modifier.padding(horizontal = 16.dp))
 }
