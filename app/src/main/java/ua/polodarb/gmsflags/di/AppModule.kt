@@ -1,8 +1,7 @@
 package ua.polodarb.gmsflags.di
 
 import org.koin.dsl.module
-import ua.polodarb.gmsflags.data.db.RootDatabase
-import ua.polodarb.gmsflags.data.repo.Repository
+import ua.polodarb.gmsflags.data.repo.DatabaseRepository
 
 val appModule = module {
 
@@ -11,7 +10,7 @@ val appModule = module {
 //    }
 
     single {
-        Repository(
+        DatabaseRepository(
             context = get()
         )
     }

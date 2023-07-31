@@ -24,11 +24,32 @@ class RootDatabase : RootService() {
             Log.wtf(TAG, e.message)
         }
         return object : IRootDatabase.Stub() {
+
             override fun getGmsPackages(): MutableList<String> = this@RootDatabase.getGmsPackages()
+
+            override fun getBoolFlags(pkgName: String): MutableList<String> =
+                this@RootDatabase.getBoolFlags(pkgName)
         }
     }
 
-    private fun getGmsPackages(): MutableList<String>  {
+    private fun getBoolFlags(pkgName: String): MutableList<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.boolVal, f.boolVal) " +
+                    "AS boolVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, boolVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.boolVal IS NOT NULL;",
+            null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+        }
+        return list
+    }
+
+    private fun getGmsPackages(): MutableList<String> {
         val cursor = db.rawQuery(GET_GMS_PACKAGES, null)
         val list = mutableListOf<String>()
         while (cursor.moveToNext()) {

@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.packagesScreen
+package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -12,17 +12,17 @@ import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.DatabaseRepository
 import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
 
-class PackagesScreenViewModel(
+class FlagChangeScreenViewModel(
     private val repository: DatabaseRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ScreenUiStates>(ScreenUiStates.Loading)
     val state: StateFlow<ScreenUiStates> = _state.asStateFlow()
 
-    init {
+    fun getBoolFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getGmsPackages().collect { uiState ->
+                repository.getBoolFlags(pkgName).collect { uiState ->
                     when (uiState) {
                         is ScreenUiStates.Success -> {
                             _state.value = ScreenUiStates.Success(uiState.data)

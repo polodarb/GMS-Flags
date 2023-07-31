@@ -1,5 +1,7 @@
 package ua.polodarb.gmsflags.ui.navigation
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,7 +43,7 @@ internal fun RootAppNavigation(
         ) { backStackEntry ->
             FlagChangeScreen(
                 onBackPressed = navController::navigateUp,
-                packageName = backStackEntry.arguments?.getString("flagChange")
+                packageName = Uri.decode(backStackEntry.arguments?.getString("flagChange"))
             )
         }
         composable(
@@ -63,7 +65,7 @@ internal fun RootAppNavigation(
             PackagesScreen(
                 onFlagClick = { packageName ->
                     navController.navigate(
-                        ScreensDestination.FlagChange.createRoute(packageName)
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(packageName))
                     )
                 },
                 onBackPressed = navController::navigateUp

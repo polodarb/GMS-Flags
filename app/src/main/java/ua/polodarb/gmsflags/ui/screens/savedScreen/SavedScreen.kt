@@ -168,6 +168,7 @@ fun SavedScreen() {
         }
         HorizontalPager(
             state = pagerState,
+            userScrollEnabled = false,
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {

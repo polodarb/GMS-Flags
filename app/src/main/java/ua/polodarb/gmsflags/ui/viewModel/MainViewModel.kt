@@ -2,10 +2,10 @@ package ua.polodarb.gmsflags.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.ShellUtils
-import ua.polodarb.gmsflags.data.repo.Repository
+import ua.polodarb.gmsflags.data.repo.DatabaseRepository
 
 class MainViewModel(
-    val repo: Repository
+    val repo: DatabaseRepository
 ) : ViewModel() {
 
 //    private val _state = MutableStateFlow<MainUiStates>(MainUiStates.Loading)
