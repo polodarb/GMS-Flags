@@ -1,10 +1,15 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -14,8 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +70,7 @@ fun BoolValItem(
 @Composable
 fun IntFloatStringValItem(
     flagName: String,
+    flagValue: String,
     lastItem: Boolean = false,
     savedButtonChecked: Boolean,
     savedButtonOnChecked: (Boolean) -> Unit,
@@ -75,6 +83,13 @@ fun IntFloatStringValItem(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
+//            Box( // indicator
+//                modifier = Modifier
+//                    .padding(start = 8.dp)
+//                    .size(width = 4.dp, height = 32.dp)
+//                    .clip(CircleShape)
+//                    .background(MaterialTheme.colorScheme.error)
+//            )
             IconToggleButton(
                 checked = savedButtonChecked,
                 onCheckedChange = savedButtonOnChecked
@@ -91,17 +106,20 @@ fun IntFloatStringValItem(
                     )
                 }
             }
-            Column(Modifier.weight(0.7f), verticalArrangement = Arrangement.Center) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Text(text = flagName, fontSize = 15.sp)
             }
             Text(
-                text = "1010101010101010",
+                text = flagValue,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(horizontal = 16.dp).weight(0.3f)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(0.35f),
+                textAlign = TextAlign.End
             )
         }
     }

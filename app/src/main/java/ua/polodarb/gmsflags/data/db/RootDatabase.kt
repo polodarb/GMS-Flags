@@ -29,6 +29,15 @@ class RootDatabase : RootService() {
 
             override fun getBoolFlags(pkgName: String): MutableList<String> =
                 this@RootDatabase.getBoolFlags(pkgName)
+
+            override fun getIntFlags(pkgName: String): MutableList<String> =
+                this@RootDatabase.getIntFlags(pkgName)
+
+            override fun getFloatFlags(pkgName: String): MutableList<String> =
+                this@RootDatabase.getFloatFlags(pkgName)
+
+            override fun getStringFlags(pkgName: String): MutableList<String> =
+                this@RootDatabase.getStringFlags(pkgName)
         }
     }
 
@@ -40,6 +49,58 @@ class RootDatabase : RootService() {
                     "ON f.name = fo.name " +
                     "WHERE f.packageName = '$pkgName' " + // pkgName
                     "AND f.boolVal IS NOT NULL;",
+            null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+        }
+        return list
+    }
+
+    private fun getIntFlags(pkgName: String): MutableList<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.intVal, f.intVal) " +
+                    "AS intVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, intVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.intVal IS NOT NULL;",
+            null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+        }
+        return list
+    }
+
+    private fun getFloatFlags(pkgName: String): MutableList<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.floatVal, f.floatVal) " +
+                    "AS floatVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, floatVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.floatVal IS NOT NULL;",
+            null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+        }
+        return list
+    }
+
+    private fun getStringFlags(pkgName: String): MutableList<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.stringVal, f.stringVal) " +
+                    "AS stringVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, stringVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.stringVal IS NOT NULL " +
+                    "AND f.stringVal <> '';",
             null
         )
         val list = mutableListOf<String>()
@@ -61,6 +122,6 @@ class RootDatabase : RootService() {
     private companion object {
         const val TAG = "RootDatabase"
         const val DB_PATH = "/data/data/com.google.android.gms/databases/phenotype.db"
-        const val GET_GMS_PACKAGES = "SELECT packageName, COUNT(*) FROM Flags group by packageName"
+        const val GET_GMS_PACKAGES = "SELECT packageName, COUNT(name) FROM Flags group by packageName"
     }
 }

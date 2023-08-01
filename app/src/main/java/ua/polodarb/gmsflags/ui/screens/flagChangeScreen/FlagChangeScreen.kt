@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDp
@@ -91,11 +92,8 @@ fun FlagChangeScreen(
 ) {
 
     val viewModel = koinViewModel<FlagChangeScreenViewModel>()
-    val uiState = viewModel.state.collectAsState()
 
-    val boolValList: MutableList<String> by remember {
-        mutableStateOf(mutableListOf())
-    }
+    val uiState = viewModel.state.collectAsState()
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -104,12 +102,12 @@ fun FlagChangeScreen(
     val lazyListState: LazyListState = rememberLazyListState()
 
     var state by remember { mutableStateOf(0) }
-    val titles = listOf("Bool", "Int", "Float", "String")
+    val titles = listOf("Bool", "Int", "Float", "String", "Other")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
     }
     val pagerState = rememberPagerState(pageCount = {
-        4
+        5
     })
 
     val coroutineScope = rememberCoroutineScope()
@@ -213,7 +211,7 @@ fun FlagChangeScreen(
                             selected = state == index,
                             onClick = {
                                 coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
+                                    pagerState.scrollToPage(index)
                                 }
                                 state = index
                             },
@@ -239,7 +237,6 @@ fun FlagChangeScreen(
                 AnimatedVisibility(visible = filterIconState) {
                     Row(
                         modifier = Modifier
-//                        .horizontalScroll(rememberScrollState())
                             .background(MaterialTheme.colorScheme.background)
                             .fillMaxWidth()
                             .padding(vertical = 12.dp, horizontal = 6.dp)
@@ -285,7 +282,6 @@ fun FlagChangeScreen(
                 AnimatedVisibility(visible = searchIconState) {
                     Row(
                         modifier = Modifier
-//                        .horizontalScroll(rememberScrollState())
                             .background(MaterialTheme.colorScheme.background)
                             .fillMaxWidth()
                             .padding(vertical = 12.dp, horizontal = 16.dp)
@@ -322,11 +318,12 @@ fun FlagChangeScreen(
             }
         }
         when (uiState.value) {
-            is ScreenUiStates.Success -> {
+            is FlagChangeUiStates.Success -> {
 
-//                boolValList.addAll((uiState.value as ScreenUiStates.Success).data)
-
-                val list = (uiState.value as ScreenUiStates.Success).data
+                val listBoolVal = (uiState.value as FlagChangeUiStates.Success).data.boolFlagsMap
+                val listIntVal = (uiState.value as FlagChangeUiStates.Success).data.intFlagsMap
+                val listFloatVal = (uiState.value as FlagChangeUiStates.Success).data.floatFlagsMap
+                val listStringVal = (uiState.value as FlagChangeUiStates.Success).data.stringFlagsMap
 
                 HorizontalPager(
                     state = pagerState,
@@ -337,17 +334,18 @@ fun FlagChangeScreen(
                         0 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn {
-                                    itemsIndexed(list) { index, item ->
+                                    itemsIndexed(listBoolVal.toList()) { index, item ->
                                         BoolValItem(
-                                            flagName = item.split("|")[0],
-                                            checked = if (item.split("|")[1] == "1" || item.split("|")[1] == "0") (item.split(
-                                                "|"
-                                            )[1]).toInt() != 0 else false,
-                                            lastItem = index == list.size - 1,
+                                            flagName = listBoolVal.keys.toList()[index],
+                                            checked = listBoolVal.values.toList()[index],
+                                            lastItem = index == listBoolVal.size - 1,
                                             onCheckedChange = {
 //                                                checked = it
                                             }
                                         )
+                                    }
+                                    item {
+                                        Spacer(modifier = Modifier.padding(12.dp))
                                     }
                                 }
                             }
@@ -356,8 +354,15 @@ fun FlagChangeScreen(
                         1 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn {
-                                    items(20) {
-                                        IntFloatStringValItem("flagName", false, false, { }, { })
+                                    itemsIndexed(listIntVal.toList()) { index, item ->
+                                        IntFloatStringValItem(
+                                            flagName = listIntVal.keys.toList()[index],
+                                            flagValue = listIntVal.values.toList()[index],
+                                            lastItem = index == listIntVal.size - 1,
+                                            savedButtonChecked = false,
+                                            savedButtonOnChecked = {},
+                                            onClick = {}
+                                        )
                                     }
                                     item {
                                         Spacer(modifier = Modifier.padding(12.dp))
@@ -369,8 +374,15 @@ fun FlagChangeScreen(
                         2 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn {
-                                    items(20) {
-                                        IntFloatStringValItem("flagName", false, false, { }, { })
+                                    itemsIndexed(listFloatVal.toList()) { index, item ->
+                                        IntFloatStringValItem(
+                                            flagName = listFloatVal.keys.toList()[index],
+                                            flagValue = listFloatVal.values.toList()[index],
+                                            lastItem = index == listFloatVal.size - 1,
+                                            savedButtonChecked = false,
+                                            savedButtonOnChecked = {},
+                                            onClick = {}
+                                        )
                                     }
                                     item {
                                         Spacer(modifier = Modifier.padding(12.dp))
@@ -382,8 +394,15 @@ fun FlagChangeScreen(
                         3 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
                                 LazyColumn {
-                                    items(20) {
-                                        BoolValItem("flagName", false, false, { })
+                                    itemsIndexed(listStringVal.toList()) { index, item ->
+                                        IntFloatStringValItem(
+                                            flagName = listStringVal.keys.toList()[index],
+                                            flagValue = listStringVal.values.toList()[index],
+                                            lastItem = index == listStringVal.size - 1,
+                                            savedButtonChecked = false,
+                                            savedButtonOnChecked = {},
+                                            onClick = {}
+                                        )
                                     }
                                     item {
                                         Spacer(modifier = Modifier.padding(12.dp))
@@ -395,12 +414,12 @@ fun FlagChangeScreen(
                 }
             }
 
-            is ScreenUiStates.Loading -> {
-                viewModel.getBoolFlags(packageName ?: "null")
+            is FlagChangeUiStates.Loading -> {
                 LoadingProgressBar()
+                viewModel.getFlagsData(packageName ?: "null")
             }
 
-            is ScreenUiStates.Error -> {
+            is FlagChangeUiStates.Error -> {
                 ErrorLoadScreen()
             }
         }
