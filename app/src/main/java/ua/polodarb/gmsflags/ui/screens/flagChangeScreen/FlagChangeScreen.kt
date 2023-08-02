@@ -24,17 +24,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -75,7 +79,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -135,6 +138,9 @@ fun FlagChangeScreen(
         mutableStateOf(false)
     }
 
+    // DropDown menu
+    var dropDownExpanded by remember { mutableStateOf(false) }
+
     val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
@@ -190,7 +196,24 @@ fun FlagChangeScreen(
                             else Modifier.background(Color.Transparent)
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Search,
+                                imageVector = Icons.Rounded.Search,
+                                contentDescription = "Localized description"
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                dropDownExpanded = !dropDownExpanded
+                            }
+                        ) {
+                            FlagChangeDropDown(
+                                expanded = dropDownExpanded,
+                                onDismissRequest = { dropDownExpanded = false },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
                                 contentDescription = "Localized description"
                             )
                         }
@@ -554,5 +577,55 @@ fun NoFlagsType() {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Composable
+fun FlagChangeDropDown(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .padding(top = 36.dp)
+    ) {
+        MaterialTheme(
+            shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))
+        ) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = onDismissRequest
+            )
+            {
+                DropdownMenuItem(
+                    text = { Text("Choose an account") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.AccountCircle,
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem(
+                    text = { Text("Reset all overridden flags") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Refresh,
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem(
+                    text = { Text("Add flag") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Add,
+                            contentDescription = null
+                        )
+                    })
+            }
+        }
     }
 }
