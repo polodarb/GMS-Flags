@@ -26,6 +26,7 @@ class DatabaseRepository(
         val intFlagsMap = mutableMapOf<String, String>()
         val floatFlagsMap = mutableMapOf<String, String>()
         val stringFlagsMap = mutableMapOf<String, String>()
+        val extensionsFlagsMap = mutableMapOf<String, String>()
 
         val gmsApplication = context as GMSApplication
 
@@ -33,6 +34,7 @@ class DatabaseRepository(
         val intFlags = gmsApplication.rootDatabase.getIntFlags(packageName)
         val floatFlags = gmsApplication.rootDatabase.getFloatFlags(packageName)
         val stringFlags = gmsApplication.rootDatabase.getStringFlags(packageName)
+        val extensionsFlags = gmsApplication.rootDatabase.getExtensionsFlags(packageName)
 
         if (boolFlags.isNotEmpty()) {
             for (flag in boolFlags) {
@@ -82,15 +84,27 @@ class DatabaseRepository(
             }
         }
 
+        if (extensionsFlags.isNotEmpty()) {
+            for (flag in extensionsFlags) {
+                val parts = flag.split("|")
+                if (parts.size == 2) {
+                    val text = parts[0]
+                    val value = parts[1]
 
-        emit(FlagChangeUiStates.Success(QuadMap(boolFlagsMap, intFlagsMap, floatFlagsMap, stringFlagsMap)))
+                    extensionsFlagsMap[text] = value
+                }
+            }
+        }
+
+        emit(FlagChangeUiStates.Success(PentagonMap(boolFlagsMap, intFlagsMap, floatFlagsMap, stringFlagsMap, extensionsFlagsMap)))
     }
 
-    data class QuadMap(
+    data class PentagonMap(
         val boolFlagsMap: Map<String, Boolean>,
         val intFlagsMap: Map<String, String>,
         val floatFlagsMap: Map<String, String>,
-        val stringFlagsMap: Map<String, String>
+        val stringFlagsMap: Map<String, String>,
+        val extensionsVal: Map<String, String>
     )
 
 }

@@ -38,7 +38,28 @@ class RootDatabase : RootService() {
 
             override fun getStringFlags(pkgName: String): MutableList<String> =
                 this@RootDatabase.getStringFlags(pkgName)
+
+            override fun getExtensionsFlags(pkgName: String): MutableList<String> =
+                this@RootDatabase.getExtensionsFlags(pkgName)
         }
+    }
+
+    private fun getExtensionsFlags(pkgName: String): MutableList<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT f.name, \n" +
+                    "COALESCE(CAST(fo.extensionVal AS TEXT), CAST(HEX(f.extensionVal) AS TEXT)) AS extensionVal \n" +
+                    "FROM Flags f \n" +
+                    "LEFT JOIN (SELECT name, HEX(extensionVal) AS extensionVal FROM FlagOverrides) fo \n" +
+                    "ON f.name = fo.name \n" +
+                    "WHERE f.packageName = '$pkgName' \n" +
+                    "AND f.extensionVal IS NOT NULL;\n",
+            null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+        }
+        return list
     }
 
     private fun getBoolFlags(pkgName: String): MutableList<String> {
@@ -122,6 +143,6 @@ class RootDatabase : RootService() {
     private companion object {
         const val TAG = "RootDatabase"
         const val DB_PATH = "/data/data/com.google.android.gms/databases/phenotype.db"
-        const val GET_GMS_PACKAGES = "SELECT packageName, COUNT(name) FROM Flags group by packageName"
+        const val GET_GMS_PACKAGES = "SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName"
     }
 }

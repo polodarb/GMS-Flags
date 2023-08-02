@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -74,6 +75,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -82,7 +85,6 @@ import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -102,7 +104,7 @@ fun FlagChangeScreen(
     val lazyListState: LazyListState = rememberLazyListState()
 
     var state by remember { mutableStateOf(0) }
-    val titles = listOf("Bool", "Int", "Float", "String", "Other")
+    val titles = listOf("Bool", "Int", "Float", "String", "ExtVal")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
     }
@@ -323,7 +325,11 @@ fun FlagChangeScreen(
                 val listBoolVal = (uiState.value as FlagChangeUiStates.Success).data.boolFlagsMap
                 val listIntVal = (uiState.value as FlagChangeUiStates.Success).data.intFlagsMap
                 val listFloatVal = (uiState.value as FlagChangeUiStates.Success).data.floatFlagsMap
-                val listStringVal = (uiState.value as FlagChangeUiStates.Success).data.stringFlagsMap
+                val listStringVal =
+                    (uiState.value as FlagChangeUiStates.Success).data.stringFlagsMap
+                val listExtensionsVal =
+                    (uiState.value as FlagChangeUiStates.Success).data.extensionsVal
+                Log.e("ext", listExtensionsVal.toString())
 
                 HorizontalPager(
                     state = pagerState,
@@ -333,83 +339,132 @@ fun FlagChangeScreen(
                     when (page) {
                         0 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
-                                LazyColumn {
-                                    itemsIndexed(listBoolVal.toList()) { index, item ->
-                                        BoolValItem(
-                                            flagName = listBoolVal.keys.toList()[index],
-                                            checked = listBoolVal.values.toList()[index],
-                                            lastItem = index == listBoolVal.size - 1,
-                                            onCheckedChange = {
+                                if (listBoolVal.isNotEmpty()) {
+                                    LazyColumn {
+                                        itemsIndexed(listBoolVal.toList()) { index, item ->
+                                            BoolValItem(
+                                                flagName = listBoolVal.keys.toList()[index],
+                                                checked = listBoolVal.values.toList()[index],
+                                                lastItem = index == listBoolVal.size - 1,
+                                                onCheckedChange = {
 //                                                checked = it
-                                            }
-                                        )
+                                                }
+                                            )
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.padding(12.dp))
+                                        }
                                     }
-                                    item {
-                                        Spacer(modifier = Modifier.padding(12.dp))
-                                    }
+                                } else {
+                                    NoFlagsType()
                                 }
                             }
                         }
 
                         1 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
-                                LazyColumn {
-                                    itemsIndexed(listIntVal.toList()) { index, item ->
-                                        IntFloatStringValItem(
-                                            flagName = listIntVal.keys.toList()[index],
-                                            flagValue = listIntVal.values.toList()[index],
-                                            lastItem = index == listIntVal.size - 1,
-                                            savedButtonChecked = false,
-                                            savedButtonOnChecked = {},
-                                            onClick = {}
-                                        )
+                                if (listIntVal.isNotEmpty()) {
+                                    LazyColumn {
+                                        itemsIndexed(listIntVal.toList()) { index, item ->
+                                            IntFloatStringValItem(
+                                                flagName = listIntVal.keys.toList()[index],
+                                                flagValue = listIntVal.values.toList()[index],
+                                                lastItem = index == listIntVal.size - 1,
+                                                savedButtonChecked = false,
+                                                savedButtonOnChecked = {},
+                                                haptic = haptic,
+                                                context = context,
+                                                onClick = {}
+                                            )
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.padding(12.dp))
+                                        }
                                     }
-                                    item {
-                                        Spacer(modifier = Modifier.padding(12.dp))
-                                    }
+                                } else {
+                                    NoFlagsType()
                                 }
                             }
                         }
 
                         2 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
-                                LazyColumn {
-                                    itemsIndexed(listFloatVal.toList()) { index, item ->
-                                        IntFloatStringValItem(
-                                            flagName = listFloatVal.keys.toList()[index],
-                                            flagValue = listFloatVal.values.toList()[index],
-                                            lastItem = index == listFloatVal.size - 1,
-                                            savedButtonChecked = false,
-                                            savedButtonOnChecked = {},
-                                            onClick = {}
-                                        )
+                                if (listFloatVal.isNotEmpty()) {
+                                    LazyColumn {
+                                        itemsIndexed(listFloatVal.toList()) { index, item ->
+                                            IntFloatStringValItem(
+                                                flagName = listFloatVal.keys.toList()[index],
+                                                flagValue = listFloatVal.values.toList()[index],
+                                                lastItem = index == listFloatVal.size - 1,
+                                                savedButtonChecked = false,
+                                                savedButtonOnChecked = {},
+                                                haptic = haptic,
+                                                context = context,
+                                                onClick = {}
+                                            )
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.padding(12.dp))
+                                        }
                                     }
-                                    item {
-                                        Spacer(modifier = Modifier.padding(12.dp))
-                                    }
+                                } else {
+                                    NoFlagsType()
                                 }
                             }
                         }
 
                         3 -> {
                             Box(modifier = Modifier.fillMaxSize()) {
-                                LazyColumn {
-                                    itemsIndexed(listStringVal.toList()) { index, item ->
-                                        IntFloatStringValItem(
-                                            flagName = listStringVal.keys.toList()[index],
-                                            flagValue = listStringVal.values.toList()[index],
-                                            lastItem = index == listStringVal.size - 1,
-                                            savedButtonChecked = false,
-                                            savedButtonOnChecked = {},
-                                            onClick = {}
-                                        )
+                                if (listStringVal.isNotEmpty()) {
+                                    LazyColumn {
+                                        itemsIndexed(listStringVal.toList()) { index, item ->
+                                            IntFloatStringValItem(
+                                                flagName = listStringVal.keys.toList()[index],
+                                                flagValue = listStringVal.values.toList()[index],
+                                                lastItem = index == listStringVal.size - 1,
+                                                savedButtonChecked = false,
+                                                savedButtonOnChecked = {},
+                                                haptic = haptic,
+                                                context = context,
+                                                onClick = {}
+                                            )
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.padding(12.dp))
+                                        }
                                     }
-                                    item {
-                                        Spacer(modifier = Modifier.padding(12.dp))
-                                    }
+                                } else {
+                                    NoFlagsType()
                                 }
                             }
                         }
+
+                        4 -> {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                if (listExtensionsVal.isNotEmpty()) {
+                                    LazyColumn {
+                                        itemsIndexed(listExtensionsVal.toList()) { index, item ->
+                                            IntFloatStringValItem(
+                                                flagName = listExtensionsVal.keys.toList()[index],
+                                                flagValue = listExtensionsVal.values.toList()[index],
+                                                lastItem = index == listExtensionsVal.size - 1,
+                                                savedButtonChecked = false,
+                                                savedButtonOnChecked = {},
+                                                haptic = haptic,
+                                                context = context,
+                                                onClick = {}
+                                            )
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.padding(12.dp))
+                                        }
+                                    }
+                                } else {
+                                    NoFlagsType()
+                                }
+                            }
+                        }
+
                     }
                 }
             }
@@ -473,4 +528,23 @@ fun CustomTabIndicatorAnimaton(tabPositions: List<TabPosition>, selectedTabIndex
             .offset(x = indicatorStart)
             .width(indicatorEnd - indicatorStart)
     )
+}
+
+@Composable
+fun NoFlagsType() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.7f)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "¯\\_(ツ)_/¯\n\nNo flags of this type",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium
+        )
+    }
 }
