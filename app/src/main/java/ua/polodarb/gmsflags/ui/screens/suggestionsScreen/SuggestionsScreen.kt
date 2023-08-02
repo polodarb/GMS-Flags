@@ -143,7 +143,8 @@ fun SuggestionsScreen(
                                 }
                                 Switch(
                                     checked = checked,
-                                    onCheckedChange = { checked = it }
+                                    onCheckedChange = { checked = it },
+                                    enabled = false
                                 )
                             }
                         },

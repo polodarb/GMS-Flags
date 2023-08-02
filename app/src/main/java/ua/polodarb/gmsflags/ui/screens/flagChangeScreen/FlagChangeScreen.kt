@@ -101,9 +101,8 @@ fun FlagChangeScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
-    val lazyListState: LazyListState = rememberLazyListState()
 
-    var state by remember { mutableStateOf(0) }
+    var state by remember { mutableIntStateOf(0) }
     val titles = listOf("Bool", "Int", "Float", "String", "ExtVal")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
@@ -122,6 +121,11 @@ fun FlagChangeScreen(
     val chipsList = listOf("All", "Enabled", "Disabled", "Changed")
 
     val localDensity = LocalDensity.current
+
+    // Tab state for filter button
+    var tabFilterState by rememberSaveable {
+        mutableStateOf(true)
+    }
 
     // TopBar icons state
     var filterIconState by rememberSaveable {
@@ -156,21 +160,23 @@ fun FlagChangeScreen(
                         )
                     },
                     actions = {
-                        IconButton(
-                            onClick = {
-                                if (searchIconState) searchIconState = false
-                                filterIconState = !filterIconState
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            },
-                            modifier = if (filterIconState) Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            else Modifier.background(Color.Transparent)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_filter),
-                                contentDescription = "Filter"
-                            )
+                        AnimatedVisibility(visible = tabFilterState) {
+                            IconButton(
+                                onClick = {
+                                    if (searchIconState) searchIconState = false
+                                    filterIconState = !filterIconState
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                },
+                                modifier = if (filterIconState) Modifier
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                else Modifier.background(Color.Transparent)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_filter),
+                                    contentDescription = "Filter"
+                                )
+                            }
                         }
                         IconButton(
                             onClick = {
@@ -215,6 +221,8 @@ fun FlagChangeScreen(
                                 coroutineScope.launch {
                                     pagerState.scrollToPage(index)
                                 }
+                                if (index != 0) filterIconState = false
+                                tabFilterState = index == 0
                                 state = index
                             },
                             text = {
