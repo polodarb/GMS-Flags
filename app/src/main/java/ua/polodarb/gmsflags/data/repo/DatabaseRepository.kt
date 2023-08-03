@@ -11,7 +11,7 @@ class DatabaseRepository(
 ) {
 
     suspend fun getGmsPackages() = flow<ScreenUiStates> {
-        val list = (context as GMSApplication).rootDatabase.gmsPackages
+        val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
         if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
         else emit(ScreenUiStates.Error())
@@ -30,11 +30,11 @@ class DatabaseRepository(
 
         val gmsApplication = context as GMSApplication
 
-        val boolFlags = gmsApplication.rootDatabase.getBoolFlags(packageName)
-        val intFlags = gmsApplication.rootDatabase.getIntFlags(packageName)
-        val floatFlags = gmsApplication.rootDatabase.getFloatFlags(packageName)
-        val stringFlags = gmsApplication.rootDatabase.getStringFlags(packageName)
-        val extensionsFlags = gmsApplication.rootDatabase.getExtensionsFlags(packageName)
+        val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
+        val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
+        val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
+        val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
+        val extensionsFlags = gmsApplication.getRootDatabase().getExtensionsFlags(packageName)
 
         if (boolFlags.isNotEmpty()) {
             for (flag in boolFlags) {

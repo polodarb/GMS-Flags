@@ -1,29 +1,24 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemGestures
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,14 +47,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
@@ -106,6 +98,7 @@ fun PackagesScreen(
                 filteredListState.clear()
                 filteredListState.addAll(filteredList)
             }
+
             else -> {}
         }
     }
@@ -127,6 +120,7 @@ fun PackagesScreen(
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 searchIconState = !searchIconState
+                                if (!searchIconState) searchQuery = ""
                             },
                             modifier = if (searchIconState) Modifier
                                 .clip(CircleShape)
@@ -154,26 +148,40 @@ fun PackagesScreen(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background)
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp)
-                            .height(64.dp),
+                            .padding(vertical = 8.dp, horizontal = 16.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         DockedSearchBar(
                             query = searchQuery,
-                            onQueryChange = {
-                                    newQuery -> searchQuery = newQuery
+                            onQueryChange = { newQuery ->
+                                searchQuery = newQuery
                             },
                             onSearch = {},
                             active = false,
                             placeholder = {
                                 Text(text = "Search a package name")
                             },
+                            trailingIcon = {
+                                AnimatedVisibility(
+                                    visible = searchQuery.isNotEmpty(),
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
+                                ) {
+                                    IconButton(onClick = {
+                                        searchQuery = ""
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                            },
                             onActiveChange = {},
                             modifier = Modifier.fillMaxWidth()
-                        ) {
-
-                        }
+                        ) { }
                     }
                 }
             }
@@ -213,16 +221,18 @@ private fun SuccessListItems(
 
     //todo: This code have problems with recompositions
 
-
     LazyColumn {
         itemsIndexed(list) { index, item ->
             LazyItem(
                 packageName = item.split("|")[0],
                 packagesCount = (item.split("|")[1]).toInt(),
+                lastItem = index == list.size - 1,
                 modifier = Modifier.clickable {
                     onFlagClick(item.split("|")[0])
-                }
-            )
+                })
+        }
+        item {
+            Spacer(modifier = Modifier.padding(12.dp))
         }
     }
 
@@ -232,6 +242,7 @@ private fun SuccessListItems(
 fun LazyItem(
     packageName: String,
     packagesCount: Int,
+    lastItem: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var checkedState by rememberSaveable {
@@ -245,7 +256,8 @@ fun LazyItem(
         checked = checkedState,
         onCheckedChange = { checked ->
             checkedState = checked
-        }
+        },
+        lastItem = lastItem
     )
 }
 
@@ -255,6 +267,7 @@ fun LazyItem(
     packagesCount: Int,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    lastItem: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column {
@@ -292,5 +305,5 @@ fun LazyItem(
             )
         }
     }
-    HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+    if (!lastItem) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
 }

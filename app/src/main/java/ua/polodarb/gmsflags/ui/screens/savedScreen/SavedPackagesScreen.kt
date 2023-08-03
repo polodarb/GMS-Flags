@@ -14,7 +14,9 @@ fun SavedPackagesScreen() {
     ) {
         LazyColumn {
             items(20) {
-                LazyItem(packageName = "com.google.android.gms.cast", packagesCount = 0)
+                LazyItem(
+                    packageName = "com.google.android.gms.cast",
+                    packagesCount = 0)
             }
         }
     }

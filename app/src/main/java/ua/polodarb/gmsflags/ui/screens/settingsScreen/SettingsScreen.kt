@@ -68,7 +68,7 @@ fun SettingsScreen(
         ) {
             Button(onClick = {
                 CoroutineScope(Dispatchers.IO).launch {
-                    (context as GMSApplication).rootDatabase.getGmsPackages()
+                    (context as GMSApplication).getRootDatabase().getGmsPackages()
                 }
             }) {
                 Text(text = "Click me!!!")

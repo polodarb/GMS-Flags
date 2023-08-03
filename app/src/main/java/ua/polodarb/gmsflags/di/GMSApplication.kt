@@ -13,9 +13,10 @@ import org.koin.core.logger.Level
 import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.data.db.RootDatabase
 
-class GMSApplication: Application() {
+class GMSApplication : Application() {
 
-    lateinit var rootDatabase: IRootDatabase
+    private var isRootDatabaseInitialized = false
+    private lateinit var rootDatabase: IRootDatabase
 
     override fun onCreate() {
         super.onCreate()
@@ -24,6 +25,7 @@ class GMSApplication: Application() {
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 rootDatabase = IRootDatabase.Stub.asInterface(service)
+                isRootDatabaseInitialized = true
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
@@ -39,4 +41,10 @@ class GMSApplication: Application() {
         }
     }
 
+    fun getRootDatabase(): IRootDatabase {
+        if (!isRootDatabaseInitialized) {
+            throw IllegalStateException("RootDatabase is not initialized yet.")
+        }
+        return rootDatabase
+    }
 }
