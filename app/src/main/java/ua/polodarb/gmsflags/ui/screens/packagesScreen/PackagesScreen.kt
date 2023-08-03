@@ -37,8 +37,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +59,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
@@ -86,6 +89,25 @@ fun PackagesScreen(
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    // Search
+    var searchQuery by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    // Use a state to hold the filtered list
+    val filteredListState = remember { mutableStateListOf<String>() }
+
+    LaunchedEffect(uiState.value, searchQuery) {
+        when (val state = uiState.value) {
+            is ScreenUiStates.Success -> {
+                val filteredList = state.data.filter { it.contains(searchQuery, ignoreCase = true) }
+                filteredListState.clear()
+                filteredListState.addAll(filteredList)
+            }
+            else -> {}
+        }
     }
 
     Scaffold(
@@ -138,8 +160,10 @@ fun PackagesScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         DockedSearchBar(
-                            query = "",
-                            onQueryChange = {},
+                            query = searchQuery,
+                            onQueryChange = {
+                                    newQuery -> searchQuery = newQuery
+                            },
                             onSearch = {},
                             active = false,
                             placeholder = {
@@ -164,7 +188,7 @@ fun PackagesScreen(
                 is ScreenUiStates.Success -> {
                     list.addAll((uiState.value as ScreenUiStates.Success).data)
                     SuccessListItems(
-                        list = list.toList(),
+                        list = filteredListState.toList(),
                         onFlagClick = onFlagClick
                     )
                 }
