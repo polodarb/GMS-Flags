@@ -88,7 +88,7 @@ fun PackagesScreen(
         mutableStateOf("")
     }
 
-    // Use a state to hold the filtered list
+    // state to hold the filtered list
     val filteredListState = remember { mutableStateListOf<String>() }
 
     LaunchedEffect(uiState.value, searchQuery) {

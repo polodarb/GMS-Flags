@@ -39,28 +39,28 @@ class RootDatabase : RootService() {
             override fun getStringFlags(pkgName: String): MutableList<String> =
                 this@RootDatabase.getStringFlags(pkgName)
 
-            override fun getExtensionsFlags(pkgName: String): MutableList<String> =
-                this@RootDatabase.getExtensionsFlags(pkgName)
+//            override fun getExtensionsFlags(pkgName: String): MutableList<String> =
+//                this@RootDatabase.getExtensionsFlags(pkgName)
         }
     }
 
-    private fun getExtensionsFlags(pkgName: String): MutableList<String> {
-        val cursor = db.rawQuery(
-            "SELECT DISTINCT f.name, \n" +
-                    "COALESCE(CAST(fo.extensionVal AS TEXT), CAST(HEX(f.extensionVal) AS TEXT)) AS extensionVal \n" +
-                    "FROM Flags f \n" +
-                    "LEFT JOIN (SELECT name, HEX(extensionVal) AS extensionVal FROM FlagOverrides) fo \n" +
-                    "ON f.name = fo.name \n" +
-                    "WHERE f.packageName = '$pkgName' \n" +
-                    "AND f.extensionVal IS NOT NULL;\n",
-            null
-        )
-        val list = mutableListOf<String>()
-        while (cursor.moveToNext()) {
-            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
-        }
-        return list
-    }
+//    private fun getExtensionsFlags(pkgName: String): MutableList<String> {
+//        val cursor = db.rawQuery(
+//            "SELECT DISTINCT f.name, \n" +
+//                    "COALESCE(CAST(fo.extensionVal AS TEXT), CAST(HEX(f.extensionVal) AS TEXT)) AS extensionVal \n" +
+//                    "FROM Flags f \n" +
+//                    "LEFT JOIN (SELECT name, HEX(extensionVal) AS extensionVal FROM FlagOverrides) fo \n" +
+//                    "ON f.name = fo.name \n" +
+//                    "WHERE f.packageName = '$pkgName' \n" +
+//                    "AND f.extensionVal IS NOT NULL;\n",
+//            null
+//        )
+//        val list = mutableListOf<String>()
+//        while (cursor.moveToNext()) {
+//            list.add("${cursor.getString(0)}|${cursor.getString(1)}")
+//        }
+//        return list
+//    }
 
     private fun getBoolFlags(pkgName: String): MutableList<String> {
         val cursor = db.rawQuery(

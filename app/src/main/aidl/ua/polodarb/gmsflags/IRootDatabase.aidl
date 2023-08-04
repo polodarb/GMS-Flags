@@ -6,5 +6,5 @@ interface IRootDatabase {
     List<String> getIntFlags(String pkgName);
     List<String> getFloatFlags(String pkgName);
     List<String> getStringFlags(String pkgName);
-    List<String> getExtensionsFlags(String pkgName);
+//    List<String> getExtensionsFlags(String pkgName);
 }

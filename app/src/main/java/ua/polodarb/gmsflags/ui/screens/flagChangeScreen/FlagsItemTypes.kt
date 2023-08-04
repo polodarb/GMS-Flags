@@ -1,9 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +16,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.dialogs.FlagReportDialog
 
 @Composable
 fun BoolValItem(
@@ -82,21 +81,27 @@ fun IntFloatStringValItem(
     haptic: HapticFeedback,
     context: Context,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    var select by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Column(
-        modifier = Modifier.combinedClickable (
-            onClick = {
-                Toast.makeText(context, "onClick", Toast.LENGTH_SHORT).show()
-            },
-            onLongClick = {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                Toast.makeText(context, "onLongClick", Toast.LENGTH_SHORT).show()
-            },
-        )
+        modifier = modifier
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+                onDoubleClick = {
+                    select = !select
+                }
+            )
+            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
@@ -140,5 +145,9 @@ fun IntFloatStringValItem(
             )
         }
     }
-    if (!lastItem) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+    if (!lastItem) HorizontalDivider(
+        Modifier
+            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .padding(horizontal = 16.dp)
+    )
 }

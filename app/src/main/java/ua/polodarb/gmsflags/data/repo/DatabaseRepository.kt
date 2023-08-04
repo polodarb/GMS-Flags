@@ -26,7 +26,7 @@ class DatabaseRepository(
         val intFlagsMap = mutableMapOf<String, String>()
         val floatFlagsMap = mutableMapOf<String, String>()
         val stringFlagsMap = mutableMapOf<String, String>()
-        val extensionsFlagsMap = mutableMapOf<String, String>()
+//        val extensionsFlagsMap = mutableMapOf<String, String>()
 
         val gmsApplication = context as GMSApplication
 
@@ -34,7 +34,7 @@ class DatabaseRepository(
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-        val extensionsFlags = gmsApplication.getRootDatabase().getExtensionsFlags(packageName)
+//        val extensionsFlags = gmsApplication.getRootDatabase().getExtensionsFlags(packageName)
 
         if (boolFlags.isNotEmpty()) {
             for (flag in boolFlags) {
@@ -84,19 +84,29 @@ class DatabaseRepository(
             }
         }
 
-        if (extensionsFlags.isNotEmpty()) {
-            for (flag in extensionsFlags) {
-                val parts = flag.split("|")
-                if (parts.size == 2) {
-                    val text = parts[0]
-                    val value = parts[1]
+//        if (extensionsFlags.isNotEmpty()) {
+//            for (flag in extensionsFlags) {
+//                val parts = flag.split("|")
+//                if (parts.size == 2) {
+//                    val text = parts[0]
+//                    val value = parts[1]
+//
+//                    extensionsFlagsMap[text] = value
+//                }
+//            }
+//        }
 
-                    extensionsFlagsMap[text] = value
-                }
-            }
-        }
-
-        emit(FlagChangeUiStates.Success(PentagonMap(boolFlagsMap, intFlagsMap, floatFlagsMap, stringFlagsMap, extensionsFlagsMap)))
+        emit(
+            FlagChangeUiStates.Success(
+                PentagonMap(
+                    boolFlagsMap,
+                    intFlagsMap,
+                    floatFlagsMap,
+                    stringFlagsMap,
+//                    extensionsFlagsMap
+                )
+            )
+        )
     }
 
     data class PentagonMap(
@@ -104,7 +114,7 @@ class DatabaseRepository(
         val intFlagsMap: Map<String, String>,
         val floatFlagsMap: Map<String, String>,
         val stringFlagsMap: Map<String, String>,
-        val extensionsVal: Map<String, String>
+//        val extensionsVal: Map<String, String>
     )
 
 }
