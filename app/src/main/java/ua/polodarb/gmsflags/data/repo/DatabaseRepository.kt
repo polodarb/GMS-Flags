@@ -4,6 +4,8 @@ import android.content.Context
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeBooleanUiStates
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeOtherTypesUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 
 class DatabaseRepository(
@@ -15,6 +17,56 @@ class DatabaseRepository(
 
         if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
         else emit(ScreenUiStates.Error())
+
+    }
+
+    suspend fun getBoolFlags(packageName: String) = flow<FlagChangeBooleanUiStates> {
+        emit(FlagChangeBooleanUiStates.Loading)
+
+        val boolFlagsMap = mutableMapOf<String, Boolean>()
+
+        val gmsApplication = context as GMSApplication
+
+        val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
+
+        if (boolFlags.isNotEmpty()) {
+            for (flag in boolFlags) {
+                val parts = flag.split("|")
+                if (parts.size == 2) {
+                    val text = parts[0]
+                    val value = parts[1].toInt() == 1
+
+                    boolFlagsMap[text] = value
+                }
+            }
+        }
+
+        emit(FlagChangeBooleanUiStates.Success(boolFlagsMap))
+
+    }
+
+    suspend fun getIntFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
+        emit(FlagChangeOtherTypesUiStates.Loading)
+
+        val intFlagsMap = mutableMapOf<String, String>()
+
+        val gmsApplication = context as GMSApplication
+
+        val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
+
+        if (intFlags.isNotEmpty()) {
+            for (flag in intFlags) {
+                val parts = flag.split("|")
+                if (parts.size == 2) {
+                    val text = parts[0]
+                    val value = parts[1]
+
+                    intFlagsMap[text] = value
+                }
+            }
+        }
+
+        emit(FlagChangeOtherTypesUiStates.Success(intFlagsMap))
 
     }
 

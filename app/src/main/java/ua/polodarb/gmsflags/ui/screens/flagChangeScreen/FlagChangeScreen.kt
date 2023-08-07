@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -59,7 +60,9 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -88,18 +91,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import org.koin.ext.clearQuotes
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.dialogs.FlagChangeDialog
 import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
-
-enum class FilterMethod {
-    ALL, ENABLED, DISABLED, CHANGED
-}
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.*
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -108,9 +110,12 @@ fun FlagChangeScreen(
     packageName: String?
 ) {
 
-    val viewModel = koinViewModel<FlagChangeScreenViewModel>()
+    val viewModel =
+        koinViewModel<FlagChangeScreenViewModel>(parameters = { parametersOf(packageName) })
 
     val uiState = viewModel.state.collectAsState()
+    val uiStateBoolean = viewModel.stateBoolean.collectAsState()
+    val uiStateInteger = viewModel.stateInteger.collectAsState()
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -173,9 +178,7 @@ fun FlagChangeScreen(
 
 
     // Filter Chips
-    var filterMethod by rememberSaveable {
-        mutableStateOf(FilterMethod.ALL)
-    }
+
 
     // Lists of flags type
     val listBool = remember { mutableMapOf<String, Boolean>() }
@@ -205,10 +208,10 @@ fun FlagChangeScreen(
 
     val changedFilterBoolList = mutableMapOf<String, Boolean>()
 
-    val filteredBoolList = when (filterMethod) {
-        FilterMethod.ENABLED -> listBool.filterByEnabled()
-        FilterMethod.DISABLED -> listBool.filterByDisabled()
-        FilterMethod.CHANGED -> changedFilterBoolList
+    val filteredBoolList = when (viewModel.filterMethod) {
+        ENABLED -> listBool.filterByEnabled()
+        DISABLED -> listBool.filterByDisabled()
+        CHANGED -> changedFilterBoolList
         else -> listBool
     }
 
@@ -219,23 +222,49 @@ fun FlagChangeScreen(
     }
 
     // State to hold the filtered list
-    val filteredBoolListState = remember { mutableStateMapOf<String, Boolean>() }
     val filteredIntListState = remember { mutableStateMapOf<String, String>() }
+    val filteredBoolListState = remember { mutableStateMapOf<String, Boolean>() }
 
-    LaunchedEffect(uiState.value, searchBoolQuery, filterMethod) {
+//    val filteredIntListState by remember(listInt, searchBoolQuery, filterMethod, pagerState) {
+//        derivedStateOf {
+//            val filteredList = listBool.filter { it.key.contains(searchBoolQuery, ignoreCase = true) }
+//            mutableStateMapOf<String, Boolean>().apply {
+//                putAll(filteredList)
+//            }
+//        }
+//    }
+
+//    val filteredIntListState by remember(listInt, searchBoolQuery, filterMethod, pagerState) {
+//        derivedStateOf {
+//            val filteredList = listInt.filter { it.key.contains(searchBoolQuery, ignoreCase = true) }
+//            mutableStateMapOf<String, String>().apply {
+//                putAll(filteredList)
+//            }
+//        }
+//    }
+
+    LaunchedEffect(uiState.value, searchBoolQuery, tabState) {
         when (val state = uiState.value) {
             is FlagChangeUiStates.Success -> {
-                 when(tabState) {
+                when (tabState) {
                     0 -> {
-                        val filteredList = filteredBoolList.filter { it.key.contains(searchBoolQuery, ignoreCase = true) }
+                        val filteredList = filteredBoolList.filter {
+                            it.key.contains(
+                                searchBoolQuery,
+                                ignoreCase = true
+                            )
+                        }
                         filteredBoolListState.clear()
                         filteredBoolListState.putAll(filteredList)
                     }
+
                     1 -> {
-                        val filteredList = listInt.filter { it.key.contains(searchBoolQuery, ignoreCase = true) }
+                        val filteredList =
+                            listInt.filter { it.key.contains(searchBoolQuery, ignoreCase = true) }
                         filteredIntListState.clear()
                         filteredIntListState.putAll(filteredList)
                     }
+
                     else -> {}
                 }
 
@@ -387,10 +416,10 @@ fun FlagChangeScreen(
                                 selected = selectedChips == index,
                                 onClick = {
                                     when (index) {
-                                        0 -> filterMethod = FilterMethod.ALL
-                                        1 -> filterMethod = FilterMethod.ENABLED
-                                        2 -> filterMethod = FilterMethod.DISABLED
-                                        3 -> filterMethod = FilterMethod.CHANGED
+                                        0 -> viewModel.filterMethod = ALL
+                                        1 -> viewModel.filterMethod = ENABLED
+                                        2 -> viewModel.filterMethod = DISABLED
+                                        3 -> viewModel.filterMethod = CHANGED
                                     }
                                     selectedChips = index
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -480,36 +509,41 @@ fun FlagChangeScreen(
                 }
             }
         }
-        when (uiState.value) {
-            is FlagChangeUiStates.Success -> {
+//        when (uiState.value) {
+//            is FlagChangeUiStates.Success -> {
+//
+////                val listBoolVal =
+//                listBool.putAll((uiState.value as FlagChangeUiStates.Success).data.boolFlagsMap)
+//                listInt.putAll((uiState.value as FlagChangeUiStates.Success).data.intFlagsMap)
+//                val listFloatVal = (uiState.value as FlagChangeUiStates.Success).data.floatFlagsMap
+//                val listStringVal =
+//                    (uiState.value as FlagChangeUiStates.Success).data.stringFlagsMap
+////                val listExtensionsVal = (uiState.value as FlagChangeUiStates.Success).data.extensionsVal
 
-//                val listBoolVal =
-                listBool.putAll((uiState.value as FlagChangeUiStates.Success).data.boolFlagsMap)
-                val listIntVal =
-                    listInt.putAll((uiState.value as FlagChangeUiStates.Success).data.intFlagsMap)
-                val listFloatVal = (uiState.value as FlagChangeUiStates.Success).data.floatFlagsMap
-                val listStringVal =
-                    (uiState.value as FlagChangeUiStates.Success).data.stringFlagsMap
-//                val listExtensionsVal = (uiState.value as FlagChangeUiStates.Success).data.extensionsVal
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
+        ) { page ->
+            when (page) {
+                0 -> {
+                    when (uiStateBoolean.value) {
+                        is FlagChangeBooleanUiStates.Success -> {
 
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = false,
-                    contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
-                ) { page ->
-                    when (page) {
-                        0 -> {
+                            val listBool = (uiStateBoolean.value as FlagChangeBooleanUiStates.Success).data
+
                             Box(modifier = Modifier.fillMaxSize()) {
-                                if (filteredBoolList.isNotEmpty()) {
+                                if (listBool.isNotEmpty()) {
                                     LazyColumn {
-                                        itemsIndexed(filteredBoolListState.toList()) { index, item ->
+                                        itemsIndexed(listBool.toList()) { index, item ->
                                             BoolValItem(
-                                                flagName = filteredBoolListState.keys.toList()[index],
-                                                checked = filteredBoolListState.values.toList()[index],
-                                                lastItem = index == filteredBoolListState.size - 1,
+                                                flagName = listBool.keys.toList()[index],
+                                                checked = listBool.values.toList()[index],
+                                                lastItem = index == listBool.size - 1,
                                                 onCheckedChange = {
 //                                                checked = it
-                                                    changedFilterBoolList[filteredBoolList.keys.toList()[index]] = filteredBoolList.values.toList()[index]
+                                                    changedFilterBoolList[listBool.keys.toList()[index]] =
+                                                        listBool.values.toList()[index]
                                                 }
                                             )
                                         }
@@ -523,15 +557,32 @@ fun FlagChangeScreen(
                             }
                         }
 
-                        1 -> {
+                        is FlagChangeBooleanUiStates.Loading -> {
+                            LoadingProgressBar()
+
+                        }
+
+                        is FlagChangeBooleanUiStates.Error -> {
+                            ErrorLoadScreen()
+                        }
+                    }
+
+                }
+
+                1 -> {
+                    when (uiStateInteger.value) {
+                        is FlagChangeOtherTypesUiStates.Success -> {
+
+                            val listInt = (uiStateInteger.value as FlagChangeOtherTypesUiStates.Success).data
+
                             Box(modifier = Modifier.fillMaxSize()) {
-                                if (filteredIntListState.isNotEmpty()) {
+                                if (listInt.isNotEmpty()) {
                                     LazyColumn {
-                                        itemsIndexed(filteredIntListState.toList()) { index, item ->
+                                        itemsIndexed(listInt.toList()) { index, item ->
                                             IntFloatStringValItem(
-                                                flagName = filteredIntListState.keys.toList()[index],
-                                                flagValue = filteredIntListState.values.toList()[index],
-                                                lastItem = index == filteredIntListState.size - 1,
+                                                flagName = listInt.keys.toList()[index],
+                                                flagValue = listInt.values.toList()[index],
+                                                lastItem = index == listInt.size - 1,
                                                 savedButtonChecked = false,
                                                 savedButtonOnChecked = {},
                                                 haptic = haptic,
@@ -587,133 +638,144 @@ fun FlagChangeScreen(
                             }
                         }
 
-                        2 -> {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                if (listFloatVal.isNotEmpty()) {
-                                    LazyColumn {
-                                        itemsIndexed(listFloatVal.toList()) { index, item ->
-                                            IntFloatStringValItem(
-                                                flagName = listFloatVal.keys.toList()[index],
-                                                flagValue = listFloatVal.values.toList()[index],
-                                                lastItem = index == listFloatVal.size - 1,
-                                                savedButtonChecked = false,
-                                                savedButtonOnChecked = {},
-                                                haptic = haptic,
-                                                context = context,
-                                                onClick = {
-                                                    flagName = item.first
-                                                    flagValue = item.second
-                                                    showDialog.value = true
-                                                },
-                                                onLongClick = {
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    Toast.makeText(
-                                                        context,
-                                                        "onLongClick",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            )
-                                        }
-                                        item {
-                                            Spacer(modifier = Modifier.padding(12.dp))
-                                        }
-                                    }
-                                    FlagChangeDialog(
-                                        showDialog = showDialog.value,
-                                        flagName = flagName,
-                                        flagValue = flagValue,
-                                        onQueryChange = {
-                                            flagValue = it
-                                        },
-                                        flagType = "Float",
-                                        onConfirm = {
-                                            Toast.makeText(
-                                                context,
-                                                "Not implemented",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        },
-                                        onDismiss = {
-                                            showDialog.value = false
-                                        },
-                                        onDefault = {
-                                            Toast.makeText(
-                                                context,
-                                                "Reset value",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    )
-                                } else {
-                                    NoFlagsType()
-                                }
-                            }
+                        is FlagChangeOtherTypesUiStates.Loading -> {
+                            LoadingProgressBar()
+                            viewModel.getIntFlags()
                         }
 
-                        3 -> {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                if (listStringVal.isNotEmpty()) {
-                                    LazyColumn {
-                                        itemsIndexed(listStringVal.toList()) { index, item ->
-                                            IntFloatStringValItem(
-                                                flagName = listStringVal.keys.toList()[index],
-                                                flagValue = listStringVal.values.toList()[index],
-                                                lastItem = index == listStringVal.size - 1,
-                                                savedButtonChecked = false,
-                                                savedButtonOnChecked = {},
-                                                haptic = haptic,
-                                                context = context,
-                                                onClick = {
-                                                    flagName = item.first
-                                                    flagValue = item.second
-                                                    showDialog.value = true
-                                                },
-                                                onLongClick = {
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    Toast.makeText(
-                                                        context,
-                                                        "onLongClick",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
-                                            )
-                                        }
-                                        item {
-                                            Spacer(modifier = Modifier.padding(12.dp))
-                                        }
-                                    }
-                                    FlagChangeDialog(
-                                        showDialog = showDialog.value,
-                                        flagName = flagName,
-                                        flagValue = flagValue,
-                                        onQueryChange = {
-                                            flagValue = it
-                                        },
-                                        flagType = "String",
-                                        onConfirm = {
-                                            Toast.makeText(
-                                                context,
-                                                "Not implemented",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        },
-                                        onDismiss = {
-                                            showDialog.value = false
-                                        },
-                                        onDefault = {
-                                            Toast.makeText(
-                                                context,
-                                                "Reset value",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    )
-                                } else {
-                                    NoFlagsType()
-                                }
-                            }
+                        is FlagChangeOtherTypesUiStates.Error -> {
+                            ErrorLoadScreen()
                         }
+                    }
+                }
+
+                2 -> {
+//                            Box(modifier = Modifier.fillMaxSize()) {
+//                                if (listFloatVal.isNotEmpty()) {
+//                                    LazyColumn {
+//                                        itemsIndexed(listFloatVal.toList()) { index, item ->
+//                                            IntFloatStringValItem(
+//                                                flagName = listFloatVal.keys.toList()[index],
+//                                                flagValue = listFloatVal.values.toList()[index],
+//                                                lastItem = index == listFloatVal.size - 1,
+//                                                savedButtonChecked = false,
+//                                                savedButtonOnChecked = {},
+//                                                haptic = haptic,
+//                                                context = context,
+//                                                onClick = {
+//                                                    flagName = item.first
+//                                                    flagValue = item.second
+//                                                    showDialog.value = true
+//                                                },
+//                                                onLongClick = {
+//                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                                                    Toast.makeText(
+//                                                        context,
+//                                                        "onLongClick",
+//                                                        Toast.LENGTH_SHORT
+//                                                    ).show()
+//                                                }
+//                                            )
+//                                        }
+//                                        item {
+//                                            Spacer(modifier = Modifier.padding(12.dp))
+//                                        }
+//                                    }
+//                                    FlagChangeDialog(
+//                                        showDialog = showDialog.value,
+//                                        flagName = flagName,
+//                                        flagValue = flagValue,
+//                                        onQueryChange = {
+//                                            flagValue = it
+//                                        },
+//                                        flagType = "Float",
+//                                        onConfirm = {
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Not implemented",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        },
+//                                        onDismiss = {
+//                                            showDialog.value = false
+//                                        },
+//                                        onDefault = {
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Reset value",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        }
+//                                    )
+//                                } else {
+//                                    NoFlagsType()
+//                                }
+//                            }
+                }
+
+                3 -> {
+//                            Box(modifier = Modifier.fillMaxSize()) {
+//                                if (listStringVal.isNotEmpty()) {
+//                                    LazyColumn {
+//                                        itemsIndexed(listStringVal.toList()) { index, item ->
+//                                            IntFloatStringValItem(
+//                                                flagName = listStringVal.keys.toList()[index],
+//                                                flagValue = listStringVal.values.toList()[index],
+//                                                lastItem = index == listStringVal.size - 1,
+//                                                savedButtonChecked = false,
+//                                                savedButtonOnChecked = {},
+//                                                haptic = haptic,
+//                                                context = context,
+//                                                onClick = {
+//                                                    flagName = item.first
+//                                                    flagValue = item.second
+//                                                    showDialog.value = true
+//                                                },
+//                                                onLongClick = {
+//                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                                                    Toast.makeText(
+//                                                        context,
+//                                                        "onLongClick",
+//                                                        Toast.LENGTH_SHORT
+//                                                    ).show()
+//                                                }
+//                                            )
+//                                        }
+//                                        item {
+//                                            Spacer(modifier = Modifier.padding(12.dp))
+//                                        }
+//                                    }
+//                                    FlagChangeDialog(
+//                                        showDialog = showDialog.value,
+//                                        flagName = flagName,
+//                                        flagValue = flagValue,
+//                                        onQueryChange = {
+//                                            flagValue = it
+//                                        },
+//                                        flagType = "String",
+//                                        onConfirm = {
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Not implemented",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        },
+//                                        onDismiss = {
+//                                            showDialog.value = false
+//                                        },
+//                                        onDefault = {
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Reset value",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        }
+//                                    )
+//                                } else {
+//                                    NoFlagsType()
+//                                }
+//                            }
+                }
 
 //                        4 -> {
 //                            Box(modifier = Modifier.fillMaxSize()) {
@@ -779,21 +841,22 @@ fun FlagChangeScreen(
 //                            }
 //                        }
 
-                    }
-                }
-            }
-
-            is FlagChangeUiStates.Loading -> {
-                LoadingProgressBar()
-                viewModel.getFlagsData(packageName ?: "null")
-            }
-
-            is FlagChangeUiStates.Error -> {
-                ErrorLoadScreen()
             }
         }
+//            }
+//
+//            is FlagChangeUiStates.Loading -> {
+//                LoadingProgressBar()
+//                viewModel.getFlagsData(packageName ?: "null")
+//            }
+//
+//            is FlagChangeUiStates.Error -> {
+//                ErrorLoadScreen()
+//            }
+//        }
     }
 }
+
 
 @Composable
 fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
