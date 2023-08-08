@@ -1,7 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-import ua.polodarb.gmsflags.data.repo.DatabaseRepository.PentagonMap
-
 sealed interface FlagChangeOtherTypesUiStates {
     data object Loading : FlagChangeOtherTypesUiStates
 
