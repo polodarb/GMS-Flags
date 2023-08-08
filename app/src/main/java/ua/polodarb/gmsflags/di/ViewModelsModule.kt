@@ -15,6 +15,7 @@ val viewModelsModule = module {
 
     viewModel<FlagChangeScreenViewModel> {
         FlagChangeScreenViewModel(
+            pkgName = get(),
             repository = get()
         )
     }
