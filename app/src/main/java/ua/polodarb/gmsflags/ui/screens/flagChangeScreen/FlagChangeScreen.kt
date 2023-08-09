@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -410,7 +411,9 @@ fun FlagChangeScreen(
                                 }
                             },
                             onActiveChange = {},
-                            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester = focusRequester)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester = focusRequester)
                         ) { }
                     }
                 }
@@ -819,6 +822,25 @@ fun FlagChangeDropDown(
                         )
                     })
                 DropdownMenuItem(
+                    text = { Text("Add flag") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Add,
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem( // todo: implement condition on flag type
+                    text = { Text("Activate all visible flags") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_activate_all),
+                            contentDescription = null
+                        )
+                    })
+                HorizontalDivider()
+                DropdownMenuItem(
                     text = { Text("Reset all overridden flags") },
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
@@ -828,11 +850,20 @@ fun FlagChangeDropDown(
                         )
                     })
                 DropdownMenuItem(
-                    text = { Text("Add flag") },
+                    text = { Text("Refresh flags list") },
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.Add,
+                            Icons.Outlined.Refresh,
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem(
+                    text = { Text("Force stop this app package") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Refresh,
                             contentDescription = null
                         )
                     })
