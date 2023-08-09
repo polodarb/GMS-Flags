@@ -44,11 +44,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -77,10 +82,16 @@ fun PackagesScreen(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
-    val coroutineScope = rememberCoroutineScope()
+    // Keyboard
+    val focusRequester = remember { FocusRequester() }
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    LaunchedEffect(searchIconState){
+        if (searchIconState)
+            focusRequester.requestFocus()
     }
 
     // Search
@@ -158,7 +169,6 @@ fun PackagesScreen(
                                 searchQuery = newQuery
                             },
                             onSearch = {},
-                            active = false,
                             placeholder = {
                                 Text(text = "Search a package name")
                             },
@@ -179,8 +189,9 @@ fun PackagesScreen(
                                     }
                                 }
                             },
-                            onActiveChange = {},
-                            modifier = Modifier.fillMaxWidth()
+                            active = false,
+                            onActiveChange = { },
+                            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
                         ) { }
                     }
                 }

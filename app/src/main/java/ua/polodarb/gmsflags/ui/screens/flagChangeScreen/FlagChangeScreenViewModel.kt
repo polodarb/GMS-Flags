@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -56,48 +57,115 @@ class FlagChangeScreenViewModel(
         return filteredMap
     }
 
-    val changedFilterBoolList = mutableMapOf<String, Boolean>() // todo
+    private val changedFilterBoolList = mutableMapOf<String, Boolean>()
 
     // Search
-    var searchBoolQuery = mutableStateOf("")
+    var searchQuery = mutableStateOf("")
 
+    private val listBoolFiltered: MutableMap<String, Boolean> = mutableMapOf()
+    private val listIntFiltered: MutableMap<String, String> = mutableMapOf()
+    private val listFloatFiltered: MutableMap<String, String> = mutableMapOf()
+    private val listStringFiltered: MutableMap<String, String> = mutableMapOf()
 
-    fun getBoolFlags() {
+    init {
+        initBoolValues()
+        initIntValues()
+        initFloatValues()
+        initStringValues()
+    }
+
+    // Boolean
+    private fun initBoolValues() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getBoolFlags(pkgName).collect { uiState ->
-                    when (uiState) {
+                Log.e("bool", "initBoolValues()")
+                repository.getBoolFlags(pkgName).collect { uiStates ->
+                    when (uiStates) {
                         is FlagChangeBooleanUiStates.Success -> {
-                            _stateBoolean.value = when (filterMethod.value) {
-                                FilterMethod.ENABLED -> FlagChangeBooleanUiStates.Success(
-                                    (uiState.data.filterByEnabled()).filter {
-                                        it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                    }
-                                )
-                                FilterMethod.DISABLED -> FlagChangeBooleanUiStates.Success(
-                                    (uiState.data.filterByDisabled()).filter {
-                                        it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                    }
-                                )
-                                FilterMethod.CHANGED -> FlagChangeBooleanUiStates.Success(
-                                    changedFilterBoolList.filter {
-                                        it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                    }
-                                )
-                                else -> FlagChangeBooleanUiStates.Success(
-                                    uiState.data.filter {
-                                        it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                    }
-                                )
-                            }
+                            Log.e("bool", "Success INIT")
+                            listBoolFiltered.putAll(uiStates.data)
+                            getBoolFlags()
+                        }
+
+                        is FlagChangeBooleanUiStates.Loading -> {
+                            Log.e("bool", "Loading INIT")
+                            _stateBoolean.value = FlagChangeBooleanUiStates.Loading
                         }
 
                         is FlagChangeBooleanUiStates.Error -> {
-                            _stateBoolean.value =
-                                FlagChangeBooleanUiStates.Error(Throwable("BOOLEAN_LOAD_ERROR"))
+                            _stateBoolean.value = FlagChangeBooleanUiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getBoolFlags() {
+        if (listBoolFiltered.isNotEmpty()) {
+            when (filterMethod.value) {
+                FilterMethod.ENABLED -> {
+                    _stateBoolean.value = FlagChangeBooleanUiStates.Success(
+                        (listBoolFiltered.toMap().filterByEnabled()).filter {
+                            it.key.contains(searchQuery.value, ignoreCase = true)
+                        }
+                    )
+                    if ((_stateBoolean.value as FlagChangeBooleanUiStates.Success).data.isEmpty()) _stateBoolean.value =
+                        FlagChangeBooleanUiStates.Error()
+                }
+
+                FilterMethod.DISABLED -> {
+                    _stateBoolean.value = FlagChangeBooleanUiStates.Success(
+                        (listBoolFiltered.toMap().filterByDisabled()).filter {
+                            it.key.contains(searchQuery.value, ignoreCase = true)
+                        }
+                    )
+                    if ((_stateBoolean.value as FlagChangeBooleanUiStates.Success).data.isEmpty()) _stateBoolean.value =
+                        FlagChangeBooleanUiStates.Error()
+                }
+
+                FilterMethod.CHANGED -> {
+                    _stateBoolean.value = FlagChangeBooleanUiStates.Success(
+                        (changedFilterBoolList.toMap().filterByEnabled()).filter {
+                            it.key.contains(searchQuery.value, ignoreCase = true)
+                        }
+                    )
+                    if ((_stateBoolean.value as FlagChangeBooleanUiStates.Success).data.isEmpty()) _stateBoolean.value =
+                        FlagChangeBooleanUiStates.Error()
+                }
+
+                else -> {
+                    _stateBoolean.value = FlagChangeBooleanUiStates.Success(
+                        listBoolFiltered.filter {
+                            it.key.contains(searchQuery.value, ignoreCase = true)
+                        }
+                    )
+                    if ((_stateBoolean.value as FlagChangeBooleanUiStates.Success).data.isEmpty()) _stateBoolean.value =
+                        FlagChangeBooleanUiStates.Error()
+                }
+            }
+        }
+    }
+
+    // Integer
+    private fun initIntValues() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Log.e("bool", "initIntValues()")
+                repository.getIntFlags(pkgName).collect { uiStates ->
+                    when (uiStates) {
+                        is FlagChangeOtherTypesUiStates.Success -> {
+                            listIntFiltered.putAll(uiStates.data)
+                            getIntFlags()
                         }
 
-                        is FlagChangeBooleanUiStates.Loading -> {}
+                        is FlagChangeOtherTypesUiStates.Loading -> {
+                            _stateInteger.value = FlagChangeOtherTypesUiStates.Loading
+                        }
+
+                        is FlagChangeOtherTypesUiStates.Error -> {
+                            _stateInteger.value = FlagChangeOtherTypesUiStates.Error()
+                        }
                     }
                 }
             }
@@ -105,24 +173,34 @@ class FlagChangeScreenViewModel(
     }
 
     fun getIntFlags() {
+        _stateInteger.value = FlagChangeOtherTypesUiStates.Success(
+            listIntFiltered.filter {
+                it.key.contains(searchQuery.value, ignoreCase = true)
+            }
+        )
+        if ((_stateInteger.value as FlagChangeOtherTypesUiStates.Success).data.isEmpty()) _stateInteger.value =
+            FlagChangeOtherTypesUiStates.Error()
+    }
+
+    // Float
+    private fun initFloatValues() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getIntFlags(pkgName).collect { uiState ->
-                    when (uiState) {
+                Log.e("bool", "initFloatValues()")
+                repository.getFloatFlags(pkgName).collect { uiStates ->
+                    when (uiStates) {
                         is FlagChangeOtherTypesUiStates.Success -> {
-                            _stateInteger.value = FlagChangeOtherTypesUiStates.Success(
-                                uiState.data.filter {
-                                    it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                }
-                            )
+                            listFloatFiltered.putAll(uiStates.data)
+                            getFloatFlags()
+                        }
+
+                        is FlagChangeOtherTypesUiStates.Loading -> {
+                            _stateFloat.value = FlagChangeOtherTypesUiStates.Loading
                         }
 
                         is FlagChangeOtherTypesUiStates.Error -> {
-                            _stateInteger.value =
-                                FlagChangeOtherTypesUiStates.Error(Throwable("BOOLEAN_LOAD_ERROR"))
+                            _stateInteger.value = FlagChangeOtherTypesUiStates.Error()
                         }
-
-                        is FlagChangeOtherTypesUiStates.Loading -> {}
                     }
                 }
             }
@@ -130,24 +208,34 @@ class FlagChangeScreenViewModel(
     }
 
     fun getFloatFlags() {
+        _stateFloat.value = FlagChangeOtherTypesUiStates.Success(
+            listFloatFiltered.filter {
+                it.key.contains(searchQuery.value, ignoreCase = true)
+            }
+        )
+        if ((_stateFloat.value as FlagChangeOtherTypesUiStates.Success).data.isEmpty()) _stateFloat.value =
+            FlagChangeOtherTypesUiStates.Error()
+    }
+
+    // String
+    private fun initStringValues() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getFloatFlags(pkgName).collect { uiState ->
-                    when (uiState) {
+                Log.e("bool", "initStringValues()")
+                repository.getStringFlags(pkgName).collect { uiStates ->
+                    when (uiStates) {
                         is FlagChangeOtherTypesUiStates.Success -> {
-                            _stateFloat.value = FlagChangeOtherTypesUiStates.Success(
-                                uiState.data.filter {
-                                    it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                }
-                            )
+                            listStringFiltered.putAll(uiStates.data)
+                            getStringFlags()
+                        }
+
+                        is FlagChangeOtherTypesUiStates.Loading -> {
+                            _stateString.value = FlagChangeOtherTypesUiStates.Loading
                         }
 
                         is FlagChangeOtherTypesUiStates.Error -> {
-                            _stateFloat.value =
-                                FlagChangeOtherTypesUiStates.Error(Throwable("BOOLEAN_LOAD_ERROR"))
+                            _stateInteger.value = FlagChangeOtherTypesUiStates.Error()
                         }
-
-                        is FlagChangeOtherTypesUiStates.Loading -> {}
                     }
                 }
             }
@@ -155,28 +243,13 @@ class FlagChangeScreenViewModel(
     }
 
     fun getStringFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getStringFlags(pkgName).collect { uiState ->
-                    when (uiState) {
-                        is FlagChangeOtherTypesUiStates.Success -> {
-                            _stateString.value = FlagChangeOtherTypesUiStates.Success(
-                                uiState.data.filter {
-                                    it.key.contains(searchBoolQuery.value, ignoreCase = true)
-                                }
-                            )
-                        }
-
-                        is FlagChangeOtherTypesUiStates.Error -> {
-                            _stateString.value =
-                                FlagChangeOtherTypesUiStates.Error(Throwable("BOOLEAN_LOAD_ERROR"))
-                        }
-
-                        is FlagChangeOtherTypesUiStates.Loading -> {}
-                    }
-                }
+        _stateString.value = FlagChangeOtherTypesUiStates.Success(
+            listStringFiltered.filter {
+                it.key.contains(searchQuery.value, ignoreCase = true)
             }
-        }
+        )
+        if ((_stateString.value as FlagChangeOtherTypesUiStates.Success).data.isEmpty()) _stateString.value =
+            FlagChangeOtherTypesUiStates.Error()
     }
 
 }
