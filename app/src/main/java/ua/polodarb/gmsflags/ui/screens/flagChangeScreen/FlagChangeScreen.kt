@@ -845,7 +845,7 @@ fun FlagChangeDropDown(
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.Refresh,
+                            painterResource(id = R.drawable.ic_reset_flags),
                             contentDescription = null
                         )
                     })
@@ -863,7 +863,7 @@ fun FlagChangeDropDown(
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.Refresh,
+                            painterResource(id = R.drawable.ic_force_stop),
                             contentDescription = null
                         )
                     })

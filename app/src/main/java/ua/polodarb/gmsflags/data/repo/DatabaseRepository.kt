@@ -14,7 +14,7 @@ class DatabaseRepository(
 
     suspend fun getGmsPackages() = flow<ScreenUiStates> {
 
-        delay(600)
+        delay(200)
 
         val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
@@ -27,7 +27,7 @@ class DatabaseRepository(
     suspend fun getBoolFlags(packageName: String) = flow<FlagChangeBooleanUiStates> {
         emit(FlagChangeBooleanUiStates.Loading)
 
-        delay(600)
+        delay(200)
 
         val boolFlagsMap = mutableMapOf<String, Boolean>()
 
@@ -56,7 +56,7 @@ class DatabaseRepository(
     suspend fun getIntFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
 
-        delay(600)
+        delay(200)
 
         val intFlagsMap = mutableMapOf<String, String>()
 
@@ -85,7 +85,7 @@ class DatabaseRepository(
     suspend fun getFloatFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
 
-        delay(600)
+        delay(200)
 
         val floatFlagsMap = mutableMapOf<String, String>()
 
@@ -114,7 +114,7 @@ class DatabaseRepository(
     suspend fun getStringFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
 
-        delay(600)
+        delay(200)
 
         val stringFlagsMap = mutableMapOf<String, String>()
 
