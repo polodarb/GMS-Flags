@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -71,6 +72,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -91,7 +94,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.dialogs.FlagChangeDialog
-import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
@@ -169,6 +171,15 @@ fun FlagChangeScreen(
     var flagValue by remember { mutableStateOf("") }
 
 
+    // Keyboard
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(searchIconState){
+        if (searchIconState)
+            focusRequester.requestFocus()
+    }
+
+
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
 
@@ -176,7 +187,7 @@ fun FlagChangeScreen(
 
     LaunchedEffect(
         viewModel.filterMethod.value,
-        viewModel.searchBoolQuery.value,
+        viewModel.searchQuery.value,
         pagerState.targetPage
     ) {
         viewModel.getBoolFlags()
@@ -371,9 +382,9 @@ fun FlagChangeScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         DockedSearchBar(
-                            query = viewModel.searchBoolQuery.value,
+                            query = viewModel.searchQuery.value,
                             onQueryChange = { newQuery ->
-                                viewModel.searchBoolQuery.value = newQuery
+                                viewModel.searchQuery.value = newQuery
                             },
                             onSearch = {},
                             active = false,
@@ -382,12 +393,12 @@ fun FlagChangeScreen(
                             },
                             trailingIcon = {
                                 AnimatedVisibility(
-                                    visible = viewModel.searchBoolQuery.value.isNotEmpty(),
+                                    visible = viewModel.searchQuery.value.isNotEmpty(),
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
                                     IconButton(onClick = {
-                                        viewModel.searchBoolQuery.value = ""
+                                        viewModel.searchQuery.value = ""
                                         viewModel.getBoolFlags()
                                         viewModel.getIntFlags()
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -400,7 +411,9 @@ fun FlagChangeScreen(
                                 }
                             },
                             onActiveChange = {},
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester = focusRequester)
                         ) { }
                     }
                 }
@@ -451,18 +464,17 @@ fun FlagChangeScreen(
                                         }
                                     }
                                 } else {
-                                    NoFlagsType()
+                                LoadingProgressBar()
                                 }
                             }
                         }
 
                         is FlagChangeBooleanUiStates.Loading -> {
                             LoadingProgressBar()
-                            viewModel.getBoolFlags()
                         }
 
                         is FlagChangeBooleanUiStates.Error -> {
-                            ErrorLoadScreen()
+                            NoFlagsType()
                         }
                     }
 
@@ -533,18 +545,17 @@ fun FlagChangeScreen(
                                         }
                                     )
                                 } else {
-                                    NoFlagsType()
+                                    LoadingProgressBar()
                                 }
                             }
                         }
 
                         is FlagChangeOtherTypesUiStates.Loading -> {
                             LoadingProgressBar()
-                            viewModel.getIntFlags()
                         }
 
                         is FlagChangeOtherTypesUiStates.Error -> {
-                            ErrorLoadScreen()
+                            NoFlagsType()
                         }
                     }
                 }
@@ -614,18 +625,18 @@ fun FlagChangeScreen(
                                         }
                                     )
                                 } else {
-                                    NoFlagsType()
+                                    LoadingProgressBar()
                                 }
                             }
                         }
 
                         is FlagChangeOtherTypesUiStates.Loading -> {
                             LoadingProgressBar()
-                            viewModel.getIntFlags()
+
                         }
 
                         is FlagChangeOtherTypesUiStates.Error -> {
-                            ErrorLoadScreen()
+                            NoFlagsType()
                         }
                     }
                 }
@@ -695,18 +706,17 @@ fun FlagChangeScreen(
                                         }
                                     )
                                 } else {
-                                    NoFlagsType()
+                                    LoadingProgressBar()
                                 }
                             }
                         }
 
                         is FlagChangeOtherTypesUiStates.Loading -> {
                             LoadingProgressBar()
-                            viewModel.getIntFlags()
                         }
 
                         is FlagChangeOtherTypesUiStates.Error -> {
-                            ErrorLoadScreen()
+                            NoFlagsType()
                         }
                     }
                 }
@@ -775,7 +785,7 @@ fun NoFlagsType() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "¯\\_(ツ)_/¯\n\nNo flags of this type",
+            text = "¯\\_(ツ)_/¯\n\nFlags not found",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
@@ -812,7 +822,35 @@ fun FlagChangeDropDown(
                         )
                     })
                 DropdownMenuItem(
+                    text = { Text("Add flag") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Add,
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem( // todo: implement condition on flag type
+                    text = { Text("Activate all visible flags") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_activate_all),
+                            contentDescription = null
+                        )
+                    })
+                HorizontalDivider()
+                DropdownMenuItem(
                     text = { Text("Reset all overridden flags") },
+                    onClick = { /* Handle onClick */ },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_reset_flags),
+                            contentDescription = null
+                        )
+                    })
+                DropdownMenuItem(
+                    text = { Text("Refresh flags list") },
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
                         Icon(
@@ -821,11 +859,11 @@ fun FlagChangeDropDown(
                         )
                     })
                 DropdownMenuItem(
-                    text = { Text("Add flag") },
+                    text = { Text("Force stop this app package") },
                     onClick = { /* Handle onClick */ },
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.Add,
+                            painterResource(id = R.drawable.ic_force_stop),
                             contentDescription = null
                         )
                     })

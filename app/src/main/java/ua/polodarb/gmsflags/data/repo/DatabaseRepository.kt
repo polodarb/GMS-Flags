@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
@@ -12,15 +13,21 @@ class DatabaseRepository(
 ) {
 
     suspend fun getGmsPackages() = flow<ScreenUiStates> {
+
+        delay(200)
+
         val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
         if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
+
         else emit(ScreenUiStates.Error())
 
     }
 
     suspend fun getBoolFlags(packageName: String) = flow<FlagChangeBooleanUiStates> {
         emit(FlagChangeBooleanUiStates.Loading)
+
+        delay(200)
 
         val boolFlagsMap = mutableMapOf<String, Boolean>()
 
@@ -38,6 +45,8 @@ class DatabaseRepository(
                     boolFlagsMap[text] = value
                 }
             }
+        } else {
+            emit(FlagChangeBooleanUiStates.Error())
         }
 
         emit(FlagChangeBooleanUiStates.Success(boolFlagsMap))
@@ -46,6 +55,8 @@ class DatabaseRepository(
 
     suspend fun getIntFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
+
+        delay(200)
 
         val intFlagsMap = mutableMapOf<String, String>()
 
@@ -63,6 +74,8 @@ class DatabaseRepository(
                     intFlagsMap[text] = value
                 }
             }
+        } else {
+            emit(FlagChangeOtherTypesUiStates.Error())
         }
 
         emit(FlagChangeOtherTypesUiStates.Success(intFlagsMap))
@@ -71,6 +84,8 @@ class DatabaseRepository(
 
     suspend fun getFloatFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
+
+        delay(200)
 
         val floatFlagsMap = mutableMapOf<String, String>()
 
@@ -88,6 +103,8 @@ class DatabaseRepository(
                     floatFlagsMap[text] = value
                 }
             }
+        } else {
+            emit(FlagChangeOtherTypesUiStates.Error())
         }
 
         emit(FlagChangeOtherTypesUiStates.Success(floatFlagsMap))
@@ -96,6 +113,8 @@ class DatabaseRepository(
 
     suspend fun getStringFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
         emit(FlagChangeOtherTypesUiStates.Loading)
+
+        delay(200)
 
         val stringFlagsMap = mutableMapOf<String, String>()
 
@@ -113,6 +132,8 @@ class DatabaseRepository(
                     stringFlagsMap[text] = value
                 }
             }
+        } else {
+            emit(FlagChangeOtherTypesUiStates.Error())
         }
 
         emit(FlagChangeOtherTypesUiStates.Success(stringFlagsMap))
