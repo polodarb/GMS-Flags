@@ -1,6 +1,8 @@
 package ua.polodarb.gmsflags.ui.animations
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -16,13 +18,13 @@ fun enterAnim(
     animationSpec = tween(
         durationMillis = 350,
         delayMillis = 150,
-        easing = FastOutSlowInEasing
+        easing = CubicBezierEasing(0.0f, 0.0f, 0.3f, 1.0f)
     )
 ) + fadeIn(
     animationSpec = tween(
         durationMillis = 250,
         delayMillis = 250,
-        easing = FastOutSlowInEasing
+        easing = CubicBezierEasing(0.0f, 0.0f, 0.3f, 1.0f)
     ),
     initialAlpha = 0.0f
 )
@@ -34,12 +36,12 @@ fun exitAnim(
     targetOffsetX = { (if (!toLeft) 1 else -1) * (it * 0.075).toInt() },
     animationSpec = tween(
         durationMillis = 350,
-        easing = FastOutSlowInEasing
+        easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f)
     )
 ) + fadeOut(
     animationSpec = tween(
         durationMillis = 250,
-        easing = FastOutSlowInEasing
+        easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f)
     ),
     targetAlpha = 0.0f
 )

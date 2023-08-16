@@ -1,20 +1,50 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeBooleanUiStates
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeOtherTypesUiStates
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 
 class DatabaseRepository(
     private val context: Context
 ) {
 
-    suspend fun getGmsPackages() = flow<ScreenUiStates> {
+    private val gmsApplication = context as GMSApplication
 
-        delay(200)
+    fun overrideFlag(
+        packageName: String,
+        user: String,
+        name: String,
+        flagType: String?,
+        intVal: String?,
+        boolVal: String?,
+        floatVal: String?,
+        stringVal: String?,
+        extensionVal: String?,
+        committed: String
+    ) {
+
+        gmsApplication.getRootDatabase().overrideFlag(
+            packageName,
+            user,
+            name,
+            flagType,
+            intVal,
+            boolVal,
+            floatVal,
+            stringVal,
+            extensionVal,
+            committed
+        )
+    }
+
+    suspend fun getGmsPackages() = flow<ScreenUiStates> {
+        emit(ScreenUiStates.Loading)
+
+        delay(150)
 
         val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
@@ -24,120 +54,72 @@ class DatabaseRepository(
 
     }
 
-    suspend fun getBoolFlags(packageName: String) = flow<FlagChangeBooleanUiStates> {
-        emit(FlagChangeBooleanUiStates.Loading)
+    suspend fun getBoolFlags(packageName: String) = flow<FlagChangeUiStates> {
+        emit(FlagChangeUiStates.Loading)
 
         delay(200)
-
-        val boolFlagsMap = mutableMapOf<String, Boolean>()
-
-        val gmsApplication = context as GMSApplication
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
 
-        if (boolFlags.isNotEmpty()) {
-            for (flag in boolFlags) {
-                val parts = flag.split("|")
-                if (parts.size == 2) {
-                    val text = parts[0]
-                    val value = parts[1].toInt() == 1
+        if (boolFlags.isEmpty())
+            emit(FlagChangeUiStates.Error())
 
-                    boolFlagsMap[text] = value
-                }
-            }
-        } else {
-            emit(FlagChangeBooleanUiStates.Error())
-        }
-
-        emit(FlagChangeBooleanUiStates.Success(boolFlagsMap))
+        emit(FlagChangeUiStates.Success(boolFlags))
 
     }
 
-    suspend fun getIntFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
-        emit(FlagChangeOtherTypesUiStates.Loading)
+    suspend fun getIntFlags(packageName: String) = flow<FlagChangeUiStates> {
+        emit(FlagChangeUiStates.Loading)
 
         delay(200)
-
-        val intFlagsMap = mutableMapOf<String, String>()
-
-        val gmsApplication = context as GMSApplication
 
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
 
-        if (intFlags.isNotEmpty()) {
-            for (flag in intFlags) {
-                val parts = flag.split("|")
-                if (parts.size == 2) {
-                    val text = parts[0]
-                    val value = parts[1]
+        if (intFlags.isEmpty())
+            emit(FlagChangeUiStates.Error())
 
-                    intFlagsMap[text] = value
-                }
-            }
-        } else {
-            emit(FlagChangeOtherTypesUiStates.Error())
-        }
-
-        emit(FlagChangeOtherTypesUiStates.Success(intFlagsMap))
+        emit(FlagChangeUiStates.Success(intFlags))
 
     }
 
-    suspend fun getFloatFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
-        emit(FlagChangeOtherTypesUiStates.Loading)
+    suspend fun getFloatFlags(packageName: String) = flow<FlagChangeUiStates> {
+        emit(FlagChangeUiStates.Loading)
 
         delay(200)
-
-        val floatFlagsMap = mutableMapOf<String, String>()
-
-        val gmsApplication = context as GMSApplication
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
 
-        if (floatFlags.isNotEmpty()) {
-            for (flag in floatFlags) {
-                val parts = flag.split("|")
-                if (parts.size == 2) {
-                    val text = parts[0]
-                    val value = parts[1]
+        if (floatFlags.isEmpty())
+            emit(FlagChangeUiStates.Error())
 
-                    floatFlagsMap[text] = value
-                }
-            }
-        } else {
-            emit(FlagChangeOtherTypesUiStates.Error())
-        }
-
-        emit(FlagChangeOtherTypesUiStates.Success(floatFlagsMap))
+        emit(FlagChangeUiStates.Success(floatFlags))
 
     }
 
-    suspend fun getStringFlags(packageName: String) = flow<FlagChangeOtherTypesUiStates> {
-        emit(FlagChangeOtherTypesUiStates.Loading)
+    suspend fun getStringFlags(packageName: String) = flow<FlagChangeUiStates> {
+        emit(FlagChangeUiStates.Loading)
 
         delay(200)
 
-        val stringFlagsMap = mutableMapOf<String, String>()
-
-        val gmsApplication = context as GMSApplication
-
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
 
-        if (stringFlags.isNotEmpty()) {
-            for (flag in stringFlags) {
-                val parts = flag.split("|")
-                if (parts.size == 2) {
-                    val text = parts[0]
-                    val value = parts[1]
+        if (stringFlags.isEmpty())
+            emit(FlagChangeUiStates.Error())
 
-                    stringFlagsMap[text] = value
-                }
-            }
-        } else {
-            emit(FlagChangeOtherTypesUiStates.Error())
-        }
+        emit(FlagChangeUiStates.Success(stringFlags))
 
-        emit(FlagChangeOtherTypesUiStates.Success(stringFlagsMap))
+    }
 
+    fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
+
+    fun androidPackage(pkgName: String): String {
+
+        val users = gmsApplication.getRootDatabase().androidPackage(pkgName)
+        return users
+    }
+    
+    fun deleteRowByFlagName(packageName: String, name: String) {
+        gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
     }
 
 }
