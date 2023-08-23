@@ -51,16 +51,16 @@ class RootDatabase : RootService() {
                 this@RootDatabase.deleteRowByFlagName(packageName, name)
 
             override fun overrideFlag(
-                packageName: String,
-                user: String,
-                name: String,
-                flagType: String?,
+                packageName: String?,
+                user: String?,
+                name: String?,
+                flagType: Int,
                 intVal: String?,
                 boolVal: String?,
                 floatVal: String?,
                 stringVal: String?,
                 extensionVal: String?,
-                committed: String
+                committed: Int
             ) {
                 return this@RootDatabase.overrideFlag(
                     packageName,
@@ -120,27 +120,27 @@ class RootDatabase : RootService() {
     }
 
     fun overrideFlag(
-        packageName: String,
-        user: String,
-        name: String,
-        flagType: String?,
+        packageName: String?,
+        user: String?,
+        name: String?,
+        flagType: Int,
         intVal: String?,
         boolVal: String?,
         floatVal: String?,
         stringVal: String?,
         extensionVal: String?,
-        committed: String
+        committed: Int
     ) {
         val values = ContentValues().apply {
             put("packageName", packageName)
             put("user", user)
             put("name", name)
-            put("flagType", flagType?.toIntOrNull() ?: 0)
-            put("intVal", intVal?.toIntOrNull())
-            put("boolVal", boolVal?.toIntOrNull())
-            put("floatVal", floatVal?.toFloatOrNull()) // todo: check type
+            put("flagType", flagType)
+            put("intVal", intVal)
+            put("boolVal", boolVal)
+            put("floatVal", floatVal) // todo: check type
             put("stringVal", stringVal)
-            put("extensionVal", extensionVal?.toByteArray())
+            put("extensionVal", extensionVal)
             put("committed", committed)
         }
 

@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -14,6 +15,14 @@ import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.data.db.RootDatabase
 
 class GMSApplication : Application() {
+
+    init {
+        Shell.setDefaultBuilder(
+            Shell.Builder.create()
+                .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
+                .setTimeout(10)
+        )
+    }
 
     private var isRootDatabaseInitialized = false
     private lateinit var rootDatabase: IRootDatabase

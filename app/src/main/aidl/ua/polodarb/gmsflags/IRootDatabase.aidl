@@ -13,15 +13,15 @@ interface IRootDatabase {
     void deleteRowByFlagName(String packageName, String name);
 
     void overrideFlag(
-    String packageName,
-    String user,
-    String name,
-    String flagType,
-    String intVal,
-    String boolVal,
-    String floatVal,
-    String stringVal,
-    String extensionVal,
-    String committed
+        String packageName,
+        String user,
+        String name,
+        int flagType,
+        String intVal,
+        String boolVal,
+        String floatVal,
+        String stringVal,
+        String extensionVal,
+        int committed
     );
 }

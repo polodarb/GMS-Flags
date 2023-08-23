@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.apache.commons.io.FileUtils
 import ua.polodarb.gmsflags.data.repo.DatabaseRepository
 import java.io.IOException
 
@@ -271,32 +270,23 @@ class FlagChangeScreenViewModel(
             FlagChangeUiStates.Error()
     }
 
-    // Clear Phenotype cache
-    fun clearPhenotypeCache(pkgName: String) { // todo: not working!!!!
-        Log.d("clear", "1")
+    fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.androidPackage(pkgName)
-        Shell.cmd("am kill all $androidPkgName").exec()
         Shell.cmd("am force-stop $androidPkgName").exec()
-
-//        val dir = File("/data/data/$androidPkgName/files/phenotype")
-//        dir.deleteRecursively()
-//        Runtime.getRuntime().exec("su rm -rf /data/data/com.google.android.videos/files/phenotype").errorStream
-//        val p = Runtime.getRuntime().exec(arrayOf("cd data/data/com.google.android.videos/", "ls"))
-//        Log.e("su", p.inputStream.read().toString())
-
+        Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
     }
 
     // Override Flag
     fun overrideFlag(
         packageName: String,
         name: String,
-        flagType: String? = "0",
+        flagType: Int = 0,
         intVal: String? = null,
         boolVal: String? = null,
         floatVal: String? = null,
         stringVal: String? = null,
         extensionVal: String? = null,
-        committed: String = "0"
+        committed: Int = 0
     ) {
         repository.deleteRowByFlagName(packageName, name)
         repository.overrideFlag(

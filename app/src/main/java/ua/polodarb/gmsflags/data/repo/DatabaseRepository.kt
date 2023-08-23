@@ -15,16 +15,16 @@ class DatabaseRepository(
     private val gmsApplication = context as GMSApplication
 
     fun overrideFlag(
-        packageName: String,
-        user: String,
-        name: String,
-        flagType: String?,
+        packageName: String?,
+        user: String?,
+        name: String?,
+        flagType: Int,
         intVal: String?,
         boolVal: String?,
         floatVal: String?,
         stringVal: String?,
         extensionVal: String?,
-        committed: String
+        committed: Int
     ) {
 
         gmsApplication.getRootDatabase().overrideFlag(
