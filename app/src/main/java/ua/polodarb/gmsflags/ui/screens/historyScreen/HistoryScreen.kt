@@ -1,10 +1,12 @@
 package ua.polodarb.gmsflags.ui.screens.historyScreen
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,13 +21,21 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
 import ua.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(
+    onSettingsClick: () -> Unit,
+    onPackagesClick: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -51,22 +61,31 @@ fun HistoryScreen() {
                             contentDescription = "Localized description"
                         )
                     }
+                    IconButton(onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onPackagesClick()
+                    }) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_packages),
+                            contentDescription = "Localized description"
+                        )
+                    }
+                    IconButton(onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onSettingsClick()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior
             )
         }
     ) { it ->
-        LazyColumn(
-            contentPadding = it
-        ) {
-            items(100) {
-                Text(
-                    text = "Item $it",
-                    modifier = Modifier.padding(16.dp),
-                    style = Typography.bodyMedium
-                )
-                Divider()
-            }
+        Column(modifier = Modifier.padding(it)) {
+            NotImplementedScreen()
         }
     }
 }

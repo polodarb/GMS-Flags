@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.dialogs.FlagReportDialog
+import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,41 +121,44 @@ fun SuggestionsScreen(
             )
         }
     ) { it ->
-        LazyColumn(
-            contentPadding = it,
-            state = listState
-        ) {
-            items(5) {
-                Column {
-                    ListItem(
-                        headlineContent = { Text("The new UI of Google Files") },
-                        supportingContent = { Text("Finder: Nikola Brown") },
-                        trailingContent = {
-                            Row {
-                                var checked by rememberSaveable { mutableStateOf(false) } // todo: remove it
-                                FilledTonalIconButton(
-                                    onClick = { showDialog.value = true },
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                ) {
-                                    Icon(
-                                        painterResource(id = R.drawable.ic_report),
-                                        contentDescription = "Localized description"
-                                    )
-                                }
-                                Switch(
-                                    checked = checked,
-                                    onCheckedChange = { checked = it },
-                                    enabled = false
-                                )
-                            }
-                        },
-                    )
-                }
-            }
-            item {
-                Spacer(modifier = Modifier.padding(44.dp))
-            }
+        Column(modifier = Modifier.padding(it)) {
+            NotImplementedScreen()
         }
+//        LazyColumn(
+//            contentPadding = it,
+//            state = listState
+//        ) {
+//            items(1) {
+//                Column {
+//                    ListItem(
+//                        headlineContent = { Text("The new UI of Google Files") },
+//                        supportingContent = { Text("Finder: Nikola Brown") },
+//                        trailingContent = {
+//                            Row {
+//                                var checked by rememberSaveable { mutableStateOf(false) } // todo: remove it
+//                                FilledTonalIconButton(
+//                                    onClick = { showDialog.value = true },
+//                                    modifier = Modifier.padding(horizontal = 16.dp)
+//                                ) {
+//                                    Icon(
+//                                        painterResource(id = R.drawable.ic_report),
+//                                        contentDescription = "Localized description"
+//                                    )
+//                                }
+//                                Switch(
+//                                    checked = checked,
+//                                    onCheckedChange = { checked = it },
+//                                    enabled = false
+//                                )
+//                            }
+//                        },
+//                    )
+//                }
+//            }
+//            item {
+//                Spacer(modifier = Modifier.padding(44.dp))
+//            }
+//        }
         FlagReportDialog(
             showDialog.value,
             onDismiss = { showDialog.value = false }

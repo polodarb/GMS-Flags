@@ -9,6 +9,8 @@ import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.nio.ExtendedFile
 import com.topjohnwu.superuser.nio.FileSystemManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,11 +47,40 @@ class FlagChangeScreenViewModel(
     fun updateBoolFlagValue(flagName: String, newValue: String) {
         val currentState = _stateBoolean.value
         if (currentState is FlagChangeUiStates.Success) {
-            Log.e("suc", currentState.toString())
             val updatedData = currentState.data.toMutableMap()
             updatedData[flagName] = newValue
             _stateBoolean.value = currentState.copy(data = updatedData)
             listBoolFiltered.replace(flagName, newValue)
+        }
+    }
+
+    fun updateIntFlagValue(flagName: String, newValue: String) {
+        val currentState = _stateInteger.value
+        if (currentState is FlagChangeUiStates.Success) {
+            val updatedData = currentState.data.toMutableMap()
+            updatedData[flagName] = newValue
+            _stateInteger.value = currentState.copy(data = updatedData)
+            listIntFiltered.replace(flagName, newValue)
+        }
+    }
+
+    fun updateFloatFlagValue(flagName: String, newValue: String) {
+        val currentState = _stateFloat.value
+        if (currentState is FlagChangeUiStates.Success) {
+            val updatedData = currentState.data.toMutableMap()
+            updatedData[flagName] = newValue
+            _stateFloat.value = currentState.copy(data = updatedData)
+            listFloatFiltered.replace(flagName, newValue)
+        }
+    }
+
+    fun updateStringFlagValue(flagName: String, newValue: String) {
+        val currentState = _stateString.value
+        if (currentState is FlagChangeUiStates.Success) {
+            val updatedData = currentState.data.toMutableMap()
+            updatedData[flagName] = newValue
+            _stateString.value = currentState.copy(data = updatedData)
+            listStringFiltered.replace(flagName, newValue)
         }
     }
 
@@ -272,8 +303,15 @@ class FlagChangeScreenViewModel(
 
     fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.androidPackage(pkgName)
-        Shell.cmd("am force-stop $androidPkgName").exec()
-        Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
+        viewModelScope.launch {
+            Shell.cmd("am force-stop $androidPkgName").exec()
+            Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
+            Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
+            repeat(3) {
+                Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
+                Shell.cmd("am force-stop $androidPkgName").exec()
+            }
+        }
     }
 
     // Override Flag
@@ -315,7 +353,7 @@ class FlagChangeScreenViewModel(
                 committed = committed
             )
         }
-//        clearPhenotypeCache(pkgName)
+        clearPhenotypeCache(pkgName)
     }
 
 }

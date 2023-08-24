@@ -90,6 +90,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.view.HapticFeedbackConstantsCompat
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -190,7 +191,17 @@ fun FlagChangeScreen(
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
 
-    val changedFilterBoolList = mutableMapOf<String, Boolean>()
+    // IntFloatStrValues
+    val intEditTextValue = rememberSaveable {
+        mutableStateOf("")
+    }
+    val floatEditTextValue = rememberSaveable {
+        mutableStateOf("")
+    }
+    val stringEditTextValue = rememberSaveable {
+        mutableStateOf("")
+    }
+
 
     LaunchedEffect(
         viewModel.filterMethod.value,
@@ -522,6 +533,7 @@ fun FlagChangeScreen(
                                                 onClick = {
                                                     flagName = item.first
                                                     flagValue = item.second
+                                                    intEditTextValue.value = flagValue
                                                     showDialog.value = true
                                                 },
                                                 onLongClick = {
@@ -541,25 +553,32 @@ fun FlagChangeScreen(
                                     FlagChangeDialog(
                                         showDialog = showDialog.value,
                                         flagName = flagName,
-                                        flagValue = flagValue,
+                                        flagValue = intEditTextValue.value,
                                         onQueryChange = {
-                                            flagValue = it
+                                            intEditTextValue.value = it
                                         },
                                         flagType = "Integer",
                                         onConfirm = {
-                                            Toast.makeText(
-                                                context,
-                                                "Not implemented",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            showDialog.value = false
+                                            viewModel.overrideFlag(
+                                                packageName = packageName.toString(),
+                                                name = flagName,
+                                                intVal = intEditTextValue.value
+                                            )
+                                            viewModel.updateIntFlagValue(
+                                                flagName,
+                                                intEditTextValue.value
+                                            )
                                         },
                                         onDismiss = {
                                             showDialog.value = false
+                                            intEditTextValue.value = flagValue
                                         },
                                         onDefault = {
                                             Toast.makeText(
                                                 context,
-                                                "Reset value",
+                                                "Not implemented",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
@@ -602,6 +621,7 @@ fun FlagChangeScreen(
                                                 onClick = {
                                                     flagName = item.first
                                                     flagValue = item.second
+                                                    floatEditTextValue.value = flagValue
                                                     showDialog.value = true
                                                 },
                                                 onLongClick = {
@@ -621,25 +641,32 @@ fun FlagChangeScreen(
                                     FlagChangeDialog(
                                         showDialog = showDialog.value,
                                         flagName = flagName,
-                                        flagValue = flagValue,
+                                        flagValue = floatEditTextValue.value,
                                         onQueryChange = {
-                                            flagValue = it
+                                            floatEditTextValue.value = it
                                         },
-                                        flagType = "Integer",
+                                        flagType = "Float",
                                         onConfirm = {
-                                            Toast.makeText(
-                                                context,
-                                                "Not implemented",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            showDialog.value = false
+                                            viewModel.overrideFlag(
+                                                packageName = packageName.toString(),
+                                                name = flagName,
+                                                floatVal = floatEditTextValue.value
+                                            )
+                                            viewModel.updateFloatFlagValue(
+                                                flagName,
+                                                floatEditTextValue.value
+                                            )
                                         },
                                         onDismiss = {
                                             showDialog.value = false
+                                            floatEditTextValue.value = flagValue
                                         },
                                         onDefault = {
                                             Toast.makeText(
                                                 context,
-                                                "Reset value",
+                                                "Not implemented",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
@@ -683,6 +710,7 @@ fun FlagChangeScreen(
                                                 onClick = {
                                                     flagName = item.first
                                                     flagValue = item.second
+                                                    stringEditTextValue.value = flagValue
                                                     showDialog.value = true
                                                 },
                                                 onLongClick = {
@@ -702,25 +730,32 @@ fun FlagChangeScreen(
                                     FlagChangeDialog(
                                         showDialog = showDialog.value,
                                         flagName = flagName,
-                                        flagValue = flagValue,
+                                        flagValue = stringEditTextValue.value,
                                         onQueryChange = {
-                                            flagValue = it
+                                            stringEditTextValue.value = it
                                         },
-                                        flagType = "Integer",
+                                        flagType = "String",
                                         onConfirm = {
-                                            Toast.makeText(
-                                                context,
-                                                "Not implemented",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            showDialog.value = false
+                                            viewModel.overrideFlag(
+                                                packageName = packageName.toString(),
+                                                name = flagName,
+                                                stringVal = stringEditTextValue.value
+                                            )
+                                            viewModel.updateStringFlagValue(
+                                                flagName,
+                                                stringEditTextValue.value
+                                            )
                                         },
                                         onDismiss = {
                                             showDialog.value = false
+                                            stringEditTextValue.value = flagValue
                                         },
                                         onDefault = {
                                             Toast.makeText(
                                                 context,
-                                                "Reset value",
+                                                "Not implemented",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
