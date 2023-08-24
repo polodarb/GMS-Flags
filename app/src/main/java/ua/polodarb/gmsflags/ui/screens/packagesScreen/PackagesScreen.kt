@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -74,8 +75,8 @@ fun PackagesScreen(
     val viewModel = koinViewModel<PackagesScreenViewModel>()
     val uiState = viewModel.state.collectAsState()
 
-    val list: MutableList<String> by remember {
-        mutableStateOf(mutableListOf())
+    val list = remember {
+        mutableStateMapOf<String, String>()
     }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -89,7 +90,7 @@ fun PackagesScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(searchIconState){
+    LaunchedEffect(searchIconState) {
         if (searchIconState)
             focusRequester.requestFocus()
     }
@@ -100,14 +101,15 @@ fun PackagesScreen(
     }
 
     // state to hold the filtered list
-    val filteredListState = remember { mutableStateListOf<String>() }
+    val filteredListState = remember { mutableStateMapOf<String, String>() }
 
     LaunchedEffect(uiState.value, searchQuery) {
         when (val state = uiState.value) {
             is ScreenUiStates.Success -> {
-                val filteredList = state.data.filter { it.contains(searchQuery, ignoreCase = true) }
+                val filteredList =
+                    state.data.filter { it.key.contains(searchQuery, ignoreCase = true) }
                 filteredListState.clear()
-                filteredListState.addAll(filteredList)
+                filteredListState.putAll(filteredList)
             }
 
             else -> {}
@@ -191,7 +193,9 @@ fun PackagesScreen(
                             },
                             active = false,
                             onActiveChange = { },
-                            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
                         ) { }
                     }
                 }
@@ -205,9 +209,9 @@ fun PackagesScreen(
         ) {
             when (uiState.value) {
                 is ScreenUiStates.Success -> {
-                    list.addAll((uiState.value as ScreenUiStates.Success).data)
+                    list.putAll((uiState.value as ScreenUiStates.Success).data)
                     SuccessListItems(
-                        list = filteredListState.toList(),
+                        list = filteredListState,
                         onFlagClick = onFlagClick
                     )
                 }
@@ -226,20 +230,20 @@ fun PackagesScreen(
 
 @Composable
 private fun SuccessListItems(
-    list: List<String>,
+    list: Map<String, String>,
     onFlagClick: (packageName: String) -> Unit
 ) {
 
     //todo: This code have problems with recompositions
 
     LazyColumn {
-        itemsIndexed(list) { index, item ->
+        itemsIndexed(list.toList()) { index, item ->
             LazyItem(
-                packageName = item.split("|")[0],
-                packagesCount = (item.split("|")[1]).toInt(),
+                packageName = item.first,
+                packagesCount = item.second.toInt(),
                 lastItem = index == list.size - 1,
                 modifier = Modifier.clickable {
-                    onFlagClick(item.split("|")[0])
+                    onFlagClick(item.first)
                 })
         }
         item {

@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.MainActivity
+import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,41 +64,8 @@ fun SettingsScreen(
             }
         }
     ) { it ->
-        Column(
-            modifier = Modifier.padding(it)
-        ) {
-            Button(onClick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    (context as GMSApplication).getRootDatabase().getGmsPackages()
-                }
-            }) {
-                Text(text = "Click me!!!")
-            }
-            Divider()
-            IconButton(
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search"
-                )
-            }
-            Divider()
-            IconButton(
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings"
-                )
-            }
-            Divider()
+        Column(modifier = Modifier.padding(it)) {
+            NotImplementedScreen()
         }
     }
 }

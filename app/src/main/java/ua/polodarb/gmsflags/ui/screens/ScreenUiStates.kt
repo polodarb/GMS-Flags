@@ -4,7 +4,7 @@ sealed interface ScreenUiStates {
     data object Loading : ScreenUiStates
 
     data class Success(
-        val data: List<String>
+        val data: Map<String, String>
     ) : ScreenUiStates
 
     data class Error(

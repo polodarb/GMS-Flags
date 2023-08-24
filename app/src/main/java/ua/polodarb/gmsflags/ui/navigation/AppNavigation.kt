@@ -60,13 +60,34 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             )
         }
         composable(route = NavBarItem.Apps.screenRoute) {
-            AppsScreen()
+            AppsScreen(
+                onSettingsClick = {
+                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+                },
+                onPackagesClick = {
+                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                }
+            )
         }
         composable(route = NavBarItem.Saved.screenRoute) {
-            SavedScreen()
+            SavedScreen(
+                onSettingsClick = {
+                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+                },
+                onPackagesClick = {
+                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                }
+            )
         }
         composable(route = NavBarItem.History.screenRoute) {
-            HistoryScreen()
+            HistoryScreen(
+                onSettingsClick = {
+                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+                },
+                onPackagesClick = {
+                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                }
+            )
         }
     }
 }

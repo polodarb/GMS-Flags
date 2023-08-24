@@ -58,10 +58,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SavedScreen() {
+fun SavedScreen(
+    onSettingsClick: () -> Unit,
+    onPackagesClick: () -> Unit
+) {
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val context = LocalContext.current
@@ -103,7 +107,7 @@ fun SavedScreen() {
                         }
                         IconButton(onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                            onPackagesClick()
+                            onPackagesClick()
                         }) {
                             Icon(
                                 painterResource(id = R.drawable.ic_packages),
@@ -112,7 +116,7 @@ fun SavedScreen() {
                         }
                         IconButton(onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                            onSettingsClick()
+                            onSettingsClick()
                         }) {
                             Icon(
                                 imageVector = Icons.Outlined.Settings,
@@ -172,8 +176,10 @@ fun SavedScreen() {
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {
-                0 -> SavedPackagesScreen()
-                1 -> SavedFlagsScreen()
+//                0 -> SavedPackagesScreen()
+//                1 -> SavedFlagsScreen()
+                0 -> NotImplementedScreen()
+                1 -> NotImplementedScreen()
             }
         }
     }

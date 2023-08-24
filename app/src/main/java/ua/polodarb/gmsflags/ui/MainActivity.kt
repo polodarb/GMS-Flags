@@ -21,16 +21,6 @@ class MainActivity : ComponentActivity() {
 
     private var shellInitialized: Boolean = false
 
-    init {
-        if (shellInitialized) {
-            Shell.setDefaultBuilder(
-                Shell.Builder.create()
-                    .setFlags(Shell.FLAG_REDIRECT_STDERR)
-                    .setTimeout(10)
-            )
-        }
-    }
-
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

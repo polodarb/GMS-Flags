@@ -46,6 +46,8 @@ object Extensions {
             .width(indicatorWidth)
 
     }
+
+    fun Boolean.toInt() = if (this) 1 else 0
 }
 
 @Stable

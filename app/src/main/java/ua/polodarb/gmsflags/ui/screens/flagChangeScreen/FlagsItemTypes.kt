@@ -45,7 +45,7 @@ fun BoolValItem(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-            IconToggleButton(checked = false, onCheckedChange = onCheckedChange) { // todo
+            IconToggleButton(checked = false, onCheckedChange = {  }) { // todo
                 if (false) { //todo
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),

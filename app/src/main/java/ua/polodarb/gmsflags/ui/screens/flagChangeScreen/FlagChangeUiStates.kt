@@ -1,13 +1,13 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-sealed interface FlagChangeOtherTypesUiStates {
-    data object Loading : FlagChangeOtherTypesUiStates
+sealed interface FlagChangeUiStates {
+    data object Loading : FlagChangeUiStates
 
     data class Success(
         val data: Map<String, String>
-    ) : FlagChangeOtherTypesUiStates
+    ) : FlagChangeUiStates
 
     data class Error(
         val throwable: Throwable? = null
-    ) : FlagChangeOtherTypesUiStates
+    ) : FlagChangeUiStates
 }
