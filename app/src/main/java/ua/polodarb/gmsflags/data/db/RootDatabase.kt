@@ -47,6 +47,9 @@ class RootDatabase : RootService() {
             override fun getUsers(): MutableList<String> =
                 this@RootDatabase.getUsers()
 
+            override fun getListByPackages(pkgName: String): List<String> =
+                this@RootDatabase.getListByPackages(pkgName)
+
             override fun deleteRowByFlagName(packageName: String, name: String) =
                 this@RootDatabase.deleteRowByFlagName(packageName, name)
 
@@ -96,6 +99,18 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             val user = cursor.getString(0)
             list.add(user)
+        }
+        return list
+    }
+
+    fun getListByPackages(pkgName: String): List<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT packageName FROM Flags WHERE packageName LIKE '%$pkgName%';", null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            val item = cursor.getString(0)
+            list.add(item)
         }
         return list
     }

@@ -34,7 +34,7 @@ fun FlagChangeDialog(
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = onDismiss,
+            onDismissRequest = {},
             title = { Text(text = "Changing flag's value") },
             text = {
                 Column {

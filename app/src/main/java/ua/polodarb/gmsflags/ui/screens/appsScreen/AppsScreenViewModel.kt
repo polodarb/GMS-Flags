@@ -19,8 +19,42 @@ class AppsScreenViewModel(
         MutableStateFlow<AppsScreenUiStates>(AppsScreenUiStates.Loading)
     val state: StateFlow<AppsScreenUiStates> = _state.asStateFlow()
 
+    private val _dialogDataState =
+        MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
+    val dialogDataState: StateFlow<DialogUiStates> = _dialogDataState.asStateFlow()
+
+    private val _dialogPackage =
+        MutableStateFlow<String>("")
+    val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
+
     init {
         getAllInstalledApps()
+    }
+
+    fun setPackageToDialog(pkgName: String) {
+        _dialogPackage.value = pkgName
+    }
+
+    fun getListByPackages(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getListByPackages(pkgName).collect { uiStates ->
+                    when (uiStates) {
+                        is DialogUiStates.Success -> {
+                            _dialogDataState.value = DialogUiStates.Success(uiStates.data)
+                        }
+
+                        is DialogUiStates.Loading -> {
+                            _dialogDataState.value = DialogUiStates.Loading
+                        }
+
+                        is DialogUiStates.Error -> {
+                            _dialogDataState.value = DialogUiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun getAllInstalledApps() {

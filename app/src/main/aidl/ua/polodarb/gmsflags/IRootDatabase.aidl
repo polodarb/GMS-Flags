@@ -6,6 +6,7 @@ interface IRootDatabase {
     Map<String, String> getIntFlags(String pkgName);
     Map<String, String> getFloatFlags(String pkgName);
     Map<String, String> getStringFlags(String pkgName);
+    List<String> getListByPackages(String pkgName);
 
     String androidPackage(String pkgName);
     List<String> getUsers();

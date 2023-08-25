@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppInfo
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
+import ua.polodarb.gmsflags.ui.screens.appsScreen.DialogUiStates
 
 class AppsListRepository(
     private val context: Context
@@ -50,5 +52,12 @@ class AppsListRepository(
         }.sortedBy { it.appName }
 
         emit(AppsScreenUiStates.Success(list))
+    }
+
+    fun getListByPackages(pkgName: String) = flow<DialogUiStates> {
+        val context = context as GMSApplication
+        val list = context.getRootDatabase().getListByPackages(pkgName)
+        Log.e("list", list.toString())
+        emit(DialogUiStates.Success(list))
     }
 }

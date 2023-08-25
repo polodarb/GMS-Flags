@@ -30,6 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,6 +67,10 @@ fun AppsScreen(
 
     val viewModel = koinViewModel<AppsScreenViewModel>()
     val uiState = viewModel.state.collectAsState()
+    val dialogPackageText = viewModel.dialogPackage.collectAsState()
+    val dialogDataState = viewModel.dialogDataState.collectAsState()
+
+    val showDialog = rememberSaveable { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
@@ -131,12 +138,34 @@ fun AppsScreen(
                                 appIcon = item.icon,
                                 flagsCount = item.packageNameCounts.toString(),
                                 onClick = {
-                                    Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
+                                    viewModel.getListByPackages(item.applicationInfo.packageName)
+                                    viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                                    showDialog.value = true
                                 })
                         }
                         item {
                             Spacer(modifier = Modifier.padding(12.dp))
                         }
+                    }
+                    when (dialogDataState.value) {
+                        is DialogUiStates.Success -> {
+
+                            val dialogPackagesList =
+                                (dialogDataState.value as DialogUiStates.Success).data
+
+                            AppsScreenDialog(
+                                showDialog.value,
+                                onDismiss = { showDialog.value = false },
+                                pkgName = dialogPackageText.value,
+                                list = dialogPackagesList
+                            )
+                        }
+
+                        is DialogUiStates.Loading -> {
+                            LoadingProgressBar()
+                        }
+
+                        is DialogUiStates.Error -> { }
                     }
                 }
 
