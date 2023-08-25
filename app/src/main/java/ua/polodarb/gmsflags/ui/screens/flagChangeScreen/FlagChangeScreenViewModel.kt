@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.nio.ExtendedFile
 import com.topjohnwu.superuser.nio.FileSystemManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -303,10 +304,9 @@ class FlagChangeScreenViewModel(
 
     fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.androidPackage(pkgName)
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
             repeat(3) {
                 Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
                 Shell.cmd("am force-stop $androidPkgName").exec()

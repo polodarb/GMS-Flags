@@ -372,9 +372,9 @@ fun FlagChangeScreen(
                                     disabledLabelColor = Color.Transparent,
                                     disabledLeadingIconColor = Color.Transparent,
                                     disabledTrailingIconColor = Color.Transparent,
-                                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    selectedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                                     disabledSelectedContainerColor = Color.Transparent,
-                                    selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                     selectedLeadingIconColor = Color.Transparent,
                                     selectedTrailingIconColor = Color.Transparent
                                 ),
