@@ -12,7 +12,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import ua.polodarb.gmsflags.IRootDatabase
-import ua.polodarb.gmsflags.data.db.RootDatabase
+import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 
 class GMSApplication : Application() {
 

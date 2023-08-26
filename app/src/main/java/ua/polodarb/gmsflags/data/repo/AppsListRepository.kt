@@ -49,6 +49,12 @@ class AppsListRepository(
         val list = filteredAppInfoList.filter { appInfo ->
             val packageName = appInfo.applicationInfo.packageName
             (packageNameCounts[packageName] ?: 0) > 0
+        }.filterNot {
+            if(it.applicationInfo.packageName == "com.google.android.gm") {
+                it.applicationInfo.packageName.contains("gms")
+            } else {
+                false
+            }
         }.sortedBy { it.appName }
 
         emit(AppsScreenUiStates.Success(list))
@@ -56,8 +62,13 @@ class AppsListRepository(
 
     fun getListByPackages(pkgName: String) = flow<DialogUiStates> {
         val context = context as GMSApplication
-        val list = context.getRootDatabase().getListByPackages(pkgName)
-        Log.e("list", list.toString())
+        val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {
+            if(pkgName == "com.google.android.gm") {
+                it.contains("gms")
+            } else {
+                false
+            }
+        }
         emit(DialogUiStates.Success(list))
     }
 }

@@ -62,7 +62,8 @@ import ua.polodarb.gmsflags.ui.theme.Typography
 @Composable
 fun AppsScreen(
     onSettingsClick: () -> Unit,
-    onPackagesClick: () -> Unit
+    onPackagesClick: () -> Unit,
+    onPackageItemClick: (packageName: String) -> Unit,
 ) {
 
     val viewModel = koinViewModel<AppsScreenViewModel>()
@@ -157,7 +158,10 @@ fun AppsScreen(
                                 showDialog.value,
                                 onDismiss = { showDialog.value = false },
                                 pkgName = dialogPackageText.value,
-                                list = dialogPackagesList
+                                list = dialogPackagesList,
+                                onPackageClick = {
+                                    onPackageItemClick(it)
+                                }
                             )
                         }
 

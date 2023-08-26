@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 fun AppsScreenDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
+    onPackageClick: (packageName: String) -> Unit,
     pkgName: String,
     list: List<String>
 ) {
@@ -72,7 +74,7 @@ fun AppsScreenDialog(
                         onActiveChange = {},
                     ) {}
                     Spacer(modifier = Modifier.height(6.dp))
-                    DialogPackagesList(list, pkgName)
+                    DialogPackagesList(list, pkgName, onPackageClick)
                 }
             },
             properties = DialogProperties().let {
@@ -93,16 +95,16 @@ fun AppsScreenDialog(
 }
 
 @Composable
-fun DialogPackagesList(allPackages: List<String>, pkgName: String) {
-    if (checkAppsListSeparation(allPackages, pkgName)) {
-        DialogListWithSeparator(allPackages, pkgName)
+fun DialogPackagesList(allPackages: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit) {
+    if (checkAppsListSeparation(allPackages, pkgName) && allPackages.size != 1) {
+        DialogListWithSeparator(allPackages, pkgName, onPackageClick)
     } else {
-        DialogListWithoutSeparator(allPackages, pkgName)
+        DialogListWithoutSeparator(allPackages, pkgName, onPackageClick)
     }
 }
 
 @Composable
-fun DialogListWithSeparator(packagesList: List<String>, pkgName: String) {
+fun DialogListWithSeparator(packagesList: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit,) {
     val filteredPrimaryList = packagesList
         .filter {
             if (pkgName == "com.google.android.googlequicksearchbox")
@@ -125,7 +127,9 @@ fun DialogListWithSeparator(packagesList: List<String>, pkgName: String) {
                     it.contains("user#$pkgName")
         }
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+    ) {
         item {
             SeparatorText("Primary")
         }
@@ -133,7 +137,8 @@ fun DialogListWithSeparator(packagesList: List<String>, pkgName: String) {
             DialogListItem(
                 itemText = item,
                 listStart = index == 0,
-                listEnd = index == filteredPrimaryList.size - 1
+                listEnd = index == filteredPrimaryList.size - 1,
+                onPackageClick = onPackageClick
             )
         }
         item {
@@ -143,7 +148,8 @@ fun DialogListWithSeparator(packagesList: List<String>, pkgName: String) {
             DialogListItem(
                 itemText = item,
                 listStart = index == 0,
-                listEnd = index == filteredSecondaryList.size - 1
+                listEnd = index == filteredSecondaryList.size - 1,
+                onPackageClick = onPackageClick
             )
         }
     }
@@ -161,13 +167,14 @@ fun SeparatorText(text: String) {
 }
 
 @Composable
-fun DialogListWithoutSeparator(packagesList: List<String>, pkgName: String) {
-    LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
+fun DialogListWithoutSeparator(packagesList: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit,) {
+    LazyColumn(modifier = Modifier.padding(top = 16.dp).clip(RoundedCornerShape(16.dp))) {
         itemsIndexed(packagesList.toList()) { index: Int, item: String ->
             DialogListItem(
                 itemText = item,
                 listStart = index == 0,
-                listEnd = index == packagesList.size - 1
+                listEnd = index == packagesList.size - 1,
+                onPackageClick = onPackageClick
             )
         }
     }
@@ -178,7 +185,8 @@ fun DialogListItem(
     itemText: String,
     listStart: Boolean,
     listEnd: Boolean,
-) {
+    onPackageClick: (packageName: String) -> Unit,
+    ) {
     Box(
         modifier = Modifier
             .padding(
@@ -222,6 +230,7 @@ fun DialogListItem(
                 }
             )
             .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            .clickable { onPackageClick(itemText) }
     ) {
         Text(
             text = itemText,

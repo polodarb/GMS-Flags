@@ -1,11 +1,10 @@
-package ua.polodarb.gmsflags.data.db
+package ua.polodarb.gmsflags.data.databases.gms
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.os.IBinder
-import android.os.Process
 import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase

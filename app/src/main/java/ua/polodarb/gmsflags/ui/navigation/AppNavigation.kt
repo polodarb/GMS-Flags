@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -66,6 +67,11 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 },
                 onPackagesClick = {
                     parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                },
+                onPackageItemClick = {
+                    navController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                    )
                 }
             )
         }
