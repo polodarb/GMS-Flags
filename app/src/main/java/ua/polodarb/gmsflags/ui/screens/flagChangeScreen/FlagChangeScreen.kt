@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -90,7 +89,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.view.HapticFeedbackConstantsCompat
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -934,17 +932,6 @@ fun FlagChangeDropDown(
                         )
                     },
                     enabled = false
-                )
-                DropdownMenuItem(
-                    text = { Text("Clear package cache") },
-                    onClick = onClearCache,
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_force_stop),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = true
                 )
             }
         }

@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.ui.navigation
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

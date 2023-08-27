@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BoolValItem(
     flagName: String,
@@ -39,10 +40,23 @@ fun BoolValItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    var select by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Column {
         Row(
             modifier = modifier
                 .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = {},
+                    onDoubleClick = {
+                        select = !select
+                    }
+                )
+                .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             IconToggleButton(checked = false, onCheckedChange = {  }) { // todo
@@ -67,7 +81,11 @@ fun BoolValItem(
             )
         }
     }
-    if (!lastItem) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+    if (!lastItem) HorizontalDivider(
+        Modifier
+            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .padding(horizontal = 16.dp)
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -105,13 +123,7 @@ fun IntFloatStringValItem(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-//            Box( // indicator
-//                modifier = Modifier
-//                    .padding(start = 8.dp)
-//                    .size(width = 4.dp, height = 32.dp)
-//                    .clip(CircleShape)
-//                    .background(MaterialTheme.colorScheme.error)
-//            )
+
             IconToggleButton(
                 checked = savedButtonChecked,
                 onCheckedChange = savedButtonOnChecked

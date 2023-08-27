@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -86,7 +85,7 @@ fun AppsScreenDialog(
                 )
             },
             confirmButton = {
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(onClick = onDismiss ) {
                     Text(text = "Exit")
                 }
             }
@@ -95,7 +94,11 @@ fun AppsScreenDialog(
 }
 
 @Composable
-fun DialogPackagesList(allPackages: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit) {
+fun DialogPackagesList(
+    allPackages: List<String>,
+    pkgName: String,
+    onPackageClick: (packageName: String) -> Unit
+) {
     if (checkAppsListSeparation(allPackages, pkgName) && allPackages.size != 1) {
         DialogListWithSeparator(allPackages, pkgName, onPackageClick)
     } else {
@@ -104,7 +107,11 @@ fun DialogPackagesList(allPackages: List<String>, pkgName: String, onPackageClic
 }
 
 @Composable
-fun DialogListWithSeparator(packagesList: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit,) {
+fun DialogListWithSeparator(
+    packagesList: List<String>,
+    pkgName: String,
+    onPackageClick: (packageName: String) -> Unit,
+) {
     val filteredPrimaryList = packagesList
         .filter {
             if (pkgName == "com.google.android.googlequicksearchbox")
@@ -167,8 +174,14 @@ fun SeparatorText(text: String) {
 }
 
 @Composable
-fun DialogListWithoutSeparator(packagesList: List<String>, pkgName: String, onPackageClick: (packageName: String) -> Unit,) {
-    LazyColumn(modifier = Modifier.padding(top = 16.dp).clip(RoundedCornerShape(16.dp))) {
+fun DialogListWithoutSeparator(
+    packagesList: List<String>,
+    pkgName: String,
+    onPackageClick: (packageName: String) -> Unit,
+) {
+    LazyColumn(modifier = Modifier
+        .padding(top = 16.dp)
+        .clip(RoundedCornerShape(16.dp))) {
         itemsIndexed(packagesList.toList()) { index: Int, item: String ->
             DialogListItem(
                 itemText = item,
@@ -186,7 +199,7 @@ fun DialogListItem(
     listStart: Boolean,
     listEnd: Boolean,
     onPackageClick: (packageName: String) -> Unit,
-    ) {
+) {
     Box(
         modifier = Modifier
             .padding(
@@ -234,7 +247,9 @@ fun DialogListItem(
     ) {
         Text(
             text = itemText,
-            modifier = Modifier.fillMaxWidth().padding(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         )
     }
 }

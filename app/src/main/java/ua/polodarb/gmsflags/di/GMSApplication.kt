@@ -24,7 +24,7 @@ class GMSApplication : Application() {
         )
     }
 
-    private var isRootDatabaseInitialized = false
+    var isRootDatabaseInitialized = false
     private lateinit var rootDatabase: IRootDatabase
 
     override fun onCreate() {

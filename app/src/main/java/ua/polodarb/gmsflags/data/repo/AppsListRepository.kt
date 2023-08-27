@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -56,6 +55,8 @@ class AppsListRepository(
                 false
             }
         }.sortedBy { it.appName }
+
+        Log.e("db", "5 - ${(context as GMSApplication).isRootDatabaseInitialized}")
 
         emit(AppsScreenUiStates.Success(list))
     }

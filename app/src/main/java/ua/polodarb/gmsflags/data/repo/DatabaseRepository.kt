@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
