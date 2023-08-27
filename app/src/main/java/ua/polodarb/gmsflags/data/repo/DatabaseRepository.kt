@@ -53,10 +53,10 @@ class DatabaseRepository(
 
     }
 
-    suspend fun getBoolFlags(packageName: String) = flow<FlagChangeUiStates> {
+    suspend fun getBoolFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
 
-        delay(200)
+        if (delay) delay(200)
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
 
@@ -67,10 +67,10 @@ class DatabaseRepository(
 
     }
 
-    suspend fun getIntFlags(packageName: String) = flow<FlagChangeUiStates> {
+    suspend fun getIntFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
 
-        delay(200)
+        if (delay) delay(200)
 
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
 
@@ -81,10 +81,10 @@ class DatabaseRepository(
 
     }
 
-    suspend fun getFloatFlags(packageName: String) = flow<FlagChangeUiStates> {
+    suspend fun getFloatFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
 
-        delay(200)
+        if (delay) delay(200)
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
 
@@ -95,10 +95,10 @@ class DatabaseRepository(
 
     }
 
-    suspend fun getStringFlags(packageName: String) = flow<FlagChangeUiStates> {
+    suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
 
-        delay(200)
+        if (delay) delay(200)
 
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
 
@@ -119,6 +119,10 @@ class DatabaseRepository(
     
     fun deleteRowByFlagName(packageName: String, name: String) {
         gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
+    }
+
+    fun deleteOverriddenFlagByPackage(packageName: String) {
+        gmsApplication.getRootDatabase().deleteOverriddenFlagByPackage(packageName)
     }
 
 }

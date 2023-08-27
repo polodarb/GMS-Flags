@@ -52,6 +52,9 @@ class RootDatabase : RootService() {
             override fun deleteRowByFlagName(packageName: String, name: String) =
                 this@RootDatabase.deleteRowByFlagName(packageName, name)
 
+            override fun deleteOverriddenFlagByPackage(packageName: String) =
+                this@RootDatabase.deleteOverriddenFlagByPackage(packageName)
+
             override fun overrideFlag(
                 packageName: String?,
                 user: String?,
@@ -129,6 +132,15 @@ class RootDatabase : RootService() {
     ) {
         val whereClause = "packageName = ? AND name = ?"
         val whereArgs = arrayOf(packageName, name)
+
+        db.delete("FlagOverrides", whereClause, whereArgs)
+    }
+
+    fun deleteOverriddenFlagByPackage(
+        packageName: String
+    ) {
+        val whereClause = "packageName = ?"
+        val whereArgs = arrayOf(packageName)
 
         db.delete("FlagOverrides", whereClause, whereArgs)
     }

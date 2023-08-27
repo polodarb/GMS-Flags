@@ -12,6 +12,7 @@ interface IRootDatabase {
     List<String> getUsers();
 
     void deleteRowByFlagName(String packageName, String name);
+    void deleteOverriddenFlagByPackage(String packageName);
 
     void overrideFlag(
         String packageName,

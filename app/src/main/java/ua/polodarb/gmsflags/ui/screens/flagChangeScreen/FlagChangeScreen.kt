@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -279,6 +280,22 @@ fun FlagChangeScreen(
                                 onDismissRequest = { dropDownExpanded = false },
                                 onClearCache = {
                                     viewModel.clearPhenotypeCache(packageName!!)
+                                    Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                },
+                                onDeleteOverriddenFlags = {
+                                    viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
+//                                    when (tabState) {
+//                                        0 -> viewModel.initBoolValues(delay = false)
+//                                        1 -> viewModel.initIntValues(delay = false)
+//                                        2 -> viewModel.initFloatValues(delay = false)
+//                                        3 -> viewModel.initStringValues(delay = false)
+//                                    }
+                                    viewModel.initBoolValues(delay = false)
+                                    viewModel.initIntValues(delay = false)
+                                    viewModel.initFloatValues(delay = false)
+                                    viewModel.initStringValues(delay = false)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    dropDownExpanded = false
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
                                 },
                                 modifier = Modifier
@@ -852,6 +869,7 @@ fun FlagChangeDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onClearCache: () -> Unit,
+    onDeleteOverriddenFlags: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -866,17 +884,6 @@ fun FlagChangeDropDown(
                 onDismissRequest = onDismissRequest
             )
             {
-                DropdownMenuItem(
-                    text = { Text("Choose an account") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.AccountCircle,
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
                 DropdownMenuItem(
                     text = { Text("Add flag") },
                     onClick = { /* Handle onClick */ },
@@ -902,14 +909,14 @@ fun FlagChangeDropDown(
                 HorizontalDivider()
                 DropdownMenuItem(
                     text = { Text("Reset all overridden flags") },
-                    onClick = { /* Handle onClick */ },
+                    onClick = onDeleteOverriddenFlags,
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_reset_flags),
                             contentDescription = null
                         )
                     },
-                    enabled = false
+                    enabled = true
                 )
                 DropdownMenuItem(
                     text = { Text("Refresh flags list") },
