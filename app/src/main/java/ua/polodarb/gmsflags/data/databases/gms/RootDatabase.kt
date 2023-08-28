@@ -28,6 +28,8 @@ class RootDatabase : RootService() {
 
             override fun getGmsPackages(): Map<String, String> = this@RootDatabase.getGmsPackages()
 
+            override fun getGooglePackages(): List<String> = this@RootDatabase.getGooglePackages()
+
             override fun getBoolFlags(pkgName: String): Map<String, String> =
                 this@RootDatabase.getBoolFlags(pkgName)
 
@@ -51,6 +53,9 @@ class RootDatabase : RootService() {
 
             override fun deleteRowByFlagName(packageName: String, name: String) =
                 this@RootDatabase.deleteRowByFlagName(packageName, name)
+
+            override fun deleteOverriddenFlagByPackage(packageName: String) =
+                this@RootDatabase.deleteOverriddenFlagByPackage(packageName)
 
             override fun overrideFlag(
                 packageName: String?,
@@ -88,6 +93,24 @@ class RootDatabase : RootService() {
     override fun onDestroy() {
         if (db.isOpen) db.close()
         super.onDestroy()
+    }
+
+    fun getGooglePackages(): List<String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT P.androidPackageName\n" +
+                    "FROM Packages P\n" +
+                    "JOIN (\n" +
+                    "    SELECT DISTINCT\n" +
+                    "        SUBSTR(packageName, INSTR(packageName, '#') + 1) AS sub_package\n" +
+                    "    FROM Flags\n" +
+                    ") F ON P.androidPackageName = F.sub_package;", null
+        )
+        val list = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            val item = cursor.getString(0)
+            list.add(item)
+        }
+        return list
     }
 
     fun getUsers(): MutableList<String> {
@@ -129,6 +152,15 @@ class RootDatabase : RootService() {
     ) {
         val whereClause = "packageName = ? AND name = ?"
         val whereArgs = arrayOf(packageName, name)
+
+        db.delete("FlagOverrides", whereClause, whereArgs)
+    }
+
+    fun deleteOverriddenFlagByPackage(
+        packageName: String
+    ) {
+        val whereClause = "packageName = ?"
+        val whereArgs = arrayOf(packageName)
 
         db.delete("FlagOverrides", whereClause, whereArgs)
     }

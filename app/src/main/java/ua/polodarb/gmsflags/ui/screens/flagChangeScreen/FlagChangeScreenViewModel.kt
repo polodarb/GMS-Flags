@@ -119,11 +119,11 @@ class FlagChangeScreenViewModel(
     }
 
     // Boolean
-    private fun initBoolValues() {
+    fun initBoolValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Log.e("bool", "initBoolValues()")
-                repository.getBoolFlags(pkgName).collect { uiStates ->
+                repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
                             Log.e("bool", "Success INIT")
@@ -192,11 +192,11 @@ class FlagChangeScreenViewModel(
     }
 
     // Integer
-    private fun initIntValues() {
+    fun initIntValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Log.e("bool", "initIntValues()")
-                repository.getIntFlags(pkgName).collect { uiStates ->
+                repository.getIntFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
                             listIntFiltered.putAll(uiStates.data)
@@ -227,11 +227,11 @@ class FlagChangeScreenViewModel(
     }
 
     // Float
-    private fun initFloatValues() {
+    fun initFloatValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Log.e("bool", "initFloatValues()")
-                repository.getFloatFlags(pkgName).collect { uiStates ->
+                repository.getFloatFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
                             listFloatFiltered.putAll(uiStates.data)
@@ -262,11 +262,11 @@ class FlagChangeScreenViewModel(
     }
 
     // String
-    private fun initStringValues() {
+    fun initStringValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Log.e("bool", "initStringValues()")
-                repository.getStringFlags(pkgName).collect { uiStates ->
+                repository.getStringFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
                             listStringFiltered.putAll(uiStates.data)
@@ -348,6 +348,15 @@ class FlagChangeScreenViewModel(
             )
         }
         clearPhenotypeCache(pkgName)
+    }
+
+    // Delete overridden flags
+    fun deleteOverriddenFlagByPackage(packageName: String) {
+        repository.deleteOverriddenFlagByPackage(packageName)
+    }
+
+    fun updateListAfterDelete() {
+
     }
 
 }

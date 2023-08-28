@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags;
 
 interface IRootDatabase {
     Map<String, String> getGmsPackages();
+    List<String> getGooglePackages();
     Map<String, String> getBoolFlags(String pkgName);
     Map<String, String> getIntFlags(String pkgName);
     Map<String, String> getFloatFlags(String pkgName);
@@ -12,6 +13,7 @@ interface IRootDatabase {
     List<String> getUsers();
 
     void deleteRowByFlagName(String packageName, String name);
+    void deleteOverriddenFlagByPackage(String packageName);
 
     void overrideFlag(
         String packageName,
