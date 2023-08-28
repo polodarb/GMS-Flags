@@ -2,6 +2,16 @@ package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,11 +50,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun AppsScreen(
     onSettingsClick: () -> Unit,
@@ -110,8 +121,26 @@ fun AppsScreen(
             }
         }
     ) { it ->
-        Column(modifier = Modifier.padding(top = it.calculateTopPadding())) {
-            when (uiState.value) {
+        AnimatedContent(
+            targetState = uiState.value,
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
+            label = "",
+            transitionSpec = {
+                (fadeIn(tween(230, delayMillis = 350)) + slideInVertically(
+                    initialOffsetY = { (it * 0.05).toInt() },
+                    animationSpec = tween(
+                    durationMillis = 350,
+                    easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f),
+                        delayMillis = 200
+                ))).togetherWith(
+                    fadeOut(
+                        animationSpec = tween(200)
+                    )
+                )
+            }
+        ) { state ->
+            Column {
+                when (state) {
                 is AppsScreenUiStates.Success -> {
 
                     val list =
@@ -156,7 +185,7 @@ fun AppsScreen(
                             LoadingProgressBar()
                         }
 
-                        is DialogUiStates.Error -> { }
+                        is DialogUiStates.Error -> {}
                     }
                 }
 
@@ -166,6 +195,7 @@ fun AppsScreen(
 
                 is AppsScreenUiStates.Error -> {}
             }
+        }
         }
     }
 }
