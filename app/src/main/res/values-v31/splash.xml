@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">?attr/colorBackgroundFloating</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_dark</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>
