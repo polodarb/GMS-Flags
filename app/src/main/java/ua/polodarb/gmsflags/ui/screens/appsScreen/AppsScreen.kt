@@ -123,7 +123,7 @@ fun AppsScreen(
                                 appName = item.appName,
                                 pkg = item.applicationInfo.packageName,
                                 appIcon = item.icon,
-                                flagsCount = item.packageNameCounts.toString(),
+                                flagsCount = "null",
                                 onClick = {
                                     viewModel.getListByPackages(item.applicationInfo.packageName)
                                     viewModel.setPackageToDialog(item.applicationInfo.packageName)
@@ -175,7 +175,7 @@ fun AppListItem(
     appName: String,
     pkg: String,
     appIcon: Drawable,
-    flagsCount: String,
+    flagsCount: String = "0",
     onClick: (String) -> Unit
 ) {
     ListItem(
@@ -192,9 +192,9 @@ fun AppListItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.offset(x = 12.dp)
             ) {
-                Text(
-                    text = flagsCount
-                )
+//                Text(
+//                    text = flagsCount
+//                )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_next),
                     contentDescription = null
