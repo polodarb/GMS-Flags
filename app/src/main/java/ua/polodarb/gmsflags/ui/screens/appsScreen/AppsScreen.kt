@@ -129,10 +129,11 @@ fun AppsScreen(
                 (fadeIn(tween(230, delayMillis = 350)) + slideInVertically(
                     initialOffsetY = { (it * 0.05).toInt() },
                     animationSpec = tween(
-                    durationMillis = 350,
-                    easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f),
+                        durationMillis = 350,
+                        easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f),
                         delayMillis = 200
-                ))).togetherWith(
+                    )
+                )).togetherWith(
                     fadeOut(
                         animationSpec = tween(200)
                     )
@@ -141,61 +142,61 @@ fun AppsScreen(
         ) { state ->
             Column {
                 when (state) {
-                is AppsScreenUiStates.Success -> {
+                    is AppsScreenUiStates.Success -> {
 
-                    val list =
-                        (uiState.value as AppsScreenUiStates.Success).data
+                        val list =
+                            (uiState.value as AppsScreenUiStates.Success).data
 
-                    LazyColumn {
-                        itemsIndexed(list.toList()) { index: Int, item: AppInfo ->
-                            AppListItem(
-                                appName = item.appName,
-                                pkg = item.applicationInfo.packageName,
-                                appIcon = item.icon,
-                                flagsCount = "null",
-                                onClick = {
-                                    viewModel.getListByPackages(item.applicationInfo.packageName)
-                                    viewModel.setPackageToDialog(item.applicationInfo.packageName)
-                                    showDialog.value = true
-                                })
+                        LazyColumn {
+                            itemsIndexed(list.toList()) { index: Int, item: AppInfo ->
+                                AppListItem(
+                                    appName = item.appName,
+                                    pkg = item.applicationInfo.packageName,
+                                    appIcon = item.icon,
+                                    flagsCount = "null",
+                                    onClick = {
+                                        viewModel.getListByPackages(item.applicationInfo.packageName)
+                                        viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                                        showDialog.value = true
+                                    })
+                            }
+                            item {
+                                Spacer(modifier = Modifier.padding(12.dp))
+                            }
                         }
-                        item {
-                            Spacer(modifier = Modifier.padding(12.dp))
+                        when (dialogDataState.value) {
+                            is DialogUiStates.Success -> {
+
+                                val dialogPackagesList =
+                                    (dialogDataState.value as DialogUiStates.Success).data
+
+                                AppsScreenDialog(
+                                    showDialog.value,
+                                    onDismiss = { showDialog.value = false },
+                                    pkgName = dialogPackageText.value,
+                                    list = dialogPackagesList,
+                                    onPackageClick = {
+                                        onPackageItemClick(it)
+                                        showDialog.value = false
+                                    }
+                                )
+                            }
+
+                            is DialogUiStates.Loading -> {
+                                LoadingProgressBar()
+                            }
+
+                            is DialogUiStates.Error -> {}
                         }
                     }
-                    when (dialogDataState.value) {
-                        is DialogUiStates.Success -> {
 
-                            val dialogPackagesList =
-                                (dialogDataState.value as DialogUiStates.Success).data
-
-                            AppsScreenDialog(
-                                showDialog.value,
-                                onDismiss = { showDialog.value = false },
-                                pkgName = dialogPackageText.value,
-                                list = dialogPackagesList,
-                                onPackageClick = {
-                                    onPackageItemClick(it)
-                                    showDialog.value = false
-                                }
-                            )
-                        }
-
-                        is DialogUiStates.Loading -> {
-                            LoadingProgressBar()
-                        }
-
-                        is DialogUiStates.Error -> {}
+                    is AppsScreenUiStates.Loading -> {
+                        LoadingProgressBar()
                     }
-                }
 
-                is AppsScreenUiStates.Loading -> {
-                    LoadingProgressBar()
+                    is AppsScreenUiStates.Error -> {}
                 }
-
-                is AppsScreenUiStates.Error -> {}
             }
-        }
         }
     }
 }
