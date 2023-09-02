@@ -28,8 +28,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.e("db", "1 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
-
         if (!shellInitialized) Shell.getShell { shellInitialized = true }
 
         installSplashScreen().apply {
@@ -39,8 +37,6 @@ class MainActivity : ComponentActivity() {
         if (!Shell.getShell().isRoot) {
             Toast.makeText(this, "Root is denied", Toast.LENGTH_SHORT).show()
         }
-
-        Log.e("db", "2 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -54,7 +50,6 @@ class MainActivity : ComponentActivity() {
                         navController = rememberNavController(),
                         modifier = Modifier.fillMaxSize()
                     )
-                    Log.e("db", "3 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
                 }
             }
         }

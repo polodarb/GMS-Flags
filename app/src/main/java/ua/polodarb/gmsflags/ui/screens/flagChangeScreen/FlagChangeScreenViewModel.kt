@@ -112,27 +112,43 @@ class FlagChangeScreenViewModel(
 
     init {
         usersList.addAll(repository.getUsers())
+//        initOverriddenBoolFlags(pkgName)
         initBoolValues()
         initIntValues()
         initFloatValues()
         initStringValues()
     }
 
+    fun initOverriddenBoolFlags(pkgName: String,  delay: Boolean = false) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val data = repository.getOverriddenBoolFlags(pkgName, delay = false)
+                    when (data) {
+                        is FlagChangeUiStates.Success -> {
+                            changedFilterBoolList.clear()
+                            changedFilterBoolList.putAll(data.data)
+                        }
+                        is FlagChangeUiStates.Loading -> {}
+                        is FlagChangeUiStates.Error -> {
+                            _stateBoolean.value = FlagChangeUiStates.Error()
+                        }
+                }
+            }
+        }
+    }
+
     // Boolean
     fun initBoolValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initBoolValues()")
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
-                            Log.e("bool", "Success INIT")
                             listBoolFiltered.putAll(uiStates.data)
                             getBoolFlags()
                         }
 
                         is FlagChangeUiStates.Loading -> {
-                            Log.e("bool", "Loading INIT")
                             _stateBoolean.value = FlagChangeUiStates.Loading
                         }
 
@@ -170,7 +186,7 @@ class FlagChangeScreenViewModel(
 
                 FilterMethod.CHANGED -> {
                     _stateBoolean.value = FlagChangeUiStates.Success(
-                        (changedFilterBoolList.toMap().filterByEnabled()).filter {
+                        changedFilterBoolList.filter {
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
@@ -195,7 +211,6 @@ class FlagChangeScreenViewModel(
     fun initIntValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initIntValues()")
                 repository.getIntFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
@@ -230,7 +245,6 @@ class FlagChangeScreenViewModel(
     fun initFloatValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initFloatValues()")
                 repository.getFloatFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
@@ -265,7 +279,6 @@ class FlagChangeScreenViewModel(
     fun initStringValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initStringValues()")
                 repository.getStringFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {

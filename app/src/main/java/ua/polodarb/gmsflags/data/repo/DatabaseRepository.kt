@@ -109,6 +109,20 @@ class DatabaseRepository(
 
     }
 
+    fun getOverriddenBoolFlags(packageName: String, delay: Boolean): FlagChangeUiStates {
+//        emit(FlagChangeUiStates.Loading)
+
+//        if (delay) delay(200)
+
+        val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
+
+//        if (boolOverriddenFlags.isEmpty())
+//            emit(FlagChangeUiStates.Error())
+
+        return(FlagChangeUiStates.Success(boolOverriddenFlags))
+
+    }
+
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
 
     fun androidPackage(pkgName: String): String {

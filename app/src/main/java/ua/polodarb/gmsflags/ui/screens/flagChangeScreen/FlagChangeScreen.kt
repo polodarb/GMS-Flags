@@ -240,6 +240,8 @@ fun FlagChangeScreen(
                             IconButton(
                                 onClick = {
                                     if (searchIconState) searchIconState = false
+                                    Log.e("packageName", packageName.toString())
+                                    viewModel.initOverriddenBoolFlags(packageName!!) //todo
                                     filterIconState = !filterIconState
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
@@ -397,7 +399,9 @@ fun FlagChangeScreen(
                                     Text(
                                         text = title,
                                         modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 },
                                 leadingIcon = null,
@@ -500,6 +504,7 @@ fun FlagChangeScreen(
                                                         name = flagName,
                                                         boolVal = newValue.toInt().toString()
                                                     )
+                                                    viewModel.initOverriddenBoolFlags(packageName.toString())
                                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                 },
                                                 lastItem = index == listBool.size - 1,
