@@ -34,9 +34,9 @@ class MainActivity : ComponentActivity() {
             setKeepOnScreenCondition { !shellInitialized }
         }
 
-        if (!Shell.getShell().isRoot) {
-            Toast.makeText(this, "Root is denied", Toast.LENGTH_SHORT).show()
-        }
+//        if (!Shell.getShell().isRoot) {
+//            Toast.makeText(this, "Root is denied", Toast.LENGTH_SHORT).show()
+//        }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
