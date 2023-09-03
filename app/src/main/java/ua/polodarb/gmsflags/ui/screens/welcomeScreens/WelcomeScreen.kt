@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -37,6 +39,9 @@ import ua.polodarb.gmsflags.ui.images.welcomeimage.getGMSImagesWelcome
 @Preview
 @Composable
 fun WelcomeScreen() {
+
+    val haptic = LocalHapticFeedback.current
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -46,7 +51,7 @@ fun WelcomeScreen() {
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp)
+                    .padding(top = 24.dp)
             )
             Text(
                 text = "Welcome!",
@@ -62,7 +67,7 @@ fun WelcomeScreen() {
         """.trimIndent(),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 32.dp),
-                lineHeight = 28.sp
+                lineHeight = 26.sp
             )
             Text(
                 text = "Become part of the community!",
@@ -72,7 +77,9 @@ fun WelcomeScreen() {
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp)
@@ -85,7 +92,13 @@ fun WelcomeScreen() {
                 )
             }
             val annotatedString = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, fontSize = 15.sp)) {
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
                     append("By continuing, you agree to our ")
                 }
 
@@ -102,7 +115,13 @@ fun WelcomeScreen() {
                 }
                 pop()
 
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, fontSize = 15.sp)) {
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                ) {
                     append(" and ")
                 }
 
@@ -130,6 +149,7 @@ fun WelcomeScreen() {
                         end = offset
                     ).firstOrNull()?.let {
                         Log.d("policy URL", it.item)
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     }
 
                     annotatedString.getStringAnnotations(
@@ -138,11 +158,12 @@ fun WelcomeScreen() {
                         end = offset
                     ).firstOrNull()?.let {
                         Log.d("terms URL", it.item)
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp, top = 8.dp)
             )
         }
     }
