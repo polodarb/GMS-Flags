@@ -11,27 +11,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ua.polodarb.gmsflags.ui.navigation.BottomBarNavigation
 import ua.polodarb.gmsflags.ui.navigation.BottomBarUI
-import ua.polodarb.gmsflags.ui.screens.welcomeScreens.WelcomeScreen
+import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 
 @Composable
 fun RootScreen(
     parentNavController: NavController,
     childNavController: NavHostController = rememberNavController()
 ) {
-    Scaffold { paddingValues ->
-//        BottomBarNavigation(
-//            parentNavController = parentNavController,
-//            navController = childNavController,
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(bottom = paddingValues.calculateBottomPadding())
-//        )
-        Column(
+    Scaffold(
+        bottomBar = { BottomBarUI(navController = childNavController) }
+    ) { paddingValues ->
+        BottomBarNavigation(
+            parentNavController = parentNavController,
+            navController = childNavController,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = paddingValues.calculateBottomPadding())
-        ) {
-            WelcomeScreen()
-        }
+        )
     }
 }

@@ -1,9 +1,7 @@
-package ua.polodarb.gmsflags.ui.screens.welcomeScreens
+package ua.polodarb.gmsflags.ui.screens.firstStartScreens
 
-import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,20 +24,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.UiMode
-import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.polodarb.gmsflags.ui.images.welcomeimage.getGMSImagesWelcome
+import ua.polodarb.gmsflags.ui.images.getGMSImagesWelcome
 
-@Preview
 @Composable
-fun WelcomeScreen() {
-
-    val haptic = LocalHapticFeedback.current
-
+fun WelcomeScreen(
+    onStart: () -> Unit,
+    onPolicyClick: (String) -> Unit,
+    onTermsClick: (String) -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -51,13 +43,13 @@ fun WelcomeScreen() {
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 24.dp)
+                    .padding(top = 32.dp)
             )
             Text(
                 text = "Welcome!",
                 fontSize = 46.sp,
                 fontWeight = FontWeight.W600,
-                modifier = Modifier.padding(vertical = 16.dp, horizontal = 32.dp)
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
             )
             Text(
                 text = """
@@ -66,29 +58,27 @@ fun WelcomeScreen() {
             off regional restrictions, and more... 
         """.trimIndent(),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier.padding(horizontal = 24.dp),
                 lineHeight = 26.sp
             )
             Text(
                 text = "Become part of the community!",
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
                 lineHeight = 28.sp
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                },
+                onClick = onStart,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
                     .height(48.dp)
             ) {
                 Text(
                     text = "Start",
                     fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp
+                    fontSize = 15.sp
                 )
             }
             val annotatedString = buildAnnotatedString {
@@ -148,8 +138,7 @@ fun WelcomeScreen() {
                         start = offset,
                         end = offset
                     ).firstOrNull()?.let {
-                        Log.d("policy URL", it.item)
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onPolicyClick(it.item)
                     }
 
                     annotatedString.getStringAnnotations(
@@ -157,8 +146,7 @@ fun WelcomeScreen() {
                         start = offset,
                         end = offset
                     ).firstOrNull()?.let {
-                        Log.d("terms URL", it.item)
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onTermsClick(it.item)
                     }
                 },
                 modifier = Modifier
