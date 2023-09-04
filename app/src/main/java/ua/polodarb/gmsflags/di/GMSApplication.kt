@@ -16,9 +16,9 @@ import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 
 class GMSApplication : Application() {
 
-    init {
-        initShell()
-    }
+//    init {
+//        initShell()
+//    }
 
     var isRootDatabaseInitialized = false
     private lateinit var rootDatabase: IRootDatabase
@@ -26,7 +26,7 @@ class GMSApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        initDB()
+//        initDB()
 
         startKoin {
             androidLogger(Level.DEBUG)

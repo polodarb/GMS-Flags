@@ -37,6 +37,8 @@ internal sealed class ScreensDestination(var screenRoute: String) {
 
     object Settings : ScreensDestination("settings")
     object Packages : ScreensDestination("packages")
+    object Welcome : ScreensDestination("welcome")
+    object RootRequest : ScreensDestination("rootRequest")
 }
 
 @Composable

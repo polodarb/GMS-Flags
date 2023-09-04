@@ -72,7 +72,7 @@ fun WelcomeScreen(
                 onClick = onStart,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp)
                     .height(48.dp)
             ) {
                 Text(
@@ -151,7 +151,7 @@ fun WelcomeScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp, top = 8.dp)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 36.dp, top = 24.dp)
             )
         }
     }

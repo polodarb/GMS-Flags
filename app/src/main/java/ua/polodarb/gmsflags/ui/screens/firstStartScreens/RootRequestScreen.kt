@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,7 +28,8 @@ import ua.polodarb.gmsflags.ui.images.getGMSImagesRoot
 @Composable
 fun RootRequestScreen(
     onExit: () -> Unit,
-    onRootRequest: () -> Unit
+    onRootRequest: () -> Unit,
+    isButtonLoading: Boolean
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -63,7 +67,7 @@ fun RootRequestScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 12.dp)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 36.dp)
             ) {
                 OutlinedButton(
                     onClick = onExit,
@@ -86,11 +90,20 @@ fun RootRequestScreen(
                         .weight(1f)
                         .height(48.dp)
                 ) {
-                    Text(
-                        text = "Request root",
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp
-                    )
+                    if (isButtonLoading) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 3.dp,
+                            strokeCap = StrokeCap.Round,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "Request root",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
+                    }
                 }
             }
         }

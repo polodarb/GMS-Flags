@@ -67,6 +67,9 @@ dependencies {
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.1")
 
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     implementation("com.github.requery:sqlite-android:3.42.0")
 
     implementation("com.google.android.material:material:1.9.0")
