@@ -21,6 +21,9 @@ import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.data.datastore.DataStoreManager
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
@@ -35,7 +38,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen()
+        val appContext: Context = get()
+        val gmsContext = appContext as GMSApplication
+        if (!isFirstStart) {
+            gmsContext.initShell()
+            gmsContext.initDB()
+        }
+
+        installSplashScreen().apply {
+            if (!isFirstStart) {
+                setKeepOnScreenCondition { !gmsContext.isRootDatabaseInitialized }
+            }
+        }
 
         val datastore = DataStoreManager(this)
         CoroutineScope(Dispatchers.IO).launch {
