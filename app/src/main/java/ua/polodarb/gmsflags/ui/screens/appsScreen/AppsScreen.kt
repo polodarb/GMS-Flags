@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -108,24 +109,8 @@ fun AppsScreen(
             focusRequester.requestFocus()
     }
 
-    // Search
-    var searchQuery by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val list = remember { mutableListOf<AppInfo>() }
-    val filteredAppsListState = remember { mutableListOf<AppInfo>() }
-
-    LaunchedEffect(uiState.value, searchQuery) {
-        when (val state = uiState.value) {
-            is AppsScreenUiStates.Success -> {
-                val filteredList =
-                    state.data.filter { it.appName.contains(searchQuery, ignoreCase = true) }
-                filteredAppsListState.clear()
-                filteredAppsListState.addAll(filteredList)
-            }
-            else -> {}
-        }
+    LaunchedEffect(viewModel.searchQuery.value) {
+        viewModel.getAllInstalledApps()
     }
 
     Scaffold(
@@ -145,7 +130,7 @@ fun AppsScreen(
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 searchIconState = !searchIconState
-                                if (!searchIconState) searchQuery = ""
+                                if (!searchIconState) viewModel.searchQuery.value = ""
                             },
                             modifier = if (searchIconState) Modifier
                                 .clip(CircleShape)
@@ -188,9 +173,9 @@ fun AppsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         DockedSearchBar(
-                            query = searchQuery,
+                            query = viewModel.searchQuery.value,
                             onQueryChange = { newQuery ->
-                                searchQuery = newQuery
+                                viewModel.searchQuery.value = newQuery
                             },
                             onSearch = {},
                             placeholder = {
@@ -198,12 +183,13 @@ fun AppsScreen(
                             },
                             trailingIcon = {
                                 AnimatedVisibility(
-                                    visible = searchQuery.isNotEmpty(),
+                                    visible = viewModel.searchQuery.value.isNotEmpty(),
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
                                     IconButton(onClick = {
-                                        searchQuery = ""
+                                        viewModel.searchQuery.value = ""
+                                        viewModel.getAllInstalledApps()
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     }) {
                                         Icon(
@@ -224,87 +210,75 @@ fun AppsScreen(
             }
         }
     ) { it ->
-        AnimatedContent(
-            targetState = uiState.value,
-            modifier = Modifier.padding(top = it.calculateTopPadding()),
-            label = "",
-            transitionSpec = {
-                (fadeIn(tween(230, delayMillis = 350)) + slideInVertically(
-                    initialOffsetY = { (it * 0.05).toInt() },
-                    animationSpec = tween(
-                        durationMillis = 350,
-                        easing = CubicBezierEasing(0.4f, 0.0f, 0.3f, 1.0f),
-                        delayMillis = 200
-                    )
-                )).togetherWith(
-                    fadeOut(
-                        animationSpec = tween(200)
-                    )
-                )
-            }
-        ) { state ->
-            Column {
-                when (state) {
-                    is AppsScreenUiStates.Success -> {
+        Column(
+            modifier = Modifier.padding(top = it.calculateTopPadding())
+        ) {
+            Log.e("appScreen", "UI_STATE - ${uiState.value}")
+            when (uiState.value) {
+                is AppsScreenUiStates.Success -> {
 
-                        list.addAll((uiState.value as AppsScreenUiStates.Success).data)
+                    Log.e("appScreen", "AppsScreenUiStates.SUCCESS")
 
-                        if (filteredAppsListState.isEmpty()) NoFlagsType()
+                    val appsList = (uiState.value as AppsScreenUiStates.Success).data
 
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            itemsIndexed(filteredAppsListState.toList()) { index: Int, item: AppInfo ->
-                                AppListItem(
-                                    appName = item.appName,
-                                    pkg = item.applicationInfo.packageName,
-                                    appIcon = item.icon,
-                                    flagsCount = "null",
-                                    onClick = {
-                                        viewModel.getListByPackages(item.applicationInfo.packageName)
-                                        viewModel.setPackageToDialog(item.applicationInfo.packageName)
-                                        showDialog.value = true
-                                    })
-                            }
-                            item {
-                                Spacer(modifier = Modifier.padding(12.dp))
-                            }
+                    if (appsList.isEmpty()) NoFlagsType()
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        itemsIndexed(appsList.toList()) { index: Int, item: AppInfo ->
+                            AppListItem(
+                                appName = item.appName,
+                                pkg = item.applicationInfo.packageName,
+                                appIcon = item.icon,
+                                flagsCount = "null",
+                                onClick = {
+                                    viewModel.getListByPackages(item.applicationInfo.packageName)
+                                    viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                                    showDialog.value = true
+                                })
                         }
-                        when (dialogDataState.value) {
-                            is DialogUiStates.Success -> {
-
-                                val dialogPackagesList =
-                                    (dialogDataState.value as DialogUiStates.Success).data
-
-                                AppsScreenDialog(
-                                    showDialog.value,
-                                    onDismiss = { showDialog.value = false },
-                                    pkgName = dialogPackageText.value,
-                                    list = dialogPackagesList,
-                                    onPackageClick = {
-                                        onPackageItemClick(it)
-                                        showDialog.value = false
-                                    }
-                                )
-                            }
-
-                            is DialogUiStates.Loading -> {
-                                LoadingProgressBar()
-                            }
-
-                            is DialogUiStates.Error -> {
-                                ErrorLoadScreen()
-                            }
+                        item {
+                            Spacer(modifier = Modifier.padding(12.dp))
                         }
                     }
 
-                    is AppsScreenUiStates.Loading -> {
-                        LoadingProgressBar()
-                    }
+                    when (dialogDataState.value) {
+                        is DialogUiStates.Success -> {
 
-                    is AppsScreenUiStates.Error -> {
-                        ErrorLoadScreen()
+                            val dialogPackagesList =
+                                (dialogDataState.value as DialogUiStates.Success).data
+
+                            AppsScreenDialog(
+                                showDialog.value,
+                                onDismiss = { showDialog.value = false },
+                                pkgName = dialogPackageText.value,
+                                list = dialogPackagesList,
+                                onPackageClick = {
+                                    onPackageItemClick(it)
+                                    showDialog.value = false
+                                }
+                            )
+                        }
+
+                        is DialogUiStates.Loading -> {
+                            LoadingProgressBar()
+                        }
+
+                        is DialogUiStates.Error -> {
+                            ErrorLoadScreen()
+                        }
                     }
+                }
+
+                is AppsScreenUiStates.Loading -> {
+                    Log.e("appScreen", "AppsScreenUiStates.LOADING")
+                    LoadingProgressBar()
+                }
+
+                is AppsScreenUiStates.Error -> {
+                    Log.e("appScreen", "AppsScreenUiStates.ERROR")
+                    ErrorLoadScreen()
                 }
             }
         }

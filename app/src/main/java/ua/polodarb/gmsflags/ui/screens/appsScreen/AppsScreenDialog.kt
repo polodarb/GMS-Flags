@@ -72,6 +72,7 @@ fun AppsScreenDialog(
                         ),
                         active = false,
                         onActiveChange = {},
+                        enabled = false
                     ) {}
                     Spacer(modifier = Modifier.height(6.dp))
                     DialogPackagesList(list, pkgName, onPackageClick)

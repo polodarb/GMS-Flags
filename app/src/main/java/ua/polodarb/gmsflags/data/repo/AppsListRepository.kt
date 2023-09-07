@@ -15,6 +15,8 @@ class AppsListRepository(
 ) {
     fun getAllInstalledApps() = flow<AppsScreenUiStates> {
 
+        emit (AppsScreenUiStates.Loading)
+
         val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
 
         val pm = context.packageManager
@@ -32,7 +34,9 @@ class AppsListRepository(
             .sortedBy { it.appName }
             .toList()
 
-        emit(AppsScreenUiStates.Success(filteredAppInfoList))
+        if (filteredAppInfoList.isNotEmpty()) {
+            emit(AppsScreenUiStates.Success(filteredAppInfoList))
+        }
     }
 
 

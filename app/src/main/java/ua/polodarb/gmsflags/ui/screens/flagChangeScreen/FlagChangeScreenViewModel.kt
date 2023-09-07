@@ -119,19 +119,20 @@ class FlagChangeScreenViewModel(
         initStringValues()
     }
 
-    fun initOverriddenBoolFlags(pkgName: String,  delay: Boolean = false) {
+    fun initOverriddenBoolFlags(pkgName: String, delay: Boolean = false) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val data = repository.getOverriddenBoolFlags(pkgName, delay = false)
-                    when (data) {
-                        is FlagChangeUiStates.Success -> {
-                            changedFilterBoolList.clear()
-                            changedFilterBoolList.putAll(data.data)
-                        }
-                        is FlagChangeUiStates.Loading -> {}
-                        is FlagChangeUiStates.Error -> {
-                            _stateBoolean.value = FlagChangeUiStates.Error()
-                        }
+                when (data) {
+                    is FlagChangeUiStates.Success -> {
+                        changedFilterBoolList.clear()
+                        changedFilterBoolList.putAll(data.data)
+                    }
+
+                    is FlagChangeUiStates.Loading -> {}
+                    is FlagChangeUiStates.Error -> {
+                        _stateBoolean.value = FlagChangeUiStates.Error()
+                    }
                 }
             }
         }
