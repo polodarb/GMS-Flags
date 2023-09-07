@@ -112,7 +112,6 @@ class FlagChangeScreenViewModel(
 
     init {
         usersList.addAll(repository.getUsers())
-//        initOverriddenBoolFlags(pkgName)
         initBoolValues()
         initIntValues()
         initFloatValues()
@@ -129,7 +128,9 @@ class FlagChangeScreenViewModel(
                         changedFilterBoolList.putAll(data.data)
                     }
 
-                    is FlagChangeUiStates.Loading -> {}
+                    is FlagChangeUiStates.Loading -> {
+                        _stateBoolean.value = FlagChangeUiStates.Loading
+                    }
                     is FlagChangeUiStates.Error -> {
                         _stateBoolean.value = FlagChangeUiStates.Error()
                     }
@@ -171,8 +172,6 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 FilterMethod.DISABLED -> {
@@ -181,8 +180,6 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 FilterMethod.CHANGED -> {
@@ -191,8 +188,6 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 else -> {
@@ -201,8 +196,6 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
             }
         }
@@ -238,8 +231,6 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateInteger.value as FlagChangeUiStates.Success).data.isEmpty()) _stateInteger.value =
-            FlagChangeUiStates.Error()
     }
 
     // Float
@@ -272,8 +263,6 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateFloat.value as FlagChangeUiStates.Success).data.isEmpty()) _stateFloat.value =
-            FlagChangeUiStates.Error()
     }
 
     // String
@@ -306,8 +295,6 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateString.value as FlagChangeUiStates.Success).data.isEmpty()) _stateString.value =
-            FlagChangeUiStates.Error()
     }
 
     fun clearPhenotypeCache(pkgName: String) {
@@ -367,10 +354,6 @@ class FlagChangeScreenViewModel(
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
         repository.deleteOverriddenFlagByPackage(packageName)
-    }
-
-    fun updateListAfterDelete() {
-
     }
 
 }

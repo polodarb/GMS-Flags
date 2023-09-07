@@ -485,6 +485,8 @@ fun FlagChangeScreen(
                             val listBool =
                                 (uiStateBoolean.value as FlagChangeUiStates.Success).data
 
+                            if (listBool.isEmpty()) NoFlagsType()
+
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listBool.isNotEmpty()) {
                                     LazyColumn {
@@ -537,6 +539,8 @@ fun FlagChangeScreen(
 
                             val listInt =
                                 (uiStateInteger.value as FlagChangeUiStates.Success).data
+
+                            if (listInt.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listInt.isNotEmpty()) {
@@ -626,6 +630,8 @@ fun FlagChangeScreen(
                             val listFloat =
                                 (uiStateFloat.value as FlagChangeUiStates.Success).data
 
+                            if (listFloat.isEmpty()) NoFlagsType()
+
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listFloat.isNotEmpty()) {
                                     LazyColumn {
@@ -714,6 +720,8 @@ fun FlagChangeScreen(
 
                             val listString =
                                 (uiStateString.value as FlagChangeUiStates.Success).data
+
+                            if (listString.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listString.isNotEmpty()) {
