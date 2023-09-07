@@ -20,7 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
@@ -40,6 +44,15 @@ class MainActivity : ComponentActivity() {
 
         val appContext: Context = get()
         val gmsContext = appContext as GMSApplication
+
+        val datastore = DataStoreManager(this)
+        val datastoreData = runBlocking {
+            withTimeoutOrNull(500) { // UI can freeze for 500ms
+                datastore.getFromDataStore().first()
+            }
+        }
+        isFirstStart = datastoreData ?: true
+
         if (!isFirstStart) {
             gmsContext.initShell()
             gmsContext.initDB()
@@ -47,15 +60,7 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen().apply {
             if (!isFirstStart) {
-                setKeepOnScreenCondition { !gmsContext.isRootDatabaseInitialized }
-            }
-        }
-
-        val datastore = DataStoreManager(this)
-        CoroutineScope(Dispatchers.IO).launch {
-            datastore.getFromDataStore().collect {
-                isFirstStart = it
-                Log.e("dts", it.toString())
+                setKeepOnScreenCondition { !gmsContext.isRootDatabaseInitialized } // todo navigation to ErrorRootPermissionScreen
             }
         }
 

@@ -3,12 +3,11 @@ package ua.polodarb.gmsflags.data.repo
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppInfo
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
-import ua.polodarb.gmsflags.ui.screens.appsScreen.DialogUiStates
+import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsListRepository(
     private val context: Context

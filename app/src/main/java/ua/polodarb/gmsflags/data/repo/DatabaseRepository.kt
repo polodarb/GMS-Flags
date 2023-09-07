@@ -60,10 +60,7 @@ class DatabaseRepository(
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
 
-        if (boolFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(boolFlags))
+        if (boolFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(boolFlags))
 
     }
 
@@ -74,10 +71,7 @@ class DatabaseRepository(
 
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
 
-        if (intFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(intFlags))
+        if (intFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(intFlags))
 
     }
 
@@ -88,10 +82,7 @@ class DatabaseRepository(
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
 
-        if (floatFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(floatFlags))
+        if (floatFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(floatFlags))
 
     }
 
@@ -102,22 +93,13 @@ class DatabaseRepository(
 
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
 
-        if (stringFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(stringFlags))
+        if (stringFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(stringFlags))
 
     }
 
     fun getOverriddenBoolFlags(packageName: String, delay: Boolean): FlagChangeUiStates {
-//        emit(FlagChangeUiStates.Loading)
-
-//        if (delay) delay(200)
 
         val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
-
-//        if (boolOverriddenFlags.isEmpty())
-//            emit(FlagChangeUiStates.Error())
 
         return(FlagChangeUiStates.Success(boolOverriddenFlags))
 
@@ -130,7 +112,7 @@ class DatabaseRepository(
         val users = gmsApplication.getRootDatabase().androidPackage(pkgName)
         return users
     }
-    
+
     fun deleteRowByFlagName(packageName: String, name: String) {
         gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
     }

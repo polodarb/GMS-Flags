@@ -96,6 +96,7 @@ import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.core.Extensions.toInt
 import ua.polodarb.gmsflags.ui.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
@@ -123,6 +124,8 @@ fun FlagChangeScreen(
     val context = LocalContext.current
     val localDensity = LocalDensity.current
     val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+
 
     // Tab bar
     var tabState by remember { mutableIntStateOf(0) }
@@ -141,17 +144,9 @@ fun FlagChangeScreen(
     })
 
 
-    val coroutineScope = rememberCoroutineScope()
-
     var textWidthDp by remember {
         mutableStateOf(0.dp)
     }
-
-    // Flags values
-    var booleanValue by remember {
-        mutableStateOf(false)
-    }
-
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
@@ -286,16 +281,11 @@ fun FlagChangeScreen(
                                 },
                                 onDeleteOverriddenFlags = {
                                     viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-//                                    when (tabState) {
-//                                        0 -> viewModel.initBoolValues(delay = false)
-//                                        1 -> viewModel.initIntValues(delay = false)
-//                                        2 -> viewModel.initFloatValues(delay = false)
-//                                        3 -> viewModel.initStringValues(delay = false)
-//                                    }
                                     viewModel.initBoolValues(delay = false)
                                     viewModel.initIntValues(delay = false)
                                     viewModel.initFloatValues(delay = false)
                                     viewModel.initStringValues(delay = false)
+                                    viewModel.initOverriddenBoolFlags(packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     dropDownExpanded = false
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
@@ -618,7 +608,7 @@ fun FlagChangeScreen(
                         }
 
                         is FlagChangeUiStates.Error -> {
-                            NoFlagsType()
+                            ErrorLoadScreen()
                         }
                     }
                 }
