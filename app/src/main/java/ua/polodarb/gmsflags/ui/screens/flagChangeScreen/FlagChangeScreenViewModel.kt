@@ -126,6 +126,7 @@ class FlagChangeScreenViewModel(
                     is FlagChangeUiStates.Success -> {
                         changedFilterBoolList.clear()
                         changedFilterBoolList.putAll(data.data)
+                        listBoolFiltered.putAll(data.data)
                     }
 
                     is FlagChangeUiStates.Loading -> {
