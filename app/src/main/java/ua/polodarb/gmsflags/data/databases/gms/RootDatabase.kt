@@ -42,7 +42,7 @@ class RootDatabase : RootService() {
             override fun getStringFlags(pkgName: String): Map<String, String> =
                 this@RootDatabase.getStringFlags(pkgName)
 
-            override fun getOverriddenBoolFlags(pkgName: String): Map<String, String> =
+            override fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> =
                 this@RootDatabase.getOverriddenBoolFlags(pkgName)
 
             override fun getOverriddenIntFlags(pkgName: String): Map<String, String> =
@@ -276,17 +276,21 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenBoolFlags(pkgName: String): Map<String, String> {
+    private fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> {
         val cursor = db.rawQuery(
             "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
             null
         )
-        val list = mutableMapOf<String, String>()
-        while (cursor.moveToNext()) {
-            list[cursor.getString(0)] = cursor.getString(1)
+        val list = mutableMapOf<String?, String?>()
+        if (cursor.moveToFirst()) {
+            do {
+                list[cursor.getString(0)] = cursor.getString(1)
+            } while (cursor.moveToNext())
         }
-        return list.toMap()
+        cursor.close()
+        return list
     }
+
 
     private fun getOverriddenIntFlags(pkgName: String): Map<String, String> {
         val cursor = db.rawQuery(

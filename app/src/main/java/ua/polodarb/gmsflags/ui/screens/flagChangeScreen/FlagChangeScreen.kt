@@ -102,6 +102,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ENABLED
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.AddFlagDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -173,6 +174,13 @@ fun FlagChangeScreen(
     var flagValue by remember { mutableStateOf("") }
 
 
+    // Add flag dialog
+    val showAddFlagDialog = remember { mutableStateOf(false) }
+    var flagType by rememberSaveable { mutableIntStateOf(0) }
+    var flagBoolean by rememberSaveable { mutableIntStateOf(0) }
+    var flagAddValue by rememberSaveable { mutableStateOf("") }
+    var flagAddName by rememberSaveable { mutableStateOf("") }
+
     // Keyboard
     val focusRequester = remember { FocusRequester() }
 
@@ -200,9 +208,11 @@ fun FlagChangeScreen(
     LaunchedEffect(
         viewModel.filterMethod.value,
         viewModel.searchQuery.value,
-        pagerState.targetPage
+        pagerState.targetPage,
+        showAddFlagDialog.value
     ) {
         viewModel.getBoolFlags()
+        viewModel.initOverriddenBoolFlags(packageName.toString())
         viewModel.getIntFlags()
         viewModel.getFloatFlags()
         viewModel.getStringFlags()
@@ -235,8 +245,7 @@ fun FlagChangeScreen(
                             IconButton(
                                 onClick = {
                                     if (searchIconState) searchIconState = false
-                                    Log.e("packageName", packageName.toString())
-                                    viewModel.initOverriddenBoolFlags(packageName!!) //todo
+                                    viewModel.initOverriddenBoolFlags(packageName.toString()) //todo
                                     filterIconState = !filterIconState
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
@@ -275,6 +284,9 @@ fun FlagChangeScreen(
                             FlagChangeDropDown(
                                 expanded = dropDownExpanded,
                                 onDismissRequest = { dropDownExpanded = false },
+                                onAddFlag = {
+                                    showAddFlagDialog.value = true
+                                },
                                 onClearCache = {
                                     viewModel.clearPhenotypeCache(packageName!!)
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
@@ -795,6 +807,69 @@ fun FlagChangeScreen(
                 }
             }
         }
+        AddFlagDialog(
+            showDialog = showAddFlagDialog.value,
+            flagType = flagType,
+            onFlagTypeChange = {
+                flagType = it
+                Toast.makeText(context, "flagType - $flagType", Toast.LENGTH_SHORT).show()
+            },
+            flagBoolean = flagBoolean,
+            onFlagBooleanChange = {
+                flagBoolean = it
+                Toast.makeText(context, "flagBoolean - $flagBoolean", Toast.LENGTH_SHORT).show()
+            },
+            flagName = flagAddName,
+            flagNameChange = {
+                flagAddName = it
+            },
+            flagValue = flagAddValue,
+            flagValueChange = {
+                flagAddValue = it
+            },
+            onAddFlag = {
+                when (flagType) {
+                    0 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            boolVal = if (flagBoolean == 0) "1" else "0"
+                        )
+                    }
+
+                    1 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            intVal = flagAddValue
+                        )
+                    }
+
+                    2 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            floatVal = flagAddValue
+                        )
+                    }
+
+                    3 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            stringVal = flagAddValue
+                        )
+                    }
+                }
+                viewModel.initOverriddenBoolFlags(packageName.toString(), false)
+                viewModel.clearPhenotypeCache(packageName.toString())
+                dropDownExpanded = false
+                showAddFlagDialog.value = false
+            },
+            onDismiss = {
+                showAddFlagDialog.value = false
+            }
+        )
     }
 }
 
@@ -871,6 +946,7 @@ fun NoFlagsType() {
 fun FlagChangeDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
+    onAddFlag: () -> Unit,
     onClearCache: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     modifier: Modifier = Modifier
@@ -889,27 +965,27 @@ fun FlagChangeDropDown(
             {
                 DropdownMenuItem(
                     text = { Text("Add flag") },
-                    onClick = { /* Handle onClick */ },
+                    onClick = onAddFlag,
                     leadingIcon = {
                         Icon(
                             Icons.Outlined.Add,
                             contentDescription = null
                         )
                     },
-                    enabled = false
+                    enabled = true
                 )
-                DropdownMenuItem( // todo: implement condition on flag type
-                    text = { Text("Activate all visible flags") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_activate_all),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
-                HorizontalDivider()
+//                DropdownMenuItem( // todo: implement condition on flag type
+//                    text = { Text("Activate all visible flags") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            painterResource(id = R.drawable.ic_activate_all),
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
+//                HorizontalDivider()
                 DropdownMenuItem(
                     text = { Text("Reset all overridden flags") },
                     onClick = onDeleteOverriddenFlags,
@@ -921,28 +997,28 @@ fun FlagChangeDropDown(
                     },
                     enabled = true
                 )
-                DropdownMenuItem(
-                    text = { Text("Refresh flags list") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Refresh,
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
-                DropdownMenuItem(
-                    text = { Text("Force stop this app package") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_force_stop),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
+//                DropdownMenuItem(
+//                    text = { Text("Refresh flags list") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            Icons.Outlined.Refresh,
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
+//                DropdownMenuItem(
+//                    text = { Text("Force stop this app package") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            painterResource(id = R.drawable.ic_force_stop),
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
             }
         }
     }

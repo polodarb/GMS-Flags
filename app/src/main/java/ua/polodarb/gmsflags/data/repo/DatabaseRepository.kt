@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
@@ -82,8 +83,7 @@ class DatabaseRepository(
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
 
-        if (floatFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(floatFlags))
-
+        emit(FlagChangeUiStates.Success(floatFlags))
     }
 
     suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
@@ -98,11 +98,8 @@ class DatabaseRepository(
     }
 
     fun getOverriddenBoolFlags(packageName: String, delay: Boolean): FlagChangeUiStates {
-
         val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
-
         return(FlagChangeUiStates.Success(boolOverriddenFlags))
-
     }
 
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
