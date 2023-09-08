@@ -118,21 +118,40 @@ class FlagChangeScreenViewModel(
         initStringValues()
     }
 
+    fun initOverriddenBoolFlags(pkgName: String, delay: Boolean = false) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val data = repository.getOverriddenBoolFlags(pkgName, delay = false)
+                when (data) {
+                    is FlagChangeUiStates.Success -> {
+                        changedFilterBoolList.clear()
+                        changedFilterBoolList.putAll(data.data)
+                        listBoolFiltered.putAll(data.data)
+                    }
+
+                    is FlagChangeUiStates.Loading -> {
+                        _stateBoolean.value = FlagChangeUiStates.Loading
+                    }
+                    is FlagChangeUiStates.Error -> {
+                        _stateBoolean.value = FlagChangeUiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
     // Boolean
     fun initBoolValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initBoolValues()")
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
-                            Log.e("bool", "Success INIT")
                             listBoolFiltered.putAll(uiStates.data)
                             getBoolFlags()
                         }
 
                         is FlagChangeUiStates.Loading -> {
-                            Log.e("bool", "Loading INIT")
                             _stateBoolean.value = FlagChangeUiStates.Loading
                         }
 
@@ -146,7 +165,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun getBoolFlags() {
-        if (listBoolFiltered.isNotEmpty()) {
+//        if (listBoolFiltered.isNotEmpty()) {
             when (filterMethod.value) {
                 FilterMethod.ENABLED -> {
                     _stateBoolean.value = FlagChangeUiStates.Success(
@@ -154,8 +173,6 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 FilterMethod.DISABLED -> {
@@ -164,18 +181,14 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 FilterMethod.CHANGED -> {
                     _stateBoolean.value = FlagChangeUiStates.Success(
-                        (changedFilterBoolList.toMap().filterByEnabled()).filter {
+                        changedFilterBoolList.filter {
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
 
                 else -> {
@@ -184,18 +197,17 @@ class FlagChangeScreenViewModel(
                             it.key.contains(searchQuery.value, ignoreCase = true)
                         }
                     )
-                    if ((_stateBoolean.value as FlagChangeUiStates.Success).data.isEmpty()) _stateBoolean.value =
-                        FlagChangeUiStates.Error()
                 }
             }
-        }
+//        } else {
+//            _stateBoolean.value = FlagChangeUiStates.Success(emptyMap())
+//        }
     }
 
     // Integer
     fun initIntValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initIntValues()")
                 repository.getIntFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
@@ -222,15 +234,12 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateInteger.value as FlagChangeUiStates.Success).data.isEmpty()) _stateInteger.value =
-            FlagChangeUiStates.Error()
     }
 
     // Float
     fun initFloatValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initFloatValues()")
                 repository.getFloatFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
@@ -257,15 +266,12 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateFloat.value as FlagChangeUiStates.Success).data.isEmpty()) _stateFloat.value =
-            FlagChangeUiStates.Error()
     }
 
     // String
     fun initStringValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.e("bool", "initStringValues()")
                 repository.getStringFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is FlagChangeUiStates.Success -> {
@@ -292,8 +298,6 @@ class FlagChangeScreenViewModel(
                 it.key.contains(searchQuery.value, ignoreCase = true)
             }
         )
-        if ((_stateString.value as FlagChangeUiStates.Success).data.isEmpty()) _stateString.value =
-            FlagChangeUiStates.Error()
     }
 
     fun clearPhenotypeCache(pkgName: String) {
@@ -353,10 +357,6 @@ class FlagChangeScreenViewModel(
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
         repository.deleteOverriddenFlagByPackage(packageName)
-    }
-
-    fun updateListAfterDelete() {
-
     }
 
 }

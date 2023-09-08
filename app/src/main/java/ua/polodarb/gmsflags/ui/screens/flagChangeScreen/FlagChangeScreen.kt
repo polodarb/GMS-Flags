@@ -96,11 +96,13 @@ import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.core.Extensions.toInt
 import ua.polodarb.gmsflags.ui.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ENABLED
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.AddFlagDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -123,6 +125,8 @@ fun FlagChangeScreen(
     val context = LocalContext.current
     val localDensity = LocalDensity.current
     val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+
 
     // Tab bar
     var tabState by remember { mutableIntStateOf(0) }
@@ -141,17 +145,9 @@ fun FlagChangeScreen(
     })
 
 
-    val coroutineScope = rememberCoroutineScope()
-
     var textWidthDp by remember {
         mutableStateOf(0.dp)
     }
-
-    // Flags values
-    var booleanValue by remember {
-        mutableStateOf(false)
-    }
-
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
@@ -177,6 +173,13 @@ fun FlagChangeScreen(
     var flagName by remember { mutableStateOf("") }
     var flagValue by remember { mutableStateOf("") }
 
+
+    // Add flag dialog
+    val showAddFlagDialog = remember { mutableStateOf(false) }
+    var flagType by rememberSaveable { mutableIntStateOf(0) }
+    var flagBoolean by rememberSaveable { mutableIntStateOf(0) }
+    var flagAddValue by rememberSaveable { mutableStateOf("") }
+    var flagAddName by rememberSaveable { mutableStateOf("") }
 
     // Keyboard
     val focusRequester = remember { FocusRequester() }
@@ -205,9 +208,11 @@ fun FlagChangeScreen(
     LaunchedEffect(
         viewModel.filterMethod.value,
         viewModel.searchQuery.value,
-        pagerState.targetPage
+        pagerState.targetPage,
+        showAddFlagDialog.value
     ) {
         viewModel.getBoolFlags()
+        viewModel.initOverriddenBoolFlags(packageName.toString())
         viewModel.getIntFlags()
         viewModel.getFloatFlags()
         viewModel.getStringFlags()
@@ -240,6 +245,7 @@ fun FlagChangeScreen(
                             IconButton(
                                 onClick = {
                                     if (searchIconState) searchIconState = false
+                                    viewModel.initOverriddenBoolFlags(packageName.toString()) //todo
                                     filterIconState = !filterIconState
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
@@ -278,22 +284,20 @@ fun FlagChangeScreen(
                             FlagChangeDropDown(
                                 expanded = dropDownExpanded,
                                 onDismissRequest = { dropDownExpanded = false },
+                                onAddFlag = {
+                                    showAddFlagDialog.value = true
+                                },
                                 onClearCache = {
                                     viewModel.clearPhenotypeCache(packageName!!)
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
                                 },
                                 onDeleteOverriddenFlags = {
                                     viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-//                                    when (tabState) {
-//                                        0 -> viewModel.initBoolValues(delay = false)
-//                                        1 -> viewModel.initIntValues(delay = false)
-//                                        2 -> viewModel.initFloatValues(delay = false)
-//                                        3 -> viewModel.initStringValues(delay = false)
-//                                    }
                                     viewModel.initBoolValues(delay = false)
                                     viewModel.initIntValues(delay = false)
                                     viewModel.initFloatValues(delay = false)
                                     viewModel.initStringValues(delay = false)
+                                    viewModel.initOverriddenBoolFlags(packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     dropDownExpanded = false
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
@@ -397,7 +401,9 @@ fun FlagChangeScreen(
                                     Text(
                                         text = title,
                                         modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 },
                                 leadingIcon = null,
@@ -479,7 +485,11 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listBool =
-                                (uiStateBoolean.value as FlagChangeUiStates.Success).data
+                                (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(compareByDescending<String> {
+                                    it.toIntOrNull() ?: 0
+                                }.thenBy { it })
+
+                            if (listBool.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listBool.isNotEmpty()) {
@@ -500,6 +510,7 @@ fun FlagChangeScreen(
                                                         name = flagName,
                                                         boolVal = newValue.toInt().toString()
                                                     )
+                                                    viewModel.initOverriddenBoolFlags(packageName.toString())
                                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                 },
                                                 lastItem = index == listBool.size - 1,
@@ -531,7 +542,9 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listInt =
-                                (uiStateInteger.value as FlagChangeUiStates.Success).data
+                                (uiStateInteger.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
+
+                            if (listInt.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listInt.isNotEmpty()) {
@@ -609,7 +622,7 @@ fun FlagChangeScreen(
                         }
 
                         is FlagChangeUiStates.Error -> {
-                            NoFlagsType()
+                            ErrorLoadScreen()
                         }
                     }
                 }
@@ -619,7 +632,9 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listFloat =
-                                (uiStateFloat.value as FlagChangeUiStates.Success).data
+                                (uiStateFloat.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
+
+                            if (listFloat.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listFloat.isNotEmpty()) {
@@ -708,7 +723,9 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listString =
-                                (uiStateString.value as FlagChangeUiStates.Success).data
+                                (uiStateString.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
+
+                            if (listString.isEmpty()) NoFlagsType()
 
                             Box(modifier = Modifier.fillMaxSize()) {
                                 if (listString.isNotEmpty()) {
@@ -792,6 +809,71 @@ fun FlagChangeScreen(
                 }
             }
         }
+        AddFlagDialog(
+            showDialog = showAddFlagDialog.value,
+            flagType = flagType,
+            onFlagTypeChange = {
+                flagType = it
+            },
+            flagBoolean = flagBoolean,
+            onFlagBooleanChange = {
+                flagBoolean = it
+            },
+            flagName = flagAddName,
+            flagNameChange = {
+                flagAddName = it
+            },
+            flagValue = flagAddValue,
+            flagValueChange = {
+                flagAddValue = it
+            },
+            onAddFlag = {
+                when (flagType) {
+                    0 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            boolVal = if (flagBoolean == 0) "1" else "0"
+                        )
+                    }
+
+                    1 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            intVal = flagAddValue
+                        )
+                    }
+
+                    2 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            floatVal = flagAddValue
+                        )
+                    }
+
+                    3 -> {
+                        viewModel.overrideFlag(
+                            packageName = packageName.toString(),
+                            name = flagAddName,
+                            stringVal = flagAddValue
+                        )
+                    }
+                }
+                viewModel.initOverriddenBoolFlags(packageName.toString(), false)
+                viewModel.clearPhenotypeCache(packageName.toString())
+                dropDownExpanded = false
+                showAddFlagDialog.value = false
+                flagAddName = ""
+                flagAddValue = ""
+            },
+            onDismiss = {
+                showAddFlagDialog.value = false
+                flagAddName = ""
+                flagAddValue = ""
+            }
+        )
     }
 }
 
@@ -868,6 +950,7 @@ fun NoFlagsType() {
 fun FlagChangeDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
+    onAddFlag: () -> Unit,
     onClearCache: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     modifier: Modifier = Modifier
@@ -886,27 +969,27 @@ fun FlagChangeDropDown(
             {
                 DropdownMenuItem(
                     text = { Text("Add flag") },
-                    onClick = { /* Handle onClick */ },
+                    onClick = onAddFlag,
                     leadingIcon = {
                         Icon(
                             Icons.Outlined.Add,
                             contentDescription = null
                         )
                     },
-                    enabled = false
+                    enabled = true
                 )
-                DropdownMenuItem( // todo: implement condition on flag type
-                    text = { Text("Activate all visible flags") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_activate_all),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
-                HorizontalDivider()
+//                DropdownMenuItem( // todo: implement condition on flag type
+//                    text = { Text("Activate all visible flags") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            painterResource(id = R.drawable.ic_activate_all),
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
+//                HorizontalDivider()
                 DropdownMenuItem(
                     text = { Text("Reset all overridden flags") },
                     onClick = onDeleteOverriddenFlags,
@@ -918,28 +1001,28 @@ fun FlagChangeDropDown(
                     },
                     enabled = true
                 )
-                DropdownMenuItem(
-                    text = { Text("Refresh flags list") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Refresh,
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
-                DropdownMenuItem(
-                    text = { Text("Force stop this app package") },
-                    onClick = { /* Handle onClick */ },
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_force_stop),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = false
-                )
+//                DropdownMenuItem(
+//                    text = { Text("Refresh flags list") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            Icons.Outlined.Refresh,
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
+//                DropdownMenuItem(
+//                    text = { Text("Force stop this app package") },
+//                    onClick = { /* Handle onClick */ },
+//                    leadingIcon = {
+//                        Icon(
+//                            painterResource(id = R.drawable.ic_force_stop),
+//                            contentDescription = null
+//                        )
+//                    },
+//                    enabled = false
+//                )
             }
         }
     }

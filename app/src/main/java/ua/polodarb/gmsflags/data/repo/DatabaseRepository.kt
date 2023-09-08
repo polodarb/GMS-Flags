@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
@@ -60,10 +61,8 @@ class DatabaseRepository(
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
 
-        if (boolFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(boolFlags))
+        if (boolFlags.isNotEmpty())
+            emit(FlagChangeUiStates.Success(boolFlags))
 
     }
 
@@ -74,10 +73,7 @@ class DatabaseRepository(
 
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
 
-        if (intFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
-        emit(FlagChangeUiStates.Success(intFlags))
+        if (intFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(intFlags))
 
     }
 
@@ -88,11 +84,7 @@ class DatabaseRepository(
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
 
-        if (floatFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
-
         emit(FlagChangeUiStates.Success(floatFlags))
-
     }
 
     suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
@@ -102,11 +94,13 @@ class DatabaseRepository(
 
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
 
-        if (stringFlags.isEmpty())
-            emit(FlagChangeUiStates.Error())
+        if (stringFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(stringFlags))
 
-        emit(FlagChangeUiStates.Success(stringFlags))
+    }
 
+    fun getOverriddenBoolFlags(packageName: String, delay: Boolean): FlagChangeUiStates {
+        val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
+        return(FlagChangeUiStates.Success(boolOverriddenFlags))
     }
 
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
@@ -116,7 +110,7 @@ class DatabaseRepository(
         val users = gmsApplication.getRootDatabase().androidPackage(pkgName)
         return users
     }
-    
+
     fun deleteRowByFlagName(packageName: String, name: String) {
         gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
     }

@@ -65,7 +65,9 @@ fun SettingsScreen(
         }
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
-            NotImplementedScreen()
+            Column {
+                NotImplementedScreen()
+            }
         }
     }
 }

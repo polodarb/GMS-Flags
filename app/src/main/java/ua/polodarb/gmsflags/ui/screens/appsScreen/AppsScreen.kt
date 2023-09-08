@@ -1,50 +1,75 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
-import android.widget.Toast
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
+import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun AppsScreen(
     onSettingsClick: () -> Unit,
@@ -63,6 +88,22 @@ fun AppsScreen(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
+    // Keyboard
+    val focusRequester = remember { FocusRequester() }
+
+    var searchIconState by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(searchIconState) {
+        if (searchIconState)
+            focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(viewModel.searchQuery.value) {
+        viewModel.getAllInstalledApps()
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -76,10 +117,17 @@ fun AppsScreen(
                         )
                     },
                     actions = {
-                        IconButton(onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
-                        }) {
+                        IconButton(
+                            onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                searchIconState = !searchIconState
+                                if (!searchIconState) viewModel.searchQuery.value = ""
+                            },
+                            modifier = if (searchIconState) Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            else Modifier.background(Color.Transparent)
+                        ) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
                                 contentDescription = "Localized description"
@@ -106,19 +154,67 @@ fun AppsScreen(
                     },
                     scrollBehavior = scrollBehavior
                 )
-
+                AnimatedVisibility(visible = searchIconState) {
+                    Row(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        DockedSearchBar(
+                            query = viewModel.searchQuery.value,
+                            onQueryChange = { newQuery ->
+                                viewModel.searchQuery.value = newQuery
+                            },
+                            onSearch = {},
+                            placeholder = {
+                                Text(text = "Search a package name")
+                            },
+                            trailingIcon = {
+                                AnimatedVisibility(
+                                    visible = viewModel.searchQuery.value.isNotEmpty(),
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
+                                ) {
+                                    IconButton(onClick = {
+                                        viewModel.searchQuery.value = ""
+                                        viewModel.getAllInstalledApps()
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                            },
+                            active = false,
+                            onActiveChange = { },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                        ) { }
+                    }
+                }
             }
         }
     ) { it ->
-        Column(modifier = Modifier.padding(top = it.calculateTopPadding())) {
+        Column(
+            modifier = Modifier.padding(top = it.calculateTopPadding())
+        ) {
             when (uiState.value) {
                 is AppsScreenUiStates.Success -> {
 
-                    val list =
-                        (uiState.value as AppsScreenUiStates.Success).data
+                    val appsList = (uiState.value as AppsScreenUiStates.Success).data
 
-                    LazyColumn {
-                        itemsIndexed(list.toList()) { index: Int, item: AppInfo ->
+                    if (appsList.isEmpty()) NoFlagsType()
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        itemsIndexed(appsList.toList()) { index: Int, item: AppInfo ->
                             AppListItem(
                                 appName = item.appName,
                                 pkg = item.applicationInfo.packageName,
@@ -134,6 +230,7 @@ fun AppsScreen(
                             Spacer(modifier = Modifier.padding(12.dp))
                         }
                     }
+
                     when (dialogDataState.value) {
                         is DialogUiStates.Success -> {
 
@@ -156,15 +253,21 @@ fun AppsScreen(
                             LoadingProgressBar()
                         }
 
-                        is DialogUiStates.Error -> { }
+                        is DialogUiStates.Error -> {
+                            ErrorLoadScreen()
+                        }
                     }
                 }
 
                 is AppsScreenUiStates.Loading -> {
+                    Log.e("appScreen", "AppsScreenUiStates.LOADING")
                     LoadingProgressBar()
                 }
 
-                is AppsScreenUiStates.Error -> {}
+                is AppsScreenUiStates.Error -> {
+                    Log.e("appScreen", "AppsScreenUiStates.ERROR")
+                    ErrorLoadScreen()
+                }
             }
         }
     }
@@ -201,4 +304,23 @@ fun AppListItem(
                 )
             }
         })
+}
+
+@Composable
+fun NoFlagsType() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(1f)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "¯\\_(ツ)_/¯\n\nApps not found",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium
+        )
+    }
 }

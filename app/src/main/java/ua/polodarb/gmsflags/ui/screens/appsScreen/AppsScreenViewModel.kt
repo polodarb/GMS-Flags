@@ -1,14 +1,18 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
+import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
@@ -26,8 +30,13 @@ class AppsScreenViewModel(
         MutableStateFlow<String>("")
     val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
 
+
+    var searchQuery = mutableStateOf("")
+
+    private val listAppsFiltered: MutableList<AppInfo> = mutableListOf()
+
     init {
-        getAllInstalledApps()
+        initAllInstalledApps()
     }
 
     fun setPackageToDialog(pkgName: String) {
@@ -56,13 +65,15 @@ class AppsScreenViewModel(
         }
     }
 
-    private fun getAllInstalledApps() {
+    private fun initAllInstalledApps() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getAllInstalledApps().collect { uiStates ->
+                repository.getAllInstalledApps().collectLatest { uiStates ->
+                    Log.e("vmui", uiStates.toString())
                     when (uiStates) {
                         is AppsScreenUiStates.Success -> {
-                            _state.value = AppsScreenUiStates.Success(uiStates.data)
+                            listAppsFiltered.addAll(uiStates.data)
+                            getAllInstalledApps()
                         }
 
                         is AppsScreenUiStates.Loading -> {
@@ -75,6 +86,16 @@ class AppsScreenViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun getAllInstalledApps() {
+        if (listAppsFiltered.isNotEmpty()) {
+            _state.value = AppsScreenUiStates.Success(
+                listAppsFiltered.filter {
+                    it.appName.contains(searchQuery.value, ignoreCase = true)
+                }
+            )
         }
     }
 

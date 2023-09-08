@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -10,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ua.polodarb.gmsflags.ui.navigation.BottomBarNavigation
 import ua.polodarb.gmsflags.ui.navigation.BottomBarUI
+import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 
 @Composable
 fun RootScreen(

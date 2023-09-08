@@ -10,11 +10,25 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.compose.koinInject
+import ua.polodarb.gmsflags.data.datastore.DataStoreManager
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
@@ -23,24 +37,32 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 class MainActivity : ComponentActivity() {
 
     private var shellInitialized: Boolean = false
+    private var isFirstStart: Boolean = false
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.e("db", "1 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
+        val appContext: Context = get()
+        val gmsContext = appContext as GMSApplication
 
-        if (!shellInitialized) Shell.getShell { shellInitialized = true }
+        val datastore = DataStoreManager(this)
+        val datastoreData = runBlocking {
+            withTimeoutOrNull(500) { // UI can freeze for 500ms
+                datastore.getFromDataStore().first()
+            }
+        }
+        isFirstStart = datastoreData ?: true
+
+        if (!isFirstStart) {
+            gmsContext.initShell()
+            gmsContext.initDB()
+        }
 
         installSplashScreen().apply {
-            setKeepOnScreenCondition { !shellInitialized }
+            if (!isFirstStart) {
+                setKeepOnScreenCondition { !gmsContext.isRootDatabaseInitialized } // todo navigation to ErrorRootPermissionScreen
+            }
         }
-
-        if (!Shell.getShell().isRoot) {
-            Toast.makeText(this, "Root is denied", Toast.LENGTH_SHORT).show()
-        }
-
-        Log.e("db", "2 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -52,21 +74,22 @@ class MainActivity : ComponentActivity() {
                 ) {
                     RootAppNavigation(
                         navController = rememberNavController(),
+                        activity = this@MainActivity,
+                        isFirstStart = isFirstStart,
                         modifier = Modifier.fillMaxSize()
                     )
-                    Log.e("db", "3 - ${(applicationContext as GMSApplication).isRootDatabaseInitialized}")
                 }
             }
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(::shellInitialized.name, shellInitialized)
+//        outState.putBoolean(::shellInitialized.name, shellInitialized)
         super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        shellInitialized = savedInstanceState.getBoolean(::shellInitialized.name)
+//        shellInitialized = savedInstanceState.getBoolean(::shellInitialized.name)
         super.onRestoreInstanceState(savedInstanceState)
     }
 }

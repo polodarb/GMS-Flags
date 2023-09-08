@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.appsScreen
+package ua.polodarb.gmsflags.ui.screens.appsScreen.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -71,6 +71,7 @@ fun AppsScreenDialog(
                         ),
                         active = false,
                         onActiveChange = {},
+                        enabled = false
                     ) {}
                     Spacer(modifier = Modifier.height(6.dp))
                     DialogPackagesList(list, pkgName, onPackageClick)

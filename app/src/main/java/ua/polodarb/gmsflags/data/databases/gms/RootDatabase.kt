@@ -42,6 +42,18 @@ class RootDatabase : RootService() {
             override fun getStringFlags(pkgName: String): Map<String, String> =
                 this@RootDatabase.getStringFlags(pkgName)
 
+            override fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> =
+                this@RootDatabase.getOverriddenBoolFlags(pkgName)
+
+            override fun getOverriddenIntFlags(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenIntFlags(pkgName)
+
+            override fun getOverriddenFloatFlags(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenFloatFlags(pkgName)
+
+            override fun getOverriddenStringFlags(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenStringFlags(pkgName)
+
             override fun androidPackage(pkgName: String): String =
                 this@RootDatabase.androidPackage(pkgName)
 
@@ -255,6 +267,58 @@ class RootDatabase : RootService() {
                     "WHERE f.packageName = '$pkgName' " + // pkgName
                     "AND f.stringVal IS NOT NULL " +
                     "AND f.stringVal <> '';",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        return list.toMap()
+    }
+
+    private fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
+            null
+        )
+        val list = mutableMapOf<String?, String?>()
+        if (cursor.moveToFirst()) {
+            do {
+                list[cursor.getString(0)] = cursor.getString(1)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return list
+    }
+
+
+    private fun getOverriddenIntFlags(pkgName: String): Map<String, String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        return list.toMap()
+    }
+
+    private fun getOverriddenFloatFlags(pkgName: String): Map<String, String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        return list.toMap()
+    }
+
+    private fun getOverriddenStringFlags(pkgName: String): Map<String, String> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
         val list = mutableMapOf<String, String>()

@@ -16,13 +16,9 @@ import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 
 class GMSApplication : Application() {
 
-    init {
-        Shell.setDefaultBuilder(
-            Shell.Builder.create()
-                .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
-                .setTimeout(10)
-        )
-    }
+//    init {
+//        initShell()
+//    }
 
     var isRootDatabaseInitialized = false
     private lateinit var rootDatabase: IRootDatabase
@@ -30,6 +26,24 @@ class GMSApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+//        initDB()
+
+        startKoin {
+            androidLogger(Level.DEBUG)
+            androidContext(this@GMSApplication)
+            modules(listOf(appModule, viewModelsModule))
+        }
+    }
+
+    fun initShell() {
+        Shell.setDefaultBuilder(
+            Shell.Builder.create()
+                .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
+                .setTimeout(10)
+        )
+    }
+
+    fun initDB() {
         val intent = Intent(this, RootDatabase::class.java)
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -42,12 +56,6 @@ class GMSApplication : Application() {
             }
         }
         RootService.bind(intent, service)
-
-        startKoin {
-            androidLogger(Level.DEBUG)
-            androidContext(this@GMSApplication)
-            modules(listOf(appModule, viewModelsModule))
-        }
     }
 
     fun getRootDatabase(): IRootDatabase {

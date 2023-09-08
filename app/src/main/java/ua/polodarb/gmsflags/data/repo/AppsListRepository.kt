@@ -3,17 +3,18 @@ package ua.polodarb.gmsflags.data.repo
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppInfo
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
-import ua.polodarb.gmsflags.ui.screens.appsScreen.DialogUiStates
+import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsListRepository(
     private val context: Context
 ) {
     fun getAllInstalledApps() = flow<AppsScreenUiStates> {
+
+        emit (AppsScreenUiStates.Loading)
 
         val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
 
@@ -27,12 +28,14 @@ class AppsListRepository(
 
         val filteredAppInfoList = appInfoList.asSequence()
             .filter { gmsPackages.contains(it.packageName) && it.packageName.contains("com.google") }
-            .filterNot { it.packageName == "com.google.android.gm" || it.packageName.contains("gms") }
+//            .filterNot { it.packageName == "com.google.android.gm" || it.packageName.contains("gms") }
             .map { AppInfo.create(pm, it) }
             .sortedBy { it.appName }
             .toList()
 
-        emit(AppsScreenUiStates.Success(filteredAppInfoList))
+        if (filteredAppInfoList.isNotEmpty()) {
+            emit(AppsScreenUiStates.Success(filteredAppInfoList))
+        }
     }
 
 
