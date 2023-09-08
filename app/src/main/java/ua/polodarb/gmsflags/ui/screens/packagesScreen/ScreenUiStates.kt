@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens
+package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
 sealed interface ScreenUiStates {
     data object Loading : ScreenUiStates

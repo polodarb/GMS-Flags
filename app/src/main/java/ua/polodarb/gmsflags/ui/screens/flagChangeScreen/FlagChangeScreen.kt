@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -36,16 +35,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -95,9 +91,9 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.core.Extensions.toInt
-import ua.polodarb.gmsflags.ui.dialogs.FlagChangeDialog
-import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
-import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.ui.components.ErrorLoadScreen
+import ua.polodarb.gmsflags.ui.components.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED

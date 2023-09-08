@@ -49,39 +49,3 @@ object Extensions {
 
     fun Boolean.toInt() = if (this) 1 else 0
 }
-
-@Stable
-@Composable
-fun NavController.currentScreenAsState(): State<NavBarItem> {
-
-    val selectedItem = remember { mutableStateOf<NavBarItem>(NavBarItem.Suggestions) }
-
-    DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.hierarchy.any { it.route == NavBarItem.Suggestions.screenRoute } -> {
-                    selectedItem.value = NavBarItem.Suggestions
-                }
-
-                destination.hierarchy.any { it.route == NavBarItem.Apps.screenRoute } -> {
-                    selectedItem.value = NavBarItem.Apps
-                }
-
-                destination.hierarchy.any { it.route == NavBarItem.Saved.screenRoute } -> {
-                    selectedItem.value = NavBarItem.Saved
-                }
-
-                destination.hierarchy.any { it.route == NavBarItem.History.screenRoute } -> {
-                    selectedItem.value = NavBarItem.History
-                }
-            }
-        }
-        addOnDestinationChangedListener(listener)
-
-        onDispose {
-            removeOnDestinationChangedListener(listener)
-        }
-    }
-
-    return selectedItem
-}

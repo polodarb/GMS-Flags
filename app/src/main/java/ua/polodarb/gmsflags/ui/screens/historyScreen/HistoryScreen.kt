@@ -3,11 +3,9 @@ package ua.polodarb.gmsflags.ui.screens.historyScreen
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,12 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
-import ua.polodarb.gmsflags.ui.theme.Typography
+import ua.polodarb.gmsflags.ui.components.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

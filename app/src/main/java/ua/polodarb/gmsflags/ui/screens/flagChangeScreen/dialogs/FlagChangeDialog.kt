@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.dialogs
+package ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

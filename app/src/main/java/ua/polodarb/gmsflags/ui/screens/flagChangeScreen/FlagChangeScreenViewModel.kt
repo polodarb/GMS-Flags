@@ -121,7 +121,7 @@ class FlagChangeScreenViewModel(
     fun initOverriddenBoolFlags(pkgName: String, delay: Boolean = false) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val data = repository.getOverriddenBoolFlags(pkgName, delay = false)
+                val data = repository.getOverriddenBoolFlags(pkgName)
                 when (data) {
                     is FlagChangeUiStates.Success -> {
                         changedFilterBoolList.clear()

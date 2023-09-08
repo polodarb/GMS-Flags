@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.dialogs
+package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

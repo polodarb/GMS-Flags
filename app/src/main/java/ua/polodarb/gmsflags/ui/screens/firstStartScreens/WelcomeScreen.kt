@@ -58,14 +58,12 @@ fun WelcomeScreen(
             off regional restrictions, and more... 
         """.trimIndent(),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                lineHeight = 26.sp
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
                 text = "Become part of the community!",
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                lineHeight = 28.sp
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(

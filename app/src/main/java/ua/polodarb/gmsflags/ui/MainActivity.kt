@@ -12,7 +12,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import org.koin.android.ext.android.get
-import ua.polodarb.gmsflags.di.GMSApplication
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File

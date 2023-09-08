@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import kotlinx.coroutines.flow.flow
-import ua.polodarb.gmsflags.di.GMSApplication
-import ua.polodarb.gmsflags.ui.screens.appsScreen.AppInfo
+import ua.polodarb.gmsflags.ui.GMSApplication
+import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
@@ -13,11 +13,9 @@ class AppsListRepository(
     private val context: Context
 ) {
     fun getAllInstalledApps() = flow<AppsScreenUiStates> {
-
         emit (AppsScreenUiStates.Loading)
 
         val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
-
         val pm = context.packageManager
 
         val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -38,8 +36,6 @@ class AppsListRepository(
         }
     }
 
-
-
     fun getListByPackages(pkgName: String) = flow<DialogUiStates> {
         val context = context as GMSApplication
         val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {
@@ -51,4 +47,5 @@ class AppsListRepository(
         }
         emit(DialogUiStates.Success(list))
     }
+
 }

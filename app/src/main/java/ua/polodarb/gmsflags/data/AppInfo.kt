@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.appsScreen
+package ua.polodarb.gmsflags.data
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager

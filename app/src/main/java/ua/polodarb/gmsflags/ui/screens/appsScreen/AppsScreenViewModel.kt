@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
