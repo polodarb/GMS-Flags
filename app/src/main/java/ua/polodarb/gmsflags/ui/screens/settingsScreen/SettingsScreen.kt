@@ -66,9 +66,6 @@ fun SettingsScreen(
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
             Column {
-                Button(onClick = { }) {
-                    Text(text = "Init Shell and DB")
-                }
                 NotImplementedScreen()
             }
         }
