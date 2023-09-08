@@ -26,7 +26,6 @@ class PackagesScreenViewModel(
                     when (uiState) {
                         is ScreenUiStates.Success -> {
                             _state.value = ScreenUiStates.Success(uiState.data)
-                            Log.e("VM", "${_state.value}")
                         }
 
                         is ScreenUiStates.Error -> {

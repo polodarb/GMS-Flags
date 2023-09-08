@@ -28,7 +28,7 @@ class AppsListRepository(
 
         val filteredAppInfoList = appInfoList.asSequence()
             .filter { gmsPackages.contains(it.packageName) && it.packageName.contains("com.google") }
-            .filterNot { it.packageName == "com.google.android.gm" || it.packageName.contains("gms") }
+//            .filterNot { it.packageName == "com.google.android.gm" || it.packageName.contains("gms") }
             .map { AppInfo.create(pm, it) }
             .sortedBy { it.appName }
             .toList()

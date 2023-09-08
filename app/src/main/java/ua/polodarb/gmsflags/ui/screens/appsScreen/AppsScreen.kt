@@ -204,11 +204,8 @@ fun AppsScreen(
         Column(
             modifier = Modifier.padding(top = it.calculateTopPadding())
         ) {
-            Log.e("appScreen", "UI_STATE - ${uiState.value}")
             when (uiState.value) {
                 is AppsScreenUiStates.Success -> {
-
-                    Log.e("appScreen", "AppsScreenUiStates.SUCCESS")
 
                     val appsList = (uiState.value as AppsScreenUiStates.Success).data
 

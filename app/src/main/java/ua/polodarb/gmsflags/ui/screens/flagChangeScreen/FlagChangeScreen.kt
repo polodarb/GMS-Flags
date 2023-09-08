@@ -485,7 +485,9 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listBool =
-                                (uiStateBoolean.value as FlagChangeUiStates.Success).data
+                                (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(compareByDescending<String> {
+                                    it.toIntOrNull() ?: 0
+                                }.thenBy { it })
 
                             if (listBool.isEmpty()) NoFlagsType()
 
@@ -540,7 +542,7 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listInt =
-                                (uiStateInteger.value as FlagChangeUiStates.Success).data
+                                (uiStateInteger.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
 
                             if (listInt.isEmpty()) NoFlagsType()
 
@@ -630,7 +632,7 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listFloat =
-                                (uiStateFloat.value as FlagChangeUiStates.Success).data
+                                (uiStateFloat.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
 
                             if (listFloat.isEmpty()) NoFlagsType()
 
@@ -721,7 +723,7 @@ fun FlagChangeScreen(
                         is FlagChangeUiStates.Success -> {
 
                             val listString =
-                                (uiStateString.value as FlagChangeUiStates.Success).data
+                                (uiStateString.value as FlagChangeUiStates.Success).data.toList().sortedBy { it.first }.toMap()
 
                             if (listString.isEmpty()) NoFlagsType()
 
@@ -812,12 +814,10 @@ fun FlagChangeScreen(
             flagType = flagType,
             onFlagTypeChange = {
                 flagType = it
-                Toast.makeText(context, "flagType - $flagType", Toast.LENGTH_SHORT).show()
             },
             flagBoolean = flagBoolean,
             onFlagBooleanChange = {
                 flagBoolean = it
-                Toast.makeText(context, "flagBoolean - $flagBoolean", Toast.LENGTH_SHORT).show()
             },
             flagName = flagAddName,
             flagNameChange = {
@@ -865,9 +865,13 @@ fun FlagChangeScreen(
                 viewModel.clearPhenotypeCache(packageName.toString())
                 dropDownExpanded = false
                 showAddFlagDialog.value = false
+                flagAddName = ""
+                flagAddValue = ""
             },
             onDismiss = {
                 showAddFlagDialog.value = false
+                flagAddName = ""
+                flagAddValue = ""
             }
         )
     }

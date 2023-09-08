@@ -165,7 +165,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun getBoolFlags() {
-        if (listBoolFiltered.isNotEmpty()) {
+//        if (listBoolFiltered.isNotEmpty()) {
             when (filterMethod.value) {
                 FilterMethod.ENABLED -> {
                     _stateBoolean.value = FlagChangeUiStates.Success(
@@ -199,7 +199,9 @@ class FlagChangeScreenViewModel(
                     )
                 }
             }
-        }
+//        } else {
+//            _stateBoolean.value = FlagChangeUiStates.Success(emptyMap())
+//        }
     }
 
     // Integer

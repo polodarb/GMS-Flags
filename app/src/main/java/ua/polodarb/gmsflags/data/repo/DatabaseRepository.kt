@@ -61,7 +61,8 @@ class DatabaseRepository(
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
 
-        if (boolFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(boolFlags))
+        if (boolFlags.isNotEmpty())
+            emit(FlagChangeUiStates.Success(boolFlags))
 
     }
 
