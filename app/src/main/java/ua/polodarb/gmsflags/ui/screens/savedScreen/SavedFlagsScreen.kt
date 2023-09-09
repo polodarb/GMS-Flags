@@ -31,7 +31,7 @@ fun SavedFlagsScreen() {
     ) {
         LazyColumn {
             items(20) {
-                LazyFlagsItem(packageName = "45369077", index = it)
+                LazyFlagsItem(flagName = "flagName", packageName = "packageName", index = it)
             }
         }
     }
@@ -39,6 +39,7 @@ fun SavedFlagsScreen() {
 
 @Composable
 fun LazyFlagsItem(
+    flagName: String,
     packageName: String,
     modifier: Modifier = Modifier,
     index: Int
@@ -48,6 +49,7 @@ fun LazyFlagsItem(
     }
 
     LazyFlagsItem(
+        flagName = flagName,
         packageName = packageName,
         modifier = modifier,
         checked = checkedState,
@@ -59,6 +61,7 @@ fun LazyFlagsItem(
 
 @Composable
 fun LazyFlagsItem(
+    flagName: String,
     packageName: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -84,7 +87,8 @@ fun LazyFlagsItem(
                 }
             }
             Column(Modifier.weight(0.9f), verticalArrangement = Arrangement.Center) {
-                Text(text = packageName, style = MaterialTheme.typography.bodyLarge)
+                Text(text = packageName, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.outline)
+                Text(text = flagName, style = MaterialTheme.typography.bodyLarge)
             }
             Switch(
                 checked = false, onCheckedChange = {
