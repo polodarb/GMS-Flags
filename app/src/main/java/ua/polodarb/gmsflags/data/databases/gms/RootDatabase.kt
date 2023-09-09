@@ -11,6 +11,9 @@ import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.core.Constants.DB_PATH
+import ua.polodarb.gmsflags.core.Constants.GET_GMS_PACKAGES
+import ua.polodarb.gmsflags.core.Constants.TAG
 
 @SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
@@ -122,6 +125,7 @@ class RootDatabase : RootService() {
             val item = cursor.getString(0)
             list.add(item)
         }
+        cursor.close()
         return list
     }
 
@@ -134,6 +138,7 @@ class RootDatabase : RootService() {
             val user = cursor.getString(0)
             list.add(user)
         }
+        cursor.close()
         return list
     }
 
@@ -146,6 +151,7 @@ class RootDatabase : RootService() {
             val item = cursor.getString(0)
             list.add(item)
         }
+        cursor.close()
         return list
     }
 
@@ -196,7 +202,7 @@ class RootDatabase : RootService() {
             put("flagType", flagType)
             put("intVal", intVal)
             put("boolVal", boolVal)
-            put("floatVal", floatVal) // todo: check type
+            put("floatVal", floatVal)
             put("stringVal", stringVal)
             put("extensionVal", extensionVal)
             put("committed", committed)
@@ -221,6 +227,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -238,6 +245,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -255,6 +263,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -273,6 +282,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -301,6 +311,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -313,6 +324,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -325,6 +337,7 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
@@ -334,13 +347,8 @@ class RootDatabase : RootService() {
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
+        cursor.close()
         return list.toMap()
     }
 
-    private companion object {
-        const val TAG = "RootDatabase"
-        const val DB_PATH = "/data/data/com.google.android.gms/databases/phenotype.db"
-        const val GET_GMS_PACKAGES =
-            "SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName"
-    }
 }

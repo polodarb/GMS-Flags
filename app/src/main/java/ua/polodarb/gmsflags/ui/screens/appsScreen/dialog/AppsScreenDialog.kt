@@ -86,7 +86,7 @@ fun AppsScreenDialog(
                 )
             },
             confirmButton = {
-                OutlinedButton(onClick = onDismiss ) {
+                OutlinedButton(onClick = onDismiss) {
                     Text(text = "Exit")
                 }
             }
@@ -180,9 +180,11 @@ fun DialogListWithoutSeparator(
     pkgName: String,
     onPackageClick: (packageName: String) -> Unit,
 ) {
-    LazyColumn(modifier = Modifier
-        .padding(top = 16.dp)
-        .clip(RoundedCornerShape(16.dp))) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .clip(RoundedCornerShape(16.dp))
+    ) {
         itemsIndexed(packagesList.toList()) { index: Int, item: String ->
             DialogListItem(
                 itemText = item,

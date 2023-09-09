@@ -58,7 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.NotImplementedScreen
+import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

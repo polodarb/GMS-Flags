@@ -1,11 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,9 +15,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,34 +30,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
-import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
+import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
+import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,47 +146,19 @@ fun PackagesScreen(
                     scrollBehavior = scrollBehavior
                 )
                 AnimatedVisibility(visible = searchIconState) {
-                    Row(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        DockedSearchBar(
-                            query = searchQuery,
-                            onQueryChange = { newQuery ->
-                                searchQuery = newQuery
-                            },
-                            onSearch = {},
-                            placeholder = {
-                                Text(text = "Search a package name")
-                            },
-                            trailingIcon = {
-                                AnimatedVisibility(
-                                    visible = searchQuery.isNotEmpty(),
-                                    enter = fadeIn(),
-                                    exit = fadeOut()
-                                ) {
-                                    IconButton(onClick = {
-                                        searchQuery = ""
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            },
-                            active = false,
-                            onActiveChange = { },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                        ) { }
-                    }
+                    GFlagsSearchBar(
+                        query = searchQuery,
+                        onQueryChange = { newQuery ->
+                            searchQuery = newQuery
+                        },
+                        iconVisibility = searchQuery.isNotEmpty(),
+                        iconOnClick = {
+                            searchQuery = ""
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        placeHolderText = "Search a package name",
+                        keyboardFocus = focusRequester
+                    )
                 }
             }
         }

@@ -2,13 +2,10 @@ package ua.polodarb.gmsflags.ui.navigation
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -25,10 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newCoroutineContext
 import org.koin.compose.koinInject
-import ua.polodarb.gmsflags.data.datastore.DataStoreManager
-import ua.polodarb.gmsflags.di.GMSApplication
+import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
@@ -51,8 +46,6 @@ internal fun RootAppNavigation(
     val appContext = koinInject<Context>()
     val activityContext = LocalContext.current
     val haptic = LocalHapticFeedback.current
-
-    val datastore = DataStoreManager(activityContext)
 
     val isButtonLoading = rememberSaveable() {
         mutableStateOf(false)
@@ -95,13 +88,14 @@ internal fun RootAppNavigation(
                     isButtonLoading.value = true
                     try {
                         (appContext.applicationContext as GMSApplication).initShell()
-                    } catch (_: Exception) { }
+                    } catch (_: Exception) {
+                    }
 
                     if (Shell.getShell().isRoot) {
                         (appContext.applicationContext as GMSApplication).initDB()
                         CoroutineScope(Dispatchers.Main).launch {
                             delay(700)
-                            datastore.setFirstStart(false)
+                            activity.setFirstLaunch()
                             navController.navigate(ScreensDestination.Root.screenRoute)
                         }
                     } else {
@@ -111,7 +105,8 @@ internal fun RootAppNavigation(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         }
                         isButtonLoading.value = false
-                        Toast.makeText(activityContext, "ROOT IS NOT DENIED!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activityContext, "ROOT IS DENIED!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 },
                 isButtonLoading = isButtonLoading.value

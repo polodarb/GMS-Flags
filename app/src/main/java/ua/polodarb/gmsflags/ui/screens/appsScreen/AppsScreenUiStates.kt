@@ -1,5 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
+import ua.polodarb.gmsflags.data.AppInfo
+
 sealed interface AppsScreenUiStates {
     data object Loading : AppsScreenUiStates
 

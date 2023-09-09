@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _state =
         MutableStateFlow<AppsScreenUiStates>(AppsScreenUiStates.Loading)

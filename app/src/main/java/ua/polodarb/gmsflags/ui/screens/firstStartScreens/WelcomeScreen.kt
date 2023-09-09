@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.firstStartScreens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -58,14 +56,12 @@ fun WelcomeScreen(
             off regional restrictions, and more... 
         """.trimIndent(),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                lineHeight = 26.sp
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
                 text = "Become part of the community!",
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                lineHeight = 28.sp
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(

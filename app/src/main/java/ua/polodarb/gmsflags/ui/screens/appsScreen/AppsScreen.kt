@@ -1,33 +1,24 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -57,15 +47,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.screens.ErrorLoadScreen
-import ua.polodarb.gmsflags.ui.screens.LoadingProgressBar
+import ua.polodarb.gmsflags.data.AppInfo
+import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
+import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
@@ -155,48 +147,20 @@ fun AppsScreen(
                     scrollBehavior = scrollBehavior
                 )
                 AnimatedVisibility(visible = searchIconState) {
-                    Row(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        DockedSearchBar(
-                            query = viewModel.searchQuery.value,
-                            onQueryChange = { newQuery ->
-                                viewModel.searchQuery.value = newQuery
-                            },
-                            onSearch = {},
-                            placeholder = {
-                                Text(text = "Search a package name")
-                            },
-                            trailingIcon = {
-                                AnimatedVisibility(
-                                    visible = viewModel.searchQuery.value.isNotEmpty(),
-                                    enter = fadeIn(),
-                                    exit = fadeOut()
-                                ) {
-                                    IconButton(onClick = {
-                                        viewModel.searchQuery.value = ""
-                                        viewModel.getAllInstalledApps()
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            },
-                            active = false,
-                            onActiveChange = { },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                        ) { }
-                    }
+                    GFlagsSearchBar(
+                        query = viewModel.searchQuery.value,
+                        onQueryChange = { newQuery ->
+                            viewModel.searchQuery.value = newQuery
+                        },
+                        placeHolderText = "Search a package name",
+                        iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
+                        iconOnClick = {
+                            viewModel.searchQuery.value = ""
+                            viewModel.getAllInstalledApps()
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        keyboardFocus = focusRequester
+                    )
                 }
             }
         }
@@ -209,17 +173,16 @@ fun AppsScreen(
 
                     val appsList = (uiState.value as AppsScreenUiStates.Success).data
 
-                    if (appsList.isEmpty()) NoFlagsType()
+                    if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        itemsIndexed(appsList.toList()) { index: Int, item: AppInfo ->
+                        this.items(appsList) { item: AppInfo ->
                             AppListItem(
                                 appName = item.appName,
                                 pkg = item.applicationInfo.packageName,
                                 appIcon = item.icon,
-                                flagsCount = "null",
                                 onClick = {
                                     viewModel.getListByPackages(item.applicationInfo.packageName)
                                     viewModel.setPackageToDialog(item.applicationInfo.packageName)
@@ -260,12 +223,10 @@ fun AppsScreen(
                 }
 
                 is AppsScreenUiStates.Loading -> {
-                    Log.e("appScreen", "AppsScreenUiStates.LOADING")
                     LoadingProgressBar()
                 }
 
                 is AppsScreenUiStates.Error -> {
-                    Log.e("appScreen", "AppsScreenUiStates.ERROR")
                     ErrorLoadScreen()
                 }
             }
@@ -278,7 +239,6 @@ fun AppListItem(
     appName: String,
     pkg: String,
     appIcon: Drawable,
-    flagsCount: String = "0",
     onClick: (String) -> Unit
 ) {
     ListItem(
@@ -295,32 +255,10 @@ fun AppListItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.offset(x = 12.dp)
             ) {
-//                Text(
-//                    text = flagsCount
-//                )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_next),
                     contentDescription = null
                 )
             }
         })
-}
-
-@Composable
-fun NoFlagsType() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(1f)
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "¯\\_(ツ)_/¯\n\nApps not found",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Medium
-        )
-    }
 }

@@ -1,12 +1,11 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import ua.polodarb.gmsflags.di.GMSApplication
-import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
+import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
+import ua.polodarb.gmsflags.ui.screens.packagesScreen.ScreenUiStates
 
 class DatabaseRepository(
     private val context: Context
@@ -49,66 +48,57 @@ class DatabaseRepository(
         val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
         if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
-
         else emit(ScreenUiStates.Error())
 
     }
 
     suspend fun getBoolFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
-
         if (delay) delay(200)
 
         val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
-
         if (boolFlags.isNotEmpty())
             emit(FlagChangeUiStates.Success(boolFlags))
-
     }
 
     suspend fun getIntFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
-
         if (delay) delay(200)
 
         val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
-
-        if (intFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(intFlags))
-
+        if (intFlags.isNotEmpty())
+            emit(FlagChangeUiStates.Success(intFlags))
     }
 
     suspend fun getFloatFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
-
         if (delay) delay(200)
 
         val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
-
-        emit(FlagChangeUiStates.Success(floatFlags))
+        if (floatFlags.isNotEmpty())
+            emit(FlagChangeUiStates.Success(floatFlags))
     }
 
     suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<FlagChangeUiStates> {
         emit(FlagChangeUiStates.Loading)
-
         if (delay) delay(200)
 
         val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-
-        if (stringFlags.isNotEmpty()) emit(FlagChangeUiStates.Success(stringFlags))
-
+        if (stringFlags.isNotEmpty())
+            emit(FlagChangeUiStates.Success(stringFlags))
     }
 
-    fun getOverriddenBoolFlags(packageName: String, delay: Boolean): FlagChangeUiStates {
-        val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
-        return(FlagChangeUiStates.Success(boolOverriddenFlags))
+    fun getOverriddenBoolFlags(packageName: String): FlagChangeUiStates {
+        val boolOverriddenFlags =
+            gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
+        return (FlagChangeUiStates.Success(boolOverriddenFlags))
     }
 
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
 
     fun androidPackage(pkgName: String): String {
-
-        val users = gmsApplication.getRootDatabase().androidPackage(pkgName)
-        return users
+        val usersList = gmsApplication.getRootDatabase().androidPackage(pkgName)
+        return usersList
     }
 
     fun deleteRowByFlagName(packageName: String, name: String) {

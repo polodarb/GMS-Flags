@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.DatabaseRepository
-import ua.polodarb.gmsflags.ui.screens.ScreenUiStates
 
 class PackagesScreenViewModel(
     private val repository: DatabaseRepository
@@ -28,11 +26,13 @@ class PackagesScreenViewModel(
                             _state.value = ScreenUiStates.Success(uiState.data)
                         }
 
-                        is ScreenUiStates.Error -> {
-
+                        is ScreenUiStates.Loading -> {
+                            _state.value = ScreenUiStates.Loading
                         }
 
-                        is ScreenUiStates.Loading -> {}
+                        is ScreenUiStates.Error -> {
+                            _state.value = ScreenUiStates.Error()
+                        }
                     }
                 }
             }

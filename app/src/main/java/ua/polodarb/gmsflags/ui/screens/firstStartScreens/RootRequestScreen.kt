@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,14 +53,12 @@ fun RootRequestScreen(
             requires superuser rights to function. 
         """.trimIndent(),
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                lineHeight = 26.sp
+                modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
                 text = "To request click the \"Request root\"",
                 fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                lineHeight = 28.sp
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
             Row(

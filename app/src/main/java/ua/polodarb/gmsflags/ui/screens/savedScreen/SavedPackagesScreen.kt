@@ -16,7 +16,8 @@ fun SavedPackagesScreen() {
             items(20) {
                 LazyItem(
                     packageName = "com.google.android.gms.cast",
-                    packagesCount = 0)
+                    packagesCount = 0
+                )
             }
         }
     }
