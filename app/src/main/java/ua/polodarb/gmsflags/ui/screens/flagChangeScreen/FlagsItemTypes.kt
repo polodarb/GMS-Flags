@@ -59,7 +59,7 @@ fun BoolValItem(
                 .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-            IconToggleButton(checked = false, onCheckedChange = {  }) { // todo
+            IconToggleButton(checked = false, onCheckedChange = { }) { // todo
                 if (false) { //todo
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),

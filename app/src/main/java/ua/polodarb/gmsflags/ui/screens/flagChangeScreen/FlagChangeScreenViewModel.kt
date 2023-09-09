@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -132,6 +131,7 @@ class FlagChangeScreenViewModel(
                     is FlagChangeUiStates.Loading -> {
                         _stateBoolean.value = FlagChangeUiStates.Loading
                     }
+
                     is FlagChangeUiStates.Error -> {
                         _stateBoolean.value = FlagChangeUiStates.Error()
                     }
@@ -166,39 +166,39 @@ class FlagChangeScreenViewModel(
 
     fun getBoolFlags() {
 //        if (listBoolFiltered.isNotEmpty()) {
-            when (filterMethod.value) {
-                FilterMethod.ENABLED -> {
-                    _stateBoolean.value = FlagChangeUiStates.Success(
-                        (listBoolFiltered.toMap().filterByEnabled()).filter {
-                            it.key.contains(searchQuery.value, ignoreCase = true)
-                        }
-                    )
-                }
-
-                FilterMethod.DISABLED -> {
-                    _stateBoolean.value = FlagChangeUiStates.Success(
-                        (listBoolFiltered.toMap().filterByDisabled()).filter {
-                            it.key.contains(searchQuery.value, ignoreCase = true)
-                        }
-                    )
-                }
-
-                FilterMethod.CHANGED -> {
-                    _stateBoolean.value = FlagChangeUiStates.Success(
-                        changedFilterBoolList.filter {
-                            it.key.contains(searchQuery.value, ignoreCase = true)
-                        }
-                    )
-                }
-
-                else -> {
-                    _stateBoolean.value = FlagChangeUiStates.Success(
-                        listBoolFiltered.filter {
-                            it.key.contains(searchQuery.value, ignoreCase = true)
-                        }
-                    )
-                }
+        when (filterMethod.value) {
+            FilterMethod.ENABLED -> {
+                _stateBoolean.value = FlagChangeUiStates.Success(
+                    (listBoolFiltered.toMap().filterByEnabled()).filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
             }
+
+            FilterMethod.DISABLED -> {
+                _stateBoolean.value = FlagChangeUiStates.Success(
+                    (listBoolFiltered.toMap().filterByDisabled()).filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
+            }
+
+            FilterMethod.CHANGED -> {
+                _stateBoolean.value = FlagChangeUiStates.Success(
+                    changedFilterBoolList.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
+            }
+
+            else -> {
+                _stateBoolean.value = FlagChangeUiStates.Success(
+                    listBoolFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
+            }
+        }
 //        } else {
 //            _stateBoolean.value = FlagChangeUiStates.Success(emptyMap())
 //        }

@@ -24,8 +24,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
             viewportWidth = 373.0f, viewportHeight = 373.0f
         ).apply {
             path(
-                fill = SolidColor(colorScheme.surfaceVariant), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.surfaceVariant),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(27.64f, 178.349f)
@@ -43,105 +47,157 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(39.254f, 181.232f)
                 verticalLineTo(192.057f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(44.667f, 186.645f)
                 horizontalLineTo(33.842f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(285.456f, 277.87f)
                 verticalLineTo(284.544f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(288.793f, 281.207f)
                 horizontalLineTo(282.119f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(320.723f, 51.961f)
                 verticalLineTo(58.635f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(324.059f, 55.298f)
                 horizontalLineTo(317.386f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(230.993f, 324.453f)
                 verticalLineTo(331.127f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(234.33f, 327.79f)
                 horizontalLineTo(227.656f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(316.487f, 309.572f)
                 verticalLineTo(325.772f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(324.587f, 317.672f)
                 horizontalLineTo(308.387f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(68.898f, 76.502f)
                 verticalLineTo(92.703f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(76.998f, 84.603f)
                 horizontalLineTo(60.798f)
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(42.894f, 130.067f)
                 curveTo(42.894f, 131.682f, 41.585f, 132.99f, 39.971f, 132.99f)
@@ -151,9 +207,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(331.516f, 299.908f)
                 curveTo(331.516f, 301.026f, 330.609f, 301.932f, 329.492f, 301.932f)
@@ -163,9 +223,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(257.844f, 313.813f)
                 curveTo(257.844f, 314.931f, 256.938f, 315.837f, 255.821f, 315.837f)
@@ -175,9 +239,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(50.725f, 144.579f)
                 curveTo(52.181f, 141.311f, 50.711f, 137.482f, 47.443f, 136.026f)
@@ -187,9 +255,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(340.888f, 199.069f)
                 curveTo(344.465f, 199.069f, 347.365f, 196.168f, 347.365f, 192.591f)
@@ -199,9 +271,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(140.257f, 61.811f)
                 curveTo(141.076f, 58.329f, 138.917f, 54.842f, 135.435f, 54.023f)
@@ -211,9 +287,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(127.312f, 95.851f)
                 curveTo(87.257f, 95.851f, 54.673f, 127.756f, 54.673f, 166.967f)
@@ -229,9 +309,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(205.58f, 315.413f)
                 verticalLineTo(206.856f)
@@ -252,9 +336,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(133.706f, 276.216f)
                 lineTo(136.606f, 306.013f)
@@ -267,9 +355,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(133.706f, 276.216f)
                 lineTo(136.606f, 306.013f)
@@ -282,8 +374,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(300.782f, 25.989f)
@@ -295,8 +391,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(249.265f, 79.282f)
@@ -472,8 +572,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(241.325f, 33.643f)
@@ -485,8 +589,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(104.292f, 261.563f)
@@ -498,8 +606,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(50.605f, 317.1f)
@@ -675,8 +787,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSecondaryContainer), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSecondaryContainer),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(42.331f, 269.54f)
@@ -688,9 +804,14 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSurfaceVariant), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Round, strokeLineJoin =
-                StrokeJoin.Round, strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.onSurfaceVariant),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Round,
+                strokeLineJoin =
+                StrokeJoin.Round,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(333.55f, 286.959f)
                 horizontalLineTo(171.027f)
@@ -702,9 +823,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(329.856f, 283.728f)
                 horizontalLineTo(167.333f)
@@ -716,9 +841,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(329.986f, 67.682f)
                 verticalLineTo(283.727f)
@@ -729,9 +858,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(336.857f, 125.203f)
                 horizontalLineTo(329.986f)
@@ -741,9 +874,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSurfaceVariant), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.onSurfaceVariant),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(336.857f, 67.682f)
                 horizontalLineTo(160.332f)
@@ -753,9 +890,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(317.517f, 75.477f)
                 curveTo(317.517f, 74.268f, 316.538f, 73.289f, 315.33f, 73.289f)
@@ -765,9 +906,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(322.205f, 77.664f)
                 curveTo(323.413f, 77.664f, 324.392f, 76.685f, 324.392f, 75.477f)
@@ -777,9 +922,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.background), stroke = SolidColor(colorScheme.onSurfaceVariant),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.background),
+                stroke = SolidColor(colorScheme.onSurfaceVariant),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(329.081f, 77.664f)
                 curveTo(330.289f, 77.664f, 331.268f, 76.685f, 331.268f, 75.477f)
@@ -789,9 +938,14 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.secondary), stroke = SolidColor(colorScheme.background),
-                strokeLineWidth = 1.0f, strokeLineCap = Round, strokeLineJoin =
-                StrokeJoin.Round, strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.secondary),
+                stroke = SolidColor(colorScheme.background),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Round,
+                strokeLineJoin =
+                StrokeJoin.Round,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(239.883f, 262.12f)
                 curveTo(221.592f, 251.135f, 207.184f, 237.845f, 197.062f, 222.62f)
@@ -827,8 +981,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.surfaceVariant), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.surfaceVariant),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(248.755f, 113.03f)
@@ -853,8 +1011,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSurfaceVariant), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSurfaceVariant),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(260.327f, 159.752f)
@@ -865,8 +1027,12 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.onSurfaceVariant), stroke = null, strokeLineWidth = 0.0f,
-                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                fill = SolidColor(colorScheme.onSurfaceVariant),
+                stroke = null,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
                 pathFillType = NonZero
             ) {
                 moveTo(248.295f, 200.433f)
@@ -877,9 +1043,16 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(colorScheme.outline), stroke = null, fillAlpha = 0.19f, strokeAlpha
-                = 0.19f, strokeLineWidth = 0.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(colorScheme.outline),
+                stroke = null,
+                fillAlpha = 0.19f,
+                strokeAlpha
+                = 0.19f,
+                strokeLineWidth = 0.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(257.625f, 262.12f)
                 curveTo(275.917f, 251.135f, 290.325f, 237.845f, 300.447f, 222.62f)
@@ -892,9 +1065,13 @@ fun getGMSImagesRoot(colorScheme: ColorScheme): ImageVector {
                 close()
             }
             path(
-                fill = SolidColor(Color(0x00000000)), stroke = SolidColor(colorScheme.onSecondaryContainer),
-                strokeLineWidth = 1.0f, strokeLineCap = Butt, strokeLineJoin = Miter,
-                strokeLineMiter = 4.0f, pathFillType = NonZero
+                fill = SolidColor(Color(0x00000000)),
+                stroke = SolidColor(colorScheme.onSecondaryContainer),
+                strokeLineWidth = 1.0f,
+                strokeLineCap = Butt,
+                strokeLineJoin = Miter,
+                strokeLineMiter = 4.0f,
+                pathFillType = NonZero
             ) {
                 moveTo(15.324f, 338.053f)
                 horizontalLineTo(348.738f)

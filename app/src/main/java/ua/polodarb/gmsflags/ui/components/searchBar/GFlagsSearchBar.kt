@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.components
+package ua.polodarb.gmsflags.ui.components.searchBar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -21,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,13 +31,15 @@ fun GFlagsSearchBar(
     onQueryChange: (String) -> Unit,
     iconVisibility: Boolean,
     iconOnClick: () -> Unit,
+    placeHolderText: String,
     keyboardFocus: FocusRequester
 ) {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .height(64.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -46,7 +48,7 @@ fun GFlagsSearchBar(
             onQueryChange = onQueryChange,
             onSearch = {},
             placeholder = {
-                Text(text = "Search a package name")
+                Text(text = placeHolderText)
             },
             trailingIcon = {
                 AnimatedVisibility(

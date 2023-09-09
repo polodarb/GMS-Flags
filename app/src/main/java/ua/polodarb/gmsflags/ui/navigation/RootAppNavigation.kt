@@ -88,7 +88,8 @@ internal fun RootAppNavigation(
                     isButtonLoading.value = true
                     try {
                         (appContext.applicationContext as GMSApplication).initShell()
-                    } catch (_: Exception) { }
+                    } catch (_: Exception) {
+                    }
 
                     if (Shell.getShell().isRoot) {
                         (appContext.applicationContext as GMSApplication).initDB()
@@ -104,7 +105,8 @@ internal fun RootAppNavigation(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         }
                         isButtonLoading.value = false
-                        Toast.makeText(activityContext, "ROOT IS DENIED!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activityContext, "ROOT IS DENIED!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 },
                 isButtonLoading = isButtonLoading.value

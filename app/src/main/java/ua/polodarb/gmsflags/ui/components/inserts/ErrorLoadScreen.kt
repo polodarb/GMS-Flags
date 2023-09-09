@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.components
+package ua.polodarb.gmsflags.ui.components.inserts
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

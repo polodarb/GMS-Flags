@@ -1,18 +1,14 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,7 +47,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,10 +54,10 @@ import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
-import ua.polodarb.gmsflags.ui.components.GFlagsSearchBar
-import ua.polodarb.gmsflags.ui.components.ErrorLoadScreen
-import ua.polodarb.gmsflags.ui.components.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.components.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
+import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
@@ -152,21 +147,22 @@ fun AppsScreen(
                     scrollBehavior = scrollBehavior
                 )
                 AnimatedVisibility(visible = searchIconState) {
-                        GFlagsSearchBar(
-                            query = viewModel.searchQuery.value,
-                            onQueryChange = { newQuery ->
-                                viewModel.searchQuery.value = newQuery
-                            },
-                            iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
-                            iconOnClick = {
-                                        viewModel.searchQuery.value = ""
-                                        viewModel.getAllInstalledApps()
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    },
-                            keyboardFocus = focusRequester
-                        )
-                    }
+                    GFlagsSearchBar(
+                        query = viewModel.searchQuery.value,
+                        onQueryChange = { newQuery ->
+                            viewModel.searchQuery.value = newQuery
+                        },
+                        placeHolderText = "Search a package name",
+                        iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
+                        iconOnClick = {
+                            viewModel.searchQuery.value = ""
+                            viewModel.getAllInstalledApps()
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        keyboardFocus = focusRequester
+                    )
                 }
+            }
         }
     ) { it ->
         Column(
@@ -182,7 +178,7 @@ fun AppsScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        this.items(appsList) {  item: AppInfo ->
+                        this.items(appsList) { item: AppInfo ->
                             AppListItem(
                                 appName = item.appName,
                                 pkg = item.applicationInfo.packageName,

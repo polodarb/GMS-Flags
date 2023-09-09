@@ -4,8 +4,8 @@ import android.content.Context
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.ui.screens.packagesScreen.ScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
+import ua.polodarb.gmsflags.ui.screens.packagesScreen.ScreenUiStates
 
 class DatabaseRepository(
     private val context: Context
@@ -48,7 +48,6 @@ class DatabaseRepository(
         val list = (context as GMSApplication).getRootDatabase().gmsPackages
 
         if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
-
         else emit(ScreenUiStates.Error())
 
     }
@@ -90,8 +89,9 @@ class DatabaseRepository(
     }
 
     fun getOverriddenBoolFlags(packageName: String): FlagChangeUiStates {
-        val boolOverriddenFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
-        return(FlagChangeUiStates.Success(boolOverriddenFlags))
+        val boolOverriddenFlags =
+            gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
+        return (FlagChangeUiStates.Success(boolOverriddenFlags))
     }
 
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users

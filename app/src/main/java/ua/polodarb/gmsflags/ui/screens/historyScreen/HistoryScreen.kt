@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.components.NotImplementedScreen
+import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -13,7 +13,7 @@ class AppsListRepository(
     private val context: Context
 ) {
     fun getAllInstalledApps() = flow<AppsScreenUiStates> {
-        emit (AppsScreenUiStates.Loading)
+        emit(AppsScreenUiStates.Loading)
 
         val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
         val pm = context.packageManager
@@ -39,7 +39,7 @@ class AppsListRepository(
     fun getListByPackages(pkgName: String) = flow<DialogUiStates> {
         val context = context as GMSApplication
         val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {
-            if(pkgName == "com.google.android.gm") {
+            if (pkgName == "com.google.android.gm") {
                 it.contains("gms")
             } else {
                 false

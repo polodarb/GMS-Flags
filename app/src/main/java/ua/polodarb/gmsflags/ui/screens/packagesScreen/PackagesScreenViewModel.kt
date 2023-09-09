@@ -26,11 +26,13 @@ class PackagesScreenViewModel(
                             _state.value = ScreenUiStates.Success(uiState.data)
                         }
 
-                        is ScreenUiStates.Error -> {
-
+                        is ScreenUiStates.Loading -> {
+                            _state.value = ScreenUiStates.Loading
                         }
 
-                        is ScreenUiStates.Loading -> {}
+                        is ScreenUiStates.Error -> {
+                            _state.value = ScreenUiStates.Error()
+                        }
                     }
                 }
             }

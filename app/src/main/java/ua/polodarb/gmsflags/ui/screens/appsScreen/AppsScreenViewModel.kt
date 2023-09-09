@@ -17,7 +17,7 @@ import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _state =
         MutableStateFlow<AppsScreenUiStates>(AppsScreenUiStates.Loading)
