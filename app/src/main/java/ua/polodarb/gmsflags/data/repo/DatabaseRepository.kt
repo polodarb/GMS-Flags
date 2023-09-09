@@ -3,7 +3,7 @@ package ua.polodarb.gmsflags.data.repo
 import android.content.Context
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import ua.polodarb.gmsflags.ui.GMSApplication
+import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.ScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 

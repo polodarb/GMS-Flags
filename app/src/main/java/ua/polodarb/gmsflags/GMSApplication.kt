@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui
+package ua.polodarb.gmsflags
 
 import android.app.Application
 import android.content.ComponentName
@@ -11,7 +11,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.viewModelsModule

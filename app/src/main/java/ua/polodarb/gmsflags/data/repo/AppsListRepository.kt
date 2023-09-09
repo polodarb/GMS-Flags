@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import kotlinx.coroutines.flow.flow
-import ua.polodarb.gmsflags.ui.GMSApplication
+import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
