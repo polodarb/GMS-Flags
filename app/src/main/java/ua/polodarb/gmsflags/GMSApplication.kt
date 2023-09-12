@@ -55,7 +55,7 @@ class GMSApplication : Application() {
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                TODO("Not yet implemented")
+                isRootDatabaseInitialized = false
             }
         }
         RootService.bind(intent, service)
