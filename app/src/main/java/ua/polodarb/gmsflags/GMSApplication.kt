@@ -16,6 +16,9 @@ import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.viewModelsModule
 
 class GMSApplication : Application() {
+    private val shellConfig = Shell.Builder.create()
+        .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
+        .setTimeout(10)
 
     var isRootDatabaseInitialized = false
     private lateinit var rootDatabase: IRootDatabase
@@ -32,11 +35,7 @@ class GMSApplication : Application() {
 
     fun initShell() {
         try {
-            Shell.setDefaultBuilder(
-                Shell.Builder.create()
-                    .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
-                    .setTimeout(10)
-            )
+            Shell.setDefaultBuilder(shellConfig)
         } catch (_: IllegalStateException) {
             /* When application configuration changed (ex. orientation changed)
              * this function are called again, since onCreate in MainActivity
