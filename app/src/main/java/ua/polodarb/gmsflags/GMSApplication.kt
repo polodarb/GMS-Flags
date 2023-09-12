@@ -31,11 +31,19 @@ class GMSApplication : Application() {
     }
 
     fun initShell() {
-        Shell.setDefaultBuilder(
-            Shell.Builder.create()
-                .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
-                .setTimeout(10)
-        )
+        try {
+            Shell.setDefaultBuilder(
+                Shell.Builder.create()
+                    .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
+                    .setTimeout(10)
+            )
+        } catch (_: IllegalStateException) {
+            /* When application configuration changed (ex. orientation changed)
+             * this function are called again, since onCreate in MainActivity
+             * are called again, and since shell instance can be already created
+             * it throws runtime exception, so just ignore it, since this call is ok.
+             */
+        }
     }
 
     fun initDB() {
