@@ -45,17 +45,20 @@ class RootDatabase : RootService() {
             override fun getStringFlags(pkgName: String): Map<String, String> =
                 this@RootDatabase.getStringFlags(pkgName)
 
-            override fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> =
-                this@RootDatabase.getOverriddenBoolFlags(pkgName)
+            override fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> =
+                this@RootDatabase.getOverriddenBoolFlagsByPackage(pkgName)
 
-            override fun getOverriddenIntFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getOverriddenIntFlags(pkgName)
+            override fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenIntFlagsByPackage(pkgName)
 
-            override fun getOverriddenFloatFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getOverriddenFloatFlags(pkgName)
+            override fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenFloatFlagsByPackage(pkgName)
 
-            override fun getOverriddenStringFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getOverriddenStringFlags(pkgName)
+            override fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> =
+                this@RootDatabase.getOverriddenStringFlagsByPackage(pkgName)
+
+            override fun getAllOverriddenBoolFlags(): Map<String?, String?> =
+                this@RootDatabase.getAllOverriddenBoolFlags()
 
             override fun androidPackage(pkgName: String): String =
                 this@RootDatabase.androidPackage(pkgName)
@@ -286,7 +289,7 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenBoolFlags(pkgName: String?): Map<String?, String?> {
+    private fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> {
         val cursor = db.rawQuery(
             "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
             null
@@ -302,7 +305,7 @@ class RootDatabase : RootService() {
     }
 
 
-    private fun getOverriddenIntFlags(pkgName: String): Map<String, String> {
+    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> {
         val cursor = db.rawQuery(
             "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
@@ -315,7 +318,7 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenFloatFlags(pkgName: String): Map<String, String> {
+    private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> {
         val cursor = db.rawQuery(
             "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
@@ -328,12 +331,27 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenStringFlags(pkgName: String): Map<String, String> {
+    private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> {
         val cursor = db.rawQuery(
             "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
         val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+        return list.toMap()
+    }
+
+    fun getAllOverriddenBoolFlags(): Map<String?, String?> {
+        val cursor = db.rawQuery(
+            "SELECT DISTINCT name, boolVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND boolVal IS NOT NULL;\n",
+            null
+        )
+        val list = mutableMapOf<String?, String?>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }

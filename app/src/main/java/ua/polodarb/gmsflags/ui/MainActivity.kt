@@ -2,6 +2,8 @@ package ua.polodarb.gmsflags.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,9 +1,12 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +18,6 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -32,8 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -42,10 +42,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.data.datastore.DataStoreManager
+import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
+import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,27 +53,16 @@ fun SuggestionsScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit
 ) {
-    val viewModel =
-        koinViewModel<SuggestionScreenViewModel>()
+    val viewModel = koinViewModel<SuggestionScreenViewModel>()
+
+    val overriddenFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
-    val datastore = DataStoreManager(context)
-    val flag1 = datastore.getFlag1().collectAsState(initial = false)
-    val flag2 = datastore.getFlag2().collectAsState(initial = false)
-    val flag3 = datastore.getFlag3().collectAsState(initial = false)
-
-
     val showDialog = remember { mutableStateOf(false) }
-
-    val listFlags = mutableMapOf<String, String>(
-        Pair("Enable transparent statusBar in dialer", "Nail Sadykov"),
-        Pair("Enable docs scanner in Drive", "Nail Sadykov"),
-        Pair("Enable MD3 style in Android Auto", "Nail Sadykov")
-    )
 
     val listState = rememberLazyListState()
     val expandedFab by remember {
@@ -140,87 +129,46 @@ fun SuggestionsScreen(
             )
         }
     ) { it ->
-//        Column(modifier = Modifier.padding(it)) {
-//            NotImplementedScreen()
-//        }
-        LazyColumn(
-            contentPadding = it,
-            state = listState
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(listFlags.keys.toList()) { item, index ->
-                ListItem(
-                    headlineContent = { Text(listFlags.keys.toList()[item]) },
-                    supportingContent = { Text(listFlags.values.first()) },
-                    trailingContent = {
-                        Row {
-                            var checkedVal = when (item) {
-                                0 -> flag1.value
-                                1 -> flag2.value
-                                2 -> flag3.value
-                                else -> false
-                            }
-//                                FilledTonalIconButton(
-//                                    onClick = { showDialog.value = true },
-//                                    modifier = Modifier.padding(horizontal = 16.dp)
-//                                ) {
-//                                    Icon(
-//                                        painterResource(id = R.drawable.ic_report),
-//                                        contentDescription = "Localized description"
-//                                    )
-//                                }
-                            Switch(
-                                checked = checkedVal,
-                                onCheckedChange = {
-                                    val checkedBool = if (!checkedVal) "1" else "0"
-                                    when (item) {
-                                        0 -> {
-                                            viewModel.initUsers()
-                                            coroutineScope.launch {
-                                                datastore.saveFlag1(it)
-                                                checkedVal = !checkedVal
-                                            }
-                                            viewModel.overrideFlag(
-                                                packageName = "com.google.android.dialer.directboot",
-                                                name = "45372787",
-                                                boolVal = checkedBool
-                                            )
-                                        }
+            when (overriddenFlags.value) {
+                is SuggestionsScreenUiStates.Success -> {
 
-                                        1 -> {
-                                            viewModel.initUsers()
-                                            coroutineScope.launch {
-                                                datastore.saveFlag2(it)
-                                                checkedVal = !checkedVal
-                                            }
-                                            viewModel.overrideFlag(
-                                                packageName = "com.google.apps.drive.androidi#com.google.android.apps.docs",
-                                                name = "MIkitScanningUiFeature_enable_mlkit_scanning_ui",
-                                                boolVal = checkedBool
-                                            )
-                                        }
+                    val data = (overriddenFlags.value as SuggestionsScreenUiStates.Success).data
 
-                                        2 -> {
-                                            viewModel.initUsers()
-                                            coroutineScope.launch {
-                                                datastore.saveFlag3(it)
-                                                checkedVal = !checkedVal
-                                            }
-                                            viewModel.overrideFlag(
-                                                packageName = "com.google.android.projection.gearhead",
-                                                name = "SystemUi__material_you_settings_enabled",
-                                                boolVal = checkedBool
-                                            )
-                                        }
-                                    }
-                                },
-                                enabled = true
+                    LazyColumn(
+                        contentPadding = it,
+                        state = listState
+                    ) {
+                        itemsIndexed(data.toList()) { index, _ ->
+                            SuggestedFlagItem(
+                                flagName = data[index].flagName,
+                                senderName = data[index].flagSender,
+                                flagValue = data[index].flagValue,
+                                flagOnCheckedChange = {
+                                    viewModel.updateFlagValue(data[index].phenotypeFlagName, it)
+                                    viewModel.overrideFlag(
+                                        packageName = data[index].phenotypePackageName,
+                                        name = data[index].phenotypeFlagName,
+                                        boolVal = if (it) "1" else "0"
+                                    )
+                                }
                             )
                         }
-                    },
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.padding(44.dp))
+                        item {
+                            Spacer(modifier = Modifier.padding(44.dp))
+                        }
+                    }
+                }
+
+                is SuggestionsScreenUiStates.Loading -> {
+                    LoadingProgressBar()
+                }
+
+                is SuggestionsScreenUiStates.Error -> {
+                    ErrorLoadScreen()
+                }
             }
         }
 //        FlagReportDialog(
@@ -228,4 +176,28 @@ fun SuggestionsScreen(
 //            onDismiss = { showDialog.value = false }
 //        )
     }
+}
+
+@Composable
+fun SuggestedFlagItem(
+    flagName: String,
+    senderName: String,
+    flagValue: Boolean,
+    flagOnCheckedChange: (Boolean) -> Unit
+) {
+    ListItem(
+        headlineContent = { Text(flagName) },
+        supportingContent = { Text(senderName) },
+        trailingContent = {
+            Row {
+                Switch(
+                    checked = flagValue,
+                    onCheckedChange = {
+                        flagOnCheckedChange(it)
+                    },
+                    enabled = true
+                )
+            }
+        },
+    )
 }
