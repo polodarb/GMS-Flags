@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">GMS Flags</string>
+    <string name="crash_title">Service error</string>
+    <string name="crash_advice">Please restart the application.</string>
+    <string name="crash_msg">Unfortunately, a service error occurred and access to the GMS database is impossible.</string>
+    <string name="crash_report">Send report</string>
+    <string name="crash_report_subject">"GMS Flags has crashed!"</string>
+    <string name="crash_report_failed">Restart app</string>
+    <string name="crash_restart">Restart app</string>
 </resources>

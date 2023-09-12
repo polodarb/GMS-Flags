@@ -61,4 +61,7 @@
     <color name="md_theme_dark_surfaceTint">#D0BCFF</color>
     <color name="md_theme_dark_outlineVariant">#49454F</color>
     <color name="md_theme_dark_scrim">#000000</color>
+
+    <color name="ic_error_icon_color_monster_eye">@android:color/black</color>
+    <color name="ic_error_icon_color_monster_sclera">@android:color/white</color>
 </resources>
