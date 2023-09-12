@@ -3,6 +3,7 @@ package ua.polodarb.gmsflags.ui
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -26,6 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowCompat.*
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
@@ -36,14 +39,16 @@ class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setDecorFitsSystemWindows(window, false)
+
         setContent {
             GMSFlagsTheme {
                 CrashScreen(
                     sendReport = {
                         try {
-                            val intent = Intent(Intent.ACTION_SEND).apply {
-                                type = "vnd.android.cursor.item/email"
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf("")) // TODO: Add email
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                setData(Uri.parse("mailto:"))
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com")) // TODO: Add email
                                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crash_report_subject))
                                 putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
                             }
