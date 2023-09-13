@@ -2,7 +2,7 @@
 ![Downloads](https://img.shields.io/github/downloads/polodarb/GMS-Flags/total?style=for-the-badge) 
 ![Start](https://img.shields.io/github/stars/polodarb/GMS-Flags?style=for-the-badge) 
 ![License](https://img.shields.io/github/license/polodarb/GMS-Flags?style=for-the-badge) 
-![Telegram](https://img.shields.io/badge/telegram-telegram?style=for-the-badge&logo=telegram&logoColor=white&label=GMS%20Flags&color=%23229ED9&link=https%3A%2F%2Ft.me%2Fgmsflags)
+[![Telegram](https://img.shields.io/badge/telegram-telegram?style=for-the-badge&logo=telegram&logoColor=white&label=GMS%20Flags&color=%23229ED9)](https://t.me/gmsflags)
 
 ![This is an image](gf_banner.png)
 # Description
