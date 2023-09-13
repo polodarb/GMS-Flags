@@ -19,10 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.polodarb.gmsflags.ui.images.getGMSImagesRoot
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun RootRequestScreen(
@@ -35,7 +36,7 @@ fun RootRequestScreen(
     ) {
         Column {
             Image(
-                imageVector = getGMSImagesRoot(colorScheme = MaterialTheme.colorScheme),
+                painter = painterResource(id = R.drawable.root_image),
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
