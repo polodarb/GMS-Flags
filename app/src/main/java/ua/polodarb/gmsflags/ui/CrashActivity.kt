@@ -74,7 +74,7 @@ class CrashActivity : ComponentActivity() {
         Surface {
             Column {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_error_image),
+                    painter = painterResource(id = R.drawable.error_image),
                     contentDescription = null,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
