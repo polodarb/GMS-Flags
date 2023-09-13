@@ -1,5 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen.dialog
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,7 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +29,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,24 +53,52 @@ fun AppsScreenDialog(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
+    var searchQuery = rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val filteredList = list.filter { it.contains(searchQuery.value) }
+
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = onDismiss,
+            onDismissRequest = {
+                onDismiss()
+                searchQuery.value = ""
+                               },
             title = { Text(text = "Choose a package") },
             text = {
                 Column(
                     modifier = Modifier.width(screenWidth - 78.dp) //todo: change dialog width
                 ) {
                     DockedSearchBar(
-                        query = "",
-                        onQueryChange = {},
+                        query = searchQuery.value,
+                        onQueryChange = {
+                            searchQuery.value = it
+                        },
                         onSearch = {},
                         placeholder = {
                             Text(text = "Search a package")
                         },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Search,
+                                contentDescription = null
+                            )
+                        },
                         trailingIcon = {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                            AnimatedVisibility(
+                                visible = searchQuery.value.isNotEmpty(),
+                                enter = fadeIn(),
+                                exit = fadeOut()
+                            ) {
+                                IconButton(onClick = {
+                                    searchQuery.value = ""
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = null
+                                    )
+                                }
                             }
                         },
                         colors = SearchBarDefaults.colors(
@@ -71,10 +106,13 @@ fun AppsScreenDialog(
                         ),
                         active = false,
                         onActiveChange = {},
-                        enabled = false
+                        enabled = true
                     ) {}
                     Spacer(modifier = Modifier.height(6.dp))
-                    DialogPackagesList(list, pkgName, onPackageClick)
+                    DialogPackagesList(filteredList, pkgName) {
+                        onPackageClick(it)
+                        searchQuery.value = ""
+                    }
                 }
             },
             properties = DialogProperties().let {

@@ -243,7 +243,8 @@ fun AppListItem(
 ) {
     ListItem(
         modifier = Modifier
-            .clip(RoundedCornerShape(18.dp))
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(24.dp))
             .clickable { onClick(pkg) },
         headlineContent = { Text(text = appName, fontWeight = FontWeight.Medium) },
         supportingContent = { Text(text = pkg, fontSize = 13.sp) },

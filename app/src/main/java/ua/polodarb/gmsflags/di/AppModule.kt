@@ -6,7 +6,6 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.DatabaseRepository
 
 val appModule = module {
-
     single {
         androidApplication().applicationContext
     }
@@ -22,5 +21,4 @@ val appModule = module {
             context = get()
         )
     }
-
 }

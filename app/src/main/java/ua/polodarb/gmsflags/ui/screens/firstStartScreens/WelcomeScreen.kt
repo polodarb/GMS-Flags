@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -24,7 +25,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.polodarb.gmsflags.ui.images.getGMSImagesWelcome
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun WelcomeScreen(
@@ -37,8 +38,8 @@ fun WelcomeScreen(
     ) {
         Column {
             Image(
-                imageVector = getGMSImagesWelcome(colorScheme = MaterialTheme.colorScheme),
-                contentDescription = "",
+                painter = painterResource(id = R.drawable.welcome_image),
+                contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp)

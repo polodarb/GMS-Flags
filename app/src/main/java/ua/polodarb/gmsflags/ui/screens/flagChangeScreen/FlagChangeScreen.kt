@@ -173,7 +173,6 @@ fun FlagChangeScreen(
         mutableStateOf("")
     }
 
-
     LaunchedEffect(
         viewModel.filterMethod.value,
         viewModel.searchQuery.value,
@@ -293,7 +292,7 @@ fun FlagChangeScreen(
                     topBarState = topBarState,
                     onClick = { index ->
                         coroutineScope.launch {
-                            pagerState.scrollToPage(index)
+                            pagerState.animateScrollToPage(index)
                         }
                         if (index != 0) filterIconState = false
                         tabFilterState = index == 0

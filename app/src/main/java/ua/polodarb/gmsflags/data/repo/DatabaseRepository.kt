@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
@@ -88,10 +89,19 @@ class DatabaseRepository(
             emit(FlagChangeUiStates.Success(stringFlags))
     }
 
-    fun getOverriddenBoolFlags(packageName: String): FlagChangeUiStates {
+    fun getOverriddenBoolFlagsByPackage(packageName: String): FlagChangeUiStates {
         val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenBoolFlags(packageName)
+            gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
         return (FlagChangeUiStates.Success(boolOverriddenFlags))
+    }
+
+    fun getAllOverriddenBoolFlags() = flow<FlagChangeUiStates> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags = gmsApplication.getRootDatabase().allOverriddenBoolFlags
+                emit(FlagChangeUiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
     fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
