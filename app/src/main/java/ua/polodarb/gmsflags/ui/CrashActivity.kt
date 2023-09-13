@@ -1,10 +1,13 @@
 package ua.polodarb.gmsflags.ui
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,13 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowCompat.*
+import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
+import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
-import java.lang.Exception
+import java.util.Locale
 import kotlin.system.exitProcess
+
 
 class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +51,8 @@ class CrashActivity : ComponentActivity() {
                     sendReport = {
                         try {
                             val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                setData(Uri.parse("mailto:"))
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com")) // TODO: Add email
+                                data = Uri.parse("mailto:")
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
                                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crash_report_subject))
                                 putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
                             }
@@ -147,7 +151,7 @@ class ExceptionHandler(
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
         try {
             val intent = Intent(context, activity).apply {
-                putExtra(STACK_TRACE_KEY, throwable.stackTraceToString())
+                putExtra(STACK_TRACE_KEY, throwable.stackTraceToReport())
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
             context.startActivity(intent)
@@ -168,5 +172,75 @@ class ExceptionHandler(
         }
 
         const val STACK_TRACE_KEY = "STACK_TRACE"
+    }
+
+    private fun Throwable.stackTraceToReport(): String {
+        return """
+            Model: ${Build.DEVICE} (${Build.BOARD})
+            Manufacturer: ${Build.MANUFACTURER}
+            Android: ${Build.VERSION.RELEASE}
+            Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})
+            GMS Flags: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})
+            
+            ${this.stackTraceToString()}
+        """.trimIndent()
+    }
+}
+/*
+ * Taken from https://bit.ly/3PA1IYS. Credits to https://github.com/Z-P-J!
+ */
+@Suppress("SpellCheckingInspection")
+object OSUtils {
+    private const val ROM_MIUI = "MIUI"
+    private const val ROM_EMUI = "EMUI"
+    private const val ROM_FLYME = "FLYME"
+    private const val ROM_OPPO = "OPPO"
+    private const val ROM_SMARTISAN = "SMARTISAN"
+    private const val ROM_VIVO = "VIVO"
+    private const val KEY_VERSION_MIUI = "ro.miui.ui.version.name"
+    private const val KEY_VERSION_EMUI = "ro.build.version.emui"
+    private const val KEY_VERSION_OPPO = "ro.build.version.opporom"
+    private const val KEY_VERSION_SMARTISAN = "ro.smartisan.version"
+    private const val KEY_VERSION_VIVO = "ro.vivo.os.version"
+
+    val sName: String
+    var sVersion: String
+
+    init {
+        if (!TextUtils.isEmpty(getProperty(KEY_VERSION_MIUI).also {
+                sVersion = it
+            })) {
+            sName = ROM_MIUI
+        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_EMUI).also {
+                sVersion = it
+            })) {
+            sName = ROM_EMUI
+        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_OPPO).also {
+                sVersion = it
+            })) {
+            sName = ROM_OPPO
+        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_VIVO).also {
+                sVersion = it
+            })) {
+            sName = ROM_VIVO
+        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_SMARTISAN).also {
+                sVersion = it
+            })) {
+            sName = ROM_SMARTISAN
+        } else {
+            sVersion = Build.DISPLAY
+            if (sVersion.uppercase(Locale.getDefault()).contains(ROM_FLYME)) {
+                sName = ROM_FLYME
+            } else {
+                sVersion = Build.UNKNOWN
+                sName = Build.MANUFACTURER.uppercase(Locale.getDefault())
+            }
+        }
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun getProperty(key: String): String {
+        return Class.forName("android.os.SystemProperties")
+            .getMethod("get", String::class.java).invoke(null, key) as String
     }
 }
