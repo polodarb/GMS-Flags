@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -526,7 +527,7 @@ fun BooleanFlagsScreen(
 
             if (listBool.isEmpty()) NoFlagsOrPackages()
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().imePadding()) {
                 if (listBool.isNotEmpty()) {
                     LazyColumn {
                         itemsIndexed(listBool.keys.toList()) { index, flagName ->
@@ -639,7 +640,7 @@ fun OtherTypesFlagsScreen(
 
             if (listInt.isEmpty()) NoFlagsOrPackages()
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().imePadding()) {
                 if (listInt.isNotEmpty()) {
                     LazyColumn {
                         itemsIndexed(listInt.toList()) { index, item ->
