@@ -293,7 +293,7 @@ fun FlagChangeScreen(
                     topBarState = topBarState,
                     onClick = { index ->
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
+                            pagerState.scrollToPage(index)
                         }
                         if (index != 0) filterIconState = false
                         tabFilterState = index == 0
