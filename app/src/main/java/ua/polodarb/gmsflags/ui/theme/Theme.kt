@@ -16,8 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-
-private val LightColors = lightColorScheme(
+private val lightColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -49,8 +48,7 @@ private val LightColors = lightColorScheme(
     scrim = md_theme_light_scrim,
 )
 
-
-private val DarkColors = darkColorScheme(
+private val darkColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -83,17 +81,14 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun GMSFlagsTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
-) {
+fun GMSFlagsTheme(content: @Composable () -> Unit) {
     val inDarkMode: Boolean = isSystemInDarkTheme()
 
     val colors = if (supportsDynamic()) {
         val context = LocalContext.current
         if (inDarkMode) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     } else {
-        if (inDarkMode) DarkColors else LightColors
+        if (inDarkMode) darkColors else lightColors
     }
 
     val view = LocalView.current
@@ -101,11 +96,9 @@ fun GMSFlagsTheme(
     SideEffect {
         val window = (view.context as Activity).window
         window.navigationBarColor = Color.Transparent.toArgb()
-
         window.statusBarColor = Color.Transparent.toArgb()
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !inDarkMode
     }
-
 
     MaterialTheme(
         colorScheme = colors,

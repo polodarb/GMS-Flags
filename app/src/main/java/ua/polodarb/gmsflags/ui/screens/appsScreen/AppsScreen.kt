@@ -2,7 +2,6 @@ package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +59,7 @@ import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppsScreen(
     onSettingsClick: () -> Unit,
@@ -77,7 +75,6 @@ fun AppsScreen(
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
     // Keyboard
@@ -122,7 +119,7 @@ fun AppsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                         IconButton(onClick = {
@@ -131,7 +128,7 @@ fun AppsScreen(
                         }) {
                             Icon(
                                 painterResource(id = R.drawable.ic_packages),
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                         IconButton(onClick = {

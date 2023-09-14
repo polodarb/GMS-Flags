@@ -20,7 +20,6 @@ android {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true

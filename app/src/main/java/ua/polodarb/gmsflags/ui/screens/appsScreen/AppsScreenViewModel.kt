@@ -27,8 +27,7 @@ class AppsScreenViewModel(
         MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
     val dialogDataState: StateFlow<DialogUiStates> = _dialogDataState.asStateFlow()
 
-    private val _dialogPackage =
-        MutableStateFlow<String>("")
+    private val _dialogPackage = MutableStateFlow("")
     val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
 
 
@@ -99,5 +98,4 @@ class AppsScreenViewModel(
             )
         }
     }
-
 }

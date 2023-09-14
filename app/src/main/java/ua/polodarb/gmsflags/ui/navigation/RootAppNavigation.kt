@@ -72,8 +72,7 @@ internal fun RootAppNavigation(
                 onStart = {
                     navController.navigate(ScreensDestination.RootRequest.screenRoute)
                 },
-                onPolicyClick = {}, // todo
-                onTermsClick = {} // todo
+                openLink = { }
             )
         }
         composable(
