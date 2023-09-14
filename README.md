@@ -4,7 +4,8 @@
 ![License](https://img.shields.io/github/license/polodarb/GMS-Flags?style=for-the-badge) 
 [![Telegram](https://img.shields.io/badge/telegram-telegram?style=for-the-badge&logo=telegram&logoColor=white&label=GMS%20Flags&color=%23229ED9)](https://t.me/gmsflags)
 
-![This is an image](gf_banner.png)
+![Banner](gf_banner.png)
+![Root](gf_root.png)
 # Description
 GMS Flags is a tool for changing parameters in Google services to activate or deactivate certain functionality in Google applications.
 ## Features available in the current version:
