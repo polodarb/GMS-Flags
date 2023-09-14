@@ -305,6 +305,10 @@ class FlagChangeScreenViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
+            if (pkgName == "com.android.vending") {
+                Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
+                Shell.cmd("am force-stop com.android.vending").exec()
+            }
             repeat(3) {
                 Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
                 Shell.cmd("am force-stop $androidPkgName").exec()
