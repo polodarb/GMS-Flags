@@ -4,13 +4,20 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,10 +30,14 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.core.Extensions.toFormattedInt
+import ua.polodarb.gmsflags.data.remote.github.GithubApiService
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
+import ua.polodarb.gmsflags.ui.components.UpdateDialog
 import ua.polodarb.gmsflags.ui.screens.RootScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RootRequestScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
@@ -49,6 +60,41 @@ internal fun RootAppNavigation(
 
     val isButtonLoading = rememberSaveable() {
         mutableStateOf(false)
+    }
+
+    var showDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    // Github latest release request
+    val apiService by lazy { GithubApiService.create() }
+    val uriHandler = LocalUriHandler.current
+
+    val products = produceState(
+        initialValue = BuildConfig.VERSION_NAME,
+        producer = {
+            value = apiService.getLatestRelease().tagName
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()) {
+            showDialog = true
+        }
+    }
+
+    if (showDialog) {
+        UpdateDialog(
+            showDialog = showDialog,
+            appVersion = products.value,
+            onDismiss = {
+                showDialog = false
+            },
+            onUpdateClick = {
+                uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
+                showDialog = false
+            }
+        )
     }
 
     NavHost(

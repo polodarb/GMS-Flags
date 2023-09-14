@@ -17,6 +17,11 @@ import androidx.compose.ui.unit.dp
 
 object Extensions {
 
+    fun String.toFormattedInt(): Int {
+        val digits = this.filter { it.isDigit() }
+        return digits.toIntOrNull() ?: 0
+    }
+
     fun Modifier.customTabIndicatorOffset(
         currentTabPosition: TabPosition
     ): Modifier = composed(
