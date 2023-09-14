@@ -198,13 +198,16 @@ fun AppsScreen(
                         is DialogUiStates.Success -> {
 
                             val dialogPackagesList =
-                                (dialogDataState.value as DialogUiStates.Success).data
+                                (dialogDataState.value as DialogUiStates.Success).data.toMutableList()
 
                             AppsScreenDialog(
                                 showDialog.value,
-                                onDismiss = { showDialog.value = false },
+                                onDismiss = {
+                                    showDialog.value = false
+                                    dialogPackagesList.clear()
+                                },
                                 pkgName = dialogPackageText.value,
-                                list = dialogPackagesList,
+                                list = dialogPackagesList.toList(),
                                 onPackageClick = {
                                     onPackageItemClick(it)
                                     showDialog.value = false
