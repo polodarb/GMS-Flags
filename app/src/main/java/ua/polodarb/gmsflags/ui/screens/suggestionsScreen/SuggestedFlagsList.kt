@@ -1,11 +1,11 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
 data class SuggestedFlag(
-    var flagName: String,
-    var flagSender: String,
-    var phenotypeFlagName: List<String>,
-    var phenotypePackageName: String,
-    var flagValue: Boolean
+    val flagName: String,
+    val flagSender: String,
+    val phenotypeFlagName: List<String>,
+    val phenotypePackageName: String,
+    val flagValue: Boolean
 )
 
 object SuggestedFlagsList {

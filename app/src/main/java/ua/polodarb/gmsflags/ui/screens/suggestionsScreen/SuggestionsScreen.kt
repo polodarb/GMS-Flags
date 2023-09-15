@@ -141,18 +141,18 @@ fun SuggestionsScreen(
                         contentPadding = it,
                         state = listState
                     ) {
-                        itemsIndexed(data.toList()) { index, _ ->
+                        itemsIndexed(data.toList()) { index, item ->
                             SuggestedFlagItem(
-                                flagName = data[index].flagName,
-                                senderName = data[index].flagSender,
-                                flagValue = data[index].flagValue,
+                                flagName = item.flagName,
+                                senderName = item.flagSender,
+                                flagValue = item.flagValue,
                                 flagOnCheckedChange = {
+                                    viewModel.updateFlagValue(it, index)
                                     viewModel.overrideFlag(
-                                        packageName = data[index].phenotypePackageName,
-                                        name = data[index].phenotypeFlagName,
+                                        packageName = item.phenotypePackageName,
+                                        name = item.phenotypeFlagName,
                                         boolVal = if (it) "1" else "0"
                                     )
-                                    viewModel.updateFlagValue(data[index].phenotypeFlagName, it)
                                 }
                             )
                         }

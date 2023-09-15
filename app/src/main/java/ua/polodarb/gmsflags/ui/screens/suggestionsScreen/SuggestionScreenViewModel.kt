@@ -31,20 +31,16 @@ class SuggestionScreenViewModel(
         getAllOverriddenBoolFlags()
     }
 
-    fun updateFlagValue(phenotypeFlagName: List<String>, newValue: Boolean) {
+    fun updateFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
         if (currentState is SuggestionsScreenUiStates.Success) {
             val updatedData = currentState.data.toMutableList()
-            val flagToUpdateIndex = updatedData.indexOfFirst { it.phenotypeFlagName[0] == phenotypeFlagName[0] }
-            if (flagToUpdateIndex != -1) {
-                updatedData[flagToUpdateIndex] = updatedData[flagToUpdateIndex].copy(flagValue = newValue)
+            if (index != -1) {
+                updatedData[index] = updatedData[index].copy(flagValue = newValue)
                 _stateSuggestionsFlags.value = currentState.copy(data = updatedData)
             }
         }
     }
-
-
-
 
     fun initUsers() {
         usersList.clear()
@@ -91,10 +87,6 @@ class SuggestionScreenViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            repeat(3) {
-                Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
-                Shell.cmd("am force-stop $androidPkgName").exec()
-            }
         }
     }
 
@@ -138,8 +130,8 @@ class SuggestionScreenViewModel(
                     committed = committed
                 )
             }
-            clearPhenotypeCache(packageName)
         }
+        clearPhenotypeCache(packageName)
     }
 
 }
