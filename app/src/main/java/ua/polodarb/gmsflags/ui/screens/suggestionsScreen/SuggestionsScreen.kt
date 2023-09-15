@@ -147,12 +147,12 @@ fun SuggestionsScreen(
                                 senderName = data[index].flagSender,
                                 flagValue = data[index].flagValue,
                                 flagOnCheckedChange = {
-                                    viewModel.updateFlagValue(data[index].phenotypeFlagName, it)
                                     viewModel.overrideFlag(
                                         packageName = data[index].phenotypePackageName,
                                         name = data[index].phenotypeFlagName,
                                         boolVal = if (it) "1" else "0"
                                     )
+                                    viewModel.updateFlagValue(data[index].phenotypeFlagName, it)
                                 }
                             )
                         }
