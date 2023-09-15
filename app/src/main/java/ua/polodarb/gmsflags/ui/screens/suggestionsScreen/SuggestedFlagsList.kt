@@ -12,14 +12,14 @@ object SuggestedFlagsList {
     val suggestedFlagsList = mutableListOf<SuggestedFlag>(
         SuggestedFlag(
             "Proofreading mode in GBoard",
-            "AssembleDebug",
+            "GApps Flags & Leaks",
             listOf("writing_helper", "writing_helper_enable_free_chat", "writing_helper_chip_shown_as_candidate"),
             "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
             false
         ),
         SuggestedFlag(
             "\"Undo\" button in GBoard",
-            "AssembleDebug",
+            "GApps Flags & Leaks",
             listOf("undo_access_point"),
             "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
             false
