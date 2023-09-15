@@ -11,6 +11,20 @@ data class SuggestedFlag(
 object SuggestedFlagsList {
     val suggestedFlagsList = mutableListOf<SuggestedFlag>(
         SuggestedFlag(
+            "Proofreading mode in GBoard",
+            "AssembleDebug",
+            listOf("writing_helper", "writing_helper_enable_free_chat", "writing_helper_chip_shown_as_candidate"),
+            "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+            false
+        ),
+        SuggestedFlag(
+            "\"Undo\" button in GBoard",
+            "AssembleDebug",
+            listOf("undo_access_point"),
+            "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+            false
+        ),
+        SuggestedFlag(
             "Enable transparent statusBar in dialer",
             "Nail Sadykov",
             listOf("45372787"),
