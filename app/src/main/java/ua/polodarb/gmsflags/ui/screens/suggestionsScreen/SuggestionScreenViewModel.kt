@@ -31,20 +31,16 @@ class SuggestionScreenViewModel(
         getAllOverriddenBoolFlags()
     }
 
-    fun updateFlagValue(phenotypeFlagName: String, newValue: Boolean) {
+    fun updateFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
         if (currentState is SuggestionsScreenUiStates.Success) {
             val updatedData = currentState.data.toMutableList()
-            val flagToUpdateIndex = updatedData.indexOfFirst { it.phenotypeFlagName == phenotypeFlagName }
-            if (flagToUpdateIndex != -1) {
-                updatedData[flagToUpdateIndex] = updatedData[flagToUpdateIndex].copy(flagValue = newValue)
+            if (index != -1) {
+                updatedData[index] = updatedData[index].copy(flagValue = newValue)
                 _stateSuggestionsFlags.value = currentState.copy(data = updatedData)
             }
         }
     }
-
-
-
 
     fun initUsers() {
         usersList.clear()
@@ -74,7 +70,7 @@ class SuggestionScreenViewModel(
 
     fun updateFlagValues(suggestedFlags: List<SuggestedFlag>, flagValuesMap: Map<String, String>): List<SuggestedFlag> {
         val list =  suggestedFlags.map { suggestedFlag ->
-            val newFlagValue = flagValuesMap[suggestedFlag.phenotypeFlagName]?.toIntOrNull() == 1
+            val newFlagValue = flagValuesMap[suggestedFlag.phenotypeFlagName[0]]?.toIntOrNull() == 1
             SuggestedFlag(
                 suggestedFlag.flagName,
                 suggestedFlag.flagSender,
@@ -91,16 +87,12 @@ class SuggestionScreenViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            repeat(3) {
-                Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
-                Shell.cmd("am force-stop $androidPkgName").exec()
-            }
         }
     }
 
     fun overrideFlag(
         packageName: String,
-        name: String,
+        name: List<String>,
         flagType: Int = 0,
         intVal: String? = null,
         boolVal: String? = null,
@@ -110,24 +102,12 @@ class SuggestionScreenViewModel(
         committed: Int = 0
     ) {
         initUsers()
-        repository.deleteRowByFlagName(packageName, name)
-        repository.overrideFlag(
-            packageName = packageName,
-            user = "",
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed
-        )
-        for (i in usersList) {
+        name.forEach {
+            repository.deleteRowByFlagName(packageName, it)
             repository.overrideFlag(
                 packageName = packageName,
-                user = i,
-                name = name,
+                user = "",
+                name = it,
                 flagType = flagType,
                 intVal = intVal,
                 boolVal = boolVal,
@@ -136,6 +116,20 @@ class SuggestionScreenViewModel(
                 extensionVal = extensionVal,
                 committed = committed
             )
+            for (i in usersList) {
+                repository.overrideFlag(
+                    packageName = packageName,
+                    user = i,
+                    name = it,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed
+                )
+            }
         }
         clearPhenotypeCache(packageName)
     }

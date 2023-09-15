@@ -6,6 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun ErrorLoadScreen() {
@@ -13,6 +15,6 @@ fun ErrorLoadScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Data loading error")
+        Text(text = stringResource(id = R.string.component_error_load))
     }
 }

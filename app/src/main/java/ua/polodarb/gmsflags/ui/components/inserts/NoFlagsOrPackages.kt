@@ -9,17 +9,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun NoFlagsOrPackages(
     type: NoFlagsOrPackages = NoFlagsOrPackages.FLAGS
 ) {
-
-    val text = when (type) {
-        NoFlagsOrPackages.FLAGS -> "¯\\_(ツ)_/¯\n\nFlags not found"
-        NoFlagsOrPackages.APPS -> "¯\\_(ツ)_/¯\n\nApps not found"
+    val text = "¯\\_(ツ)_/¯\n\n" + when (type) {
+        NoFlagsOrPackages.FLAGS -> stringResource(id = R.string.component_no_flags)
+        NoFlagsOrPackages.APPS -> stringResource(id = R.string.component_no_apps)
     }
 
     Box(

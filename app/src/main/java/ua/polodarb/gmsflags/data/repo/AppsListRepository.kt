@@ -18,6 +18,8 @@ class AppsListRepository(
         val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
         val pm = context.packageManager
 
+        val finskyPackages = gmsPackages.filter { it.contains("finsky") }
+
         val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             pm.getInstalledApplications(PackageManager.ApplicationInfoFlags.of(PackageManager.GET_META_DATA.toLong()))
         } else {
@@ -25,8 +27,11 @@ class AppsListRepository(
         }
 
         val filteredAppInfoList = appInfoList.asSequence()
-            .filter { gmsPackages.contains(it.packageName) && it.packageName.contains("com.google") }
-//            .filterNot { it.packageName == "com.google.android.gm" || it.packageName.contains("gms") }
+            .filter {
+                gmsPackages.contains(it.packageName)
+                        && it.packageName.contains("com.google")
+                        || it.packageName.contains("com.android.vending")
+            }
             .map { AppInfo.create(pm, it) }
             .sortedBy { it.appName }
             .toList()
@@ -44,7 +49,16 @@ class AppsListRepository(
             } else {
                 false
             }
-        }
+        }.toMutableList()
+
+        if (pkgName == "com.android.vending") list.addAll(0,
+            listOf(
+                "com.google.android.finsky.instantapps",
+                "com.google.android.finsky.regular",
+                "com.google.android.finsky.stable"
+            )
+        )
+
         emit(DialogUiStates.Success(list))
     }
 

@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.appsScreen.dialog
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -162,7 +163,8 @@ fun DialogListWithSeparator(
                 it == pkgName ||
                         it == "$pkgName#$pkgName" ||
                         it.contains("device#$pkgName") ||
-                        it.contains("user#$pkgName")
+                        it.contains("user#$pkgName") ||
+                        it.contains("finsky")
         }
 
     val filteredSecondaryList = packagesList
@@ -170,7 +172,8 @@ fun DialogListWithSeparator(
             it == pkgName ||
                     it == "$pkgName#$pkgName" ||
                     it.contains("device#$pkgName") ||
-                    it.contains("user#$pkgName")
+                    it.contains("user#$pkgName") ||
+                    it.contains("finsky")
         }
 
     LazyColumn(
@@ -299,5 +302,6 @@ fun checkAppsListSeparation(allPackages: List<String>, pkgName: String): Boolean
     return allPackages.contains(pkgName) ||
             allPackages.contains("device#$pkgName") ||
             allPackages.contains("user#$pkgName") ||
-            allPackages.contains("$pkgName#$pkgName")
+            allPackages.contains("$pkgName#$pkgName") ||
+            allPackages.any { it.contains("finsky") }
 }

@@ -11,18 +11,20 @@ import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
-import ua.polodarb.gmsflags.core.Constants.DB_PATH
-import ua.polodarb.gmsflags.core.Constants.GET_GMS_PACKAGES
+import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
+import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
 import ua.polodarb.gmsflags.core.Constants.TAG
 
 @SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
 
-    private lateinit var db: SQLiteDatabase
+    private lateinit var gmsDB: SQLiteDatabase
+    private lateinit var vendingDB: SQLiteDatabase
 
     override fun onBind(intent: Intent): IBinder {
         try {
-            db = openDatabase(DB_PATH, null, OPEN_READWRITE)
+            gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
+            vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
         } catch (e: SQLiteException) {
             // TODO: Handle exception
             Log.wtf(TAG, e.message)
@@ -104,17 +106,19 @@ class RootDatabase : RootService() {
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        if (db.isOpen) db.close()
+        if (gmsDB.isOpen) gmsDB.close()
+        if (vendingDB.isOpen) vendingDB.close()
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
-        if (db.isOpen) db.close()
+        if (gmsDB.isOpen) gmsDB.close()
+        if (vendingDB.isOpen) vendingDB.close()
         super.onDestroy()
     }
 
     fun getGooglePackages(): List<String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT P.androidPackageName\n" +
                     "FROM Packages P\n" +
                     "JOIN (\n" +
@@ -133,7 +137,7 @@ class RootDatabase : RootService() {
     }
 
     fun getUsers(): MutableList<String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT user FROM Flags WHERE user IS NOT \"\";", null
         )
         val list = mutableListOf<String>()
@@ -146,7 +150,7 @@ class RootDatabase : RootService() {
     }
 
     fun getListByPackages(pkgName: String): List<String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT packageName FROM Flags WHERE packageName LIKE '%$pkgName%';", null
         )
         val list = mutableListOf<String>()
@@ -159,7 +163,7 @@ class RootDatabase : RootService() {
     }
 
     fun androidPackage(pkgName: String): String {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT androidPackageName FROM Packages WHERE packageName = '$pkgName' LIMIT 1;", null
         )
         val androidPackage = if (cursor.moveToFirst()) return cursor.getString(0) else "" // todo
@@ -174,7 +178,11 @@ class RootDatabase : RootService() {
         val whereClause = "packageName = ? AND name = ?"
         val whereArgs = arrayOf(packageName, name)
 
-        db.delete("FlagOverrides", whereClause, whereArgs)
+        gmsDB.delete("FlagOverrides", whereClause, whereArgs)
+
+        if (packageName.contains("finsky") || packageName.contains("vending")) {
+            vendingDB.delete("FlagOverrides", whereClause, whereArgs)
+        }
     }
 
     fun deleteOverriddenFlagByPackage(
@@ -183,7 +191,11 @@ class RootDatabase : RootService() {
         val whereClause = "packageName = ?"
         val whereArgs = arrayOf(packageName)
 
-        db.delete("FlagOverrides", whereClause, whereArgs)
+        gmsDB.delete("FlagOverrides", whereClause, whereArgs)
+
+        if (packageName.contains("finsky") || packageName.contains("vending")) {
+            vendingDB.delete("FlagOverrides", whereClause, whereArgs)
+        }
     }
 
     fun overrideFlag(
@@ -211,12 +223,16 @@ class RootDatabase : RootService() {
             put("committed", committed)
         }
 
-        db.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        gmsDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+
+        if (packageName?.contains("finsky") == true || packageName?.contains("vending") == true) {
+            vendingDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        }
 
     }
 
     private fun getBoolFlags(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT f.name, COALESCE(fo.boolVal, f.boolVal) " +
                     "AS boolVal FROM Flags f LEFT JOIN " +
                     "(SELECT name, boolVal FROM FlagOverrides) fo " +
@@ -231,11 +247,26 @@ class RootDatabase : RootService() {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.boolVal, f.boolVal) " +
+                    "AS boolVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, boolVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.boolVal IS NOT NULL " +
+                    "ORDER BY f.name ASC;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 
     private fun getIntFlags(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT f.name, COALESCE(fo.intVal, f.intVal) " +
                     "AS intVal FROM Flags f LEFT JOIN " +
                     "(SELECT name, intVal FROM FlagOverrides) fo " +
@@ -249,11 +280,25 @@ class RootDatabase : RootService() {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.intVal, f.intVal) " +
+                    "AS intVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, intVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.intVal IS NOT NULL;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 
     private fun getFloatFlags(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT f.name, COALESCE(fo.floatVal, f.floatVal) " +
                     "AS floatVal FROM Flags f LEFT JOIN " +
                     "(SELECT name, floatVal FROM FlagOverrides) fo " +
@@ -267,11 +312,25 @@ class RootDatabase : RootService() {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.floatVal, f.floatVal) " +
+                    "AS floatVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, floatVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.floatVal IS NOT NULL;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 
     private fun getStringFlags(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT f.name, COALESCE(fo.stringVal, f.stringVal) " +
                     "AS stringVal FROM Flags f LEFT JOIN " +
                     "(SELECT name, stringVal FROM FlagOverrides) fo " +
@@ -286,11 +345,26 @@ class RootDatabase : RootService() {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT f.name, COALESCE(fo.stringVal, f.stringVal) " +
+                    "AS stringVal FROM Flags f LEFT JOIN " +
+                    "(SELECT name, stringVal FROM FlagOverrides) fo " +
+                    "ON f.name = fo.name " +
+                    "WHERE f.packageName = '$pkgName' " + // pkgName
+                    "AND f.stringVal IS NOT NULL " +
+                    "AND f.stringVal <> '';",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 
     private fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
             null
         )
@@ -301,12 +375,23 @@ class RootDatabase : RootService() {
             } while (cursor.moveToNext())
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
+            null
+        )
+        if (cursorVending.moveToFirst()) {
+            do {
+                list[cursorVending.getString(0)] = cursorVending.getString(1)
+            } while (cursorVending.moveToNext())
+        }
+        cursorVending.close()
         return list
     }
 
 
-    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> {  // todo: not used
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
@@ -318,8 +403,8 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+    private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> {  // todo: not used
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
@@ -331,8 +416,8 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> {
-        val cursor = db.rawQuery(
+    private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> { // todo: not used
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
@@ -345,7 +430,7 @@ class RootDatabase : RootService() {
     }
 
     fun getAllOverriddenBoolFlags(): Map<String?, String?> {
-        val cursor = db.rawQuery(
+        val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, boolVal\n" +
                     "FROM FlagOverrides\n" +
                     "WHERE name IS NOT NULL AND boolVal IS NOT NULL;\n",
@@ -356,16 +441,33 @@ class RootDatabase : RootService() {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, boolVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND boolVal IS NOT NULL;\n",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 
     private fun getGmsPackages(): Map<String, String> {
-        val cursor = db.rawQuery(GET_GMS_PACKAGES, null)
+        val cursor = gmsDB.rawQuery("SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName", null)
         val list = mutableMapOf<String, String>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
         cursor.close()
+
+        val cursorVending = vendingDB.rawQuery("SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName", null)
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
         return list.toMap()
     }
 

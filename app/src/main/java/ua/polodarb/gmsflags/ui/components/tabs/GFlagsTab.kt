@@ -34,7 +34,11 @@ fun GFlagsTab(
                 text = tabTitle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = if (tabState == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (tabState == index) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
         },
         modifier = Modifier

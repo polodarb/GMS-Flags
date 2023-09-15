@@ -57,7 +57,7 @@ class CrashActivity : ComponentActivity() {
                                 putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
                             }
                             startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
+                        } catch (_: ActivityNotFoundException) {
                             Toast.makeText(this, getString(R.string.crash_report_failed), Toast.LENGTH_SHORT).show()
                         }
                     },
@@ -156,7 +156,7 @@ class ExceptionHandler(
             }
             context.startActivity(intent)
             exitProcess(0)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             handler.uncaughtException(thread, throwable)
         }
     }

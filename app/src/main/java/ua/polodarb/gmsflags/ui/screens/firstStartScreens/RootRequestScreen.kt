@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,27 +38,24 @@ fun RootRequestScreen(
         Column {
             Image(
                 painter = painterResource(id = R.drawable.root_image),
-                contentDescription = "",
+                contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 44.dp)
             )
             Text(
-                text = "Root required",
+                text = stringResource(id = R.string.root_title),
                 fontSize = 46.sp,
                 fontWeight = FontWeight.W600,
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
             )
             Text(
-                text = """
-            Unfortunately, the application 
-            requires superuser rights to function. 
-        """.trimIndent(),
+                text = stringResource(id = R.string.root_msg),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
-                text = "To request click the \"Request root\"",
+                text = stringResource(id = R.string.root_advice),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
@@ -75,7 +73,7 @@ fun RootRequestScreen(
                         .height(48.dp)
                 ) {
                     Text(
-                        text = "Exit",
+                        text = stringResource(id = R.string.root_exit),
                         fontWeight = FontWeight.Medium,
                         fontSize = 15.sp
                     )
@@ -97,7 +95,7 @@ fun RootRequestScreen(
                         )
                     } else {
                         Text(
-                            text = "Request root",
+                            text = stringResource(id = R.string.root_request),
                             fontWeight = FontWeight.Medium,
                             fontSize = 15.sp
                         )

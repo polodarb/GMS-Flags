@@ -42,9 +42,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
@@ -69,7 +69,6 @@ fun PackagesScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
     // Keyboard
@@ -112,7 +111,7 @@ fun PackagesScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            "Packages",
+                            stringResource(id = R.string.packages_title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -131,7 +130,7 @@ fun PackagesScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                     },
@@ -139,7 +138,7 @@ fun PackagesScreen(
                         IconButton(onClick = onBackPressed) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                     },
@@ -156,7 +155,7 @@ fun PackagesScreen(
                             searchQuery = ""
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
-                        placeHolderText = "Search a package name",
+                        placeHolderText = stringResource(id = R.string.packages_search_advice),
                         keyboardFocus = focusRequester
                     )
                 }
@@ -176,14 +175,8 @@ fun PackagesScreen(
                         onFlagClick = onFlagClick
                     )
                 }
-
-                is ScreenUiStates.Loading -> {
-                    LoadingProgressBar()
-                }
-
-                is ScreenUiStates.Error -> {
-                    ErrorLoadScreen()
-                }
+                is ScreenUiStates.Loading -> LoadingProgressBar()
+                is ScreenUiStates.Error -> ErrorLoadScreen()
             }
         }
     }
@@ -216,10 +209,10 @@ private fun SuccessListItems(
 
 @Composable
 fun LazyItem(
+    modifier: Modifier = Modifier,
     packageName: String,
     packagesCount: Int,
     lastItem: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     var checkedState by rememberSaveable {
         mutableStateOf(false)
@@ -239,12 +232,12 @@ fun LazyItem(
 
 @Composable
 fun LazyItem(
+    modifier: Modifier = Modifier,
     packageName: String,
     packagesCount: Int,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     lastItem: Boolean,
-    modifier: Modifier = Modifier
 ) {
     Column {
         Row(
@@ -256,12 +249,12 @@ fun LazyItem(
                 if (checked) {
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 } else {
                     Icon(
                         painterResource(id = R.drawable.ic_save_inactive),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 }
             }

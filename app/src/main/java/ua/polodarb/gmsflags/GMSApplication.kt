@@ -5,14 +5,11 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.google.android.material.color.DynamicColors
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -27,9 +24,13 @@ import ua.polodarb.gmsflags.ui.ExceptionHandler
 data class DatabaseInitializationState(val isInitialized: Boolean)
 
 class GMSApplication : Application() {
+    private companion object {
+        const val SHELL_TIMEOUT = 10L
+    }
+
     private val shellConfig = Shell.Builder.create()
         .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
-        .setTimeout(10)
+        .setTimeout(SHELL_TIMEOUT)
 
     private val _databaseInitializationStateFlow = MutableStateFlow(DatabaseInitializationState(false))
     val databaseInitializationStateFlow: Flow<DatabaseInitializationState> = _databaseInitializationStateFlow
@@ -45,6 +46,8 @@ class GMSApplication : Application() {
         super.onCreate()
 
         ExceptionHandler.initialize(this, CrashActivity::class.java)
+
+        DynamicColors.applyToActivitiesIfAvailable(this)
 
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
@@ -83,9 +86,7 @@ class GMSApplication : Application() {
     }
 
     fun getRootDatabase(): IRootDatabase {
-        if (!isRootDatabaseInitialized) {
-            throw IllegalStateException("RootDatabase is not initialized yet.")
-        }
+        check (isRootDatabaseInitialized) { "RootDatabase is not initialized yet." }
         return rootDatabase
     }
 }
