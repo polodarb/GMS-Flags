@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -305,7 +306,7 @@ class FlagChangeScreenViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            if (pkgName == "com.android.vending") {
+            if (pkgName.contains("finsky") || pkgName.contains("vending")) {
                 Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
                 Shell.cmd("am force-stop com.android.vending").exec()
             }

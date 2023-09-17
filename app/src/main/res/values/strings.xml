@@ -39,4 +39,5 @@
     <string name="update_dialog_title">Update app to v</string>
     <string name="update_dialog_close">Close</string>
     <string name="update_dialog_confirm">Update GMS Flags</string>
+    <string name="finder">"Finder: "</string>
 </resources>
