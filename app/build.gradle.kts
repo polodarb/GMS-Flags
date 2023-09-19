@@ -54,6 +54,11 @@ android {
 
 dependencies {
 
+    // Room Database
+    val roomVersion = "2.5.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
     // KTOR
     val ktorVersion = "2.3.4"
     implementation("io.ktor:ktor-client-core:$ktorVersion")
