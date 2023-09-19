@@ -67,7 +67,8 @@ import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewMod
 @Composable
 fun SavedScreen(
     onSettingsClick: () -> Unit,
-    onPackagesClick: () -> Unit
+    onPackagesClick: () -> Unit,
+    onFlagClick: (packageName: String) -> Unit,
 ) {
 
     val viewModel = koinViewModel<SavedScreenViewModel>()
@@ -185,7 +186,8 @@ fun SavedScreen(
             when (page) {
                 0 -> SavedPackagesScreen(
                     savedPackagesList = savedPackages.value,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onFlagClick = onFlagClick
                 )
 //                1 -> SavedFlagsScreen()
                 1 -> NotImplementedScreen()

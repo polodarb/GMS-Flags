@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,13 +27,16 @@ import ua.polodarb.gmsflags.R
 @Composable
 fun SavedPackagesScreen(
     savedPackagesList: List<String>,
-    viewModel: SavedScreenViewModel
+    viewModel: SavedScreenViewModel,
+    onFlagClick: (packageName: String) -> Unit
 ) {
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
             itemsIndexed(savedPackagesList) { index, item ->
                 SavedPackagesLazyItem(
                     packageName = item,
@@ -40,7 +44,10 @@ fun SavedPackagesScreen(
                     onCheckedChange = {
                         if (!it) viewModel.deleteSavedPackage(item)
                     },
-                    lastItem = savedPackagesList.size - 1 == index
+                    lastItem = savedPackagesList.size - 1 == index,
+                    modifier = Modifier.clickable {
+                        onFlagClick(item)
+                    }
                 )
             }
         }
