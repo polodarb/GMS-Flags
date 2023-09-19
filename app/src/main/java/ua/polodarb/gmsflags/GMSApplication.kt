@@ -18,6 +18,7 @@ import org.koin.core.logger.Level
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.databaseModule
+import ua.polodarb.gmsflags.di.repositoryModule
 import ua.polodarb.gmsflags.di.viewModelsModule
 import ua.polodarb.gmsflags.ui.CrashActivity
 import ua.polodarb.gmsflags.ui.ExceptionHandler
@@ -53,7 +54,7 @@ class GMSApplication : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
             androidContext(this@GMSApplication)
-            modules(listOf(appModule, viewModelsModule, databaseModule))
+            modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule))
         }
     }
 

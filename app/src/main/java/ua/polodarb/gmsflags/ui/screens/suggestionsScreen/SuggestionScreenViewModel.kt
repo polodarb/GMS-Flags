@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,12 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.data.repo.DatabaseRepository
+import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 
 class SuggestionScreenViewModel(
-    private val repository: DatabaseRepository
+    private val repository: GmsDBRepository
 ) : ViewModel() {
 
     private val _stateSuggestionsFlags =
@@ -42,12 +40,12 @@ class SuggestionScreenViewModel(
         }
     }
 
-    fun initUsers() {
+    private fun initUsers() {
         usersList.clear()
         usersList.addAll(repository.getUsers())
     }
 
-    fun getAllOverriddenBoolFlags() {
+    private fun getAllOverriddenBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllOverriddenBoolFlags().collect { uiState ->
@@ -68,7 +66,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    fun updateFlagValues(suggestedFlags: List<SuggestedFlag>, flagValuesMap: Map<String, String>): List<SuggestedFlag> {
+    private fun updateFlagValues(suggestedFlags: List<SuggestedFlag>, flagValuesMap: Map<String, String>): List<SuggestedFlag> {
         val list =  suggestedFlags.map { suggestedFlag ->
             val newFlagValue = flagValuesMap[suggestedFlag.phenotypeFlagName[0]]?.toIntOrNull() == 1
             SuggestedFlag(
@@ -82,7 +80,7 @@ class SuggestionScreenViewModel(
         return list
     }
 
-    fun clearPhenotypeCache(pkgName: String) {
+    private fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.androidPackage(pkgName)
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()

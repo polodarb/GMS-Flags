@@ -38,6 +38,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,8 +58,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
+import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -66,6 +69,10 @@ fun SavedScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit
 ) {
+
+    val viewModel = koinViewModel<SavedScreenViewModel>()
+    val savedPackages = viewModel.stateSavedPackages.collectAsState()
+
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val context = LocalContext.current
@@ -176,9 +183,11 @@ fun SavedScreen(
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {
-//                0 -> SavedPackagesScreen()
+                0 -> SavedPackagesScreen(
+                    savedPackagesList = savedPackages.value,
+                    viewModel = viewModel
+                )
 //                1 -> SavedFlagsScreen()
-                0 -> NotImplementedScreen()
                 1 -> NotImplementedScreen()
             }
         }

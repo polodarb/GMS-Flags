@@ -8,7 +8,7 @@ import ua.polodarb.gmsflags.data.databases.local.dao.PackagesDAO
 
 val databaseModule = module {
 
-    single {
+    single<AppDatabase> {
         Room.databaseBuilder(
             androidApplication().applicationContext,
             AppDatabase::class.java,
