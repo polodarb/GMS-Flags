@@ -8,18 +8,18 @@ import kotlinx.coroutines.flow.Flow
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedPackages
 
 @Dao
-interface PackagesDAO { // todo
+interface FlagsDAO {
 
     @Query("SELECT * FROM saved_packages")
-    fun getSavedPackages(): Flow<List<String>>
+    fun getSavedFlags(): Flow<List<String>>
 
     @Insert(entity = SavedPackages::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun savePackage(pkgName: SavedPackages)
+    suspend fun saveFlag(flagName: SavedPackages)
 
-    @Query("DELETE FROM saved_packages WHERE pkg_name = :pkgName")
-    suspend fun deleteSavedPackage(pkgName: String)
+    @Query("DELETE FROM saved_packages WHERE pkg_name = :flagName")
+    suspend fun deleteSavedFlag(flagName: String)
 
     @Query("DELETE FROM saved_packages")
-    fun deleteAllSavedPackages()
+    fun deleteAllSavedFlags()
 
 }
