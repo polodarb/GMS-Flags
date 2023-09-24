@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedPackages
 
 @Dao
-interface PackagesDAO { // todo
+interface PackagesDAO {
 
     @Query("SELECT * FROM saved_packages")
     fun getSavedPackages(): Flow<List<String>>
