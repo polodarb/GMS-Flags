@@ -28,7 +28,7 @@ import ua.polodarb.gmsflags.R
 fun SavedPackagesScreen(
     savedPackagesList: List<String>,
     viewModel: SavedScreenViewModel,
-    onFlagClick: (packageName: String) -> Unit
+    onPackageClick: (packageName: String) -> Unit
 ) {
 
     Column(
@@ -46,7 +46,7 @@ fun SavedPackagesScreen(
                     },
                     lastItem = savedPackagesList.size - 1 == index,
                     modifier = Modifier.clickable {
-                        onFlagClick(item)
+                        onPackageClick(item)
                     }
                 )
             }

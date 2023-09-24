@@ -68,11 +68,13 @@ import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewMod
 fun SavedScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit,
-    onFlagClick: (packageName: String) -> Unit,
+    onSavedPackageClick: (packageName: String) -> Unit,
+    onSavedFlagClick: (packageName: String, flagName: String) -> Unit,
 ) {
 
     val viewModel = koinViewModel<SavedScreenViewModel>()
     val savedPackages = viewModel.stateSavedPackages.collectAsState()
+    val savedFlags = viewModel.stateSavedFlags.collectAsState()
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -187,10 +189,13 @@ fun SavedScreen(
                 0 -> SavedPackagesScreen(
                     savedPackagesList = savedPackages.value,
                     viewModel = viewModel,
-                    onFlagClick = onFlagClick
+                    onPackageClick = onSavedPackageClick
                 )
-//                1 -> SavedFlagsScreen()
-                1 -> NotImplementedScreen()
+                1 -> SavedFlagsScreen(
+                    savedFlagsList = savedFlags.value,
+                    viewModel = viewModel,
+                    onFlagClick = onSavedFlagClick
+                )
             }
         }
     }

@@ -21,7 +21,8 @@ val repositoryModule = module {
 
     single {
         RoomDBRepository(
-            savedPackagesDao = get()
+            savedPackagesDao = get(),
+            savedFlagsDao = get()
         )
     }
 

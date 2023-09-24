@@ -113,10 +113,13 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 onPackagesClick = {
                     parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 },
-                onFlagClick = {
+                onSavedPackageClick = {
                     parentNavController.navigate(
                         ScreensDestination.FlagChange.createRoute(Uri.encode(it))
                     )
+                },
+                onSavedFlagClick = { packageName, flagName ->
+                    // TODO: Implement navigation to flags list
                 }
             )
         }

@@ -38,6 +38,8 @@ fun BoolValItem(
     checked: Boolean,
     lastItem: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
+    saveChecked: Boolean,
+    saveOnCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -59,16 +61,16 @@ fun BoolValItem(
                 .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-            IconToggleButton(checked = false, onCheckedChange = { }) { // todo
-                if (false) { //todo
+            IconToggleButton(checked = saveChecked, onCheckedChange = saveOnCheckedChange) {
+                if (saveChecked) {
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 } else {
                     Icon(
                         painterResource(id = R.drawable.ic_save_inactive),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 }
             }
@@ -94,10 +96,8 @@ fun IntFloatStringValItem(
     flagName: String,
     flagValue: String,
     lastItem: Boolean = false,
-    savedButtonChecked: Boolean,
-    savedButtonOnChecked: (Boolean) -> Unit,
-    haptic: HapticFeedback,
-    context: Context,
+    saveChecked: Boolean,
+    saveOnCheckedChange: (Boolean) -> Unit,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -125,10 +125,10 @@ fun IntFloatStringValItem(
         ) {
 
             IconToggleButton(
-                checked = savedButtonChecked,
-                onCheckedChange = savedButtonOnChecked
+                checked = saveChecked,
+                onCheckedChange = saveOnCheckedChange
             ) { // todo
-                if (savedButtonChecked) { //todo
+                if (saveChecked) { //todo
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),
                         contentDescription = "Localized description"

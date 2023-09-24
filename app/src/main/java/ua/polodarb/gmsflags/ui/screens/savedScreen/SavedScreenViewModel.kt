@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreenUiStates
 
@@ -19,11 +20,16 @@ class SavedScreenViewModel(
         MutableStateFlow<List<String>>(emptyList())
     val stateSavedPackages: StateFlow<List<String>> = _stateSavedPackages.asStateFlow()
 
+    private val _stateSavedFlags =
+        MutableStateFlow<List<SavedFlags>>(emptyList())
+    val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
+
     init {
         getAllSavedPackages()
     }
 
-    fun getAllSavedPackages() {
+    // Packages
+    private fun getAllSavedPackages() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 roomRepository.getSavedPackages().collect {
@@ -37,6 +43,25 @@ class SavedScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 roomRepository.deleteSavedPackage(pkgName)
+            }
+        }
+    }
+
+    // Flags
+    private fun getAllSavedFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.getSavedFlags().collect {
+                    _stateSavedFlags.value = it
+                }
+            }
+        }
+    }
+
+    fun deleteSavedFlag(flagName: String, pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.deleteSavedFlag(flagName, pkgName)
             }
         }
     }

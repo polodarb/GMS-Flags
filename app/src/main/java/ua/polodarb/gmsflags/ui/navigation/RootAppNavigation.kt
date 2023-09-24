@@ -99,8 +99,7 @@ internal fun RootAppNavigation(
 
     NavHost(
         navController = navController,
-//        startDestination = if (isFirstStart) ScreensDestination.Welcome.screenRoute else ScreensDestination.Root.screenRoute,
-        startDestination = ScreensDestination.Settings.screenRoute,
+        startDestination = if (isFirstStart) ScreensDestination.Welcome.screenRoute else ScreensDestination.Root.screenRoute,
         modifier = modifier
     ) {
         composable(

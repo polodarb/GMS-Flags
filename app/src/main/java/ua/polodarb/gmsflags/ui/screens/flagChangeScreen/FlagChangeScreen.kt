@@ -548,6 +548,8 @@ fun BooleanFlagsScreen(
                                     viewModel.initOverriddenBoolFlags(packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 },
+                                saveChecked = true, // TODO: Implement saveChecked
+                                saveOnCheckedChange = {},  // TODO: Implement saveOnCheckedChange
                                 lastItem = index == listBool.size - 1,
                             )
                         }
@@ -648,10 +650,8 @@ fun OtherTypesFlagsScreen(
                                 flagName = listInt.keys.toList()[index],
                                 flagValue = listInt.values.toList()[index],
                                 lastItem = index == listInt.size - 1,
-                                savedButtonChecked = false,
-                                savedButtonOnChecked = {},
-                                haptic = haptic,
-                                context = context,
+                                saveChecked = false, // TODO: Implement saveChecked
+                                saveOnCheckedChange = {}, // TODO: Implement saveOnCheckedChange
                                 onClick = {
                                     onFlagClick(
                                         item.first,

@@ -4,6 +4,7 @@ import androidx.room.Room
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.databases.local.AppDatabase
+import ua.polodarb.gmsflags.data.databases.local.dao.FlagsDAO
 import ua.polodarb.gmsflags.data.databases.local.dao.PackagesDAO
 
 val databaseModule = module {
@@ -19,6 +20,11 @@ val databaseModule = module {
     single<PackagesDAO> {
         val database = get<AppDatabase>()
         database.packagesDao()
+    }
+
+    single<FlagsDAO> {
+        val database = get<AppDatabase>()
+        database.flagsDao()
     }
 
 }
