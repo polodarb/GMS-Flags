@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,7 +79,10 @@ fun SuggestionsScreen(
             ) {
                 ExtendedFloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    onClick = { /* do something */ },
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
+                    },
                     expanded = expandedFab,
                     icon = { Icon(painterResource(id = R.drawable.ic_question), "") },
                     text = { Text(text = "How can I suggest or report a flag?") },

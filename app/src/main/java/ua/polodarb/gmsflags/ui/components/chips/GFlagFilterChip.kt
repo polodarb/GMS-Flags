@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun GFlagFilterChip(
     selected: Boolean,
+    pagerCurrentState: Int,
     chipOnClick: () -> Unit,
     chipTitle: String,
     modifier: Modifier
@@ -29,12 +30,16 @@ fun GFlagFilterChip(
             leadingIconColor = Color.Transparent,
             trailingIconColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
-            disabledLabelColor = Color.Transparent,
+            disabledLabelColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                alpha = 0.3f
+            ),
             disabledLeadingIconColor = Color.Transparent,
             disabledTrailingIconColor = Color.Transparent,
-            selectedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            disabledSelectedContainerColor = Color.Transparent,
-            selectedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledSelectedContainerColor = MaterialTheme.colorScheme.secondary.copy(
+                alpha = 0.2f
+            ),
+            selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
             selectedLeadingIconColor = Color.Transparent,
             selectedTrailingIconColor = Color.Transparent
         ),
@@ -48,6 +53,7 @@ fun GFlagFilterChip(
             )
         },
         leadingIcon = null,
-        modifier = modifier
+        modifier = modifier,
+        enabled = pagerCurrentState == 0
     )
 }

@@ -213,24 +213,22 @@ fun FlagChangeScreen(
                         )
                     },
                     actions = {
-                        AnimatedVisibility(visible = tabFilterState) {
-                            IconButton(
-                                onClick = {
-                                    if (searchIconState) searchIconState = false
-                                    viewModel.initOverriddenBoolFlags(packageName.toString()) //todo
-                                    filterIconState = !filterIconState
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                },
-                                modifier = if (filterIconState) Modifier
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                else Modifier.background(Color.Transparent)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_filter),
-                                    contentDescription = "Filter"
-                                )
-                            }
+                        IconButton(
+                            onClick = {
+                                if (searchIconState) searchIconState = false
+                                viewModel.initOverriddenBoolFlags(packageName.toString()) //todo
+                                filterIconState = !filterIconState
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            },
+                            modifier = if (filterIconState) Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            else Modifier.background(Color.Transparent)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_filter),
+                                contentDescription = "Filter"
+                            )
                         }
                         IconButton(
                             onClick = {
@@ -298,7 +296,6 @@ fun FlagChangeScreen(
                         coroutineScope.launch {
                             pagerState.scrollToPage(index)
                         }
-                        if (index != 0) filterIconState = false
                         tabFilterState = index == 0
                         tabState = index
                     }
@@ -307,6 +304,7 @@ fun FlagChangeScreen(
                     GFlagFilterChipRow(
                         list = chipsList,
                         selectedChips = selectedChips,
+                        pagerCurrentState = pagerState.currentPage,
                         chipOnClick = {
                             when (it) {
                                 0 -> viewModel.filterMethod.value = ALL
@@ -359,9 +357,11 @@ fun FlagChangeScreen(
                     when (uiStateBoolean.value) {
                         is FlagChangeUiStates.Success -> {
 
-                            val listBool = (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(compareByDescending<String> {
-                                it.toIntOrNull() ?: 0
-                            }.thenBy { it })
+                            val listBool =
+                                (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(
+                                    compareByDescending<String> {
+                                        it.toIntOrNull() ?: 0
+                                    }.thenBy { it })
 
                             BooleanFlagsScreen(
                                 listBool = listBool,
@@ -372,6 +372,7 @@ fun FlagChangeScreen(
                                 savedFlagsList = savedFlags.value
                             )
                         }
+
                         is FlagChangeUiStates.Loading -> {}
                         is FlagChangeUiStates.Error -> {}
                     }
@@ -544,20 +545,27 @@ fun BooleanFlagsScreen(
 
             if (listBool.isEmpty()) NoFlagsOrPackages()
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .imePadding()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+            ) {
                 if (listBool.isNotEmpty()) {
                     LazyColumn {
                         itemsIndexed(listBool.keys.toList()) { index, flagName ->
 
                             val checked = listBool.values.toList()[index] == "1"
-                            val targetFlag = SavedFlags(packageName.toString(), flagName, SelectFlagsType.BOOLEAN.name)
-                            val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                                packageName == targetFlag.pkgName &&
-                                        flag == targetFlag.flagName &&
-                                        selectFlagsType == targetFlag.type
-                            }
+                            val targetFlag = SavedFlags(
+                                packageName.toString(),
+                                flagName,
+                                SelectFlagsType.BOOLEAN.name
+                            )
+                            val isEqual =
+                                savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
+                                    packageName == targetFlag.pkgName &&
+                                            flag == targetFlag.flagName &&
+                                            selectFlagsType == targetFlag.type
+                                }
 
                             BoolValItem(
                                 flagName = flagName,
@@ -578,7 +586,11 @@ fun BooleanFlagsScreen(
                                 saveChecked = isEqual,
                                 saveOnCheckedChange = {
                                     if (it) {
-                                        viewModel.saveFlag(flagName, packageName.toString(), SelectFlagsType.BOOLEAN.name)
+                                        viewModel.saveFlag(
+                                            flagName,
+                                            packageName.toString(),
+                                            SelectFlagsType.BOOLEAN.name
+                                        )
                                     } else {
                                         viewModel.deleteSavedFlag(flagName, packageName.toString())
                                     }
@@ -679,9 +691,11 @@ fun OtherTypesFlagsScreen(
 
             if (listInt.isEmpty()) NoFlagsOrPackages()
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .imePadding()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+            ) {
                 if (listInt.isNotEmpty()) {
                     LazyColumn {
                         itemsIndexed(listInt.toList()) { index, item ->
