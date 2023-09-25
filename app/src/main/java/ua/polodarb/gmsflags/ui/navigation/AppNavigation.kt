@@ -118,8 +118,10 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                         ScreensDestination.FlagChange.createRoute(Uri.encode(it))
                     )
                 },
-                onSavedFlagClick = { packageName, flagName ->
-                    // TODO: Implement navigation to flags list
+                onSavedFlagClick = { packageName, flagName, type  ->
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(packageName)) // TODO: Implement search flag in list after navigation
+                    )
                 }
             )
         }

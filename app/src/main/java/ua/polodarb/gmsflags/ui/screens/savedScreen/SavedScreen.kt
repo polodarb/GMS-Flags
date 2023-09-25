@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDp
@@ -61,6 +62,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.SelectFlagsType
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -69,7 +71,7 @@ fun SavedScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit,
     onSavedPackageClick: (packageName: String) -> Unit,
-    onSavedFlagClick: (packageName: String, flagName: String) -> Unit,
+    onSavedFlagClick: (packageName: String, flagName: String, type: String) -> Unit,
 ) {
 
     val viewModel = koinViewModel<SavedScreenViewModel>()
@@ -90,6 +92,8 @@ fun SavedScreen(
     val pagerState = rememberPagerState(pageCount = {
         2
     })
+
+    Log.e("flag", savedFlags.value.toString())
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -182,17 +186,17 @@ fun SavedScreen(
         }
         HorizontalPager(
             state = pagerState,
-            userScrollEnabled = false,
+            userScrollEnabled = true,
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {
                 0 -> SavedPackagesScreen(
-                    savedPackagesList = savedPackages.value,
+                    savedPackagesList = savedPackages.value.reversed(),
                     viewModel = viewModel,
                     onPackageClick = onSavedPackageClick
                 )
                 1 -> SavedFlagsScreen(
-                    savedFlagsList = savedFlags.value,
+                    savedFlagsList = savedFlags.value.reversed(),
                     viewModel = viewModel,
                     onFlagClick = onSavedFlagClick
                 )

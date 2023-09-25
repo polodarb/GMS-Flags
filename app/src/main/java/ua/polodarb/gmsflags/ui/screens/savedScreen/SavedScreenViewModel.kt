@@ -26,6 +26,7 @@ class SavedScreenViewModel(
 
     init {
         getAllSavedPackages()
+        getAllSavedFlags()
     }
 
     // Packages

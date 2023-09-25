@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 
 @Composable
@@ -30,7 +31,7 @@ fun BottomBarUI(
                         contentDescription = stringResource(id = item.title)
                     )
                 },
-                label = { Text(text = stringResource(id = item.title)) },
+                label = { Text(text = stringResource(id = item.title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 selected = currentSelectedItem == item,
                 onClick = {
                     navController.navigate(item.screenRoute) {

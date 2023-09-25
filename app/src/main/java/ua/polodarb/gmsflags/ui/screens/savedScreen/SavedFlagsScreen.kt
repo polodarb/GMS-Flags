@@ -1,7 +1,10 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,32 +12,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.SelectFlagsType
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SavedFlagsScreen(
     savedFlagsList: List<SavedFlags>,
     viewModel: SavedScreenViewModel,
-    onFlagClick: (packageName: String, flagName: String) -> Unit
+    onFlagClick: (packageName: String, flagName: String, type: String) -> Unit
 ) {
+
+    val clipboardManager = LocalClipboardManager.current
+    val haptic = LocalHapticFeedback.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -43,17 +50,31 @@ fun SavedFlagsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(savedFlagsList.toList()) { index, item ->
+
+                val targetFlag = SavedFlags(item.pkgName, item.flagName, SelectFlagsType.BOOLEAN.name)
+                val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
+                    packageName == targetFlag.pkgName &&
+                            flag == targetFlag.flagName &&
+                            selectFlagsType == targetFlag.type
+                }
+
                 SavedFlagsLazyItem(
                     packageName = item.pkgName,
                     flagName = item.flagName,
-                    checked = savedFlagsList.contains(SavedFlags(item.pkgName, item.flagName, item.type)), // todo ??
+                    checked = isEqual,
                     onCheckedChange = {
                         if (!it) viewModel.deleteSavedFlag(item.flagName, item.pkgName)
                     },
                     lastItem = savedFlagsList.size - 1 == index,
-                    modifier = Modifier.clickable {
-                        onFlagClick(item.pkgName, item.flagName)
-                    }
+                    modifier = Modifier.combinedClickable(
+                        onClick = {
+                            onFlagClick(item.pkgName, item.flagName, item.type)
+                        },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            clipboardManager.setText(AnnotatedString(item.flagName))
+                        }
+                    )
                 )
             }
         }
@@ -69,11 +90,18 @@ fun SavedFlagsLazyItem(
     onCheckedChange: (Boolean) -> Unit,
     lastItem: Boolean,
 ) {
-    Column {
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = packageName,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+        )
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             IconToggleButton(checked = checked, onCheckedChange = onCheckedChange) {
                 if (checked) {
@@ -89,7 +117,6 @@ fun SavedFlagsLazyItem(
                 }
             }
             Column(Modifier.weight(0.9f)) {
-                Text(text = packageName, fontSize = 13.sp, color = MaterialTheme.colorScheme.outline)
                 Text(text = flagName, fontSize = 15.sp)
             }
             Icon(

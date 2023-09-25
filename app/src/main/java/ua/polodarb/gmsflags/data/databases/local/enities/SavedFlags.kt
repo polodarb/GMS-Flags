@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "saved_flags")
 data class SavedFlags(
-    @PrimaryKey @ColumnInfo(name = "pkg_name") val pkgName: String,
+    @ColumnInfo(name = "pkg_name") val pkgName: String,
     @ColumnInfo(name = "flag_name") val flagName: String,
-    @ColumnInfo(name = "flag_type") val type: String
+    @ColumnInfo(name = "flag_type") val type: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
 )
