@@ -107,7 +107,7 @@ internal fun RootAppNavigation(
             enterTransition = { enterAnim(toLeft = false) },
             exitTransition = { exitAnim(toLeft = true) }
         ) {
-            RootScreen(parentNavController = navController)
+            RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
         }
         composable(
             route = ScreensDestination.Welcome.screenRoute,

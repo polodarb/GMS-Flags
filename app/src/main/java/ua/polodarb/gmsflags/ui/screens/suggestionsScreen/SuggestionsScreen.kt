@@ -1,19 +1,31 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
@@ -33,13 +45,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
@@ -50,6 +67,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuggestionsScreen(
+    isFirstStart: Boolean,
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit
 ) {
@@ -133,7 +151,9 @@ fun SuggestionsScreen(
         }
     ) { it ->
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = it.calculateTopPadding())
         ) {
             when (overriddenFlags.value) {
                 is SuggestionsScreenUiStates.Success -> {
@@ -141,9 +161,11 @@ fun SuggestionsScreen(
                     val data = (overriddenFlags.value as SuggestionsScreenUiStates.Success).data
 
                     LazyColumn(
-                        contentPadding = it,
                         state = listState
                     ) {
+                        item {
+                            WarningBanner(isFirstStart)
+                        }
                         itemsIndexed(data.toList()) { index, item ->
                             SuggestedFlagItem(
                                 flagName = item.flagName,
@@ -203,4 +225,62 @@ fun SuggestedFlagItem(
             }
         },
     )
+}
+
+@Composable
+fun WarningBanner(
+    isFirstStart: Boolean
+) {
+    var visibility by rememberSaveable {
+        mutableStateOf(isFirstStart)
+    }
+
+    AnimatedVisibility(visible = visibility, enter = fadeIn(), exit = fadeOut() + shrinkVertically()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.errorContainer)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_force_stop),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(28.dp)
+                )
+                Text(
+                    text = "To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = { visibility = false },
+                        modifier = Modifier.padding(8.dp),
+                        colors = ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError,
+                            disabledContainerColor = MaterialTheme.colorScheme.outline,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
+                        Text(text = "Close")
+                    }
+                }
+            }
+        }
+    }
 }

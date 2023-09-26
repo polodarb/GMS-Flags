@@ -13,6 +13,7 @@ import ua.polodarb.gmsflags.ui.navigation.BottomBarUI
 
 @Composable
 fun RootScreen(
+    isFirstStart: Boolean,
     parentNavController: NavController,
     childNavController: NavHostController = rememberNavController()
 ) {
@@ -20,6 +21,7 @@ fun RootScreen(
         bottomBar = { BottomBarUI(navController = childNavController) }
     ) { paddingValues ->
         BottomBarNavigation(
+            isFirstStart = isFirstStart,
             parentNavController = parentNavController,
             navController = childNavController,
             modifier = Modifier

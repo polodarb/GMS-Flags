@@ -71,6 +71,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
 
 @Composable
 internal fun BottomBarNavigation( // Navigation realization for BottomBar
+    isFirstStart: Boolean,
     modifier: Modifier = Modifier,
     parentNavController: NavController,
     navController: NavHostController
@@ -82,6 +83,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
     ) {
         composable(route = NavBarItem.Suggestions.screenRoute) {
             SuggestionsScreen(
+                isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
