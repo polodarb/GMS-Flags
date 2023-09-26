@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -406,7 +407,8 @@ fun FlagChangeScreen(
                         editTextValue.value = flagValue
                     },
                     haptic = haptic,
-                    context = context
+                    context = context,
+                    savedFlagsList = savedFlags.value
                 )
 
                 2 -> OtherTypesFlagsScreen(
@@ -436,7 +438,8 @@ fun FlagChangeScreen(
                         editTextValue.value = flagValue
                     },
                     haptic = haptic,
-                    context = context
+                    context = context,
+                    savedFlagsList = savedFlags.value
                 )
 
                 3 -> OtherTypesFlagsScreen(
@@ -466,7 +469,8 @@ fun FlagChangeScreen(
                         editTextValue.value = flagValue
                     },
                     haptic = haptic,
-                    context = context
+                    context = context,
+                    savedFlagsList = savedFlags.value
                 )
             }
         }
@@ -628,6 +632,7 @@ fun OtherTypesFlagsScreen(
     flagsType: SelectFlagsType,
     editTextValue: String,
     showDialog: Boolean,
+    savedFlagsList: List<SavedFlags>,
     onFlagClick: (flagName: String, flagValue: String, editTextValue: String, showDialog: Boolean) -> Unit,
     dialogOnQueryChange: (String) -> Unit,
     dialogOnConfirm: () -> Unit,
@@ -699,12 +704,38 @@ fun OtherTypesFlagsScreen(
                 if (listInt.isNotEmpty()) {
                     LazyColumn {
                         itemsIndexed(listInt.toList()) { index, item ->
+
+                            val targetFlag = SavedFlags(
+                                packageName.toString(),
+                                item.first,
+                                flagsType.name
+                            )
+                            val isEqual =
+                                savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
+                                    packageName == targetFlag.pkgName &&
+                                            flag == targetFlag.flagName &&
+                                            selectFlagsType == targetFlag.type
+                                }
+
+                            Log.e("flag", targetFlag.toString())
+                            Log.e("flag", isEqual.toString())
+
                             IntFloatStringValItem(
                                 flagName = listInt.keys.toList()[index],
                                 flagValue = listInt.values.toList()[index],
                                 lastItem = index == listInt.size - 1,
-                                saveChecked = false, // TODO: Implement saveChecked
-                                saveOnCheckedChange = {}, // TODO: Implement saveOnCheckedChange
+                                saveChecked = isEqual,
+                                saveOnCheckedChange = {
+                                    if (it) {
+                                        viewModel.saveFlag(
+                                            item.first,
+                                            packageName.toString(),
+                                            flagsType.name
+                                        )
+                                    } else {
+                                        viewModel.deleteSavedFlag(item.first, packageName.toString())
+                                    }
+                                },
                                 onClick = {
                                     onFlagClick(
                                         item.first,

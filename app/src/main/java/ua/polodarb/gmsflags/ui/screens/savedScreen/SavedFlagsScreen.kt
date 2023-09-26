@@ -51,7 +51,7 @@ fun SavedFlagsScreen(
         ) {
             itemsIndexed(savedFlagsList.toList()) { index, item ->
 
-                val targetFlag = SavedFlags(item.pkgName, item.flagName, SelectFlagsType.BOOLEAN.name)
+                val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
                 val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
                     packageName == targetFlag.pkgName &&
                             flag == targetFlag.flagName &&
