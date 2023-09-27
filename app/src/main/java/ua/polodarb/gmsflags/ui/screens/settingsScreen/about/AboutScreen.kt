@@ -188,7 +188,11 @@ fun SettingsAboutListInfo(
                 Text(text = "Danyil Kobzar")
             },
             leadingContent = {
-                Image(imageVector = Icons.Rounded.Person, contentDescription = null)
+                Image(
+                    imageVector = Icons.Rounded.Person,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                )
             },
             overlineContent = {
                 Text(text = "Developer")
@@ -205,7 +209,8 @@ fun SettingsAboutListInfo(
             leadingContent = {
                 Image(
                     painter = painterResource(id = R.drawable.ic_github),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
                 )
             },
             overlineContent = {
@@ -223,7 +228,8 @@ fun SettingsAboutListInfo(
             leadingContent = {
                 Image(
                     painter = painterResource(id = R.drawable.ic_telegram),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
                 )
             },
             overlineContent = {
