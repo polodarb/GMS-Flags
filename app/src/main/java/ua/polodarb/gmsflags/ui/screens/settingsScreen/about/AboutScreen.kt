@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
@@ -141,7 +143,7 @@ fun Header(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
-                    modifier = Modifier.size(292.dp)
+                    modifier = Modifier.size(292.dp).offset(x = 8.dp)
                 )
             }
         }
@@ -191,7 +193,8 @@ fun SettingsAboutListInfo(
                 Image(
                     imageVector = Icons.Rounded.Person,
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                    modifier = Modifier.scale(1.1f)
                 )
             },
             overlineContent = {
