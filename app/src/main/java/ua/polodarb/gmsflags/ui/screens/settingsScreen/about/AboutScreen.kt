@@ -123,7 +123,7 @@ fun Header(
                     indication = null
                 ) {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    rotationState += 15f
+                    rotationState += 30f
                 }
         ) {
             Box(
