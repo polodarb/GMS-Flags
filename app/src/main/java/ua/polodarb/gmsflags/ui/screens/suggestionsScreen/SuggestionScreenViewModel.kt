@@ -45,7 +45,7 @@ class SuggestionScreenViewModel(
         usersList.addAll(repository.getUsers())
     }
 
-    private fun getAllOverriddenBoolFlags() {
+    fun getAllOverriddenBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllOverriddenBoolFlags().collect { uiState ->

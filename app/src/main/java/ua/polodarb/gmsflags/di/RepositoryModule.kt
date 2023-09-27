@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.data.repo.SettingsRepository
 
 val repositoryModule = module {
 
@@ -23,6 +24,12 @@ val repositoryModule = module {
         RoomDBRepository(
             savedPackagesDao = get(),
             savedFlagsDao = get()
+        )
+    }
+
+    single {
+        SettingsRepository(
+            context = get()
         )
     }
 
