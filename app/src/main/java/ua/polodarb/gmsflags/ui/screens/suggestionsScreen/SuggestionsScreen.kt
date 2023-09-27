@@ -85,12 +85,11 @@ fun SuggestionsScreen(
     val listState = rememberLazyListState()
     val expandedFab by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex == 0
+            listState.firstVisibleItemIndex == 1 || listState.firstVisibleItemIndex == 0
         }
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             Box(
                 modifier = Modifier.offset(y = 12.dp)
@@ -235,7 +234,11 @@ fun WarningBanner(
         mutableStateOf(isFirstStart)
     }
 
-    AnimatedVisibility(visible = visibility, enter = fadeIn(), exit = fadeOut() + shrinkVertically()) {
+    AnimatedVisibility(
+        visible = visibility,
+        enter = fadeIn(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

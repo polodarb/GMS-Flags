@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags.ui.navigation
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.AlertDialog
@@ -44,6 +45,7 @@ import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
 
 @OptIn(ExperimentalAnimationApi::class, InternalCoroutinesApi::class)
 @Composable
@@ -171,9 +173,25 @@ internal fun RootAppNavigation(
         composable(
             route = ScreensDestination.Settings.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
         ) {
             SettingsScreen(
+                onBackPressed = navController::navigateUp,
+                onResetFlagsClick = {},
+                onResetSavedClick = {},
+                onAboutClick = {
+                    navController.navigate(ScreensDestination.SettingsAbout.screenRoute)
+                }
+            ) // TODO: Implement SettingsScreen
+        }
+        composable(
+            route = ScreensDestination.SettingsAbout.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            AboutScreen(
                 onBackPressed = navController::navigateUp
             ) // TODO: Implement SettingsScreen
         }
