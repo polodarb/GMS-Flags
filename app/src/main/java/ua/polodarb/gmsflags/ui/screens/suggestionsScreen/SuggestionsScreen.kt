@@ -95,6 +95,7 @@ fun SuggestionsScreen(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             Box(
                 modifier = Modifier.offset(y = 12.dp)

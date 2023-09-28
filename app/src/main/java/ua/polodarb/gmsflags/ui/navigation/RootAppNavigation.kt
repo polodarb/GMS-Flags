@@ -48,6 +48,7 @@ import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.SettingsResetFlagsHeader
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
 
 @OptIn(ExperimentalAnimationApi::class, InternalCoroutinesApi::class)
 @Composable
@@ -188,7 +189,9 @@ internal fun RootAppNavigation(
                 onResetFlagsClick = {
                     navController.navigate(ScreensDestination.SettingsResetFlags.screenRoute)
                 },
-                onResetSavedClick = {},
+                onResetSavedClick = {
+                    navController.navigate(ScreensDestination.SettingsResetSaved.screenRoute)
+                },
                 onAboutClick = {
                     navController.navigate(ScreensDestination.SettingsAbout.screenRoute)
                 }
@@ -202,6 +205,17 @@ internal fun RootAppNavigation(
             exitTransition = { exitAnim(toLeft = false) },
         ) {
             ResetFlagsScreen(
+                onBackPressed = navController::navigateUp
+            )
+        }
+
+        // Settings - Reset Saved
+        composable(
+            route = ScreensDestination.SettingsResetSaved.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            ResetSavedScreen(
                 onBackPressed = navController::navigateUp
             )
         }

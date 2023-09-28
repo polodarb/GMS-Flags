@@ -87,7 +87,7 @@ fun SettingsScreen(
         Column(modifier = Modifier.padding(it)) {
             Column {
                 SettingsItem(R.drawable.ic_reset, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
-                SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", { })
+                SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", onResetSavedClick)
                 SettingsItem(R.drawable.ic_info, "About & support", "Useful information and resources", onAboutClick)
             }
         }

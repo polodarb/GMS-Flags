@@ -29,7 +29,9 @@ val repositoryModule = module {
 
     single {
         SettingsRepository(
-            context = get()
+            context = get(),
+            flagsDao = get(),
+            packagesDAO = get()
         )
     }
 
