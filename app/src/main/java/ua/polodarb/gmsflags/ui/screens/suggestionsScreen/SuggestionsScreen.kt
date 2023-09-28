@@ -60,6 +60,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
@@ -177,12 +180,16 @@ fun SuggestionsScreen(
                                 senderName = item.flagSender,
                                 flagValue = item.flagValue,
                                 flagOnCheckedChange = {
-                                    viewModel.updateFlagValue(it, index)
-                                    viewModel.overrideFlag(
-                                        packageName = item.phenotypePackageName,
-                                        name = item.phenotypeFlagName,
-                                        boolVal = if (it) "1" else "0"
-                                    )
+                                    coroutineScope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            viewModel.updateFlagValue(it, index)
+                                            viewModel.overrideFlag(
+                                                packageName = item.phenotypePackageName,
+                                                name = item.phenotypeFlagName,
+                                                boolVal = if (it) "1" else "0"
+                                            )
+                                        }
+                                    }
                                 }
                             )
                         }
