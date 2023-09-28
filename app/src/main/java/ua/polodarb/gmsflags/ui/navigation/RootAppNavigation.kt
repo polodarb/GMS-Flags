@@ -5,8 +5,6 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,7 +45,6 @@ import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.SettingsResetFlagsHeader
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
 
 @OptIn(ExperimentalAnimationApi::class, InternalCoroutinesApi::class)
@@ -88,19 +85,17 @@ internal fun RootAppNavigation(
         }
     }
 
-    if (showDialog) {
-        UpdateDialog(
-            showDialog = showDialog,
-            appVersion = products.value,
-            onDismiss = {
-                showDialog = false
-            },
-            onUpdateClick = {
-                uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
-                showDialog = false
-            }
-        )
-    }
+    UpdateDialog(
+        showDialog = showDialog,
+        appVersion = products.value,
+        onDismiss = {
+            showDialog = false
+        },
+        onUpdateClick = {
+            uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
+            showDialog = false
+        }
+    )
 
     NavHost(
         navController = navController,

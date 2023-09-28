@@ -73,7 +73,6 @@ class AppsScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
-                    Log.e("vmui", uiStates.toString())
                     when (uiStates) {
                         is AppsScreenUiStates.Success -> {
                             listAppsFiltered.addAll(uiStates.data)

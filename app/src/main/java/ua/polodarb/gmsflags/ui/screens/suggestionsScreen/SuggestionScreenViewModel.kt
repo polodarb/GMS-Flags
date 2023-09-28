@@ -25,7 +25,6 @@ class SuggestionScreenViewModel(
     private val usersList = mutableListOf<String>()
 
     init {
-        Log.e("sugg", "init VM")
         getAllOverriddenBoolFlags()
     }
 

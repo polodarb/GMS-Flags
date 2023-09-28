@@ -731,9 +731,6 @@ fun OtherTypesFlagsScreen(
                                             selectFlagsType == targetFlag.type
                                 }
 
-                            Log.e("flag", targetFlag.toString())
-                            Log.e("flag", isEqual.toString())
-
                             IntFloatStringValItem(
                                 flagName = listInt.keys.toList()[index],
                                 flagValue = listInt.values.toList()[index],

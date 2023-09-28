@@ -93,8 +93,6 @@ fun SavedScreen(
         2
     })
 
-    Log.e("flag", savedFlags.value.toString())
-
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
