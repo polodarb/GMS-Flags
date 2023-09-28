@@ -11,6 +11,13 @@ data class SuggestedFlag(
 object SuggestedFlagsList {
     val suggestedFlagsList = mutableListOf<SuggestedFlag>(
         SuggestedFlag(
+            "Google Search Suggestions new design",
+            "Nail Sadykov",
+            listOf("45369077"),
+            "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
+            false
+        ),
+        SuggestedFlag(
             "Proofreading mode in GBoard",
             "GApps Flags & Leaks",
             listOf("writing_helper", "writing_helper_enable_free_chat", "writing_helper_chip_shown_as_candidate"),

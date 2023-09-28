@@ -64,6 +64,10 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     }
 
     data object Settings : ScreensDestination("settings")
+    data object SettingsAbout : ScreensDestination("settingsAbout")
+    data object SettingsResetFlags : ScreensDestination("settingsResetFlags")
+    data object SettingsResetSaved : ScreensDestination("settingsResetSaved")
+
     data object Packages : ScreensDestination("packages")
     data object Welcome : ScreensDestination("welcome")
     data object RootRequest : ScreensDestination("rootRequest")
@@ -71,6 +75,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
 
 @Composable
 internal fun BottomBarNavigation( // Navigation realization for BottomBar
+    isFirstStart: Boolean,
     modifier: Modifier = Modifier,
     parentNavController: NavController,
     navController: NavHostController
@@ -82,6 +87,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
     ) {
         composable(route = NavBarItem.Suggestions.screenRoute) {
             SuggestionsScreen(
+                isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
@@ -112,6 +118,16 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 },
                 onPackagesClick = {
                     parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                },
+                onSavedPackageClick = {
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                    )
+                },
+                onSavedFlagClick = { packageName, flagName, type  ->
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(packageName)) // TODO: Implement search flag in list after navigation
+                    )
                 }
             )
         }

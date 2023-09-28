@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 fun GFlagFilterChipRow(
     list: List<String>,
     selectedChips: Int,
+    pagerCurrentState: Int,
     chipOnClick: (index: Int) -> Unit
 
 ) {
@@ -27,6 +28,7 @@ fun GFlagFilterChipRow(
         list.forEachIndexed { index, title ->
             GFlagFilterChip(
                 selected = selectedChips == index,
+                pagerCurrentState = pagerCurrentState,
                 chipOnClick = {
                     chipOnClick(index)
                 },

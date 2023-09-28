@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
+//    id("kotlin-kapt")
 }
 
 android {
@@ -13,8 +14,8 @@ android {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -53,6 +54,12 @@ android {
 }
 
 dependencies {
+
+    // Room Database
+    val roomVersion = "2.5.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     // KTOR
     val ktorVersion = "2.3.4"

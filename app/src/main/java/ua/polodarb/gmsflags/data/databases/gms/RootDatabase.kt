@@ -71,6 +71,12 @@ class RootDatabase : RootService() {
             override fun getListByPackages(pkgName: String): List<String> =
                 this@RootDatabase.getListByPackages(pkgName)
 
+            override fun deleteAllOverriddenFlagsFromGMS() =
+                this@RootDatabase.deleteAllOverriddenFlagsFromGMS()
+
+            override fun deleteAllOverriddenFlagsFromPlayStore() =
+                this@RootDatabase.deleteAllOverriddenFlagsFromPlayStore()
+
             override fun deleteRowByFlagName(packageName: String, name: String) =
                 this@RootDatabase.deleteRowByFlagName(packageName, name)
 
@@ -169,6 +175,18 @@ class RootDatabase : RootService() {
         val androidPackage = if (cursor.moveToFirst()) return cursor.getString(0) else "" // todo
         cursor.close()
         return androidPackage
+    }
+
+    fun deleteAllOverriddenFlagsFromGMS() {
+        gmsDB.execSQL(
+            "DELETE FROM FlagOverrides;"
+        )
+    }
+
+    fun deleteAllOverriddenFlagsFromPlayStore() {
+        vendingDB.execSQL(
+            "DELETE FROM FlagOverrides;"
+        )
     }
 
     fun deleteRowByFlagName(

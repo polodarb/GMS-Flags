@@ -63,6 +63,7 @@ fun PackagesScreen(
 
     val viewModel = koinViewModel<PackagesScreenViewModel>()
     val uiState = viewModel.state.collectAsState()
+    val savedPackagesList = viewModel.stateSavedPackages.collectAsState()
 
     val list = remember {
         mutableStateMapOf<String, String>()
@@ -172,9 +173,12 @@ fun PackagesScreen(
                     list.putAll((uiState.value as ScreenUiStates.Success).data)
                     SuccessListItems(
                         list = filteredListState,
+                        savedPackagesList = savedPackagesList.value,
+                        viewModel = viewModel,
                         onFlagClick = onFlagClick
                     )
                 }
+
                 is ScreenUiStates.Loading -> LoadingProgressBar()
                 is ScreenUiStates.Error -> ErrorLoadScreen()
             }
@@ -185,16 +189,25 @@ fun PackagesScreen(
 @Composable
 private fun SuccessListItems(
     list: Map<String, String>,
+    savedPackagesList: List<String>,
+    viewModel: PackagesScreenViewModel,
     onFlagClick: (packageName: String) -> Unit
 ) {
 
-    //todo: This code have problems with recompositions
-
     LazyColumn {
         itemsIndexed(list.toList()) { index, item ->
-            LazyItem(
+            PackagesLazyItem(
                 packageName = item.first,
                 packagesCount = item.second.toInt(),
+                checked = savedPackagesList.contains(item.first),
+                onCheckedChange = {
+                    if (it) {
+                        viewModel.savePackage(item.first)
+                    } else {
+                        viewModel.deleteSavedPackage(item.first)
+                    }
+//                    viewModel.updateSavedState(item.first)
+                },
                 lastItem = index == list.size - 1,
                 modifier = Modifier.clickable {
                     onFlagClick(item.first)
@@ -208,30 +221,7 @@ private fun SuccessListItems(
 }
 
 @Composable
-fun LazyItem(
-    modifier: Modifier = Modifier,
-    packageName: String,
-    packagesCount: Int,
-    lastItem: Boolean = false,
-) {
-    var checkedState by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LazyItem(
-        packageName = packageName,
-        packagesCount = packagesCount,
-        modifier = modifier,
-        checked = checkedState,
-        onCheckedChange = { checked ->
-            checkedState = checked
-        },
-        lastItem = lastItem
-    )
-}
-
-@Composable
-fun LazyItem(
+fun PackagesLazyItem(
     modifier: Modifier = Modifier,
     packageName: String,
     packagesCount: Int,

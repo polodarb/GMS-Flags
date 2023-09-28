@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File
 
 class MainActivity : ComponentActivity() {
+    
     private val appContext = get<Context>() as GMSApplication
 
     private val configuredFilePath =
@@ -40,6 +42,8 @@ class MainActivity : ComponentActivity() {
         }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+//        Toast.makeText(this, "$isFirstStart", Toast.LENGTH_SHORT).show()
 
         setContent {
             GMSFlagsTheme {

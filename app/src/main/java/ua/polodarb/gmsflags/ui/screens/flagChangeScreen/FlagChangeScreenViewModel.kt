@@ -12,11 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.data.repo.DatabaseRepository
+import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
+import ua.polodarb.gmsflags.data.repo.GmsDBRepository
+import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 
 class FlagChangeScreenViewModel(
     private val pkgName: String,
-    private val repository: DatabaseRepository
+    private val repository: GmsDBRepository,
+    private val roomRepository: RoomDBRepository
 ) : ViewModel() {
 
     private val _stateBoolean =
@@ -34,6 +37,11 @@ class FlagChangeScreenViewModel(
     private val _stateString =
         MutableStateFlow<FlagChangeUiStates>(FlagChangeUiStates.Loading)
     val stateString: StateFlow<FlagChangeUiStates> = _stateString.asStateFlow()
+
+    private val _stateSavedFlags =
+        MutableStateFlow<List<SavedFlags>>(emptyList())
+    val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
+
 
     // Filter
     var filterMethod = mutableStateOf(FilterMethod.ALL)
@@ -98,6 +106,10 @@ class FlagChangeScreenViewModel(
         return filteredMap
     }
 
+    fun getAndroidPackage(pkgName: String): String {
+        return repository.androidPackage(pkgName)
+    }
+
     private val changedFilterBoolList = mutableMapOf<String, String>()
     private val usersList = mutableListOf<String>()
 
@@ -111,6 +123,7 @@ class FlagChangeScreenViewModel(
 
     init {
         usersList.addAll(repository.getUsers())
+        getAllSavedFlags()
         initBoolValues()
         initIntValues()
         initFloatValues()
@@ -305,7 +318,7 @@ class FlagChangeScreenViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            if (pkgName == "com.android.vending") {
+            if (pkgName.contains("finsky") || pkgName.contains("vending")) {
                 Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
                 Shell.cmd("am force-stop com.android.vending").exec()
             }
@@ -361,6 +374,34 @@ class FlagChangeScreenViewModel(
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
         repository.deleteOverriddenFlagByPackage(packageName)
+    }
+
+    // Saved flags
+
+    private fun getAllSavedFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.getSavedFlags().collect {
+                    _stateSavedFlags.value = it
+                }
+            }
+        }
+    }
+
+    fun saveFlag(flagName: String, pkgName: String, flagType: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.saveFlag(flagName, pkgName, flagType)
+            }
+        }
+    }
+
+    fun deleteSavedFlag(flagName: String, pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.deleteSavedFlag(flagName, pkgName)
+            }
+        }
     }
 
 }

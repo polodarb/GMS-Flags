@@ -21,6 +21,8 @@ interface IRootDatabase {
     String androidPackage(String pkgName);
     List<String> getUsers();
 
+    void deleteAllOverriddenFlagsFromGMS();
+    void deleteAllOverriddenFlagsFromPlayStore();
     void deleteRowByFlagName(String packageName, String name);
     void deleteOverriddenFlagByPackage(String packageName);
 

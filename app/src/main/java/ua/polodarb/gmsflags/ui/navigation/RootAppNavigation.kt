@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags.ui.navigation
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.AlertDialog
@@ -44,6 +45,10 @@ import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.SettingsResetFlagsHeader
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
 
 @OptIn(ExperimentalAnimationApi::class, InternalCoroutinesApi::class)
 @Composable
@@ -107,7 +112,7 @@ internal fun RootAppNavigation(
             enterTransition = { enterAnim(toLeft = false) },
             exitTransition = { exitAnim(toLeft = true) }
         ) {
-            RootScreen(parentNavController = navController)
+            RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
         }
         composable(
             route = ScreensDestination.Welcome.screenRoute,
@@ -157,6 +162,8 @@ internal fun RootAppNavigation(
                 isButtonLoading = isButtonLoading.value
             )
         }
+
+        // Flag change
         composable(
             route = ScreensDestination.FlagChange.createStringRoute(ScreensDestination.Packages.screenRoute),
             arguments = listOf(navArgument("flagChange") { type = NavType.StringType }),
@@ -168,15 +175,63 @@ internal fun RootAppNavigation(
                 packageName = Uri.decode(backStackEntry.arguments?.getString("flagChange"))
             )
         }
+
+        // Settings
         composable(
             route = ScreensDestination.Settings.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
         ) {
             SettingsScreen(
-                onBackPressed = navController::navigateUp
+                onBackPressed = navController::navigateUp,
+                onResetFlagsClick = {
+                    navController.navigate(ScreensDestination.SettingsResetFlags.screenRoute)
+                },
+                onResetSavedClick = {
+                    navController.navigate(ScreensDestination.SettingsResetSaved.screenRoute)
+                },
+                onAboutClick = {
+                    navController.navigate(ScreensDestination.SettingsAbout.screenRoute)
+                }
             ) // TODO: Implement SettingsScreen
         }
+
+        // Settings - Reset Flags
+        composable(
+            route = ScreensDestination.SettingsResetFlags.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            ResetFlagsScreen(
+                onBackPressed = navController::navigateUp
+            )
+        }
+
+        // Settings - Reset Saved
+        composable(
+            route = ScreensDestination.SettingsResetSaved.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            ResetSavedScreen(
+                onBackPressed = navController::navigateUp
+            )
+        }
+
+        // Settings - About & Support
+        composable(
+            route = ScreensDestination.SettingsAbout.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            AboutScreen(
+                onBackPressed = navController::navigateUp
+            )
+        }
+
+        // Packages list
         composable(
             route = ScreensDestination.Packages.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },

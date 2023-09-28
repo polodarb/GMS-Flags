@@ -43,6 +43,10 @@ class AppsScreenViewModel(
         _dialogPackage.value = pkgName
     }
 
+    fun setEmptyList() {
+        _dialogDataState.value = DialogUiStates.Success(emptyList())
+    }
+
     fun getListByPackages(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

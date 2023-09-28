@@ -5,19 +5,24 @@ import org.koin.dsl.module
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
 
 val viewModelsModule = module {
+
     viewModel {
         PackagesScreenViewModel(
-            repository = get()
+            gmsRepository = get(),
+            roomRepository = get()
         )
     }
 
     viewModel {
         FlagChangeScreenViewModel(
             pkgName = get(),
-            repository = get()
+            repository = get(),
+            roomRepository = get()
         )
     }
 
@@ -32,4 +37,17 @@ val viewModelsModule = module {
             repository = get()
         )
     }
+
+    viewModel {
+        SavedScreenViewModel(
+            roomRepository = get()
+        )
+    }
+
+    viewModel {
+        SettingsViewModel(
+            settingsRepository = get()
+        )
+    }
+
 }
