@@ -173,7 +173,7 @@ fun SettingsResetFlagsButtons(
             onClick = onPlayStoreClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Text(text = "Reset flags in Play Store Database")
         }

@@ -68,7 +68,7 @@ fun ResetSavedScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Reset flags") },
+                title = { Text(text = "Reset saved") },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(
@@ -173,7 +173,7 @@ fun SettingsResetFlagsButtons(
             onClick = onFlagsClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Text(text = "Reset saved flags")
         }
