@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,6 +50,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
@@ -58,6 +62,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
+import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +81,7 @@ fun AppsScreen(
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
 
     // Keyboard
     val focusRequester = remember { FocusRequester() }
@@ -181,9 +187,13 @@ fun AppsScreen(
                                 pkg = item.applicationInfo.packageName,
                                 appIcon = item.icon,
                                 onClick = {
-                                    viewModel.getListByPackages(item.applicationInfo.packageName)
-                                    viewModel.setPackageToDialog(item.applicationInfo.packageName)
                                     showDialog.value = true
+                                    coroutineScope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            viewModel.getListByPackages(item.applicationInfo.packageName)
+                                            viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                                        }
+                                    }
                                 })
                         }
                         item {
@@ -201,6 +211,7 @@ fun AppsScreen(
                                 showDialog.value,
                                 onDismiss = {
                                     showDialog.value = false
+                                    viewModel.setEmptyList()
                                     dialogPackagesList.clear()
                                 },
                                 pkgName = dialogPackageText.value,
@@ -208,6 +219,7 @@ fun AppsScreen(
                                 onPackageClick = {
                                     onPackageItemClick(it)
                                     showDialog.value = false
+                                    viewModel.setEmptyList()
                                 }
                             )
                         }
