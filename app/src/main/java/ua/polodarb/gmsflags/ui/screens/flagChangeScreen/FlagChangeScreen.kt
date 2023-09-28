@@ -1,6 +1,9 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -59,7 +62,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
@@ -169,6 +175,7 @@ fun FlagChangeScreen(
             focusRequester.requestFocus()
     }
 
+    val androidPackage = viewModel.getAndroidPackage(packageName.toString())
 
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
@@ -268,6 +275,13 @@ fun FlagChangeScreen(
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     dropDownExpanded = false
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                },
+                                onOpenAppDetailsSettings = {
+                                    val intent =
+                                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                    val uri = Uri.fromParts("package", androidPackage, null)
+                                    intent.setData(uri)
+                                    startActivity(context, intent, null)
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -733,7 +747,10 @@ fun OtherTypesFlagsScreen(
                                             flagsType.name
                                         )
                                     } else {
-                                        viewModel.deleteSavedFlag(item.first, packageName.toString())
+                                        viewModel.deleteSavedFlag(
+                                            item.first,
+                                            packageName.toString()
+                                        )
                                     }
                                 },
                                 onClick = {

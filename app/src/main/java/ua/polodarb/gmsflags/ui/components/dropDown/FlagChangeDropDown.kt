@@ -23,6 +23,7 @@ fun FlagChangeDropDown(
     onDismissRequest: () -> Unit,
     onAddFlag: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
+    onOpenAppDetailsSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -54,6 +55,17 @@ fun FlagChangeDropDown(
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_reset_flags),
+                            contentDescription = null
+                        )
+                    },
+                    enabled = true
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(R.string.open_app_details_settings)) },
+                    onClick = onOpenAppDetailsSettings,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_open_app_settings),
                             contentDescription = null
                         )
                     },

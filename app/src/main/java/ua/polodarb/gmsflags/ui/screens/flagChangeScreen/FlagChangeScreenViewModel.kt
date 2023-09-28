@@ -106,6 +106,10 @@ class FlagChangeScreenViewModel(
         return filteredMap
     }
 
+    fun getAndroidPackage(pkgName: String): String {
+        return repository.androidPackage(pkgName)
+    }
+
     private val changedFilterBoolList = mutableMapOf<String, String>()
     private val usersList = mutableListOf<String>()
 
