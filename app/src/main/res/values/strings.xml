@@ -32,7 +32,7 @@
     <string name="component_error_load">Data loading error</string>
     <string name="component_no_flags">Flags not found</string>
     <string name="component_no_apps">Apps not found</string>
-    <string name="component_not_implemented">Not implemented</string>
+    <string name="component_not_implemented">Coming soon</string>
     <string name="component_add_flag">Add flag</string>
     <string name="component_reset_flags">Reset all overridden flags</string>
     <string name="update_dialog_info">"Clicking the \"Update GMS Flags\" button will take you to GitHub with the latest release "</string>

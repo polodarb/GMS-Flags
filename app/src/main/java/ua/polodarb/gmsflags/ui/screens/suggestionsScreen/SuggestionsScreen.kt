@@ -107,7 +107,7 @@ fun SuggestionsScreen(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show()
                     },
                     expanded = expandedFab,
                     icon = { Icon(painterResource(id = R.drawable.ic_question), "") },
