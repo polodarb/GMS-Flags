@@ -19,9 +19,13 @@ import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
-    
+
+    private lateinit var analytics: FirebaseAnalytics
     private val appContext = get<Context>() as GMSApplication
 
     private val configuredFilePath =
@@ -30,6 +34,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        analytics = Firebase.analytics
 
         if (!isFirstStart) {
             appContext.initShell()
