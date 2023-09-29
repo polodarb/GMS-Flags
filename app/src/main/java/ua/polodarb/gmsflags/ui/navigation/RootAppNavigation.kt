@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -79,9 +80,19 @@ internal fun RootAppNavigation(
         }
     )
 
-    LaunchedEffect(Unit) {
-        if (BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()) {
-            showDialog = true
+    var appUpdateState by remember {
+        mutableStateOf(false)
+    }
+
+    val appUpdateAvailable = BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()
+
+    appUpdateState = appUpdateAvailable
+
+    if (!isFirstStart) {
+        LaunchedEffect(appUpdateAvailable) {
+            if (appUpdateState) {
+                showDialog = true
+            }
         }
     }
 
