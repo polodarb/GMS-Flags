@@ -129,7 +129,9 @@ internal fun RootAppNavigation(
                 onStart = {
                     navController.navigate(ScreensDestination.RootRequest.screenRoute)
                 },
-                openLink = { }
+                openLink = {
+                    uriHandler.openUri(it)
+                }
             )
         }
         composable(
