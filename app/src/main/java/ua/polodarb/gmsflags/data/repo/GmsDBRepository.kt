@@ -45,10 +45,13 @@ class GmsDBRepository(
 
         delay(150)
 
-        val list = (context as GMSApplication).getRootDatabase().gmsPackages
-
-        if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
-        else emit(ScreenUiStates.Error())
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val list = (context as GMSApplication).getRootDatabase().gmsPackages
+                if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
+                else emit(ScreenUiStates.Error())
+            }
+        }
 
     }
 

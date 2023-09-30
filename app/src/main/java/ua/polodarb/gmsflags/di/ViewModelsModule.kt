@@ -34,7 +34,8 @@ val viewModelsModule = module {
 
     viewModel {
         SuggestionScreenViewModel(
-            repository = get()
+            repository = get(),
+            appsRepository = get()
         )
     }
 

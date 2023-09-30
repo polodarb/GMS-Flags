@@ -12,32 +12,43 @@ import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 class AppsListRepository(
     private val context: Context
 ) {
+
+    private val gmsApplication = context as GMSApplication
+
     fun getAllInstalledApps() = flow<AppsScreenUiStates> {
         emit(AppsScreenUiStates.Loading)
 
-        val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
-        val pm = context.packageManager
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
+                val pm = context.packageManager
 
-        val finskyPackages = gmsPackages.filter { it.contains("finsky") }
+                val finskyPackages = gmsPackages.filter { it.contains("finsky") }
 
-        val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pm.getInstalledApplications(PackageManager.ApplicationInfoFlags.of(PackageManager.GET_META_DATA.toLong()))
-        } else {
-            pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        }
+                val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pm.getInstalledApplications(
+                        PackageManager.ApplicationInfoFlags.of(
+                            PackageManager.GET_META_DATA.toLong()
+                        )
+                    )
+                } else {
+                    pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                }
 
-        val filteredAppInfoList = appInfoList.asSequence()
-            .filter {
-                gmsPackages.contains(it.packageName)
-                        && it.packageName.contains("com.google")
-                        || it.packageName.contains("com.android.vending")
+                val filteredAppInfoList = appInfoList.asSequence()
+                    .filter {
+                        gmsPackages.contains(it.packageName)
+                                && it.packageName.contains("com.google")
+                                || it.packageName.contains("com.android.vending")
+                    }
+                    .map { AppInfo.create(pm, it) }
+                    .sortedBy { it.appName }
+                    .toList()
+
+                if (filteredAppInfoList.isNotEmpty()) {
+                    emit(AppsScreenUiStates.Success(filteredAppInfoList))
+                }
             }
-            .map { AppInfo.create(pm, it) }
-            .sortedBy { it.appName }
-            .toList()
-
-        if (filteredAppInfoList.isNotEmpty()) {
-            emit(AppsScreenUiStates.Success(filteredAppInfoList))
         }
     }
 

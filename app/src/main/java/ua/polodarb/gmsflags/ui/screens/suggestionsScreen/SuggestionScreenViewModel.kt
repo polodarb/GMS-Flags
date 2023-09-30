@@ -9,13 +9,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
+import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 
 class SuggestionScreenViewModel(
-    private val repository: GmsDBRepository
+    private val repository: GmsDBRepository,
+    private val appsRepository: AppsListRepository
 ) : ViewModel() {
 
     private val _stateSuggestionsFlags =
@@ -26,6 +30,15 @@ class SuggestionScreenViewModel(
 
     init {
         getAllOverriddenBoolFlags()
+        initGmsPackages()
+    }
+
+    private fun initGmsPackages() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                appsRepository.getAllInstalledApps().collectLatest {  }
+            }
+        }
     }
 
     fun updateFlagValue(newValue: Boolean, index: Int) {
