@@ -17,7 +17,7 @@ GMS Flags is a tool for changing parameters in Google services to activate or de
 6) Filtering flags by various parameters, including overwritten values
 7) Error Handler. You can send a report with an error to the mail and restart applications for correct operation
 8) Option to save package names and flags 
-9) Five flags have been added to the suggestions:
+9) Some flags have been added to the suggestions:
     - Enable transparent statusBar in dialer
     - Enable docs scanner in Google Drive
     - Enable MD3 style in Android Auto Settings
