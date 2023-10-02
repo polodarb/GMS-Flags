@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -42,6 +43,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,6 +76,7 @@ fun PackagesScreen(
 
     // Keyboard
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
@@ -172,10 +175,13 @@ fun PackagesScreen(
                 is ScreenUiStates.Success -> {
                     list.putAll((uiState.value as ScreenUiStates.Success).data)
                     SuccessListItems(
-                        list = filteredListState,
+                        list = filteredListState.toSortedMap(),
                         savedPackagesList = savedPackagesList.value,
                         viewModel = viewModel,
-                        onFlagClick = onFlagClick
+                        onFlagClick = {
+                            focusManager.clearFocus()
+                            onFlagClick(it)
+                        }
                     )
                 }
 
@@ -194,7 +200,9 @@ private fun SuccessListItems(
     onFlagClick: (packageName: String) -> Unit
 ) {
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.imePadding()
+    ) {
         itemsIndexed(list.toList()) { index, item ->
             PackagesLazyItem(
                 packageName = item.first,

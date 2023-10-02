@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
@@ -156,8 +157,9 @@ class ExceptionHandler(
             }
             context.startActivity(intent)
             exitProcess(0)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             handler.uncaughtException(thread, throwable)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 

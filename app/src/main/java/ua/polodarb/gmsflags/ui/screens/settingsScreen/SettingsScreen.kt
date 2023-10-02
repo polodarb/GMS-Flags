@@ -16,6 +16,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -102,7 +103,9 @@ fun SettingsItem(
     onItemClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(painter = painterResource(id = icon), contentDescription = null,

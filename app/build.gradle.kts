@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-//    id("kotlin-kapt")
+    id("com.google.firebase.firebase-perf")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -118,6 +118,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-perf-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     implementation("com.github.requery:sqlite-android:3.42.0")
 
