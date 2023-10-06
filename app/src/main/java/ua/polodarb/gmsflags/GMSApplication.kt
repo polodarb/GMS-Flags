@@ -15,6 +15,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import ua.polodarb.gmsflags.core.Constants
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.databaseModule
@@ -88,7 +89,7 @@ class GMSApplication : Application() {
     }
 
     fun getRootDatabase(): IRootDatabase {
-        check (isRootDatabaseInitialized) { "RootDatabase is not initialized yet." }
+        check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }
 }

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +35,8 @@ import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.Constants
+import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.CRASH_MESSAGE
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.util.Locale
@@ -54,17 +57,24 @@ class CrashActivity : ComponentActivity() {
                             val intent = Intent(Intent.ACTION_SENDTO).apply {
                                 data = Uri.parse("mailto:")
                                 putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crash_report_subject))
+                                putExtra(
+                                    Intent.EXTRA_SUBJECT,
+                                    getString(R.string.crash_report_subject)
+                                )
                                 putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
                             }
                             startActivity(intent)
                         } catch (_: ActivityNotFoundException) {
-                            Toast.makeText(this, getString(R.string.crash_report_failed), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                getString(R.string.crash_report_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
                     restartApp = {
-                        finishAffinity()
                         startActivity(Intent(this, MainActivity::class.java))
+                        finishAffinity()
                     }
                 )
             }
@@ -149,17 +159,20 @@ class ExceptionHandler(
     private val handler: Thread.UncaughtExceptionHandler,
     private val activity: Class<*>
 ) : Thread.UncaughtExceptionHandler {
+
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
         try {
             val intent = Intent(context, activity).apply {
                 putExtra(STACK_TRACE_KEY, throwable.stackTraceToReport())
+                putExtra(CRASH_MESSAGE, throwable.message)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
             context.startActivity(intent)
+            FirebaseCrashlytics.getInstance().recordException(throwable)
             exitProcess(0)
         } catch (e: Exception) {
-            handler.uncaughtException(thread, throwable)
             FirebaseCrashlytics.getInstance().recordException(e)
+            handler.uncaughtException(thread, throwable)
         }
     }
 
@@ -174,6 +187,7 @@ class ExceptionHandler(
         }
 
         const val STACK_TRACE_KEY = "STACK_TRACE"
+        const val CRASH_MESSAGE = "CRASH_MESSAGE"
     }
 
     private fun Throwable.stackTraceToReport(): String {
@@ -188,6 +202,7 @@ class ExceptionHandler(
         """.trimIndent()
     }
 }
+
 /*
  * Taken from https://bit.ly/3PA1IYS. Credits to https://github.com/Z-P-J!
  */

@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.Constants
 import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,6 +88,9 @@ fun SettingsScreen(
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
             Column {
+                Button(onClick = { throw IllegalStateException(Constants.GMS_DATABASE_CRASH_MSG) }) {
+                    Text(text = "Crash")
+                }
                 SettingsItem(R.drawable.ic_reset, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
                 SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", onResetSavedClick)
                 SettingsItem(R.drawable.ic_info, "About & support", "Useful information and resources", onAboutClick)
