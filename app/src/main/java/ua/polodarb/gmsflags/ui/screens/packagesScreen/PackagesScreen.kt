@@ -47,6 +47,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,6 +81,7 @@ fun PackagesScreen(
     // Keyboard
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
@@ -88,6 +90,12 @@ fun PackagesScreen(
     LaunchedEffect(searchIconState) {
         if (searchIconState)
             focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(Unit) {
+        if (searchIconState)
+            keyboardController?.hide()
+        focusManager.clearFocus()
     }
 
     LaunchedEffect(viewModel.searchQuery.value) {
@@ -168,6 +176,7 @@ fun PackagesScreen(
                         viewModel = viewModel,
                         onFlagClick = {
                             focusManager.clearFocus()
+                            keyboardController?.hide()
                             onFlagClick(it)
                         }
                     )
