@@ -10,6 +10,7 @@
     <application
         android:name=".GMSApplication"
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -17,9 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
         <activity
             android:name=".ui.CrashActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity

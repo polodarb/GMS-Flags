@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreenUiStates
 
 class PackagesScreenViewModel(
@@ -26,6 +28,10 @@ class PackagesScreenViewModel(
         MutableStateFlow<List<String>>(emptyList())
     val stateSavedPackages: StateFlow<List<String>> = _stateSavedPackages.asStateFlow()
 
+    // Search
+    var searchQuery = mutableStateOf("")
+    private val listFiltered: MutableMap<String, String> = mutableMapOf()
+
     init {
         initGmsPackagesList()
         getAllSavedPackages()
@@ -39,13 +45,14 @@ class PackagesScreenViewModel(
 //        }
 //    }
 
-    fun initGmsPackagesList() {
+    private fun initGmsPackagesList() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 gmsRepository.getGmsPackages().collect { uiState ->
                     when (uiState) {
                         is ScreenUiStates.Success -> {
-                            _state.value = ScreenUiStates.Success(uiState.data)
+                            listFiltered.putAll(uiState.data)
+                            getGmsPackagesList()
                         }
 
                         is ScreenUiStates.Loading -> {
@@ -58,6 +65,16 @@ class PackagesScreenViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun getGmsPackagesList() {
+        if (listFiltered.isNotEmpty()) {
+            _state.value = ScreenUiStates.Success(
+                listFiltered.filter {
+                    it.key.contains(searchQuery.value, ignoreCase = true)
+                }.toSortedMap()
+            )
         }
     }
 

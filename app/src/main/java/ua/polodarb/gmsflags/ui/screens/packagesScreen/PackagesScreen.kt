@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -49,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import okhttp3.internal.toImmutableMap
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
@@ -87,25 +90,8 @@ fun PackagesScreen(
             focusRequester.requestFocus()
     }
 
-    // Search
-    var searchQuery by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    // state to hold the filtered list
-    val filteredListState = remember { mutableStateMapOf<String, String>() }
-
-    LaunchedEffect(uiState.value, searchQuery) {
-        when (val state = uiState.value) {
-            is ScreenUiStates.Success -> {
-                val filteredList =
-                    state.data.filter { it.key.contains(searchQuery, ignoreCase = true) }
-                filteredListState.clear()
-                filteredListState.putAll(filteredList)
-            }
-
-            else -> {}
-        }
+    LaunchedEffect(viewModel.searchQuery.value) {
+        viewModel.getGmsPackagesList()
     }
 
     Scaffold(
@@ -125,7 +111,7 @@ fun PackagesScreen(
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 searchIconState = !searchIconState
-                                if (!searchIconState) searchQuery = ""
+                                if (!searchIconState) viewModel.searchQuery.value = ""
                             },
                             modifier = if (searchIconState) Modifier
                                 .clip(CircleShape)
@@ -150,16 +136,17 @@ fun PackagesScreen(
                 )
                 AnimatedVisibility(visible = searchIconState) {
                     GFlagsSearchBar(
-                        query = searchQuery,
+                        query = viewModel.searchQuery.value,
                         onQueryChange = { newQuery ->
-                            searchQuery = newQuery
+                            viewModel.searchQuery.value = newQuery
                         },
-                        iconVisibility = searchQuery.isNotEmpty(),
+                        placeHolderText = "Search a package name",
+                        iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
-                            searchQuery = ""
+                            viewModel.searchQuery.value = ""
+                            viewModel.getGmsPackagesList()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
-                        placeHolderText = stringResource(id = R.string.packages_search_advice),
                         keyboardFocus = focusRequester
                     )
                 }
@@ -173,9 +160,10 @@ fun PackagesScreen(
         ) {
             when (uiState.value) {
                 is ScreenUiStates.Success -> {
-                    list.putAll((uiState.value as ScreenUiStates.Success).data)
+//                    list.putAll((uiState.value as ScreenUiStates.Success).data)
                     SuccessListItems(
-                        list = filteredListState.toSortedMap(),
+                        list = (uiState.value as ScreenUiStates.Success).data,
+//                        listState = savedState,
                         savedPackagesList = savedPackagesList.value,
                         viewModel = viewModel,
                         onFlagClick = {
@@ -195,12 +183,14 @@ fun PackagesScreen(
 @Composable
 private fun SuccessListItems(
     list: Map<String, String>,
+//    listState: LazyListState,
     savedPackagesList: List<String>,
     viewModel: PackagesScreenViewModel,
     onFlagClick: (packageName: String) -> Unit
 ) {
 
     LazyColumn(
+//        state = listState,
         modifier = Modifier.imePadding()
     ) {
         itemsIndexed(list.toList()) { index, item ->
@@ -214,7 +204,6 @@ private fun SuccessListItems(
                     } else {
                         viewModel.deleteSavedPackage(item.first)
                     }
-//                    viewModel.updateSavedState(item.first)
                 },
                 lastItem = index == list.size - 1,
                 modifier = Modifier.clickable {

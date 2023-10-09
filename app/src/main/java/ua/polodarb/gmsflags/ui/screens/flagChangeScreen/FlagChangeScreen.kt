@@ -285,6 +285,9 @@ fun FlagChangeScreen(
                                     intent.setData(uri)
                                     startActivity(context, intent, null)
                                 },
+                                onTurnOnAllBooleans = {
+                                    viewModel.overrideAllFlag()
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)

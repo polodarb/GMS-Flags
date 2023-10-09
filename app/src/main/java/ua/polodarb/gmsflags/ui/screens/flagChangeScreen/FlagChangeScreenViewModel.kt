@@ -341,34 +341,48 @@ class FlagChangeScreenViewModel(
         extensionVal: String? = null,
         committed: Int = 0
     ) {
-        repository.deleteRowByFlagName(packageName, name)
-        repository.overrideFlag(
-            packageName = packageName,
-            user = "",
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed
-        )
-        for (i in usersList) {
-            repository.overrideFlag(
-                packageName = packageName,
-                user = i,
-                name = name,
-                flagType = flagType,
-                intVal = intVal,
-                boolVal = boolVal,
-                floatVal = floatVal,
-                stringVal = stringVal,
-                extensionVal = extensionVal,
-                committed = committed
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteRowByFlagName(packageName, name)
+                repository.overrideFlag(
+                    packageName = packageName,
+                    user = "",
+                    name = name,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed
+                )
+                for (i in usersList) {
+                    repository.overrideFlag(
+                        packageName = packageName,
+                        user = i,
+                        name = name,
+                        flagType = flagType,
+                        intVal = intVal,
+                        boolVal = boolVal,
+                        floatVal = floatVal,
+                        stringVal = stringVal,
+                        extensionVal = extensionVal,
+                        committed = committed
+                    )
+                }
+                clearPhenotypeCache(pkgName)
+            }
+        }
+    }
+
+    fun overrideAllFlag() { // todo
+        listBoolFiltered.forEach {
+            overrideFlag(
+                packageName = pkgName,
+                it.key,
+                boolVal = "1"
             )
         }
-        clearPhenotypeCache(pkgName)
     }
 
     // Delete overridden flags

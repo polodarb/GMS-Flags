@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -24,6 +25,7 @@ fun FlagChangeDropDown(
     onAddFlag: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     onOpenAppDetailsSettings: () -> Unit,
+    onTurnOnAllBooleans: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -66,6 +68,17 @@ fun FlagChangeDropDown(
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_open_app_settings),
+                            contentDescription = null
+                        )
+                    },
+                    enabled = true
+                )
+                DropdownMenuItem(
+                    text = { Text(text = "Turn on all booleans") },
+                    onClick = onTurnOnAllBooleans,
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Build,
                             contentDescription = null
                         )
                     },
