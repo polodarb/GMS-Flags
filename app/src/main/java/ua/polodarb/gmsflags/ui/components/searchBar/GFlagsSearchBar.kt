@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.components.searchBar
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,13 +17,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,11 +36,22 @@ fun GFlagsSearchBar(
     iconVisibility: Boolean,
     iconOnClick: () -> Unit,
     placeHolderText: String,
+    colorFraction: Float? = null,
     keyboardFocus: FocusRequester
 ) {
     Row(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                if (colorFraction != null) {
+                    lerp(
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+                        colorFraction
+                    )
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
+            )
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp)
             .height(64.dp),
@@ -50,6 +64,19 @@ fun GFlagsSearchBar(
             onSearch = {},
             placeholder = {
                 Text(text = placeHolderText)
+            },
+            colors = if (colorFraction != null) {
+                SearchBarDefaults.colors(
+                    containerColor = lerp(
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+                        colorFraction - 0.05f
+                    )
+                )
+            } else {
+                SearchBarDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             },
             trailingIcon = {
                 AnimatedVisibility(
@@ -67,7 +94,7 @@ fun GFlagsSearchBar(
             },
             active = false,
             onActiveChange = { },
-                        modifier = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(keyboardFocus)
         ) { }

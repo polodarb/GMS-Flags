@@ -1,6 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,7 +78,8 @@ fun PackagesScreen(
         mutableStateMapOf<String, String>()
     }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
 
     // Keyboard
@@ -86,6 +90,7 @@ fun PackagesScreen(
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
     }
+
 
     LaunchedEffect(searchIconState) {
         if (searchIconState)
@@ -155,6 +160,7 @@ fun PackagesScreen(
                             viewModel.getGmsPackagesList()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         keyboardFocus = focusRequester
                     )
                 }

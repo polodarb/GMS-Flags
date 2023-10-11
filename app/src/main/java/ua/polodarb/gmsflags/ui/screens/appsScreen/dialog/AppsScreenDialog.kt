@@ -65,7 +65,7 @@ fun AppsScreenDialog(
             onDismissRequest = {
                 onDismiss()
                 searchQuery.value = ""
-                               },
+            },
             title = { Text(text = "Choose a package") },
             text = {
                 Column(

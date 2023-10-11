@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -66,6 +68,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
@@ -86,6 +89,8 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ENABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.AddFlagDialog
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.BooleanFlagsScreen
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.OtherTypesFlagsScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -93,6 +98,10 @@ fun FlagChangeScreen(
     onBackPressed: () -> Unit,
     packageName: String?
 ) {
+
+    // scroll to position
+    val item: String? = "Video__hevc_default_value"
+    val listState = rememberLazyListState()
 
     val viewModel =
         koinViewModel<FlagChangeScreenViewModel>(parameters = { parametersOf(packageName) })
@@ -355,15 +364,6 @@ fun FlagChangeScreen(
                 }
             }
         },
-//        bottomBar = {
-//            BottomAppBar(
-//                actions = {},
-//                floatingActionButton = {
-//                    FloatingActionButton(onClick = { /*TODO*/ }) {
-//
-//                    }
-//                })
-//        }
     ) { paddingValues ->
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -392,7 +392,22 @@ fun FlagChangeScreen(
                                         it.toIntOrNull() ?: 0
                                     }.thenBy { it })
 
+//                            if (listBool.isNotEmpty()) { // todo
+//                                val itemIndex = listBool.keys.indexOf(item)
+//                                if (itemIndex != -1) {
+//                                    LaunchedEffect(Unit) {
+//                                        delay(50)
+//                                        coroutineScope.launch {
+//                                            listState.scrollToItem(itemIndex)
+//                                        }
+//                                    }
+//                                } else {
+//                                    Toast.makeText(context, "Flag not found!", Toast.LENGTH_SHORT).show()
+//                                }
+//                            }
+
                             BooleanFlagsScreen(
+                                lazyListState = listState,
                                 listBool = listBool,
                                 uiState = uiStateBoolean.value,
                                 viewModel = viewModel,
@@ -560,267 +575,6 @@ fun FlagChangeScreen(
                 flagAddValue = ""
             }
         )
-    }
-}
-
-@Composable
-fun BooleanFlagsScreen(
-    listBool: Map<String, String>,
-    uiState: FlagChangeUiStates,
-    savedFlagsList: List<SavedFlags>,
-    viewModel: FlagChangeScreenViewModel,
-    packageName: String?,
-    haptic: HapticFeedback
-) {
-    when (uiState) {
-        is FlagChangeUiStates.Success -> {
-
-            if (listBool.isEmpty()) NoFlagsOrPackages()
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .imePadding()
-            ) {
-                if (listBool.isNotEmpty()) {
-                    LazyColumn {
-                        itemsIndexed(listBool.keys.toList()) { index, flagName ->
-
-                            val checked = listBool.values.toList()[index] == "1"
-                            val targetFlag = SavedFlags(
-                                packageName.toString(),
-                                flagName,
-                                SelectFlagsType.BOOLEAN.name
-                            )
-                            val isEqual =
-                                savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                                    packageName == targetFlag.pkgName &&
-                                            flag == targetFlag.flagName &&
-                                            selectFlagsType == targetFlag.type
-                                }
-
-                            BoolValItem(
-                                flagName = flagName,
-                                checked = checked,
-                                onCheckedChange = { newValue ->
-                                    viewModel.updateBoolFlagValue(
-                                        flagName,
-                                        newValue.toInt().toString()
-                                    )
-                                    viewModel.overrideFlag(
-                                        packageName = packageName.toString(),
-                                        name = flagName,
-                                        boolVal = newValue.toInt().toString()
-                                    )
-                                    viewModel.initOverriddenBoolFlags(packageName.toString())
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                saveChecked = isEqual,
-                                saveOnCheckedChange = {
-                                    if (it) {
-                                        viewModel.saveFlag(
-                                            flagName,
-                                            packageName.toString(),
-                                            SelectFlagsType.BOOLEAN.name
-                                        )
-                                    } else {
-                                        viewModel.deleteSavedFlag(flagName, packageName.toString())
-                                    }
-                                },
-                                lastItem = index == listBool.size - 1,
-                            )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(12.dp))
-                        }
-                    }
-                } else {
-                    LoadingProgressBar()
-                }
-            }
-        }
-
-        is FlagChangeUiStates.Loading -> {
-            LoadingProgressBar()
-        }
-
-        is FlagChangeUiStates.Error -> {
-            NoFlagsOrPackages()
-        }
-    }
-}
-
-@Composable
-fun OtherTypesFlagsScreen(
-    uiState: FlagChangeUiStates,
-    viewModel: FlagChangeScreenViewModel,
-    packageName: String?,
-    flagName: String,
-    flagValue: String,
-    flagsType: SelectFlagsType,
-    editTextValue: String,
-    showDialog: Boolean,
-    savedFlagsList: List<SavedFlags>,
-    onFlagClick: (flagName: String, flagValue: String, editTextValue: String, showDialog: Boolean) -> Unit,
-    dialogOnQueryChange: (String) -> Unit,
-    dialogOnConfirm: () -> Unit,
-    dialogOnDismiss: () -> Unit,
-    haptic: HapticFeedback,
-    context: Context
-) {
-    when (uiState) {
-        is FlagChangeUiStates.Success -> {
-
-            val textFlagType = when (flagsType) {
-                SelectFlagsType.BOOLEAN -> "Boolean"
-                SelectFlagsType.INTEGER -> "Integer"
-                SelectFlagsType.FLOAT -> "Float"
-                SelectFlagsType.STRING -> "String"
-            }
-
-            fun setViewModelMethods() = when (flagsType) {
-
-                SelectFlagsType.BOOLEAN -> {}
-
-                SelectFlagsType.INTEGER -> {
-                    viewModel.overrideFlag(
-                        packageName = packageName.toString(),
-                        name = flagName,
-                        intVal = editTextValue
-                    )
-                    viewModel.updateIntFlagValue(
-                        flagName,
-                        editTextValue
-                    )
-                }
-
-                SelectFlagsType.FLOAT -> {
-                    viewModel.overrideFlag(
-                        packageName = packageName.toString(),
-                        name = flagName,
-                        floatVal = editTextValue
-                    )
-                    viewModel.updateFloatFlagValue(
-                        flagName,
-                        editTextValue
-                    )
-                }
-
-                SelectFlagsType.STRING -> {
-                    viewModel.overrideFlag(
-                        packageName = packageName.toString(),
-                        name = flagName,
-                        stringVal = editTextValue
-                    )
-                    viewModel.updateStringFlagValue(
-                        flagName,
-                        editTextValue
-                    )
-                }
-            }
-
-            val listInt =
-                uiState.data.toList().sortedBy { it.first }.toMap()
-
-            if (listInt.isEmpty()) NoFlagsOrPackages()
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .imePadding()
-            ) {
-                if (listInt.isNotEmpty()) {
-                    LazyColumn {
-                        itemsIndexed(listInt.toList()) { index, item ->
-
-                            val targetFlag = SavedFlags(
-                                packageName.toString(),
-                                item.first,
-                                flagsType.name
-                            )
-                            val isEqual =
-                                savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                                    packageName == targetFlag.pkgName &&
-                                            flag == targetFlag.flagName &&
-                                            selectFlagsType == targetFlag.type
-                                }
-
-                            IntFloatStringValItem(
-                                flagName = listInt.keys.toList()[index],
-                                flagValue = listInt.values.toList()[index],
-                                lastItem = index == listInt.size - 1,
-                                saveChecked = isEqual,
-                                saveOnCheckedChange = {
-                                    if (it) {
-                                        viewModel.saveFlag(
-                                            item.first,
-                                            packageName.toString(),
-                                            flagsType.name
-                                        )
-                                    } else {
-                                        viewModel.deleteSavedFlag(
-                                            item.first,
-                                            packageName.toString()
-                                        )
-                                    }
-                                },
-                                onClick = {
-                                    onFlagClick(
-                                        item.first,
-                                        item.second,
-                                        flagValue,
-                                        showDialog
-                                    )
-                                },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    Toast.makeText(
-                                        context,
-                                        "onLongClick",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(12.dp))
-                        }
-                    }
-                    FlagChangeDialog(
-                        showDialog = showDialog,
-                        flagName = flagName,
-                        flagValue = flagValue,
-                        onQueryChange = {
-                            dialogOnQueryChange(it)
-                        },
-                        flagType = textFlagType,
-                        onConfirm = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            dialogOnConfirm()
-                            setViewModelMethods()
-                        },
-                        onDismiss = dialogOnDismiss,
-                        onDefault = {
-                            Toast.makeText(
-                                context,
-                                "Not implemented",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    )
-                } else {
-                    LoadingProgressBar()
-                }
-            }
-        }
-
-        is FlagChangeUiStates.Loading -> {
-            LoadingProgressBar()
-        }
-
-        is FlagChangeUiStates.Error -> {
-            ErrorLoadScreen()
-        }
     }
 }
 
