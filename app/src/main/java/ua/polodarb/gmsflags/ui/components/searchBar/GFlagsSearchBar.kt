@@ -74,9 +74,7 @@ fun GFlagsSearchBar(
                     )
                 )
             } else {
-                SearchBarDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+                SearchBarDefaults.colors()
             },
             trailingIcon = {
                 AnimatedVisibility(

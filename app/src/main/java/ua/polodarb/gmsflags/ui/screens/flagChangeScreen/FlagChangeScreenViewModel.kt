@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
@@ -41,7 +42,6 @@ class FlagChangeScreenViewModel(
     private val _stateSavedFlags =
         MutableStateFlow<List<SavedFlags>>(emptyList())
     val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
-
 
     // Filter
     var filterMethod = mutableStateOf(FilterMethod.ALL)

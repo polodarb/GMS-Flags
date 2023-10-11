@@ -52,7 +52,7 @@ fun SavedFlagsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             val grouped = savedFlagsList.toList().groupBy { it.pkgName }
-            grouped.forEach {
+            grouped.entries.forEachIndexed { index, it ->
                 stickyHeader {
                     Text(
                         text = it.key,
@@ -95,7 +95,7 @@ fun SavedFlagsScreen(
                 }
                 item { 
                     Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+                    if (grouped.size - 1 != index) HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
                 }
             }
         }
