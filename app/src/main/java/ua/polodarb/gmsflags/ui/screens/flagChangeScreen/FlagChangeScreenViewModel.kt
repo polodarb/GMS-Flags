@@ -5,12 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
@@ -47,43 +45,86 @@ class FlagChangeScreenViewModel(
     var filterMethod = mutableStateOf(FilterMethod.ALL)
 
     fun updateBoolFlagValue(flagName: String, newValue: String) {
-        val currentState = _stateBoolean.value
-        if (currentState is FlagChangeUiStates.Success) {
-            val updatedData = currentState.data.toMutableMap()
-            updatedData[flagName] = newValue
-            _stateBoolean.value = currentState.copy(data = updatedData)
-            listBoolFiltered.replace(flagName, newValue)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateBoolean.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.toMutableMap()
+                    updatedData[flagName] = newValue
+                    _stateBoolean.value = currentState.copy(data = updatedData)
+                    listBoolFiltered.replace(flagName, newValue)
+                }
+            }
+        }
+    }
+
+    fun turnOnAllBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateBoolean.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
+                    _stateBoolean.value = currentState.copy(data = updatedData)
+                    listBoolFiltered.replaceAll { _, _ -> "1" }
+                }
+            }
+        }
+    }
+
+    fun turnOffAllBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateBoolean.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
+                    _stateBoolean.value = currentState.copy(data = updatedData)
+                    listBoolFiltered.replaceAll { _, _ -> "0" }
+                }
+            }
         }
     }
 
     fun updateIntFlagValue(flagName: String, newValue: String) {
-        val currentState = _stateInteger.value
-        if (currentState is FlagChangeUiStates.Success) {
-            val updatedData = currentState.data.toMutableMap()
-            updatedData[flagName] = newValue
-            _stateInteger.value = currentState.copy(data = updatedData)
-            listIntFiltered.replace(flagName, newValue)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateInteger.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.toMutableMap()
+                    updatedData[flagName] = newValue
+                    _stateInteger.value = currentState.copy(data = updatedData)
+                    listIntFiltered.replace(flagName, newValue)
+                }
+            }
         }
     }
 
     fun updateFloatFlagValue(flagName: String, newValue: String) {
-        val currentState = _stateFloat.value
-        if (currentState is FlagChangeUiStates.Success) {
-            val updatedData = currentState.data.toMutableMap()
-            updatedData[flagName] = newValue
-            _stateFloat.value = currentState.copy(data = updatedData)
-            listFloatFiltered.replace(flagName, newValue)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateFloat.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.toMutableMap()
+                    updatedData[flagName] = newValue
+                    _stateFloat.value = currentState.copy(data = updatedData)
+                    listFloatFiltered.replace(flagName, newValue)
+                }
+            }
         }
     }
 
     fun updateStringFlagValue(flagName: String, newValue: String) {
-        val currentState = _stateString.value
-        if (currentState is FlagChangeUiStates.Success) {
-            val updatedData = currentState.data.toMutableMap()
-            updatedData[flagName] = newValue
-            _stateString.value = currentState.copy(data = updatedData)
-            listStringFiltered.replace(flagName, newValue)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateString.value
+                if (currentState is FlagChangeUiStates.Success) {
+                    val updatedData = currentState.data.toMutableMap()
+                    updatedData[flagName] = newValue
+                    _stateString.value = currentState.copy(data = updatedData)
+                    listStringFiltered.replace(flagName, newValue)
+                }
+            }
         }
+
     }
 
     fun Map<String, String>.filterByEnabled(): Map<String, String> {
@@ -178,43 +219,43 @@ class FlagChangeScreenViewModel(
     }
 
     fun getBoolFlags() {
-//        if (listBoolFiltered.isNotEmpty()) {
-        when (filterMethod.value) {
-            FilterMethod.ENABLED -> {
-                _stateBoolean.value = FlagChangeUiStates.Success(
-                    (listBoolFiltered.toMap().filterByEnabled()).filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (filterMethod.value) {
+                    FilterMethod.ENABLED -> {
+                        _stateBoolean.value = FlagChangeUiStates.Success(
+                            (listBoolFiltered.toMap().filterByEnabled()).filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }
+                        )
                     }
-                )
-            }
 
-            FilterMethod.DISABLED -> {
-                _stateBoolean.value = FlagChangeUiStates.Success(
-                    (listBoolFiltered.toMap().filterByDisabled()).filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    FilterMethod.DISABLED -> {
+                        _stateBoolean.value = FlagChangeUiStates.Success(
+                            (listBoolFiltered.toMap().filterByDisabled()).filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }
+                        )
                     }
-                )
-            }
 
-            FilterMethod.CHANGED -> {
-                _stateBoolean.value = FlagChangeUiStates.Success(
-                    changedFilterBoolList.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    FilterMethod.CHANGED -> {
+                        _stateBoolean.value = FlagChangeUiStates.Success(
+                            changedFilterBoolList.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }
+                        )
                     }
-                )
-            }
 
-            else -> {
-                _stateBoolean.value = FlagChangeUiStates.Success(
-                    listBoolFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    else -> {
+                        _stateBoolean.value = FlagChangeUiStates.Success(
+                            listBoolFiltered.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }
+                        )
                     }
-                )
+                }
             }
         }
-//        } else {
-//            _stateBoolean.value = FlagChangeUiStates.Success(emptyMap())
-//        }
     }
 
     // Integer
@@ -242,11 +283,15 @@ class FlagChangeScreenViewModel(
     }
 
     fun getIntFlags() {
-        _stateInteger.value = FlagChangeUiStates.Success(
-            listIntFiltered.filter {
-                it.key.contains(searchQuery.value, ignoreCase = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _stateInteger.value = FlagChangeUiStates.Success(
+                    listIntFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
             }
-        )
+        }
     }
 
     // Float
@@ -274,11 +319,15 @@ class FlagChangeScreenViewModel(
     }
 
     fun getFloatFlags() {
-        _stateFloat.value = FlagChangeUiStates.Success(
-            listFloatFiltered.filter {
-                it.key.contains(searchQuery.value, ignoreCase = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _stateFloat.value = FlagChangeUiStates.Success(
+                    listFloatFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
             }
-        )
+        }
     }
 
     // String
@@ -306,25 +355,31 @@ class FlagChangeScreenViewModel(
     }
 
     fun getStringFlags() {
-        _stateString.value = FlagChangeUiStates.Success(
-            listStringFiltered.filter {
-                it.key.contains(searchQuery.value, ignoreCase = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _stateString.value = FlagChangeUiStates.Success(
+                    listStringFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }
+                )
             }
-        )
+        }
     }
 
     fun clearPhenotypeCache(pkgName: String) {
-        val androidPkgName = repository.androidPackage(pkgName)
-        CoroutineScope(Dispatchers.IO).launch {
-            Shell.cmd("am force-stop $androidPkgName").exec()
-            Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-            if (pkgName.contains("finsky") || pkgName.contains("vending")) {
-                Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
-                Shell.cmd("am force-stop com.android.vending").exec()
-            }
-            repeat(3) {
-                Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val androidPkgName = repository.androidPackage(pkgName)
                 Shell.cmd("am force-stop $androidPkgName").exec()
+                Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
+                if (pkgName.contains("finsky") || pkgName.contains("vending")) {
+                    Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
+                    Shell.cmd("am force-stop com.android.vending").exec()
+                }
+                repeat(3) {
+                    Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
+                    Shell.cmd("am force-stop $androidPkgName").exec()
+                }
             }
         }
     }
@@ -376,18 +431,29 @@ class FlagChangeScreenViewModel(
     }
 
     fun overrideAllFlag() { // todo
-        listBoolFiltered.forEach {
-            overrideFlag(
-                packageName = pkgName,
-                it.key,
-                boolVal = "1"
-            )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                listBoolFiltered.forEach {
+                    if (it.value == "0") {
+                        overrideFlag(
+                            packageName = pkgName,
+                            it.key,
+                            boolVal = "1"
+                        )
+                    }
+                }
+                turnOnAllBoolFlags()
+            }
         }
     }
 
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
-        repository.deleteOverriddenFlagByPackage(packageName)
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+                repository.deleteOverriddenFlagByPackage(packageName)
+//            }
+//        }
     }
 
     // Saved flags

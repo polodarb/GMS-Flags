@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -90,6 +91,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ENABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.AddFlagDialog
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.ProgressDialog
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.OtherTypesFlagsScreen
 
@@ -165,12 +167,15 @@ fun FlagChangeScreen(
         mutableIntStateOf(0)
     }
 
-
     // Flag change dialog
     val showDialog = remember { mutableStateOf(false) }
     var flagName by remember { mutableStateOf("") }
     var flagValue by remember { mutableStateOf("") }
-
+    
+    // Show progress dialog
+    var showProgressDialog = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     // Add flag dialog
     val showAddFlagDialog = remember { mutableStateOf(false) }
@@ -278,15 +283,12 @@ fun FlagChangeScreen(
                                     showAddFlagDialog.value = true
                                 },
                                 onDeleteOverriddenFlags = {
+                                    showProgressDialog.value = true
                                     viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                    viewModel.initBoolValues(delay = false)
-                                    viewModel.initIntValues(delay = false)
-                                    viewModel.initFloatValues(delay = false)
-                                    viewModel.initStringValues(delay = false)
-                                    viewModel.initOverriddenBoolFlags(packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    dropDownExpanded = false
+                                    viewModel.turnOffAllBoolFlags()
                                     Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                    dropDownExpanded = false
                                 },
                                 onOpenAppDetailsSettings = {
                                     val intent =
@@ -297,6 +299,9 @@ fun FlagChangeScreen(
                                 },
                                 onTurnOnAllBooleans = {
                                     viewModel.overrideAllFlag()
+                                    if ((uiStateBoolean.value as FlagChangeUiStates.Success).data.size > 300) {
+                                        Toast.makeText(context, "Please, wait...", Toast.LENGTH_SHORT).show()
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -335,6 +340,7 @@ fun FlagChangeScreen(
                         list = chipsList,
                         selectedChips = selectedChips,
                         pagerCurrentState = pagerState.currentPage,
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         chipOnClick = {
                             when (it) {
                                 0 -> viewModel.filterMethod.value = ALL
@@ -360,6 +366,7 @@ fun FlagChangeScreen(
                             viewModel.getIntFlags()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         keyboardFocus = focusRequester
                     )
                 }
@@ -386,6 +393,10 @@ fun FlagChangeScreen(
                 0 -> {
                     when (uiStateBoolean.value) {
                         is FlagChangeUiStates.Success -> {
+
+                            isAllOff.value = (uiStateBoolean.value as FlagChangeUiStates.Success).data.values.all { it == "0" }
+
+                            Toast.makeText(context, "${isAllOff.value}", Toast.LENGTH_SHORT).show()
 
                             val listBool =
                                 (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(
@@ -518,6 +529,8 @@ fun FlagChangeScreen(
                 )
             }
         }
+        
+        ProgressDialog(showDialog = showProgressDialog.value)
 
         AddFlagDialog(
             showDialog = showAddFlagDialog.value,

@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,7 +81,8 @@ fun AppsScreen(
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -162,6 +165,7 @@ fun AppsScreen(
                             viewModel.getAllInstalledApps()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         keyboardFocus = focusRequester
                     )
                 }
