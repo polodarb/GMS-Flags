@@ -12,13 +12,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.ui.screens.UiStates
+
+typealias PackagesScreenUiStates = UiStates<Map<String, String>>
 class PackagesScreenViewModel(
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: RoomDBRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<ScreenUiStates>(ScreenUiStates.Loading)
-    val state: StateFlow<ScreenUiStates> = _state.asStateFlow()
+    private val _state = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
+    val state: StateFlow<PackagesScreenUiStates> = _state.asStateFlow()
 
     private val _stateSavedPackages =
         MutableStateFlow<List<String>>(emptyList())
@@ -33,30 +36,22 @@ class PackagesScreenViewModel(
         getAllSavedPackages()
     }
 
-//    fun updateSavedState(pkgName: String) {
-//        val currentState = _stateSavedPackages.value.toMutableList()
-//        if (currentState.isNotEmpty()) {
-//            currentState.remove(pkgName)
-//            _stateSavedPackages.value = currentState.toList()
-//        }
-//    }
-
     private fun initGmsPackagesList() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 gmsRepository.getGmsPackages().collect { uiState ->
                     when (uiState) {
-                        is ScreenUiStates.Success -> {
+                        is UiStates.Success -> {
                             listFiltered.putAll(uiState.data)
                             getGmsPackagesList()
                         }
 
-                        is ScreenUiStates.Loading -> {
-                            _state.value = ScreenUiStates.Loading
+                        is UiStates.Loading -> {
+                            _state.value = UiStates.Loading()
                         }
 
-                        is ScreenUiStates.Error -> {
-                            _state.value = ScreenUiStates.Error()
+                        is UiStates.Error -> {
+                            _state.value = UiStates.Error()
                         }
                     }
                 }
@@ -66,7 +61,7 @@ class PackagesScreenViewModel(
 
     fun getGmsPackagesList() {
         if (listFiltered.isNotEmpty()) {
-            _state.value = ScreenUiStates.Success(
+            _state.value = UiStates.Success(
                 listFiltered.filter {
                     it.key.contains(searchQuery.value, ignoreCase = true)
                 }.toSortedMap()

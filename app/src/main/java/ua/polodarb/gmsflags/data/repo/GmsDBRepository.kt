@@ -5,7 +5,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.packagesScreen.ScreenUiStates
 
 class GmsDBRepository(
     private val context: Context
@@ -40,16 +39,14 @@ class GmsDBRepository(
         )
     }
 
-    suspend fun getGmsPackages() = flow<ScreenUiStates> {
-        emit(ScreenUiStates.Loading)
-
+    suspend fun getGmsPackages() = flow<UiStates<Map<String, String>>> {
         delay(150)
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val list = (context as GMSApplication).getRootDatabase().gmsPackages
-                if (list.isNotEmpty()) emit(ScreenUiStates.Success(list))
-                else emit(ScreenUiStates.Error())
+                if (list.isNotEmpty()) emit(UiStates.Success(list))
+                else emit(UiStates.Error())
             }
         }
 

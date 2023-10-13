@@ -61,6 +61,7 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -173,11 +174,9 @@ fun PackagesScreen(
                 .padding(top = it.calculateTopPadding())
         ) {
             when (uiState.value) {
-                is ScreenUiStates.Success -> {
-//                    list.putAll((uiState.value as ScreenUiStates.Success).data)
+                is UiStates.Success -> {
                     SuccessListItems(
-                        list = (uiState.value as ScreenUiStates.Success).data,
-//                        listState = savedState,
+                        list = (uiState.value as UiStates.Success).data,
                         savedPackagesList = savedPackagesList.value,
                         viewModel = viewModel,
                         onFlagClick = {
@@ -188,8 +187,8 @@ fun PackagesScreen(
                     )
                 }
 
-                is ScreenUiStates.Loading -> LoadingProgressBar()
-                is ScreenUiStates.Error -> ErrorLoadScreen()
+                is UiStates.Loading -> LoadingProgressBar()
+                is UiStates.Error -> ErrorLoadScreen()
             }
         }
     }
