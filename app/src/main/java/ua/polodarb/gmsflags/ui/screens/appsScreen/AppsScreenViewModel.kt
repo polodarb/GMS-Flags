@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsScreenViewModel(
@@ -20,8 +21,8 @@ class AppsScreenViewModel(
 ) : ViewModel() {
 
     private val _state =
-        MutableStateFlow<AppsScreenUiStates>(AppsScreenUiStates.Loading)
-    val state: StateFlow<AppsScreenUiStates> = _state.asStateFlow()
+        MutableStateFlow<UiStates>(UiStates.Loading)
+    val state: StateFlow<UiStates> = _state.asStateFlow()
 
     private val _dialogDataState =
         MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
@@ -73,18 +74,18 @@ class AppsScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
-                    when (uiStates) {
-                        is AppsScreenUiStates.Success -> {
-                            listAppsFiltered.addAll(uiStates.data)
+                    when (val currentState = state.value) { // todo
+                        is UiStates.Success -> {
+                            listAppsFiltered.addAll(currentState.data)
                             getAllInstalledApps()
                         }
 
-                        is AppsScreenUiStates.Loading -> {
-                            _state.value = AppsScreenUiStates.Loading
+                        is UiStates.Loading -> {
+                            _state.value = UiStates.Loading
                         }
 
-                        is AppsScreenUiStates.Error -> {
-                            _state.value = AppsScreenUiStates.Error()
+                        is UiStates.Error -> {
+                            _state.value = UiStates.Error()
                         }
                     }
                 }

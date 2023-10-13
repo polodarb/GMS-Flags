@@ -6,7 +6,7 @@ import android.os.Build
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.AppInfo
-import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenUiStates
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsListRepository(
@@ -15,8 +15,8 @@ class AppsListRepository(
 
     private val gmsApplication = context as GMSApplication
 
-    fun getAllInstalledApps() = flow<AppsScreenUiStates> {
-        emit(AppsScreenUiStates.Loading)
+    fun getAllInstalledApps() = flow<UiStates> {
+        emit(UiStates.Loading)
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
@@ -46,7 +46,7 @@ class AppsListRepository(
                     .toList()
 
                 if (filteredAppInfoList.isNotEmpty()) {
-                    emit(AppsScreenUiStates.Success(filteredAppInfoList))
+                    emit(UiStates.Success(filteredAppInfoList))
                 }
             }
         }
