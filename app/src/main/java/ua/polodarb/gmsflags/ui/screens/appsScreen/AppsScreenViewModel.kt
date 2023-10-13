@@ -14,9 +14,9 @@ import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 typealias AppInfoList = UiStates<List<AppInfo>>
+typealias AppDialogList = UiStates<List<String>>
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
@@ -27,8 +27,8 @@ class AppsScreenViewModel(
     val state: StateFlow<AppInfoList> = _state.asStateFlow()
 
     private val _dialogDataState =
-        MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
-    val dialogDataState: StateFlow<DialogUiStates> = _dialogDataState.asStateFlow()
+        MutableStateFlow<AppDialogList>(UiStates.Loading())
+    val dialogDataState: StateFlow<AppDialogList> = _dialogDataState.asStateFlow()
 
     private val _dialogPackage = MutableStateFlow("")
     val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
@@ -47,7 +47,7 @@ class AppsScreenViewModel(
     }
 
     fun setEmptyList() {
-        _dialogDataState.value = DialogUiStates.Success(emptyList())
+        _dialogDataState.value = UiStates.Success(emptyList())
     }
 
     fun getListByPackages(pkgName: String) {
@@ -55,16 +55,16 @@ class AppsScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getListByPackages(pkgName).collect { uiStates ->
                     when (uiStates) {
-                        is DialogUiStates.Success -> {
-                            _dialogDataState.value = DialogUiStates.Success(uiStates.data)
+                        is UiStates.Success -> {
+                            _dialogDataState.value = UiStates.Success(uiStates.data)
                         }
 
-                        is DialogUiStates.Loading -> {
-                            _dialogDataState.value = DialogUiStates.Loading
+                        is UiStates.Loading -> {
+                            _dialogDataState.value = UiStates.Loading()
                         }
 
-                        is DialogUiStates.Error -> {
-                            _dialogDataState.value = DialogUiStates.Error()
+                        is UiStates.Error -> {
+                            _dialogDataState.value = UiStates.Error()
                         }
                     }
                 }

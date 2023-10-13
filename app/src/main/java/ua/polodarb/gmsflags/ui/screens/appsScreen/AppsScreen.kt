@@ -64,8 +64,6 @@ import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
-import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
-import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -207,10 +205,10 @@ fun AppsScreen(
                     }
 
                     when (dialogDataState.value) {
-                        is DialogUiStates.Success -> {
+                        is UiStates.Success -> {
 
                             val dialogPackagesList =
-                                (dialogDataState.value as DialogUiStates.Success).data.toMutableList()
+                                (dialogDataState.value as UiStates.Success).data.toMutableList()
 
                             AppsScreenDialog(
                                 showDialog.value,
@@ -229,11 +227,11 @@ fun AppsScreen(
                             )
                         }
 
-                        is DialogUiStates.Loading -> {
+                        is UiStates.Loading -> {
                             LoadingProgressBar()
                         }
 
-                        is DialogUiStates.Error -> {
+                        is UiStates.Error -> {
                             ErrorLoadScreen()
                         }
                     }

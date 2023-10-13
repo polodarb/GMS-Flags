@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
 class AppsListRepository(
     private val context: Context
@@ -47,14 +46,12 @@ class AppsListRepository(
 
                 if (filteredAppInfoList.isNotEmpty()) {
                     emit(UiStates.Success(filteredAppInfoList))
-                } else {
-                    emit(UiStates.Error())
                 }
             }
         }
     }
 
-    fun getListByPackages(pkgName: String) = flow<DialogUiStates> {
+    fun getListByPackages(pkgName: String) = flow<UiStates<List<String>>> {
         val context = context as GMSApplication
         val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {
             if (pkgName == "com.google.android.gm") {
@@ -72,7 +69,7 @@ class AppsListRepository(
             )
         )
 
-        emit(DialogUiStates.Success(list))
+        emit(UiStates.Success(list))
     }
 
 }
