@@ -18,6 +18,7 @@ import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.IntFloatStringValItem
@@ -43,7 +44,7 @@ fun OtherTypesFlagsScreen(
     context: Context
 ) {
     when (uiState) {
-        is FlagChangeUiStates.Success -> {
+        is UiStates.Success -> {
 
             val textFlagType = when (flagsType) {
                 SelectFlagsType.BOOLEAN -> "Boolean"
@@ -188,11 +189,11 @@ fun OtherTypesFlagsScreen(
             }
         }
 
-        is FlagChangeUiStates.Loading -> {
+        is UiStates.Loading -> {
             LoadingProgressBar()
         }
 
-        is FlagChangeUiStates.Error -> {
+        is UiStates.Error -> {
             ErrorLoadScreen()
         }
     }

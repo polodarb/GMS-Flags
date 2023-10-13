@@ -14,6 +14,9 @@ import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.ui.screens.UiStates
+
+typealias FlagChangeUiStates = UiStates<Map<String, String>>
 
 class FlagChangeScreenViewModel(
     private val pkgName: String,
@@ -22,19 +25,19 @@ class FlagChangeScreenViewModel(
 ) : ViewModel() {
 
     private val _stateBoolean =
-        MutableStateFlow<FlagChangeUiStates>(FlagChangeUiStates.Loading)
+        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
     val stateBoolean: StateFlow<FlagChangeUiStates> = _stateBoolean.asStateFlow()
 
     private val _stateInteger =
-        MutableStateFlow<FlagChangeUiStates>(FlagChangeUiStates.Loading)
+        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
     val stateInteger: StateFlow<FlagChangeUiStates> = _stateInteger.asStateFlow()
 
     private val _stateFloat =
-        MutableStateFlow<FlagChangeUiStates>(FlagChangeUiStates.Loading)
+        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
     val stateFloat: StateFlow<FlagChangeUiStates> = _stateFloat.asStateFlow()
 
     private val _stateString =
-        MutableStateFlow<FlagChangeUiStates>(FlagChangeUiStates.Loading)
+        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
     val stateString: StateFlow<FlagChangeUiStates> = _stateString.asStateFlow()
 
     private val _stateSavedFlags =
@@ -48,7 +51,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.toMutableMap()
                     updatedData[flagName] = newValue
                     _stateBoolean.value = currentState.copy(data = updatedData)
@@ -62,7 +65,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
                     _stateBoolean.value = currentState.copy(data = updatedData)
                     listBoolFiltered.replaceAll { _, _ -> "1" }
@@ -75,7 +78,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
                     _stateBoolean.value = currentState.copy(data = updatedData)
                     listBoolFiltered.replaceAll { _, _ -> "0" }
@@ -88,7 +91,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateInteger.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.toMutableMap()
                     updatedData[flagName] = newValue
                     _stateInteger.value = currentState.copy(data = updatedData)
@@ -102,7 +105,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateFloat.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.toMutableMap()
                     updatedData[flagName] = newValue
                     _stateFloat.value = currentState.copy(data = updatedData)
@@ -116,7 +119,7 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateString.value
-                if (currentState is FlagChangeUiStates.Success) {
+                if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.toMutableMap()
                     updatedData[flagName] = newValue
                     _stateString.value = currentState.copy(data = updatedData)
@@ -174,20 +177,19 @@ class FlagChangeScreenViewModel(
     fun initOverriddenBoolFlags(pkgName: String, delay: Boolean = false) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val data = repository.getOverriddenBoolFlagsByPackage(pkgName)
-                when (data) {
-                    is FlagChangeUiStates.Success -> {
+                when (val data = repository.getOverriddenBoolFlagsByPackage(pkgName)) {
+                    is UiStates.Success -> {
                         changedFilterBoolList.clear()
                         changedFilterBoolList.putAll(data.data)
                         listBoolFiltered.putAll(data.data)
                     }
 
-                    is FlagChangeUiStates.Loading -> {
-                        _stateBoolean.value = FlagChangeUiStates.Loading
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
                     }
 
-                    is FlagChangeUiStates.Error -> {
-                        _stateBoolean.value = FlagChangeUiStates.Error()
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
                     }
                 }
             }
@@ -200,17 +202,17 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
                             listBoolFiltered.putAll(uiStates.data)
                             getBoolFlags()
                         }
 
-                        is FlagChangeUiStates.Loading -> {
-                            _stateBoolean.value = FlagChangeUiStates.Loading
+                        is UiStates.Loading -> {
+                            _stateBoolean.value = UiStates.Loading()
                         }
 
-                        is FlagChangeUiStates.Error -> {
-                            _stateBoolean.value = FlagChangeUiStates.Error()
+                        is UiStates.Error -> {
+                            _stateBoolean.value = UiStates.Error()
                         }
                     }
                 }
@@ -223,7 +225,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (filterMethod.value) {
                     FilterMethod.ENABLED -> {
-                        _stateBoolean.value = FlagChangeUiStates.Success(
+                        _stateBoolean.value = UiStates.Success(
                             (listBoolFiltered.toMap().filterByEnabled()).filter {
                                 it.key.contains(searchQuery.value, ignoreCase = true)
                             }
@@ -231,7 +233,7 @@ class FlagChangeScreenViewModel(
                     }
 
                     FilterMethod.DISABLED -> {
-                        _stateBoolean.value = FlagChangeUiStates.Success(
+                        _stateBoolean.value = UiStates.Success(
                             (listBoolFiltered.toMap().filterByDisabled()).filter {
                                 it.key.contains(searchQuery.value, ignoreCase = true)
                             }
@@ -239,7 +241,7 @@ class FlagChangeScreenViewModel(
                     }
 
                     FilterMethod.CHANGED -> {
-                        _stateBoolean.value = FlagChangeUiStates.Success(
+                        _stateBoolean.value = UiStates.Success(
                             changedFilterBoolList.filter {
                                 it.key.contains(searchQuery.value, ignoreCase = true)
                             }
@@ -247,7 +249,7 @@ class FlagChangeScreenViewModel(
                     }
 
                     else -> {
-                        _stateBoolean.value = FlagChangeUiStates.Success(
+                        _stateBoolean.value = UiStates.Success(
                             listBoolFiltered.filter {
                                 it.key.contains(searchQuery.value, ignoreCase = true)
                             }
@@ -264,17 +266,17 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getIntFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
                             listIntFiltered.putAll(uiStates.data)
                             getIntFlags()
                         }
 
-                        is FlagChangeUiStates.Loading -> {
-                            _stateInteger.value = FlagChangeUiStates.Loading
+                        is UiStates.Loading -> {
+                            _stateInteger.value = UiStates.Loading()
                         }
 
-                        is FlagChangeUiStates.Error -> {
-                            _stateInteger.value = FlagChangeUiStates.Error()
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
                         }
                     }
                 }
@@ -285,7 +287,7 @@ class FlagChangeScreenViewModel(
     fun getIntFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _stateInteger.value = FlagChangeUiStates.Success(
+                _stateInteger.value = UiStates.Success(
                     listIntFiltered.filter {
                         it.key.contains(searchQuery.value, ignoreCase = true)
                     }
@@ -300,17 +302,17 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getFloatFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
                             listFloatFiltered.putAll(uiStates.data)
                             getFloatFlags()
                         }
 
-                        is FlagChangeUiStates.Loading -> {
-                            _stateFloat.value = FlagChangeUiStates.Loading
+                        is UiStates.Loading -> {
+                            _stateFloat.value = UiStates.Loading()
                         }
 
-                        is FlagChangeUiStates.Error -> {
-                            _stateInteger.value = FlagChangeUiStates.Error()
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
                         }
                     }
                 }
@@ -321,7 +323,7 @@ class FlagChangeScreenViewModel(
     fun getFloatFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _stateFloat.value = FlagChangeUiStates.Success(
+                _stateFloat.value = UiStates.Success(
                     listFloatFiltered.filter {
                         it.key.contains(searchQuery.value, ignoreCase = true)
                     }
@@ -336,17 +338,17 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getStringFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
                             listStringFiltered.putAll(uiStates.data)
                             getStringFlags()
                         }
 
-                        is FlagChangeUiStates.Loading -> {
-                            _stateString.value = FlagChangeUiStates.Loading
+                        is UiStates.Loading -> {
+                            _stateString.value = UiStates.Loading()
                         }
 
-                        is FlagChangeUiStates.Error -> {
-                            _stateInteger.value = FlagChangeUiStates.Error()
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
                         }
                     }
                 }
@@ -357,7 +359,7 @@ class FlagChangeScreenViewModel(
     fun getStringFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _stateString.value = FlagChangeUiStates.Success(
+                _stateString.value = UiStates.Success(
                     listStringFiltered.filter {
                         it.key.contains(searchQuery.value, ignoreCase = true)
                     }

@@ -14,7 +14,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
+
+typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlag>>
 
 class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
@@ -22,8 +25,8 @@ class SuggestionScreenViewModel(
 ) : ViewModel() {
 
     private val _stateSuggestionsFlags =
-        MutableStateFlow<SuggestionsScreenUiStates>(SuggestionsScreenUiStates.Loading)
-    val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiStates> = _stateSuggestionsFlags.asStateFlow()
+        MutableStateFlow<SuggestionsScreenUiState>(UiStates.Loading())
+    val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiState> = _stateSuggestionsFlags.asStateFlow()
 
     private val usersList = mutableListOf<String>()
 
@@ -42,7 +45,7 @@ class SuggestionScreenViewModel(
 
     fun updateFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
-        if (currentState is SuggestionsScreenUiStates.Success) {
+        if (currentState is UiStates.Success) {
             val updatedData = currentState.data.toMutableList()
             if (index != -1) {
                 updatedData[index] = updatedData[index].copy(flagValue = newValue)
@@ -61,15 +64,15 @@ class SuggestionScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getAllOverriddenBoolFlags().collect { uiState ->
                     when (uiState) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
                             val suggestedFlagsList = updateFlagValues(SuggestedFlagsList.suggestedFlagsList.toList(), uiState.data)
-                            _stateSuggestionsFlags.value = SuggestionsScreenUiStates.Success(suggestedFlagsList)
+                            _stateSuggestionsFlags.value = UiStates.Success(suggestedFlagsList)
                         }
-                        is FlagChangeUiStates.Loading -> {
-                            _stateSuggestionsFlags.value = SuggestionsScreenUiStates.Loading
+                        is UiStates.Loading -> {
+                            _stateSuggestionsFlags.value = UiStates.Loading()
                         }
-                        is FlagChangeUiStates.Error -> {
-                            _stateSuggestionsFlags.value = SuggestionsScreenUiStates.Error()
+                        is UiStates.Error -> {
+                            _stateSuggestionsFlags.value = UiStates.Error()
                         }
                     }
                 }

@@ -64,6 +64,7 @@ import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
@@ -277,7 +278,7 @@ fun FlagChangeScreen(
                                 },
                                 onTurnOnAllBooleans = {
                                     viewModel.overrideAllFlag()
-                                    if ((uiStateBoolean.value as FlagChangeUiStates.Success).data.size > 300) {
+                                    if ((uiStateBoolean.value as UiStates.Success).data.size > 300) {
                                         Toast.makeText(context, "Please, wait...", Toast.LENGTH_SHORT).show()
                                     }
                                 },
@@ -370,10 +371,10 @@ fun FlagChangeScreen(
             when (page) {
                 0 -> {
                     when (uiStateBoolean.value) {
-                        is FlagChangeUiStates.Success -> {
+                        is UiStates.Success -> {
 
                             val listBool =
-                                (uiStateBoolean.value as FlagChangeUiStates.Success).data.toSortedMap(
+                                (uiStateBoolean.value as UiStates.Success).data.toSortedMap(
                                     compareByDescending<String> {
                                         it.toIntOrNull() ?: 0
                                     }.thenBy { it })
@@ -403,8 +404,8 @@ fun FlagChangeScreen(
                             )
                         }
 
-                        is FlagChangeUiStates.Loading -> {}
-                        is FlagChangeUiStates.Error -> {}
+                        is UiStates.Loading -> {}
+                        is UiStates.Error -> {}
                     }
 
                 }

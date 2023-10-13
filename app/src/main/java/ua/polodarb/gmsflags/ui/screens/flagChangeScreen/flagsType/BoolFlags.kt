@@ -17,6 +17,7 @@ import ua.polodarb.gmsflags.core.Extensions.toInt
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.BoolValItem
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
@@ -33,7 +34,7 @@ fun BooleanFlagsScreen(
     haptic: HapticFeedback
 ) {
     when (uiState) {
-        is FlagChangeUiStates.Success -> {
+        is UiStates.Success -> {
 
             if (listBool.isEmpty()) NoFlagsOrPackages()
 
@@ -102,11 +103,11 @@ fun BooleanFlagsScreen(
             }
         }
 
-        is FlagChangeUiStates.Loading -> {
+        is UiStates.Loading -> {
             LoadingProgressBar()
         }
 
-        is FlagChangeUiStates.Error -> {
+        is UiStates.Error -> {
             NoFlagsOrPackages()
         }
     }

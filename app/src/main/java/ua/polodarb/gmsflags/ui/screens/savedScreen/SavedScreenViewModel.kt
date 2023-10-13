@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
-import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreenUiStates
 
 class SavedScreenViewModel(
     val roomRepository: RoomDBRepository

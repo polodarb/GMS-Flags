@@ -67,6 +67,7 @@ import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,9 +165,9 @@ fun SuggestionsScreen(
                 .padding(top = it.calculateTopPadding())
         ) {
             when (overriddenFlags.value) {
-                is SuggestionsScreenUiStates.Success -> {
+                is UiStates.Success -> {
 
-                    val data = (overriddenFlags.value as SuggestionsScreenUiStates.Success).data
+                    val data = (overriddenFlags.value as UiStates.Success).data
 
                     LazyColumn(
                         state = listState
@@ -199,11 +200,11 @@ fun SuggestionsScreen(
                     }
                 }
 
-                is SuggestionsScreenUiStates.Loading -> {
+                is UiStates.Loading -> {
                     LoadingProgressBar()
                 }
 
-                is SuggestionsScreenUiStates.Error -> {
+                is UiStates.Error -> {
                     ErrorLoadScreen()
                 }
             }
