@@ -15,6 +15,7 @@ import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
 typealias PackagesScreenUiStates = UiStates<Map<String, String>>
+
 class PackagesScreenViewModel(
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: RoomDBRepository,

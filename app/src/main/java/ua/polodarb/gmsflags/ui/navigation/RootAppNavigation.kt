@@ -5,6 +5,8 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -84,7 +86,8 @@ internal fun RootAppNavigation(
         mutableStateOf(false)
     }
 
-    val appUpdateAvailable = BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()
+    val appUpdateAvailable =
+        BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()
 
     appUpdateState = appUpdateAvailable
 

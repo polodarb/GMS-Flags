@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -111,7 +112,7 @@ fun SettingsItem(
     ) {
         Image(painter = painterResource(id = icon), contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp))
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp).size(26.dp))
         Column(
             modifier = Modifier.weight(1f)
         ) {
