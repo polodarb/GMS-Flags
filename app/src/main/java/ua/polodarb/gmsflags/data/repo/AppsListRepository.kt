@@ -15,8 +15,8 @@ class AppsListRepository(
 
     private val gmsApplication = context as GMSApplication
 
-    fun getAllInstalledApps() = flow<UiStates> {
-        emit(UiStates.Loading)
+    fun getAllInstalledApps() = flow {
+        emit(UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
@@ -47,6 +47,8 @@ class AppsListRepository(
 
                 if (filteredAppInfoList.isNotEmpty()) {
                     emit(UiStates.Success(filteredAppInfoList))
+                } else {
+                    emit(UiStates.Error())
                 }
             }
         }

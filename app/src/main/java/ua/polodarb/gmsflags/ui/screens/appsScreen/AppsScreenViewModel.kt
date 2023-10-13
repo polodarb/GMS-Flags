@@ -16,13 +16,15 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 
+typealias AppInfoList = UiStates<List<AppInfo>>
+
 class AppsScreenViewModel(
     private val repository: AppsListRepository
 ) : ViewModel() {
 
     private val _state =
-        MutableStateFlow<UiStates>(UiStates.Loading)
-    val state: StateFlow<UiStates> = _state.asStateFlow()
+        MutableStateFlow<AppInfoList>(UiStates.Loading())
+    val state: StateFlow<AppInfoList> = _state.asStateFlow()
 
     private val _dialogDataState =
         MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
@@ -74,14 +76,14 @@ class AppsScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
-                    when (val currentState = state.value) { // todo
+                    when (uiStates) {
                         is UiStates.Success -> {
-                            listAppsFiltered.addAll(currentState.data)
+                            listAppsFiltered.addAll(uiStates.data)
                             getAllInstalledApps()
                         }
 
                         is UiStates.Loading -> {
-                            _state.value = UiStates.Loading
+                            _state.value = UiStates.Loading()
                         }
 
                         is UiStates.Error -> {
@@ -95,7 +97,7 @@ class AppsScreenViewModel(
 
     fun getAllInstalledApps() {
         if (listAppsFiltered.isNotEmpty()) {
-            _state.value = AppsScreenUiStates.Success(
+            _state.value = UiStates.Success(
                 listAppsFiltered.filter {
                     it.appName.contains(searchQuery.value, ignoreCase = true)
                 }

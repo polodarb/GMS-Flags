@@ -62,6 +62,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
 import kotlin.coroutines.coroutineContext
@@ -176,9 +177,9 @@ fun AppsScreen(
             modifier = Modifier.padding(top = it.calculateTopPadding())
         ) {
             when (uiState.value) {
-                is AppsScreenUiStates.Success -> {
+                is UiStates.Success -> {
 
-                    val appsList = (uiState.value as AppsScreenUiStates.Success).data
+                    val appsList = (uiState.value as UiStates.Success).data
 
                     if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
 
@@ -238,11 +239,11 @@ fun AppsScreen(
                     }
                 }
 
-                is AppsScreenUiStates.Loading -> {
+                is UiStates.Loading -> {
                     LoadingProgressBar()
                 }
 
-                is AppsScreenUiStates.Error -> {
+                is UiStates.Error -> {
                     ErrorLoadScreen()
                 }
             }
