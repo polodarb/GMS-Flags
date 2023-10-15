@@ -2,19 +2,11 @@ package ua.polodarb.gmsflags.ui.navigation
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -28,18 +20,13 @@ import androidx.navigation.navArgument
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.core.Extensions.toFormattedInt
-import ua.polodarb.gmsflags.data.remote.github.GithubApiService
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
-import ua.polodarb.gmsflags.ui.components.UpdateDialog
 import ua.polodarb.gmsflags.ui.screens.RootScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RootRequestScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
@@ -50,7 +37,7 @@ import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
 
-@OptIn(ExperimentalAnimationApi::class, InternalCoroutinesApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun RootAppNavigation(
     modifier: Modifier = Modifier,
@@ -58,58 +45,14 @@ internal fun RootAppNavigation(
     isFirstStart: Boolean,
     navController: NavHostController
 ) {
-
+    val uriHandler = LocalUriHandler.current
     val appContext = koinInject<Context>()
     val activityContext = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
-    val isButtonLoading = rememberSaveable() {
+    val isButtonLoading = rememberSaveable {
         mutableStateOf(false)
     }
-
-    var showDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    // Github latest release request
-    val apiService by lazy { GithubApiService.create() }
-    val uriHandler = LocalUriHandler.current
-
-    val products = produceState(
-        initialValue = BuildConfig.VERSION_NAME,
-        producer = {
-            value = apiService.getLatestRelease().tagName
-        }
-    )
-
-    var appUpdateState by remember {
-        mutableStateOf(false)
-    }
-
-    val appUpdateAvailable =
-        BuildConfig.VERSION_NAME.toFormattedInt() < products.value.toFormattedInt()
-
-    appUpdateState = appUpdateAvailable
-
-    if (!isFirstStart) {
-        LaunchedEffect(appUpdateAvailable) {
-            if (appUpdateState) {
-                showDialog = true
-            }
-        }
-    }
-
-    UpdateDialog(
-        showDialog = showDialog,
-        appVersion = products.value,
-        onDismiss = {
-            showDialog = false
-        },
-        onUpdateClick = {
-            uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
-            showDialog = false
-        }
-    )
 
     NavHost(
         navController = navController,

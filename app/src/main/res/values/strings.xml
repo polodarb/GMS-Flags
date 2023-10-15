@@ -36,7 +36,7 @@
     <string name="component_add_flag">Add flag</string>
     <string name="component_reset_flags">Reset all overridden flags</string>
     <string name="update_dialog_info">"Clicking the \"Update GMS Flags\" button will take you to GitHub with the latest release "</string>
-    <string name="update_dialog_title">Update app to v</string>
+    <string name="update_dialog_title">Update app to v%1$s</string>
     <string name="update_dialog_close">Close</string>
     <string name="update_dialog_confirm">Update GMS Flags</string>
     <string name="finder">"Finder: "</string>
