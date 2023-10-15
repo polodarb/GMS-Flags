@@ -50,7 +50,7 @@ class CrashActivity : ComponentActivity() {
         setDecorFitsSystemWindows(window, false)
 
         val intentMain = Intent(this, MainActivity::class.java)
-        if (intent.getStringExtra(CRASH_MESSAGE).toString() == Constants.GMS_DATABASE_CRASH_MSG) {
+        if (intent.getStringExtra(STACK_TRACE_KEY)?.contains(Constants.GMS_DATABASE_CRASH_MSG) == true) {
             startActivity(intentMain)
             finishAffinity()
         }

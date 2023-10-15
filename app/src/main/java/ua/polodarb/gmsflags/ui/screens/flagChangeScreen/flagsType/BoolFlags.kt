@@ -1,5 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +12,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -23,6 +30,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewMode
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.SelectFlagsType
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BooleanFlagsScreen(
     lazyListState: LazyListState,
@@ -31,8 +39,12 @@ fun BooleanFlagsScreen(
     savedFlagsList: List<SavedFlags>,
     viewModel: FlagChangeScreenViewModel,
     packageName: String?,
-    haptic: HapticFeedback
+    haptic: HapticFeedback,
+    isSelectedList: List<String>,
+    selectedItemLongClick: (isSelected: Boolean, flagName: String) -> Unit,
+    selectedItemShortClick: (isSelected: Boolean, flagName: String) -> Unit
 ) {
+
     when (uiState) {
         is UiStates.Success -> {
 
@@ -48,6 +60,8 @@ fun BooleanFlagsScreen(
                         state = lazyListState
                     ) {
                         itemsIndexed(listBool.keys.toList()) { index, flagName ->
+
+                            val isSelected = isSelectedList.contains(flagName)
 
                             val checked = listBool.values.toList()[index] == "1"
                             val targetFlag = SavedFlags(
@@ -65,6 +79,7 @@ fun BooleanFlagsScreen(
                             BoolValItem(
                                 flagName = flagName,
                                 checked = checked,
+                                isSelected = isSelected,
                                 onCheckedChange = { newValue ->
                                     viewModel.updateBoolFlagValue(
                                         flagName,
@@ -91,6 +106,10 @@ fun BooleanFlagsScreen(
                                     }
                                 },
                                 lastItem = index == listBool.size - 1,
+                                modifier = Modifier.combinedClickable(
+                                    onClick = { selectedItemShortClick(isSelected, flagName) },
+                                    onLongClick = { selectedItemLongClick(isSelected, flagName)  }
+                                )
                             )
                         }
                         item {

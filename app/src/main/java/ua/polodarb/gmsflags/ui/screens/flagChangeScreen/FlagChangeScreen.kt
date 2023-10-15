@@ -4,8 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -18,10 +21,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -35,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -119,6 +128,34 @@ fun FlagChangeScreen(
     })
 
 
+    // Select states
+    var isInSelectionMode by remember {
+        mutableStateOf(false)
+    }
+    val selectedItems = remember {
+        mutableStateListOf<String>()
+    }
+    val resetSelectionMode = {
+        isInSelectionMode = false
+        selectedItems.clear()
+    }
+
+    BackHandler(
+        enabled = isInSelectionMode,
+    ) {
+        resetSelectionMode()
+    }
+
+    LaunchedEffect(
+        key1 = isInSelectionMode,
+        key2 = selectedItems.size,
+    ) {
+        if (isInSelectionMode && selectedItems.isEmpty()) {
+            isInSelectionMode = false
+        }
+    }
+
+
     var textWidthDp by remember {
         mutableStateOf(0.dp)
     }
@@ -150,7 +187,7 @@ fun FlagChangeScreen(
     val showDialog = remember { mutableStateOf(false) }
     var flagName by remember { mutableStateOf("") }
     var flagValue by remember { mutableStateOf("") }
-    
+
     // Show progress dialog
     var showProgressDialog = rememberSaveable {
         mutableStateOf(false)
@@ -201,7 +238,8 @@ fun FlagChangeScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            packageName ?: "Null package name",
+                            text = if (isInSelectionMode) "Selected: ${selectedItems.size}" else packageName
+                                ?: "Null package name",
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .combinedClickable(
@@ -279,7 +317,11 @@ fun FlagChangeScreen(
                                 onTurnOnAllBooleans = {
                                     viewModel.overrideAllFlag()
                                     if ((uiStateBoolean.value as UiStates.Success).data.size > 300) {
-                                        Toast.makeText(context, "Please, wait...", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Please, wait...",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 },
                                 modifier = Modifier
@@ -351,6 +393,26 @@ fun FlagChangeScreen(
                 }
             }
         },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = isInSelectionMode,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                BottomAppBar(
+                    actions = {},
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { /* do something */ },
+                            containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                        ) {
+                            Icon(Icons.Filled.Add, "Localized description")
+                        }
+                    }
+                )
+            }
+        }
     ) { paddingValues ->
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -400,7 +462,31 @@ fun FlagChangeScreen(
                                 viewModel = viewModel,
                                 packageName = packageName.toString(),
                                 haptic = haptic,
-                                savedFlagsList = savedFlags.value
+                                savedFlagsList = savedFlags.value,
+                                isSelectedList = selectedItems,
+                                selectedItemLongClick = { isSelected, flagName ->
+                                    if (isInSelectionMode) {
+                                        if (isSelected) {
+                                            selectedItems.remove(flagName)
+                                        } else {
+                                            selectedItems.add(flagName)
+                                        }
+                                    } else {
+                                        isInSelectionMode = true
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        selectedItems.add(flagName)
+                                    }
+                                },
+                                selectedItemShortClick = { isSelected, flagName ->
+                                    if (isInSelectionMode) {
+                                        if (isSelected) {
+                                            selectedItems.remove(flagName)
+                                        } else {
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            selectedItems.add(flagName)
+                                        }
+                                    }
+                                }
                             )
                         }
 
@@ -504,7 +590,7 @@ fun FlagChangeScreen(
                 )
             }
         }
-        
+
         ProgressDialog(showDialog = showProgressDialog.value)
 
         AddFlagDialog(
