@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,35 +50,28 @@ fun BoolValItem(
     modifier: Modifier = Modifier
 ) {
 
-    var select by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    Column(
-        modifier = Modifier.combinedClickable(
-            onDoubleClick = {
-                select = !select
-            },
-            onClick = {}
-        )
-    ) {
+    Column() {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+                .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             if (isSelected) {
-                Icon(
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                Box(
                     modifier = Modifier
                         .padding(12.dp)
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                )
+                        .background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             } else {
                 IconToggleButton(checked = saveChecked, onCheckedChange = saveOnCheckedChange) {
                     if (saveChecked) {
@@ -105,7 +99,7 @@ fun BoolValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
             .padding(horizontal = 16.dp)
     )
 }

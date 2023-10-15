@@ -23,8 +23,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -336,11 +341,23 @@ fun FlagChangeScreen(
                     },
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
-                        IconButton(onClick = onBackPressed) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Localized description"
-                            )
+                        if (isInSelectionMode) {
+                            IconButton(onClick = {
+                                resetSelectionMode()
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Localized description"
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = onBackPressed) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowBack,
+                                    contentDescription = "Localized description"
+                                )
+                            }
                         }
                     },
                 )
@@ -400,14 +417,27 @@ fun FlagChangeScreen(
                 exit = shrinkVertically()
             ) {
                 BottomAppBar(
-                    actions = {},
+                    actions = {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(painter = painterResource(id = R.drawable.ic_report), contentDescription = null)
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(painter = painterResource(id = R.drawable.ic_navbar_suggestions_inactive), contentDescription = null)
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
+                        }
+                    },
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = { /* do something */ },
                             containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                             elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                         ) {
-                            Icon(Icons.Filled.Add, "Localized description")
+                            Icon(painter = painterResource(id = R.drawable.ic_save_inactive), "Localized description")
                         }
                     }
                 )
@@ -463,6 +493,7 @@ fun FlagChangeScreen(
                                 packageName = packageName.toString(),
                                 haptic = haptic,
                                 savedFlagsList = savedFlags.value,
+                                isInSelectionMode = isInSelectionMode,
                                 isSelectedList = selectedItems,
                                 selectedItemLongClick = { isSelected, flagName ->
                                     if (isInSelectionMode) {
