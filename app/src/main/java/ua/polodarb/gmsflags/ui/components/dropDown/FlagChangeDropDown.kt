@@ -25,7 +25,6 @@ fun FlagChangeDropDown(
     onAddFlag: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     onOpenAppDetailsSettings: () -> Unit,
-    onTurnOnAllBooleans: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -68,17 +67,6 @@ fun FlagChangeDropDown(
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_open_app_settings),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = true
-                )
-                DropdownMenuItem(
-                    text = { Text(text = "Turn on all booleans") },
-                    onClick = onTurnOnAllBooleans,
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Build,
                             contentDescription = null
                         )
                     },

@@ -82,8 +82,8 @@ fun BooleanFlagsScreen(
                                 checked = checked,
                                 isSelected = isSelected,
                                 onCheckedChange = { newValue ->
-                                    viewModel.updateBoolFlagValue(
-                                        flagName,
+                                    viewModel.updateBoolFlagValues(
+                                        listOf(flagName),
                                         newValue.toInt().toString()
                                     )
                                     viewModel.overrideFlag(

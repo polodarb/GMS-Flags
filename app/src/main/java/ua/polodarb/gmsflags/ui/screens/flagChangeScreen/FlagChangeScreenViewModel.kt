@@ -3,7 +3,6 @@ package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
@@ -54,19 +53,20 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (stateBoolean.value) {
                     is UiStates.Success -> {
-                            val flagsCount = customCount ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
-                            delay(
-                                when {
-                                    flagsCount <= 50 -> 0
-                                    flagsCount in 51..150 -> 2000
-                                    flagsCount in 151..500 -> 4000
-                                    flagsCount in 501..1000 -> 6000
-                                    flagsCount in 1001..1500 -> 8000
-                                    flagsCount > 1501 -> 10000
-                                    else -> 0
-                                }
-                            )
-                            showProgressDialog.value = false
+                        val flagsCount = customCount
+                            ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
+                        delay(
+                            when {
+                                flagsCount <= 50 -> 0
+                                flagsCount in 51..150 -> 3000
+                                flagsCount in 151..500 -> 5000
+                                flagsCount in 501..1000 -> 7000
+                                flagsCount in 1001..1500 -> 9000
+                                flagsCount > 1501 -> 10000
+                                else -> 0
+                            }
+                        )
+                        showProgressDialog.value = false
                     }
 
                     is UiStates.Loading -> {
@@ -84,19 +84,24 @@ class FlagChangeScreenViewModel(
     // Filter
     var filterMethod = mutableStateOf(FilterMethod.ALL)
 
-    fun updateBoolFlagValue(flagName: String, newValue: String) {
+    fun updateBoolFlagValues(flagNames: List<String>, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
                 if (currentState is UiStates.Success) {
                     val updatedData = currentState.data.toMutableMap()
-                    updatedData[flagName] = newValue
+
+                    for (flagName in flagNames) {
+                        updatedData[flagName] = newValue
+                        listBoolFiltered[flagName] = newValue
+                    }
+
                     _stateBoolean.value = currentState.copy(data = updatedData)
-                    listBoolFiltered.replace(flagName, newValue)
                 }
             }
         }
     }
+
 
     fun turnOnAllBoolFlags() {
         viewModelScope.launch {
@@ -490,7 +495,7 @@ class FlagChangeScreenViewModel(
     fun deleteOverriddenFlagByPackage(packageName: String) {
 //        viewModelScope.launch {
 //            withContext(Dispatchers.IO) {
-                repository.deleteOverriddenFlagByPackage(packageName)
+        repository.deleteOverriddenFlagByPackage(packageName)
 //            }
 //        }
     }
@@ -547,6 +552,73 @@ class FlagChangeScreenViewModel(
                     is UiStates.Success -> {
                         selectedItems.clear()
                         selectedItems.addAll((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys)
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
+    fun enableSelectedFlag() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (stateBoolean.value) {
+                    is UiStates.Success -> {
+                        listBoolFiltered.forEach { (key, value) ->
+                            if (selectedItems.contains(key) && value == "0") {
+                                overrideFlag(
+                                    packageName = pkgName,
+                                    key,
+                                    boolVal = "1"
+                                )
+                            }
+                        }
+                        if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+                            turnOnAllBoolFlags()
+                        } else {
+                            updateBoolFlagValues(selectedItems, "1")
+                        }
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
+    fun disableSelectedFlag() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (stateBoolean.value) {
+                    is UiStates.Success -> {
+                        val data = (stateBoolean.value as UiStates.Success<Map<String, String>>).data
+                        data.forEach { (key, value) ->
+                            if (selectedItems.contains(key) && value == "1") {
+                                overrideFlag(
+                                    packageName = pkgName,
+                                    key,
+                                    boolVal = "0"
+                                )
+                            }
+                        }
+                        if (data.keys.size == selectedItems.size) {
+                            turnOffAllBoolFlags()
+                        } else {
+                            updateBoolFlagValues(selectedItems, "0")
+                        }
                     }
 
                     is UiStates.Loading -> {

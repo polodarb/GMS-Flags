@@ -291,6 +291,7 @@ fun FlagChangeScreen(
                                     viewModel.showFalseProgressDialog()
                                     viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    viewModel.initBoolValues()
                                     dropDownExpanded = false
                                 },
                                 onOpenAppDetailsSettings = {
@@ -299,16 +300,6 @@ fun FlagChangeScreen(
                                     val uri = Uri.fromParts("package", androidPackage, null)
                                     intent.setData(uri)
                                     startActivity(context, intent, null)
-                                },
-                                onTurnOnAllBooleans = {
-                                    viewModel.overrideAllFlag()
-                                    if ((uiStateBoolean.value as UiStates.Success).data.size > 300) {
-                                        Toast.makeText(
-                                            context,
-                                            "Please, wait...",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -403,8 +394,16 @@ fun FlagChangeScreen(
                             FlagSelectDropDown(
                                 expanded = selectDropDownExpanded,
                                 onDismissRequest = { selectDropDownExpanded = false },
-                                onEnableSelected = { /*TODO*/ },
-                                onDisableSelected = { /*TODO*/ },
+                                onEnableSelected = {
+                                    viewModel.showProgressDialog.value = true
+                                    viewModel.enableSelectedFlag()
+                                    viewModel.showFalseProgressDialog(viewModel.selectedItems.size)
+                                },
+                                onDisableSelected = {
+                                    viewModel.showProgressDialog.value = true
+                                    viewModel.disableSelectedFlag()
+                                    viewModel.showFalseProgressDialog(viewModel.selectedItems.size)
+                                },
                                 onSelectAllItems = {
                                     viewModel.selectAllItems()
                                 })
