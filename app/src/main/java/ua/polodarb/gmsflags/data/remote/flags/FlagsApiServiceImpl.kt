@@ -6,7 +6,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.url
-import org.koin.android.BuildConfig
+import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
 import ua.polodarb.gmsflags.data.remote.setConfig
