@@ -49,24 +49,24 @@ class FlagChangeScreenViewModel(
 
     // ProgressDialog
     val showProgressDialog = mutableStateOf(false)
-    fun showFalseProgressDialog() {
+    fun showFalseProgressDialog(customCount: Int? = null) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 when (stateBoolean.value) {
                     is UiStates.Success -> {
-                        val flagsCount = (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
-                        delay(
-                            when {
-                                flagsCount <= 50 -> 0
-                                flagsCount in 51..150 -> 2000
-                                flagsCount in 151..500 -> 4000
-                                flagsCount in 501..1000 -> 6000
-                                flagsCount in 1001..1500 -> 8000
-                                flagsCount > 1501 -> 10000
-                                else -> 0
-                            }
-                        )
-                        showProgressDialog.value = false
+                            val flagsCount = customCount ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
+                            delay(
+                                when {
+                                    flagsCount <= 50 -> 0
+                                    flagsCount in 51..150 -> 2000
+                                    flagsCount in 151..500 -> 4000
+                                    flagsCount in 501..1000 -> 6000
+                                    flagsCount in 1001..1500 -> 8000
+                                    flagsCount > 1501 -> 10000
+                                    else -> 0
+                                }
+                            )
+                            showProgressDialog.value = false
                     }
 
                     is UiStates.Loading -> {
@@ -535,6 +535,27 @@ class FlagChangeScreenViewModel(
                         pkgName,
                         SelectFlagsType.BOOLEAN.name
                     )
+                }
+            }
+        }
+    }
+
+    fun selectAllItems() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (stateBoolean.value) {
+                    is UiStates.Success -> {
+                        selectedItems.clear()
+                        selectedItems.addAll((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys)
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
                 }
             }
         }

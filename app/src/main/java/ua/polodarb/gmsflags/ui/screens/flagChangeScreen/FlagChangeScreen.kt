@@ -73,6 +73,7 @@ import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
+import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.gmsflags.ui.screens.UiStates
@@ -197,6 +198,7 @@ fun FlagChangeScreen(
 
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
+    var selectDropDownExpanded by remember { mutableStateOf(false) }
 
     // IntFloatStrValues
     val editTextValue = rememberSaveable {
@@ -397,7 +399,15 @@ fun FlagChangeScreen(
             ) {
                 BottomAppBar(
                     actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { selectDropDownExpanded = !selectDropDownExpanded }) {
+                            FlagSelectDropDown(
+                                expanded = selectDropDownExpanded,
+                                onDismissRequest = { selectDropDownExpanded = false },
+                                onEnableSelected = { /*TODO*/ },
+                                onDisableSelected = { /*TODO*/ },
+                                onSelectAllItems = {
+                                    viewModel.selectAllItems()
+                                })
                             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                         }
                         IconButton(onClick = { /*TODO*/ }) {
@@ -421,7 +431,8 @@ fun FlagChangeScreen(
                             onClick = {
                                 viewModel.saveSelectedFlags()
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                viewModel.showProgressDialog.value = true
+                                viewModel.showFalseProgressDialog(viewModel.selectedItems.size)
                                 coroutineScope.launch {
                                     delay(35)
                                     resetSelectionMode()
