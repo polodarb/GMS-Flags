@@ -4,6 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Release(
+data class ReleaseInfo(
     @SerialName("tag_name") val tagName: String
 )

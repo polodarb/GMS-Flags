@@ -85,9 +85,27 @@ class GmsDBRepository(
 
     }
 
-    fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<MutableMap<String, String>> {
+    fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
         val boolOverriddenFlags =
             gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
+        return (UiStates.Success(boolOverriddenFlags))
+    }
+
+    fun getOverriddenIntFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
+        val boolOverriddenFlags =
+            gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(packageName)
+        return (UiStates.Success(boolOverriddenFlags))
+    }
+
+    fun getOverriddenFloatFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
+        val boolOverriddenFlags =
+            gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(packageName)
+        return (UiStates.Success(boolOverriddenFlags))
+    }
+
+    fun getOverriddenStringFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
+        val boolOverriddenFlags =
+            gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(packageName)
         return (UiStates.Success(boolOverriddenFlags))
     }
 

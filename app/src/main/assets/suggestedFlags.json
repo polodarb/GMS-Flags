@@ -2,49 +2,89 @@
   {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",
-    "tags": ["45369077"],
+    "flags": [
+      {
+        "tag": "45369077",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
-    "enabled": false,
     "isArchive": false
   },
   {
     "name": "Proofreading mode in GBoard",
     "author": "GApps Flags & Leaks",
-    "tags": ["writing_helper", "writing_helper_enable_free_chat", "writing_helper_chip_shown_as_candidate"],
+    "flags": [
+      {
+        "tag": "writing_helper",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "writing_helper_enable_free_chat",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "writing_helper_chip_shown_as_candidate",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
-    "enabled": false,
     "isArchive": false
   },
   {
     "name": "\"Undo\" button in GBoard",
     "author": "GApps Flags & Leaks",
-    "tags": ["undo_access_point"],
+    "flags": [
+      {
+        "tag": "undo_access_point",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
-    "enabled": false,
     "isArchive": false
   },
   {
     "name": "Enable transparent statusBar in dialer",
     "author": "Nail Sadykov",
-    "tags": ["45372787"],
+    "flags": [
+      {
+        "tag": "45372787",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.android.dialer.directboot",
-    "enabled": false,
     "isArchive": false
   },
   {
     "name": "Enable docs scanner in Drive",
     "author": "Nail Sadykov",
-    "tags": ["MlkitScanningUiFeature__enable_mlkit_scanning_ui"],
+    "flags": [
+      {
+        "tag": "MlkitScanningUiFeature__enable_mlkit_scanning_ui",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.apps.drive.android#com.google.android.apps.docs",
-    "enabled": false,
     "isArchive": false
   },
   {
     "name": "Enable MD3 style in Android Auto",
     "author": "Nail Sadykov",
-    "tags": ["SystemUi__material_you_settings_enabled"],
+    "flags": [
+      {
+        "tag": "SystemUi__material_you_settings_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
     "package": "com.google.android.projection.gearhead",
-    "enabled": false,
     "isArchive": false
   }
 ]

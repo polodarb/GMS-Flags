@@ -1,7 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens
 
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeUiStates
-
 sealed interface UiStates<T> {
     class Loading<T> : UiStates<T>
 
