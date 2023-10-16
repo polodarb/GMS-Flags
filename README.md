@@ -9,27 +9,26 @@
 # Description
 GMS Flags is a tool for changing parameters in Google services to activate or deactivate certain functionality in Google applications.
 ## Features available in the current version:
-1) Change parameters of flags of Boolean, Int, Float and String types
-2) Ability to add a flag manually 
-3) Removing overwritten flags by package
-4) Generating a list of applications with all packages belonging to it
-5) Access to the entire list of packages 
-6) Filtering flags by various parameters, including overwritten values
-7) Error Handler. You can send a report with an error to the mail and restart applications for correct operation
-8) Option to save package names and flags 
-9) Some flags have been added to the suggestions:
-    - Enable transparent statusBar in dialer
-    - Enable docs scanner in Google Drive
-    - Enable MD3 style in Android Auto Settings
-    - "Undo" button in GBoard
-    - Proofreading mode in GBoard
-    - Google Search Suggestions new design
+- Change parameters of flags of Boolean, Int, Float and String types
+- Ability to add a flag manually 
+- Removing overwritten flags by package
+- Generating a list of applications with all packages belonging to it
+- Access to the entire list of packages 
+- Filtering flags by various parameters, including overwritten values
+- Error Handler. You can send a report with an error to the mail and restart applications for correct operation
+- Option to save package names and flags 
+- The list of suggested flags depends on the network and can be updated without updating the application
+- Ability to receive notifications about new suggested flags and updates
+- Ability to add several flags to favorites at once
+- Ability to activate and deactivate all boolean flags
+- Ability to suggest flags
+- Ability to report a problem caused by a flag
 
 
 # Download
 [<img src="gh_download.png"
      alt="Get it on GitHub"
-     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.0.5/gms_flags_1.0.5.apk)
+     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.0.6/gms_flags_1.0.6.apk)
 
 ## License
 
