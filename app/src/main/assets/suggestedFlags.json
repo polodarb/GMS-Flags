@@ -1,5 +1,18 @@
 [
   {
+    "name": "Test name",
+    "author": "Test name",
+    "flags": [
+      {
+        "tag": "123123",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "test_pkg",
+    "isArchive": false
+  },
+  {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",
     "flags": [
