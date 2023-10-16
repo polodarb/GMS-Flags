@@ -3,7 +3,6 @@ package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -83,6 +82,8 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.DISABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FilterMethod.ENABLED
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.AddFlagDialog
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.ProgressDialog
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.ReportFlagsDialog
+import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.dialogs.SuggestFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType.OtherTypesFlagsScreen
 
@@ -217,6 +218,16 @@ fun FlagChangeScreen(
         viewModel.getFloatFlags()
         viewModel.getStringFlags()
     }
+
+
+    // SuggestFlagsDialog
+    val showSendSuggestDialog = remember { mutableStateOf(false) }
+    val suggestFlagDesc = remember { mutableStateOf("") }
+    val senderName = remember { mutableStateOf("") }
+
+    // ReportFlagsDialog
+    val showSendReportDialog = remember { mutableStateOf(false) }
+    val reportFlagDesc = remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -409,13 +420,19 @@ fun FlagChangeScreen(
                                 })
                             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                         }
-                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
+                        IconButton(onClick = {
+                            showSendReportDialog.value = true
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }, enabled = true) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_report),
                                 contentDescription = null
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
+                        IconButton(onClick = {
+                            showSendSuggestDialog.value = true
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }, enabled = true) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_navbar_suggestions_inactive),
                                 contentDescription = null
@@ -627,6 +644,74 @@ fun FlagChangeScreen(
                 )
             }
         }
+
+        SuggestFlagsDialog(
+            showDialog = showSendSuggestDialog.value,
+            flagDesc = suggestFlagDesc.value,
+            onFlagDescChange = {
+                suggestFlagDesc.value = it
+            },
+            senderName = senderName.value,
+            onSenderNameChanged = {
+                senderName.value = it
+            },
+            onSend = {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:")
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        "Flags suggestion by ${senderName.value}"
+                    )
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Sender: ${senderName.value}\n\n" +
+                                "Package: ${packageName.toString()}\n\n" +
+                                "Description: \n${suggestFlagDesc.value}\n\n" +
+                                "Flags: \n${viewModel.selectedItems.joinToString("\n")}"
+                    )
+                }
+                context.startActivity(intent)
+                showSendSuggestDialog.value = false
+                suggestFlagDesc.value = ""
+                senderName.value = ""
+            },
+            onDismiss = {
+                showSendSuggestDialog.value = false
+                suggestFlagDesc.value = ""
+                senderName.value = ""
+            })
+
+        ReportFlagsDialog(
+            showDialog = showSendReportDialog.value,
+            flagDesc = reportFlagDesc.value,
+            onFlagDescChange = {
+                reportFlagDesc.value = it
+            },
+            onSend = {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:")
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        "Problem report"
+                    )
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Package: ${packageName.toString()}\n\n" +
+                                "Description: \n${reportFlagDesc.value}\n\n" +
+                                "Flags: \n${viewModel.selectedItems.joinToString("\n")}"
+                    )
+                }
+                context.startActivity(intent)
+                showSendReportDialog.value = false
+                reportFlagDesc.value = ""
+            },
+            onDismiss = {
+                showSendReportDialog.value = false
+                reportFlagDesc.value = ""
+            })
+
 
         ProgressDialog(showDialog = viewModel.showProgressDialog.value)
 
