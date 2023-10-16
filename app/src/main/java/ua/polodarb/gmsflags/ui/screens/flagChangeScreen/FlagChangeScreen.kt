@@ -438,7 +438,42 @@ fun FlagChangeScreen(
                                 contentDescription = null
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
+                        IconButton(onClick = {
+                            when (uiStateBoolean.value) {
+                                is UiStates.Success -> {
+
+                                    val listBool =
+                                        (uiStateBoolean.value as UiStates.Success).data
+
+                                    val selectedItemsWithValues =
+                                        viewModel.selectedItems.mapNotNull { selectedItem ->
+                                            val value = listBool[selectedItem]
+                                            if (value != null) {
+                                                "$selectedItem: $value"
+                                            } else {
+                                                null
+                                            }
+                                        }
+
+                                    val flagsText = selectedItemsWithValues.joinToString("\n")
+
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        setType("text/plain")
+                                        putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            "Extracted flags from GMS Flags"
+                                        )
+                                        putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            "Package: \n${packageName.toString()}\n\n" +
+                                                    "Flags: \n$flagsText"
+                                        )
+                                    }
+                                    context.startActivity(intent)
+                                }
+                                else -> {}
+                            }
+                        }, enabled = true) {
                             Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
                         }
                     },
