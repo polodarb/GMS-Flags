@@ -108,15 +108,15 @@ fun SavedScreen(
                         )
                     },
                     actions = {
-                        IconButton(onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Localized description"
-                            )
-                        }
+//                        IconButton(onClick = {
+//                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                            Toast.makeText(context, "Search", Toast.LENGTH_SHORT).show()
+//                        }) {
+//                            Icon(
+//                                imageVector = Icons.Filled.Search,
+//                                contentDescription = "Localized description"
+//                            )
+//                        }
                         IconButton(onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             onPackagesClick()

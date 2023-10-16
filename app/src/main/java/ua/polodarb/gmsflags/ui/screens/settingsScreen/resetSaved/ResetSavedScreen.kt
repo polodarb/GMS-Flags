@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsViewModel
@@ -133,8 +134,8 @@ fun SettingsResetFlagsHeader() {
                 .background(MaterialTheme.colorScheme.surfaceContainer),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.img_settings_reset_saved),
+            AsyncImage(
+                model =  R.drawable.img_settings_reset_saved,
                 contentDescription = null,
                 modifier = Modifier.padding(24.dp)
             )
