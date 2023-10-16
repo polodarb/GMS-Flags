@@ -409,19 +409,19 @@ fun FlagChangeScreen(
                                 })
                             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_report),
                                 contentDescription = null
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_navbar_suggestions_inactive),
                                 contentDescription = null
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { /*TODO*/ }, enabled = false) {
                             Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
                         }
                     },
