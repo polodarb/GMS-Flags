@@ -423,6 +423,11 @@ class FlagChangeScreenViewModel(
                     Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
                     Shell.cmd("am force-stop com.android.vending").exec()
                 }
+                if (pkgName.contains("com.google.android.apps.photos")) {
+                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*").exec()
+                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml").exec()
+                    Shell.cmd("am force-stop com.google.android.apps.photos").exec()
+                }
                 repeat(3) {
                     Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
                     Shell.cmd("am force-stop $androidPkgName").exec()
@@ -441,7 +446,8 @@ class FlagChangeScreenViewModel(
         floatVal: String? = null,
         stringVal: String? = null,
         extensionVal: String? = null,
-        committed: Int = 0
+        committed: Int = 0,
+        clearData: Boolean = true
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -472,7 +478,7 @@ class FlagChangeScreenViewModel(
                         committed = committed
                     )
                 }
-                clearPhenotypeCache(pkgName)
+                if (clearData) clearPhenotypeCache(pkgName)
             }
         }
     }
@@ -579,10 +585,12 @@ class FlagChangeScreenViewModel(
                                 overrideFlag(
                                     packageName = pkgName,
                                     key,
-                                    boolVal = "1"
+                                    boolVal = "1",
+                                    clearData = false
                                 )
                             }
                         }
+                        clearPhenotypeCache(pkgName)
                         if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                             turnOnAllBoolFlags()
                         } else {
@@ -613,10 +621,12 @@ class FlagChangeScreenViewModel(
                                 overrideFlag(
                                     packageName = pkgName,
                                     key,
-                                    boolVal = "0"
+                                    boolVal = "0",
+                                    clearData = false
                                 )
                             }
                         }
+                        clearPhenotypeCache(pkgName)
                         if (data.keys.size == selectedItems.size) {
                             turnOffAllBoolFlags()
                         } else {
