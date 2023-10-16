@@ -1,18 +1,5 @@
 [
   {
-    "name": "Test name",
-    "author": "Test name",
-    "flags": [
-      {
-        "tag": "45369077",
-        "type": "bool",
-        "value": "1"
-      }
-    ],
-    "package": "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
-    "isArchive": false
-  },
-  {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",
     "flags": [
