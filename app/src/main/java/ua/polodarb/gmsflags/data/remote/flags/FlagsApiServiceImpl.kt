@@ -6,6 +6,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.url
+import kotlinx.serialization.json.Json
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
@@ -27,7 +28,8 @@ class FlagsApiServiceImpl(
 
     override suspend fun getSuggestedFlags(): Resource<List<SuggestedFlagInfo>> {
         return try {
-            Resource.Success(client.get { url("suggestedFlags.json") }.body())
+            val response: String = client.get { url("suggestedFlags.json") }.body()
+            Resource.Success(Json.decodeFromString(response))
         } catch (e: Exception) {
             Resource.Error(e)
         }
