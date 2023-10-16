@@ -1,11 +1,14 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +46,40 @@ class FlagChangeScreenViewModel(
     private val _stateSavedFlags =
         MutableStateFlow<List<SavedFlags>>(emptyList())
     val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
+
+    // ProgressDialog
+    val showProgressDialog = mutableStateOf(false)
+    fun showFalseProgressDialog() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (stateBoolean.value) {
+                    is UiStates.Success -> {
+                        val flagsCount = (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
+                        delay(
+                            when {
+                                flagsCount <= 50 -> 0
+                                flagsCount in 51..150 -> 2000
+                                flagsCount in 151..500 -> 4000
+                                flagsCount in 501..1000 -> 6000
+                                flagsCount in 1001..1500 -> 8000
+                                flagsCount > 1501 -> 10000
+                                else -> 0
+                            }
+                        )
+                        showProgressDialog.value = false
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
 
     // Filter
     var filterMethod = mutableStateOf(FilterMethod.ALL)
@@ -482,6 +519,23 @@ class FlagChangeScreenViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 roomRepository.deleteSavedFlag(flagName, pkgName)
+            }
+        }
+    }
+
+    // Select
+    val selectedItems = mutableStateListOf<String>()
+
+    fun saveSelectedFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                selectedItems.forEach {
+                    saveFlag(
+                        it,
+                        pkgName,
+                        SelectFlagsType.BOOLEAN.name
+                    )
+                }
             }
         }
     }

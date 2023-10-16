@@ -21,15 +21,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +45,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,6 +66,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -137,12 +134,10 @@ fun FlagChangeScreen(
     var isInSelectionMode by remember {
         mutableStateOf(false)
     }
-    val selectedItems = remember {
-        mutableStateListOf<String>()
-    }
+
     val resetSelectionMode = {
         isInSelectionMode = false
-        selectedItems.clear()
+        viewModel.selectedItems.clear()
     }
 
     BackHandler(
@@ -153,16 +148,11 @@ fun FlagChangeScreen(
 
     LaunchedEffect(
         key1 = isInSelectionMode,
-        key2 = selectedItems.size,
+        key2 = viewModel.selectedItems.size,
     ) {
-        if (isInSelectionMode && selectedItems.isEmpty()) {
+        if (isInSelectionMode && viewModel.selectedItems.isEmpty()) {
             isInSelectionMode = false
         }
-    }
-
-
-    var textWidthDp by remember {
-        mutableStateOf(0.dp)
     }
 
     // Filter
@@ -183,20 +173,10 @@ fun FlagChangeScreen(
         mutableStateOf(false)
     }
 
-    // Chips index
-    val chipIndex by remember {
-        mutableIntStateOf(0)
-    }
-
     // Flag change dialog
     val showDialog = remember { mutableStateOf(false) }
     var flagName by remember { mutableStateOf("") }
     var flagValue by remember { mutableStateOf("") }
-
-    // Show progress dialog
-    var showProgressDialog = rememberSaveable {
-        mutableStateOf(false)
-    }
 
     // Add flag dialog
     val showAddFlagDialog = remember { mutableStateOf(false) }
@@ -243,7 +223,7 @@ fun FlagChangeScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            text = if (isInSelectionMode) "Selected: ${selectedItems.size}" else packageName
+                            text = if (isInSelectionMode) "Selected: ${viewModel.selectedItems.size}" else packageName
                                 ?: "Null package name",
                             modifier = Modifier
                                 .padding(end = 16.dp)
@@ -305,11 +285,10 @@ fun FlagChangeScreen(
                                     showAddFlagDialog.value = true
                                 },
                                 onDeleteOverriddenFlags = {
-                                    showProgressDialog.value = true
+                                    viewModel.showProgressDialog.value = true
+                                    viewModel.showFalseProgressDialog()
                                     viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    viewModel.turnOffAllBoolFlags()
-                                    Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
                                     dropDownExpanded = false
                                 },
                                 onOpenAppDetailsSettings = {
@@ -422,10 +401,16 @@ fun FlagChangeScreen(
                             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                         }
                         IconButton(onClick = { /*TODO*/ }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_report), contentDescription = null)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_report),
+                                contentDescription = null
+                            )
                         }
                         IconButton(onClick = { /*TODO*/ }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_navbar_suggestions_inactive), contentDescription = null)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_navbar_suggestions_inactive),
+                                contentDescription = null
+                            )
                         }
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
@@ -433,11 +418,22 @@ fun FlagChangeScreen(
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = { /* do something */ },
+                            onClick = {
+                                viewModel.saveSelectedFlags()
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                coroutineScope.launch {
+                                    delay(35)
+                                    resetSelectionMode()
+                                }
+                            },
                             containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                             elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                         ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_save_inactive), "Localized description")
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_save_inactive),
+                                "Localized description"
+                            )
                         }
                     }
                 )
@@ -494,27 +490,27 @@ fun FlagChangeScreen(
                                 haptic = haptic,
                                 savedFlagsList = savedFlags.value,
                                 isInSelectionMode = isInSelectionMode,
-                                isSelectedList = selectedItems,
+                                isSelectedList = viewModel.selectedItems,
                                 selectedItemLongClick = { isSelected, flagName ->
                                     if (isInSelectionMode) {
                                         if (isSelected) {
-                                            selectedItems.remove(flagName)
+                                            viewModel.selectedItems.remove(flagName)
                                         } else {
-                                            selectedItems.add(flagName)
+                                            viewModel.selectedItems.add(flagName)
                                         }
                                     } else {
                                         isInSelectionMode = true
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        selectedItems.add(flagName)
+                                        viewModel.selectedItems.add(flagName)
                                     }
                                 },
                                 selectedItemShortClick = { isSelected, flagName ->
                                     if (isInSelectionMode) {
                                         if (isSelected) {
-                                            selectedItems.remove(flagName)
+                                            viewModel.selectedItems.remove(flagName)
                                         } else {
                                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            selectedItems.add(flagName)
+                                            viewModel.selectedItems.add(flagName)
                                         }
                                     }
                                 }
@@ -622,7 +618,7 @@ fun FlagChangeScreen(
             }
         }
 
-        ProgressDialog(showDialog = showProgressDialog.value)
+        ProgressDialog(showDialog = viewModel.showProgressDialog.value)
 
         AddFlagDialog(
             showDialog = showAddFlagDialog.value,

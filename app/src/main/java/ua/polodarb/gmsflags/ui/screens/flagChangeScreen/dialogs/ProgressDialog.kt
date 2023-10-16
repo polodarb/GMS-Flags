@@ -10,15 +10,18 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressDialog(
     showDialog: Boolean
 ) {
+
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { /*TODO*/ },
@@ -27,15 +30,13 @@ fun ProgressDialog(
             title = { Text(text = "Please wait", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
             text = {
                 LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     trackColor = MaterialTheme.colorScheme.secondary,
                 )
             }
         )
     }
-}
-
-enum class ProgressDialogLevelVolume {
-    LOW, MEDIUM, HIGH, HIGHEST
 }
