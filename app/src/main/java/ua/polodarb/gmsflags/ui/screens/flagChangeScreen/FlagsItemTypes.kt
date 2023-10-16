@@ -1,14 +1,19 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -22,7 +27,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +42,7 @@ import ua.polodarb.gmsflags.R
 fun BoolValItem(
     flagName: String,
     checked: Boolean,
+    isSelected: Boolean,
     lastItem: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     saveChecked: Boolean,
@@ -43,37 +50,44 @@ fun BoolValItem(
     modifier: Modifier = Modifier
 ) {
 
-    var select by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    Column {
+    Column() {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = {},
-                    onLongClick = {},
-                    onDoubleClick = {
-                        select = !select
-                    }
-                )
-                .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+                .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-            IconToggleButton(checked = saveChecked, onCheckedChange = saveOnCheckedChange) {
-                if (saveChecked) {
+            if (isSelected) {
+                Box(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center
+                ) {
                     Icon(
-                        painterResource(id = R.drawable.ic_save_active),
-                        contentDescription = null
-                    )
-                } else {
-                    Icon(
-                        painterResource(id = R.drawable.ic_save_inactive),
-                        contentDescription = null
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(18.dp)
                     )
                 }
+            } else {
+                IconToggleButton(checked = saveChecked, onCheckedChange = saveOnCheckedChange) {
+                    if (saveChecked) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_save_active),
+                            contentDescription = null
+                        )
+                    } else {
+                        Icon(
+                            painterResource(id = R.drawable.ic_save_inactive),
+                            contentDescription = null
+                        )
+                    }
+                }
             }
+
             Column(Modifier.weight(0.9f), verticalArrangement = Arrangement.Center) {
                 Text(text = flagName, fontSize = 15.sp)
             }
@@ -85,7 +99,7 @@ fun BoolValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
             .padding(horizontal = 16.dp)
     )
 }

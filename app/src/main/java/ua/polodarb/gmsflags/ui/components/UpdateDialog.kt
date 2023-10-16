@@ -1,45 +1,79 @@
 package ua.polodarb.gmsflags.ui.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.Extensions.toFormattedInt
+import ua.polodarb.gmsflags.data.remote.Resource
+import ua.polodarb.gmsflags.data.remote.github.GithubApiService
 
 @Composable
 fun UpdateDialog(
-    showDialog: Boolean,
-    appVersion: String,
-    onDismiss: () -> Unit,
-    onUpdateClick: () -> Unit,
+    githubApiService: GithubApiService,
+    isFirstStart: Boolean
 ) {
+    val uriHandler = LocalUriHandler.current
 
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    val release = produceState(
+        initialValue = BuildConfig.VERSION_NAME,
+        producer = {
+            CoroutineScope(Dispatchers.IO).launch {
+                val res = githubApiService.getLatestRelease()
+                if (res is Resource.Success) {
+                    this@produceState.value = res.data?.tagName!!
+                }
+            }
+        }
+    ).value
+
+    var appUpdateState by remember { mutableStateOf(false) }
+    appUpdateState = BuildConfig.VERSION_NAME.toFormattedInt() < release.toFormattedInt()
+
+    if (!isFirstStart) {
+        LaunchedEffect(appUpdateState) {
+            if (appUpdateState) {
+                showDialog = true
+            }
+        }
+    }
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = onDismiss,
+            onDismissRequest = { showDialog = false },
             confirmButton = {
                 Row {
-                    OutlinedButton(onClick = onDismiss) {
+                    OutlinedButton(onClick = { showDialog = false }) {
                         Text(text = stringResource(R.string.update_dialog_close))
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = onUpdateClick) {
+                    Button(
+                        onClick = {
+                            uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
+                            showDialog = false
+                        }) {
                         Text(text = stringResource(R.string.update_dialog_confirm))
                     }
                 }
@@ -54,7 +88,10 @@ fun UpdateDialog(
                 Text(text = stringResource(R.string.update_dialog_info))
             },
             title = {
-                Text(text = stringResource(R.string.update_dialog_title) + appVersion + "!", fontWeight = FontWeight.Medium)
+                Text(
+                    text = stringResource(R.string.update_dialog_title, release),
+                    fontWeight = FontWeight.Medium
+                )
             },
         )
     }

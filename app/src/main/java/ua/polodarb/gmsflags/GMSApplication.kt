@@ -10,14 +10,15 @@ import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import ua.polodarb.gmsflags.core.Constants
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.databaseModule
+import ua.polodarb.gmsflags.di.remoteModule
 import ua.polodarb.gmsflags.di.repositoryModule
 import ua.polodarb.gmsflags.di.viewModelsModule
 import ua.polodarb.gmsflags.ui.CrashActivity
@@ -54,7 +55,7 @@ class GMSApplication : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
             androidContext(this@GMSApplication)
-            modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule))
+            modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule, remoteModule))
         }
     }
 
@@ -88,7 +89,7 @@ class GMSApplication : Application() {
     }
 
     fun getRootDatabase(): IRootDatabase {
-        check (isRootDatabaseInitialized) { "RootDatabase is not initialized yet." }
+        check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }
 }

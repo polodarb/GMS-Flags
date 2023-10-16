@@ -10,6 +10,7 @@
     <application
         android:name=".GMSApplication"
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -17,23 +18,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
         <activity
             android:name=".ui.CrashActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
             android:name=".ui.MainActivity"
+            android:enableOnBackInvokedCallback="true"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.App.Starting"
+            tools:targetApi="tiramisu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notify_logo" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"

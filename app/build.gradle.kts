@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-//    id("kotlin-kapt")
+    id("com.google.firebase.firebase-perf")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -32,8 +32,8 @@ android {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = 7
+        versionName = "1.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -108,7 +108,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.7.4")
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
@@ -118,14 +118,16 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-perf-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     implementation("com.github.requery:sqlite-android:3.42.0")
 
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.compose.ui:ui:1.5.3")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
     implementation("androidx.compose.material3:material3:1.2.0-alpha04")
     implementation("androidx.leanback:leanback:1.0.0")

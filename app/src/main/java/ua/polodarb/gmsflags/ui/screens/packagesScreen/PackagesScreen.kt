@@ -1,6 +1,8 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,9 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,16 +48,20 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import okhttp3.internal.toImmutableMap
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,40 +79,33 @@ fun PackagesScreen(
         mutableStateMapOf<String, String>()
     }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
 
     // Keyboard
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
     }
+
 
     LaunchedEffect(searchIconState) {
         if (searchIconState)
             focusRequester.requestFocus()
     }
 
-    // Search
-    var searchQuery by rememberSaveable {
-        mutableStateOf("")
+    LaunchedEffect(Unit) {
+        if (searchIconState)
+            keyboardController?.hide()
+        focusManager.clearFocus()
     }
 
-    // state to hold the filtered list
-    val filteredListState = remember { mutableStateMapOf<String, String>() }
-
-    LaunchedEffect(uiState.value, searchQuery) {
-        when (val state = uiState.value) {
-            is ScreenUiStates.Success -> {
-                val filteredList =
-                    state.data.filter { it.key.contains(searchQuery, ignoreCase = true) }
-                filteredListState.clear()
-                filteredListState.putAll(filteredList)
-            }
-
-            else -> {}
-        }
+    LaunchedEffect(viewModel.searchQuery.value) {
+        viewModel.getGmsPackagesList()
     }
 
     Scaffold(
@@ -122,7 +125,7 @@ fun PackagesScreen(
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 searchIconState = !searchIconState
-                                if (!searchIconState) searchQuery = ""
+                                if (!searchIconState) viewModel.searchQuery.value = ""
                             },
                             modifier = if (searchIconState) Modifier
                                 .clip(CircleShape)
@@ -147,16 +150,18 @@ fun PackagesScreen(
                 )
                 AnimatedVisibility(visible = searchIconState) {
                     GFlagsSearchBar(
-                        query = searchQuery,
+                        query = viewModel.searchQuery.value,
                         onQueryChange = { newQuery ->
-                            searchQuery = newQuery
+                            viewModel.searchQuery.value = newQuery
                         },
-                        iconVisibility = searchQuery.isNotEmpty(),
+                        placeHolderText = "Search a package name",
+                        iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
-                            searchQuery = ""
+                            viewModel.searchQuery.value = ""
+                            viewModel.getGmsPackagesList()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
-                        placeHolderText = stringResource(id = R.string.packages_search_advice),
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         keyboardFocus = focusRequester
                     )
                 }
@@ -169,18 +174,21 @@ fun PackagesScreen(
                 .padding(top = it.calculateTopPadding())
         ) {
             when (uiState.value) {
-                is ScreenUiStates.Success -> {
-                    list.putAll((uiState.value as ScreenUiStates.Success).data)
+                is UiStates.Success -> {
                     SuccessListItems(
-                        list = filteredListState,
+                        list = (uiState.value as UiStates.Success).data,
                         savedPackagesList = savedPackagesList.value,
                         viewModel = viewModel,
-                        onFlagClick = onFlagClick
+                        onFlagClick = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                            onFlagClick(it)
+                        }
                     )
                 }
 
-                is ScreenUiStates.Loading -> LoadingProgressBar()
-                is ScreenUiStates.Error -> ErrorLoadScreen()
+                is UiStates.Loading -> LoadingProgressBar()
+                is UiStates.Error -> ErrorLoadScreen()
             }
         }
     }
@@ -189,12 +197,16 @@ fun PackagesScreen(
 @Composable
 private fun SuccessListItems(
     list: Map<String, String>,
+//    listState: LazyListState,
     savedPackagesList: List<String>,
     viewModel: PackagesScreenViewModel,
     onFlagClick: (packageName: String) -> Unit
 ) {
 
-    LazyColumn {
+    LazyColumn(
+//        state = listState,
+        modifier = Modifier.imePadding()
+    ) {
         itemsIndexed(list.toList()) { index, item ->
             PackagesLazyItem(
                 packageName = item.first,
@@ -206,7 +218,6 @@ private fun SuccessListItems(
                     } else {
                         viewModel.deleteSavedPackage(item.first)
                     }
-//                    viewModel.updateSavedState(item.first)
                 },
                 lastItem = index == list.size - 1,
                 modifier = Modifier.clickable {

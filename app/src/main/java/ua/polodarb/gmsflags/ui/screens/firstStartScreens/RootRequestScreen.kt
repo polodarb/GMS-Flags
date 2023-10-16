@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import ua.polodarb.gmsflags.R
 
 @Composable
@@ -36,8 +37,8 @@ fun RootRequestScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
-            Image(
-                painter = painterResource(id = R.drawable.root_image),
+            AsyncImage(
+                model = R.drawable.root_image,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

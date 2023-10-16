@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.Constants
 import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +89,7 @@ fun SettingsScreen(
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
             Column {
-                SettingsItem(R.drawable.ic_reset, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
+                SettingsItem(R.drawable.ic_reset_flags, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
                 SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", onResetSavedClick)
                 SettingsItem(R.drawable.ic_info, "About & support", "Useful information and resources", onAboutClick)
             }
@@ -102,12 +105,14 @@ fun SettingsItem(
     onItemClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(painter = painterResource(id = icon), contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp))
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp).size(26.dp))
         Column(
             modifier = Modifier.weight(1f)
         ) {

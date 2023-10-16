@@ -13,19 +13,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
-import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
+import ua.polodarb.gmsflags.ui.screens.UiStates
+
+typealias AppInfoList = UiStates<List<AppInfo>>
+typealias AppDialogList = UiStates<List<String>>
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
 ) : ViewModel() {
 
     private val _state =
-        MutableStateFlow<AppsScreenUiStates>(AppsScreenUiStates.Loading)
-    val state: StateFlow<AppsScreenUiStates> = _state.asStateFlow()
+        MutableStateFlow<AppInfoList>(UiStates.Loading())
+    val state: StateFlow<AppInfoList> = _state.asStateFlow()
 
     private val _dialogDataState =
-        MutableStateFlow<DialogUiStates>(DialogUiStates.Loading)
-    val dialogDataState: StateFlow<DialogUiStates> = _dialogDataState.asStateFlow()
+        MutableStateFlow<AppDialogList>(UiStates.Loading())
+    val dialogDataState: StateFlow<AppDialogList> = _dialogDataState.asStateFlow()
 
     private val _dialogPackage = MutableStateFlow("")
     val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
@@ -44,7 +47,7 @@ class AppsScreenViewModel(
     }
 
     fun setEmptyList() {
-        _dialogDataState.value = DialogUiStates.Success(emptyList())
+        _dialogDataState.value = UiStates.Success(emptyList())
     }
 
     fun getListByPackages(pkgName: String) {
@@ -52,16 +55,16 @@ class AppsScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getListByPackages(pkgName).collect { uiStates ->
                     when (uiStates) {
-                        is DialogUiStates.Success -> {
-                            _dialogDataState.value = DialogUiStates.Success(uiStates.data)
+                        is UiStates.Success -> {
+                            _dialogDataState.value = UiStates.Success(uiStates.data)
                         }
 
-                        is DialogUiStates.Loading -> {
-                            _dialogDataState.value = DialogUiStates.Loading
+                        is UiStates.Loading -> {
+                            _dialogDataState.value = UiStates.Loading()
                         }
 
-                        is DialogUiStates.Error -> {
-                            _dialogDataState.value = DialogUiStates.Error()
+                        is UiStates.Error -> {
+                            _dialogDataState.value = UiStates.Error()
                         }
                     }
                 }
@@ -74,17 +77,17 @@ class AppsScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
                     when (uiStates) {
-                        is AppsScreenUiStates.Success -> {
+                        is UiStates.Success -> {
                             listAppsFiltered.addAll(uiStates.data)
                             getAllInstalledApps()
                         }
 
-                        is AppsScreenUiStates.Loading -> {
-                            _state.value = AppsScreenUiStates.Loading
+                        is UiStates.Loading -> {
+                            _state.value = UiStates.Loading()
                         }
 
-                        is AppsScreenUiStates.Error -> {
-                            _state.value = AppsScreenUiStates.Error()
+                        is UiStates.Error -> {
+                            _state.value = UiStates.Error()
                         }
                     }
                 }
@@ -94,7 +97,7 @@ class AppsScreenViewModel(
 
     fun getAllInstalledApps() {
         if (listAppsFiltered.isNotEmpty()) {
-            _state.value = AppsScreenUiStates.Success(
+            _state.value = UiStates.Success(
                 listAppsFiltered.filter {
                     it.appName.contains(searchQuery.value, ignoreCase = true)
                 }

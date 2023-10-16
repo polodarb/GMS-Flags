@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -15,12 +17,23 @@ fun GFlagFilterChipRow(
     list: List<String>,
     selectedChips: Int,
     pagerCurrentState: Int,
+    colorFraction: Float? = null,
     chipOnClick: (index: Int) -> Unit
 
 ) {
     Row(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                if (colorFraction != null) {
+                    lerp(
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+                        colorFraction
+                    )
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
+            )
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 6.dp)
             .height(36.dp)

@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags.ui.screens.appsScreen
 
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,9 +62,8 @@ import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
-import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.DialogUiStates
-import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,8 @@ fun AppsScreen(
 
     val showDialog = rememberSaveable { mutableStateOf(false) }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -162,6 +164,7 @@ fun AppsScreen(
                             viewModel.getAllInstalledApps()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
+                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         keyboardFocus = focusRequester
                     )
                 }
@@ -172,9 +175,9 @@ fun AppsScreen(
             modifier = Modifier.padding(top = it.calculateTopPadding())
         ) {
             when (uiState.value) {
-                is AppsScreenUiStates.Success -> {
+                is UiStates.Success -> {
 
-                    val appsList = (uiState.value as AppsScreenUiStates.Success).data
+                    val appsList = (uiState.value as UiStates.Success).data
 
                     if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
 
@@ -202,10 +205,10 @@ fun AppsScreen(
                     }
 
                     when (dialogDataState.value) {
-                        is DialogUiStates.Success -> {
+                        is UiStates.Success -> {
 
                             val dialogPackagesList =
-                                (dialogDataState.value as DialogUiStates.Success).data.toMutableList()
+                                (dialogDataState.value as UiStates.Success).data.toMutableList()
 
                             AppsScreenDialog(
                                 showDialog.value,
@@ -224,21 +227,21 @@ fun AppsScreen(
                             )
                         }
 
-                        is DialogUiStates.Loading -> {
+                        is UiStates.Loading -> {
                             LoadingProgressBar()
                         }
 
-                        is DialogUiStates.Error -> {
+                        is UiStates.Error -> {
                             ErrorLoadScreen()
                         }
                     }
                 }
 
-                is AppsScreenUiStates.Loading -> {
+                is UiStates.Loading -> {
                     LoadingProgressBar()
                 }
 
-                is AppsScreenUiStates.Error -> {
+                is UiStates.Error -> {
                     ErrorLoadScreen()
                 }
             }

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import ua.polodarb.gmsflags.R
 
 @Composable
@@ -35,12 +36,12 @@ fun WelcomeScreen(
     val context = LocalContext.current
 
     Column {
-        Image(
-            painter = painterResource(id = R.drawable.welcome_image),
+        AsyncImage(
+            model = R.drawable.welcome_image,
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 32.dp)
+                .padding(32.dp)
         )
         Text(
             text = stringResource(id = R.string.welcome_title),

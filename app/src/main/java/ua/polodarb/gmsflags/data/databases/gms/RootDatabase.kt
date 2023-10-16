@@ -50,13 +50,13 @@ class RootDatabase : RootService() {
             override fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> =
                 this@RootDatabase.getOverriddenBoolFlagsByPackage(pkgName)
 
-            override fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> =
+            override fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> =
                 this@RootDatabase.getOverriddenIntFlagsByPackage(pkgName)
 
-            override fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> =
+            override fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String?, String?> =
                 this@RootDatabase.getOverriddenFloatFlagsByPackage(pkgName)
 
-            override fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> =
+            override fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String?, String?> =
                 this@RootDatabase.getOverriddenStringFlagsByPackage(pkgName)
 
             override fun getAllOverriddenBoolFlags(): Map<String?, String?> =
@@ -408,12 +408,12 @@ class RootDatabase : RootService() {
     }
 
 
-    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String, String> {  // todo: not used
+    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> {  // todo: not used
         val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
-        val list = mutableMapOf<String, String>()
+        val list = mutableMapOf<String?, String?>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
@@ -421,12 +421,12 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String, String> {  // todo: not used
+    private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String?, String?> {  // todo: not used
         val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
-        val list = mutableMapOf<String, String>()
+        val list = mutableMapOf<String?, String?>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }
@@ -434,12 +434,12 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
-    private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String, String> { // todo: not used
+    private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String?, String?> { // todo: not used
         val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
             null
         )
-        val list = mutableMapOf<String, String>()
+        val list = mutableMapOf<String?, String?>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)
         }

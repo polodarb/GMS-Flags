@@ -65,8 +65,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.screens.UiStates
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,8 +86,6 @@ fun SuggestionsScreen(
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
-    val showDialog = remember { mutableStateOf(false) }
-
     val listState = rememberLazyListState()
     val expandedFab by remember {
         derivedStateOf {
@@ -99,23 +99,6 @@ fun SuggestionsScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        floatingActionButton = {
-            Box(
-                modifier = Modifier.offset(y = 12.dp)
-            ) {
-                ExtendedFloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show()
-                    },
-                    expanded = expandedFab,
-                    icon = { Icon(painterResource(id = R.drawable.ic_question), "") },
-                    text = { Text(text = "How can I suggest or report a flag?") },
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -157,17 +140,15 @@ fun SuggestionsScreen(
                 scrollBehavior = scrollBehavior
             )
         }
-    ) { it ->
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
             when (overriddenFlags.value) {
-                is SuggestionsScreenUiStates.Success -> {
-
-                    val data = (overriddenFlags.value as SuggestionsScreenUiStates.Success).data
-
+                is UiStates.Success -> {
+                    val data = (overriddenFlags.value as UiStates.Success).data
                     LazyColumn(
                         state = listState
                     ) {
@@ -176,18 +157,23 @@ fun SuggestionsScreen(
                         }
                         itemsIndexed(data.toList()) { index, item ->
                             SuggestedFlagItem(
-                                flagName = item.flagName,
-                                senderName = item.flagSender,
-                                flagValue = item.flagValue,
-                                flagOnCheckedChange = {
+                                flagName = item.flag.name,
+                                senderName = item.flag.author,
+                                flagValue = item.enabled,
+                                flagOnCheckedChange = { bool ->
                                     coroutineScope.launch {
                                         withContext(Dispatchers.IO) {
-                                            viewModel.updateFlagValue(it, index)
-                                            viewModel.overrideFlag(
-                                                packageName = item.phenotypePackageName,
-                                                name = item.phenotypeFlagName,
-                                                boolVal = if (it) "1" else "0"
-                                            )
+                                            viewModel.updateFlagValue(bool, index)
+                                            item.flag.flags.forEach { flag ->
+                                                viewModel.overrideFlag(
+                                                    packageName = item.flag.packageName,
+                                                    name = flag.tag,
+                                                    boolVal = if (flag.type == FlagType.BOOL) if (bool) flag.value else "0" else null, // TODO
+                                                    intVal = if (flag.type == FlagType.INTEGER) flag.value else null, // TODO
+                                                    floatVal = if (flag.type == FlagType.FLOAT) flag.value else null, // TODO
+                                                    stringVal = if (flag.type == FlagType.STRING) flag.value else null // TODO
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -199,11 +185,11 @@ fun SuggestionsScreen(
                     }
                 }
 
-                is SuggestionsScreenUiStates.Loading -> {
+                is UiStates.Loading -> {
                     LoadingProgressBar()
                 }
 
-                is SuggestionsScreenUiStates.Error -> {
+                is UiStates.Error -> {
                     ErrorLoadScreen()
                 }
             }

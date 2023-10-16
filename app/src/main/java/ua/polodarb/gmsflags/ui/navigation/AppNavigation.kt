@@ -42,15 +42,15 @@ sealed class NavBarItem(
         screenRoute = "saved"
     )
 
-    data object History : NavBarItem(
-        title = R.string.nav_bar_history,
-        iconActive = R.drawable.ic_navbar_history,
-        iconInactive = null,
-        screenRoute = "history"
-    )
+//    data object History : NavBarItem(
+//        title = R.string.nav_bar_history,
+//        iconActive = R.drawable.ic_navbar_history,
+//        iconInactive = null,
+//        screenRoute = "history"
+//    )
 }
 
-val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved, NavBarItem.History)
+val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved, /*NavBarItem.History*/)
 
 internal sealed class ScreensDestination(var screenRoute: String) {
 
@@ -131,15 +131,15 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 }
             )
         }
-        composable(route = NavBarItem.History.screenRoute) {
-            HistoryScreen(
-                onSettingsClick = {
-                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
-                }
-            )
-        }
+//        composable(route = NavBarItem.History.screenRoute) {
+//            HistoryScreen(
+//                onSettingsClick = {
+//                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+//                },
+//                onPackagesClick = {
+//                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+//                }
+//            )
+//        }
     }
 }
