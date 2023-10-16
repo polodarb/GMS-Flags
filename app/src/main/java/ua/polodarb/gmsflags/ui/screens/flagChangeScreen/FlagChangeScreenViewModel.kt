@@ -245,7 +245,10 @@ class FlagChangeScreenViewModel(
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is UiStates.Success -> {
-                            listBoolFiltered.putAll(uiStates.data)
+                            listBoolFiltered.putAll(uiStates.data.toSortedMap(
+                                compareByDescending<String> {
+                                    it.toIntOrNull() ?: 0
+                                }.thenBy { it }))
                             getBoolFlags()
                         }
 

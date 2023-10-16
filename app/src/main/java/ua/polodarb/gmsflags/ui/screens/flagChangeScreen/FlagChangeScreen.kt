@@ -489,10 +489,7 @@ fun FlagChangeScreen(
                         is UiStates.Success -> {
 
                             val listBool =
-                                (uiStateBoolean.value as UiStates.Success).data.toSortedMap(
-                                    compareByDescending<String> {
-                                        it.toIntOrNull() ?: 0
-                                    }.thenBy { it })
+                                (uiStateBoolean.value as UiStates.Success).data
 
 //                            if (listBool.isNotEmpty()) { // todo
 //                                val itemIndex = listBool.keys.indexOf(item)
@@ -656,25 +653,47 @@ fun FlagChangeScreen(
                 senderName.value = it
             },
             onSend = {
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:")
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                    putExtra(
-                        Intent.EXTRA_SUBJECT,
-                        "Flags suggestion by ${senderName.value}"
-                    )
-                    putExtra(
-                        Intent.EXTRA_TEXT,
-                        "Sender: ${senderName.value}\n\n" +
-                                "Package: ${packageName.toString()}\n\n" +
-                                "Description: \n${suggestFlagDesc.value}\n\n" +
-                                "Flags: \n${viewModel.selectedItems.joinToString("\n")}"
-                    )
+                when (uiStateBoolean.value) {
+                    is UiStates.Success -> {
+
+                        val listBool =
+                            (uiStateBoolean.value as UiStates.Success).data
+
+                        val selectedItemsWithValues =
+                            viewModel.selectedItems.mapNotNull { selectedItem ->
+                                val value = listBool[selectedItem]
+                                if (value != null) {
+                                    "$selectedItem: $value"
+                                } else {
+                                    null
+                                }
+                            }
+
+                        val flagsText = selectedItemsWithValues.joinToString("\n")
+
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                            putExtra(
+                                Intent.EXTRA_SUBJECT,
+                                "Flags suggestion by ${senderName.value}"
+                            )
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Sender: ${senderName.value}\n\n" +
+                                        "Package: ${packageName.toString()}\n\n" +
+                                        "Description: \n${suggestFlagDesc.value}\n\n" +
+                                        "Flags: \n${flagsText}"
+                            )
+                        }
+                        context.startActivity(intent)
+                        showSendSuggestDialog.value = false
+                        suggestFlagDesc.value = ""
+                        senderName.value = ""
+                    }
+
+                    else -> {}
                 }
-                context.startActivity(intent)
-                showSendSuggestDialog.value = false
-                suggestFlagDesc.value = ""
-                senderName.value = ""
             },
             onDismiss = {
                 showSendSuggestDialog.value = false
@@ -689,23 +708,45 @@ fun FlagChangeScreen(
                 reportFlagDesc.value = it
             },
             onSend = {
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:")
-                    putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                    putExtra(
-                        Intent.EXTRA_SUBJECT,
-                        "Problem report"
-                    )
-                    putExtra(
-                        Intent.EXTRA_TEXT,
-                        "Package: ${packageName.toString()}\n\n" +
-                                "Description: \n${reportFlagDesc.value}\n\n" +
-                                "Flags: \n${viewModel.selectedItems.joinToString("\n")}"
-                    )
+                when (uiStateBoolean.value) {
+                    is UiStates.Success -> {
+
+                        val listBool =
+                            (uiStateBoolean.value as UiStates.Success).data
+
+                        val selectedItemsWithValues =
+                            viewModel.selectedItems.mapNotNull { selectedItem ->
+                                val value = listBool[selectedItem]
+                                if (value != null) {
+                                    "$selectedItem: $value"
+                                } else {
+                                    null
+                                }
+                            }
+
+                        val flagsText = selectedItemsWithValues.joinToString("\n")
+
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                            putExtra(
+                                Intent.EXTRA_SUBJECT,
+                                "Problem report"
+                            )
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Package: ${packageName.toString()}\n\n" +
+                                        "Description: \n${reportFlagDesc.value}\n\n" +
+                                        "Flags: \n${flagsText}"
+                            )
+                        }
+                        context.startActivity(intent)
+                        showSendReportDialog.value = false
+                        reportFlagDesc.value = ""
+                    }
+
+                    else -> {}
                 }
-                context.startActivity(intent)
-                showSendReportDialog.value = false
-                reportFlagDesc.value = ""
             },
             onDismiss = {
                 showSendReportDialog.value = false
