@@ -100,23 +100,6 @@ fun SuggestionsScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        floatingActionButton = {
-            Box(
-                modifier = Modifier.offset(y = 12.dp)
-            ) {
-                ExtendedFloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show()
-                    },
-                    expanded = expandedFab,
-                    icon = { Icon(painterResource(id = R.drawable.ic_question), "") },
-                    text = { Text(text = "How can I suggest or report a flag?") },
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
         topBar = {
             LargeTopAppBar(
                 title = {
