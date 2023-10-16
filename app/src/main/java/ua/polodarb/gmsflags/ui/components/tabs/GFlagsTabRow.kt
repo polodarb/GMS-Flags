@@ -17,6 +17,7 @@ fun GFlagsTabRow(
     list: List<String>,
     tabState: Int,
     topBarState: TopAppBarState,
+    enabled: Boolean = true,
     onClick: (Int) -> Unit
 ) {
 
@@ -39,6 +40,7 @@ fun GFlagsTabRow(
                 tabState = tabState,
                 index = index,
                 tabTitle = title,
+                enabled = enabled,
                 onClick = {
                     onClick(index)
                 }

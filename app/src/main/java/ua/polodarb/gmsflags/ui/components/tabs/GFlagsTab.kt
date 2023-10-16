@@ -17,18 +17,12 @@ fun GFlagsTab(
     tabState: Int,
     index: Int,
     tabTitle: String,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     Tab(
         selected = selected,
         onClick = onClick,
-//            coroutineScope.launch {
-//                pagerState.scrollToPage(index)
-//            }
-//            if (index != 0) filterIconState = false
-//            tabFilterState = index == 0
-//            tabState = index
-//        },
         text = {
             Text(
                 text = tabTitle,
@@ -41,9 +35,11 @@ fun GFlagsTab(
                 }
             )
         },
+
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 8.dp)
             .height(36.dp)
-            .clip(MaterialTheme.shapes.extraLarge)
+            .clip(MaterialTheme.shapes.extraLarge),
+        enabled = enabled
     )
 }

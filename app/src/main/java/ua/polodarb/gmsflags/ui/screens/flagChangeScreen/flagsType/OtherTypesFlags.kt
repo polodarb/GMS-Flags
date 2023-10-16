@@ -147,14 +147,7 @@ fun OtherTypesFlagsScreen(
                                         showDialog
                                     )
                                 },
-                                onLongClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    Toast.makeText(
-                                        context,
-                                        "onLongClick",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                onLongClick = { }
                             )
                         }
                         item {

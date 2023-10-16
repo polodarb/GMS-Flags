@@ -114,7 +114,7 @@ fun BooleanFlagsScreen(
                             )
                         }
                         item {
-                            Spacer(modifier = Modifier.padding(12.dp))
+                            Spacer(modifier = Modifier.padding(56.dp))
                         }
                     }
                 } else {

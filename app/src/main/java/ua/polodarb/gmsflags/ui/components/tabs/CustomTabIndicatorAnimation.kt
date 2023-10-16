@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun CustomTabIndicatorAnimation(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+fun CustomTabIndicatorAnimation(tabPositions: List<TabPosition>, selectedTabIndex: Int, enabled: Boolean = true) {
     val transition = updateTransition(selectedTabIndex, label = "")
     val indicatorStart by transition.animateDp(
         transitionSpec = {

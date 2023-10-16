@@ -133,7 +133,7 @@ fun FlagChangeScreen(
 
 
     // Select states
-    var isInSelectionMode by remember {
+    var isInSelectionMode by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -344,18 +344,21 @@ fun FlagChangeScreen(
                         }
                     },
                 )
-                GFlagsTabRow(
-                    list = titles,
-                    tabState = tabState,
-                    topBarState = topBarState,
-                    onClick = { index ->
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(index)
+                AnimatedVisibility(visible = !isInSelectionMode) {
+                    GFlagsTabRow(
+                        list = titles,
+                        tabState = tabState,
+                        topBarState = topBarState,
+                        enabled = if (isInSelectionMode) false else true,
+                        onClick = { index ->
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(index)
+                            }
+                            tabFilterState = index == 0
+                            tabState = index
                         }
-                        tabFilterState = index == 0
-                        tabState = index
-                    }
-                )
+                    )
+                }
                 AnimatedVisibility(visible = filterIconState) {
                     GFlagFilterChipRow(
                         list = chipsList,
@@ -515,7 +518,7 @@ fun FlagChangeScreen(
 
         HorizontalPager(
             state = pagerState,
-            userScrollEnabled = true,
+            userScrollEnabled = if (isInSelectionMode) false else true,
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {
