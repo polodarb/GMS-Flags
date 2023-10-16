@@ -30,10 +30,10 @@ fun NavController.currentScreenAsState(): State<NavBarItem> {
                 destination.hierarchy.any { it.route == NavBarItem.Saved.screenRoute } -> {
                     selectedItem.value = NavBarItem.Saved
                 }
-
-                destination.hierarchy.any { it.route == NavBarItem.History.screenRoute } -> {
-                    selectedItem.value = NavBarItem.History
-                }
+//
+//                destination.hierarchy.any { it.route == NavBarItem.History.screenRoute } -> {
+//                    selectedItem.value = NavBarItem.History
+//                }
             }
         }
         addOnDestinationChangedListener(listener)
