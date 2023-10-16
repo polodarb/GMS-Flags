@@ -9,7 +9,7 @@
         "value": "1"
       }
     ],
-    "package": "test_pkg",
+    "package": "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
     "isArchive": false
   },
   {
