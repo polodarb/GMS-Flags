@@ -14,12 +14,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.dp
+import java.util.SortedMap
 
 object Extensions {
 
     fun String.toFormattedInt(): Int {
         val digits = this.filter { it.isDigit() }
         return digits.toIntOrNull() ?: 0
+    }
+
+    fun Map<String, String>.toSortMap(): SortedMap<String, String> {
+        return this.toSortedMap(
+            compareByDescending<String> {
+                it.toIntOrNull() ?: 0
+            }.thenBy { it })
     }
 
     fun Modifier.customTabIndicatorOffset(

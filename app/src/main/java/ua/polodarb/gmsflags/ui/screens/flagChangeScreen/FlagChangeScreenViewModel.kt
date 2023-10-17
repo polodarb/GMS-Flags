@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.core.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
@@ -245,10 +246,7 @@ class FlagChangeScreenViewModel(
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
                     when (uiStates) {
                         is UiStates.Success -> {
-                            listBoolFiltered.putAll(uiStates.data.toSortedMap(
-                                compareByDescending<String> {
-                                    it.toIntOrNull() ?: 0
-                                }.thenBy { it }))
+                            listBoolFiltered.putAll(uiStates.data)
                             getBoolFlags()
                         }
 

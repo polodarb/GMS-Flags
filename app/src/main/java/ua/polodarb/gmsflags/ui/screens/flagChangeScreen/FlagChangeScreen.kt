@@ -70,6 +70,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.core.Extensions.toSortMap
 import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
@@ -442,11 +443,14 @@ fun FlagChangeScreen(
                             )
                         }
                         IconButton(onClick = {
+
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
                             when (uiStateBoolean.value) {
                                 is UiStates.Success -> {
 
                                     val listBool =
-                                        (uiStateBoolean.value as UiStates.Success).data
+                                        (uiStateBoolean.value as UiStates.Success).data.toSortMap()
 
                                     val selectedItemsWithValues =
                                         viewModel.selectedItems.mapNotNull { selectedItem ->
@@ -527,7 +531,7 @@ fun FlagChangeScreen(
                         is UiStates.Success -> {
 
                             val listBool =
-                                (uiStateBoolean.value as UiStates.Success).data
+                                (uiStateBoolean.value as UiStates.Success).data.toSortMap()
 
 //                            if (listBool.isNotEmpty()) { // todo
 //                                val itemIndex = listBool.keys.indexOf(item)
@@ -695,7 +699,7 @@ fun FlagChangeScreen(
                     is UiStates.Success -> {
 
                         val listBool =
-                            (uiStateBoolean.value as UiStates.Success).data
+                            (uiStateBoolean.value as UiStates.Success).data.toSortMap()
 
                         val selectedItemsWithValues =
                             viewModel.selectedItems.mapNotNull { selectedItem ->
@@ -750,7 +754,7 @@ fun FlagChangeScreen(
                     is UiStates.Success -> {
 
                         val listBool =
-                            (uiStateBoolean.value as UiStates.Success).data
+                            (uiStateBoolean.value as UiStates.Success).data.toSortMap()
 
                         val selectedItemsWithValues =
                             viewModel.selectedItems.mapNotNull { selectedItem ->
