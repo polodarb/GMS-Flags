@@ -1,0 +1,82 @@
+[versions]
+activity = "1.8.0"
+agp = "8.1.2"
+androidJunit = "1.1.5"
+coil = "2.4.0"
+compose = "2023.10.00"
+composeCompiler = "1.5.3"
+composeMaterial3 = "1.2.0-alpha04"
+coreKtx = "1.12.0"
+coreSplashscreen = "1.0.1"
+datastore = "1.0.0"
+espresso = "3.5.1"
+firebase = "32.3.1"
+firebaseCrashlyticsPlugin = "2.9.9"
+firebasePerfPlugin = "1.4.2"
+gms = "4.4.0"
+junit = "4.13.2"
+koin = "3.5.0"
+kotlin = "1.9.10"
+ksp = "1.9.10-1.0.13"
+ktor = "2.3.5"
+libsu = "5.2.1"
+lifecycle = "2.6.2"
+material = "1.10.0"
+navigation = "2.7.4"
+room = "2.5.2"
+sqlite = "3.42.0"
+
+[libraries]
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+android-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidJunit" }
+coil-bom = { group = "io.coil-kt", name = "coil-bom", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-test-juni4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf-ktx" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+ktor-android = { group = "io.ktor", name = "ktor-client-android" }
+ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
+ktor-core = { group = "io.ktor", name = "ktor-client-core" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging" }
+ktor-negotation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
+ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
+libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
+libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
+libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
+requery-sqlite = { group = "com.github.requery", name = "sqlite-android", version.ref = "sqlite" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+
+# Dependencies of the included build-logic
+android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+firebase-crashlytics-gradle = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -2,13 +2,13 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.firebase-perf")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.gms)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -63,7 +63,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -73,68 +73,78 @@ android {
 }
 
 dependencies {
-
-    // Room Database
-    val roomVersion = "2.5.2"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-
-    // KTOR
-    val ktorVersion = "2.3.4"
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-android:$ktorVersion")
-    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
-    // Kotlin JSON Serialization
-    val serializationVersion = "1.5.1"
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
-
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-    // Koin for Android
-    implementation("io.insert-koin:koin-androidx-compose:3.4.5")
-
-    // libsu
-    implementation("com.github.topjohnwu.libsu:core:5.2.0")
-    implementation("com.github.topjohnwu.libsu:service:5.2.0")
-    implementation("com.github.topjohnwu.libsu:nio:5.2.0")
+    // Core
+    implementation(libs.core.ktx)
 
     // Splash Screen
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.core.splashscreen)
+
+    // Activity
+    implementation(libs.activity.compose)
+
+    // Lifecycle
+    implementation(libs.lifecycle.runtime)
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation(libs.navigation.compose)
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.datastore.preferences)
+
+    // Jetpack Compose
+    platform(libs.compose.bom).let { bom ->
+        implementation(bom)
+        androidTestImplementation(bom)
+        debugImplementation(bom)
+    }
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    androidTestImplementation(libs.compose.test.juni4)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.test.manifest)
+
+    // Material
+    implementation(libs.google.material)
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-perf-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.messaging)
 
-    implementation("com.github.requery:sqlite-android:3.42.0")
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.compose)
 
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.0")
-    implementation("androidx.compose.ui:ui:1.5.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
-    implementation("androidx.leanback:leanback:1.0.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.1")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.1")
+    // Ktor
+    implementation(platform(libs.ktor.bom))
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.android)
+    implementation(libs.ktor.negotation)
+    implementation(libs.ktor.serialization.json)
+    implementation(libs.ktor.logging)
+
+    // SQLite
+    implementation(libs.requery.sqlite)
+
+    // libsu
+    implementation(libs.libsu.core)
+    implementation(libs.libsu.service)
+    implementation(libs.libsu.nio)
+
+    // Room Database
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+
+    // Coil
+    implementation(platform(libs.coil.bom))
+    implementation(libs.coil.compose)
+
+    // Tests
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.android.junit)
+    androidTestImplementation(libs.espresso.core)
 }
