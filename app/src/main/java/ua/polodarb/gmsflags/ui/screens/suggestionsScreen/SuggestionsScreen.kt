@@ -163,6 +163,7 @@ fun SuggestionsScreen(
                 is UiStates.Success -> {
                     val data = (overriddenFlags.value as UiStates.Success).data
                     LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
                         state = listState
                     ) {
                         item {
@@ -227,7 +228,7 @@ fun SuggestionsScreen(
                                 showResetDialog = false
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-
+                                viewModel.getAllOverriddenBoolFlags()
                             }
 
                         }

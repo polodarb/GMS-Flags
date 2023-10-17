@@ -8,18 +8,14 @@ class MergeOverriddenFlagsInteractor(
     private val context: Context
 ) {
 
-    private val gmsApplication = context as GMSApplication
+    private val gmsApplication = (context as GMSApplication)
 
     fun getMergedOverriddenFlagsByPackage(pkg: String): MergedOverriddenFlag {
+
         val boolFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(pkg)
         val intFlags = gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(pkg)
         val floatFlags = gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(pkg)
         val stringFlags = gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(pkg)
-
-        Log.e("repo", "bool: $boolFlags")
-        Log.e("repo", "int: $intFlags")
-        Log.e("repo", "float: $floatFlags")
-        Log.e("repo", "string: $stringFlags")
 
         return (
                 MergedOverriddenFlag(

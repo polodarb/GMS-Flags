@@ -34,6 +34,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.changeNavigation.ChangeNavigationScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
 
@@ -146,10 +147,13 @@ internal fun RootAppNavigation(
                 onResetSavedClick = {
                     navController.navigate(ScreensDestination.SettingsResetSaved.screenRoute)
                 },
+                onChangeNavigationClick = {
+                    navController.navigate(ScreensDestination.SettingsChangeNavigation.screenRoute)
+                },
                 onAboutClick = {
                     navController.navigate(ScreensDestination.SettingsAbout.screenRoute)
                 }
-            ) // TODO: Implement SettingsScreen
+            )
         }
 
         // Settings - Reset Flags
@@ -170,6 +174,17 @@ internal fun RootAppNavigation(
             exitTransition = { exitAnim(toLeft = false) },
         ) {
             ResetSavedScreen(
+                onBackPressed = navController::navigateUp
+            )
+        }
+
+        // Settings - Change Navigation
+        composable(
+            route = ScreensDestination.SettingsChangeNavigation.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = false) },
+        ) {
+            ChangeNavigationScreen(
                 onBackPressed = navController::navigateUp
             )
         }

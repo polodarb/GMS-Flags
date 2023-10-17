@@ -134,10 +134,13 @@ fun SettingsResetFlagsHeader() {
                 .background(MaterialTheme.colorScheme.surfaceContainer),
             contentAlignment = Alignment.Center
         ) {
-            AsyncImage(
-                model =  R.drawable.img_settings_reset_saved,
+            Icon(
+                painter = painterResource(id = R.drawable.ic_reset_saved),
                 contentDescription = null,
-                modifier = Modifier.padding(24.dp)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(36.dp)
+                    .size(112.dp)
             )
         }
         Image(

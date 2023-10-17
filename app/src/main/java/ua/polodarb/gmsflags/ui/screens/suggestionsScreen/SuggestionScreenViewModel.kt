@@ -91,7 +91,6 @@ class SuggestionScreenViewModel(
                                 overriddenFlags[pkg] = interactor.getMergedOverriddenFlagsByPackage(pkg)
                             }
                         }
-                        Log.e("flags", overriddenFlags.toString())
                         _stateSuggestionsFlags.value = UiStates.Success(rawSuggestedFlag.map { flag ->
                             SuggestedFlag(
                                 flag = flag,
