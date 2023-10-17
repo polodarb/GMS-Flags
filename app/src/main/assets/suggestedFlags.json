@@ -1,4 +1,16 @@
-[
+[  {
+    "name": "Floating navigation bar in Google Photos",
+    "author": "Nail Sadykov",
+    "flags": [
+      {
+        "tag": "45415956",
+        "type": "int",
+        "value": "1"
+      }
+    ],
+    "package": "https://com.google.android.apps.photos",
+    "isArchive": false
+  },
   {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",
