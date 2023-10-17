@@ -18,9 +18,12 @@ import kotlinx.serialization.json.Json
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
+import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
+import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
+import ua.polodarb.gmsflags.data.repo.interactors.MergedOverriddenFlag
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 
@@ -30,7 +33,8 @@ class SuggestionScreenViewModel(
     private val application: Application,
     private val repository: GmsDBRepository,
     private val appsRepository: AppsListRepository,
-    private val flagsApiService: FlagsApiService
+    private val flagsApiService: FlagsApiService,
+    private val interactor: MergeOverriddenFlagsInteractor
 ) : ViewModel() {
     private val gmsApplication = application as GMSApplication
 
@@ -71,9 +75,8 @@ class SuggestionScreenViewModel(
         usersList.addAll(repository.getUsers())
     }
 
-    private var overriddenFlags = mutableMapOf<String, Map<String, String>>()
+    private var overriddenFlags = mutableMapOf<String, MergedOverriddenFlag>()
 
-    // TODO
     fun getAllOverriddenBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -85,19 +88,18 @@ class SuggestionScreenViewModel(
                         overriddenFlags = mutableMapOf()
                         rawSuggestedFlag.map { it.packageName }.forEach { pkg ->
                             if (overriddenFlags[pkg] == null) {
-                                // TODO
-                                overriddenFlags[pkg] =
-                                    ((repository.getOverriddenBoolFlagsByPackage(pkg) as? UiStates.Success<Map<String, String>>)?.data ?: emptyMap())
-//                                            ((repository.getOverriddenIntFlagsByPackage(pkg) as? UiStates.Success<Map<String, String>>)?.data ?: emptyMap()) +
-//                                            ((repository.getOverriddenFloatFlagsByPackage(pkg) as? UiStates.Success<Map<String, String>>)?.data ?: emptyMap()) +
-//                                            ((repository.getOverriddenStringFlagsByPackage(pkg) as? UiStates.Success<Map<String, String>>)?.data ?: emptyMap())
+                                overriddenFlags[pkg] = interactor.getMergedOverriddenFlagsByPackage(pkg)
                             }
                         }
+                        Log.e("flags", overriddenFlags.toString())
                         _stateSuggestionsFlags.value = UiStates.Success(rawSuggestedFlag.map { flag ->
                             SuggestedFlag(
                                 flag = flag,
                                 enabled = flag.flags.firstOrNull {
-                                    overriddenFlags[flag.packageName]?.get(it.tag) != it.value
+                                    overriddenFlags[flag.packageName]?.boolFlag?.get(it.tag) != it.value &&
+                                    overriddenFlags[flag.packageName]?.intFlag?.get(it.tag) != it.value &&
+                                    overriddenFlags[flag.packageName]?.floatFlag?.get(it.tag) != it.value &&
+                                    overriddenFlags[flag.packageName]?.stringFlag?.get(it.tag) != it.value
                                 } == null
                             )
                         })
@@ -147,7 +149,7 @@ class SuggestionScreenViewModel(
         committed: Int = 0
     ) {
         initUsers()
-        repository.deleteRowByFlagName(packageName, name,)
+        repository.deleteRowByFlagName(packageName, name)
         repository.overrideFlag(
             packageName = packageName,
             user = "",
@@ -175,6 +177,16 @@ class SuggestionScreenViewModel(
             )
         }
         clearPhenotypeCache(packageName)
+    }
+
+    fun resetSuggestedFlagValue(packageName: String, flags: List<FlagInfo>) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                flags.forEach {
+                    repository.deleteRowByFlagName(packageName, it.tag)
+                }
+            }
+        }
     }
 
 }

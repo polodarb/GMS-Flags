@@ -62,6 +62,15 @@ class RootDatabase : RootService() {
             override fun getAllOverriddenBoolFlags(): Map<String?, String?> =
                 this@RootDatabase.getAllOverriddenBoolFlags()
 
+            override fun getAllOverriddenIntFlags(): Map<String?, String?> =
+                this@RootDatabase.getAllOverriddenIntFlags()
+
+            override fun getAllOverriddenFloatFlags(): Map<String?, String?> =
+                this@RootDatabase.getAllOverriddenFloatFlags()
+
+            override fun getAllOverriddenStringFlags(): Map<String?, String?> =
+                this@RootDatabase.getAllOverriddenStringFlags()
+
             override fun androidPackage(pkgName: String): String =
                 this@RootDatabase.androidPackage(pkgName)
 
@@ -464,6 +473,84 @@ class RootDatabase : RootService() {
             "SELECT DISTINCT name, boolVal\n" +
                     "FROM FlagOverrides\n" +
                     "WHERE name IS NOT NULL AND boolVal IS NOT NULL;\n",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    fun getAllOverriddenIntFlags(): Map<String?, String?> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT DISTINCT name, intVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND intVal IS NOT NULL;\n",
+            null
+        )
+        val list = mutableMapOf<String?, String?>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, intVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND intVal IS NOT NULL;\n",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    fun getAllOverriddenFloatFlags(): Map<String?, String?> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT DISTINCT name, floatVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND floatVal IS NOT NULL;\n",
+            null
+        )
+        val list = mutableMapOf<String?, String?>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, floatVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND floatVal IS NOT NULL;\n",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    fun getAllOverriddenStringFlags(): Map<String?, String?> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT DISTINCT name, stringVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND stringVal IS NOT NULL;\n",
+            null
+        )
+        val list = mutableMapOf<String?, String?>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, stringVal\n" +
+                    "FROM FlagOverrides\n" +
+                    "WHERE name IS NOT NULL AND stringVal IS NOT NULL;\n",
             null
         )
         while (cursorVending.moveToNext()) {

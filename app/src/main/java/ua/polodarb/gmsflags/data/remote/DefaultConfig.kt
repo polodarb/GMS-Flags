@@ -21,7 +21,7 @@ private fun Logging.Config.setConfig(tag: String) {
     this.level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
     this.logger = object: Logger {
         override fun log(message: String) {
-            Log.e(tag, message)
+//            Log.e(tag, message)
         }
     }
 }

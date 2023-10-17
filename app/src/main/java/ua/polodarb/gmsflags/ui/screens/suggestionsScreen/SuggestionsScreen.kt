@@ -5,8 +5,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,10 +68,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.dialog.ResetFlagToDefaultDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,6 +101,14 @@ fun SuggestionsScreen(
     LaunchedEffect(Unit) {
         viewModel.getAllOverriddenBoolFlags()
     }
+
+    var showResetDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    // Reset Flags list
+    var resetFlagsList: MutableList<FlagInfo> = mutableListOf()
+    var resetFlagPackage = ""
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -165,19 +178,58 @@ fun SuggestionsScreen(
                                         withContext(Dispatchers.IO) {
                                             viewModel.updateFlagValue(bool, index)
                                             item.flag.flags.forEach { flag ->
-                                                viewModel.overrideFlag(
-                                                    packageName = item.flag.packageName,
-                                                    name = flag.tag,
-                                                    boolVal = if (flag.type == FlagType.BOOL) if (bool) flag.value else "0" else null, // TODO
-                                                    intVal = if (flag.type == FlagType.INTEGER) flag.value else null, // TODO
-                                                    floatVal = if (flag.type == FlagType.FLOAT) flag.value else null, // TODO
-                                                    stringVal = if (flag.type == FlagType.STRING) flag.value else null // TODO
-                                                )
+                                                when (flag.type) {
+                                                    FlagType.BOOL -> {
+                                                        viewModel.overrideFlag(
+                                                            packageName = item.flag.packageName,
+                                                            name = flag.tag,
+                                                            boolVal = if (bool) flag.value else "0"
+                                                        )
+                                                    }
+                                                    FlagType.INTEGER -> {
+                                                        viewModel.overrideFlag(
+                                                            packageName = item.flag.packageName,
+                                                            name = flag.tag,
+                                                            intVal = if (bool) flag.value else "0"
+                                                        )
+                                                    }
+                                                    FlagType.FLOAT -> {
+                                                        viewModel.overrideFlag(
+                                                            packageName = item.flag.packageName,
+                                                            name = flag.tag,
+                                                            floatVal = if (bool) flag.value else "0"
+                                                        )
+                                                    }
+                                                    FlagType.STRING -> {
+                                                        viewModel.overrideFlag(
+                                                            packageName = item.flag.packageName,
+                                                            name = flag.tag,
+                                                            stringVal = if (bool) flag.value else ""
+                                                        )
+                                                    }
+                                                }
                                             }
                                         }
                                     }
+                                },
+                                onFlagLongClick = {
+                                    resetFlagPackage = item.flag.packageName
+                                    resetFlagsList.addAll(item.flag.flags)
+                                    showResetDialog = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                                    Toast.makeText(context, "${item.flag.flags}", Toast.LENGTH_SHORT).show()
                                 }
                             )
+                            ResetFlagToDefaultDialog(
+                                showDialog = showResetDialog,
+                                onDismiss = { showResetDialog = false }
+                            ) {
+                                showResetDialog = false
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+
+                            }
+
                         }
                         item {
                             Spacer(modifier = Modifier.padding(44.dp))
@@ -201,12 +253,14 @@ fun SuggestionsScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SuggestedFlagItem(
     flagName: String,
     senderName: String,
     flagValue: Boolean,
-    flagOnCheckedChange: (Boolean) -> Unit
+    flagOnCheckedChange: (Boolean) -> Unit,
+    onFlagLongClick: () -> Unit
 ) {
     ListItem(
         headlineContent = { Text(flagName) },
@@ -222,6 +276,10 @@ fun SuggestedFlagItem(
                 )
             }
         },
+        modifier = Modifier.combinedClickable (
+            onClick = {},
+            onLongClick = onFlagLongClick
+        )
     )
 }
 
