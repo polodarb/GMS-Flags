@@ -147,7 +147,7 @@ fun SettingsResetFlagsHeader() {
             imageVector = Icons.Outlined.Info,
             contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(start = 24.dp, bottom = 12.dp, top = 24.dp)
+            modifier = Modifier.padding(start = 24.dp, bottom = 12.dp)
         )
         Text(
             text = "In this section you can reset all packages and flags on the \"Saved\" screen that you have saved before.",

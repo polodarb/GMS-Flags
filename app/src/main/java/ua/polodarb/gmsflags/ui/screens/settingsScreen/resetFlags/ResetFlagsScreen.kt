@@ -147,7 +147,7 @@ fun SettingsResetFlagsHeader() {
             imageVector = Icons.Outlined.Info,
             contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(start = 24.dp, bottom = 12.dp, top = 24.dp)
+            modifier = Modifier.padding(start = 24.dp, bottom = 12.dp)
         )
         Text(
             text = "Restore default settings and clears any user-customized (overridden) flags or preferences within the application, providing a clean slate for configuration.",
