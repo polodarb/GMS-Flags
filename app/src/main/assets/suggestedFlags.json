@@ -1,4 +1,70 @@
-[
+[  
+  {
+    "name": "Memories tab with a new UI in Google Photos",
+    "author": "Danyil Kobzar",
+    "flags": [
+      {
+        "tag": "45386363",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45366356",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45414358",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45411123",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45401668",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45401669",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45411122",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45417430",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45412949",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.photos",
+    "isArchive": false
+  },
+  {
+    "name": "Floating NavBar in Google Photos",
+    "author": "Nail Sadykov",
+    "flags": [
+      {
+        "tag": "45415956",
+        "type": "int",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.photos",
+    "isArchive": false
+  },
   {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",

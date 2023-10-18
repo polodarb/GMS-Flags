@@ -48,7 +48,8 @@ class GMSApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        ExceptionHandler.initialize(this, CrashActivity::class.java)
+        if (!BuildConfig.DEBUG)
+            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         DynamicColors.applyToActivitiesIfAvailable(this)
 

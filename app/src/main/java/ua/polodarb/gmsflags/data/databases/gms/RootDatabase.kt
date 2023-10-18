@@ -3,9 +3,7 @@ package ua.polodarb.gmsflags.data.databases.gms
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteException
 import android.os.IBinder
-import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
@@ -13,7 +11,6 @@ import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
 import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
-import ua.polodarb.gmsflags.core.Constants.TAG
 
 @SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
@@ -22,13 +19,8 @@ class RootDatabase : RootService() {
     private lateinit var vendingDB: SQLiteDatabase
 
     override fun onBind(intent: Intent): IBinder {
-        try {
-            gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
-            vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
-        } catch (e: SQLiteException) {
-            // TODO: Handle exception
-            Log.wtf(TAG, e.message)
-        }
+        gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
+        vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
         return object : IRootDatabase.Stub() {
 
             override fun getGmsPackages(): Map<String, String> = this@RootDatabase.getGmsPackages()
