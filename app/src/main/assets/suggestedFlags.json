@@ -66,6 +66,19 @@
     "isArchive": false
   },
   {
+    "name": "New play store app page header",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Fougasse__enable_multicolumn_dp",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
     "name": "Google Search Suggestions new design",
     "author": "Nail Sadykov",
     "flags": [

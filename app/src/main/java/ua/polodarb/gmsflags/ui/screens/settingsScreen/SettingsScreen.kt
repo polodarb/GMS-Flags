@@ -92,7 +92,7 @@ fun SettingsScreen(
             Column {
                 SettingsItem(R.drawable.ic_reset_flags, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
                 SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", onResetSavedClick)
-                SettingsItem(R.drawable.ic_change_navigation, "Change the start screen", "Select from which screen the app will start", onChangeNavigationClick)
+                SettingsItem(R.drawable.ic_home, "Change the start screen", "Select from which screen the app will start", onChangeNavigationClick)
                 SettingsItem(R.drawable.ic_info, "About & support", "Useful information and resources", onAboutClick)
             }
         }

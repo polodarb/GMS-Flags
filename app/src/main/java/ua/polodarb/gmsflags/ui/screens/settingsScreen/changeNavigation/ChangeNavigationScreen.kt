@@ -151,7 +151,7 @@ fun SettingsNavigationFlagsHeader() {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_change_navigation),
+                painter = painterResource(id = R.drawable.ic_home),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier

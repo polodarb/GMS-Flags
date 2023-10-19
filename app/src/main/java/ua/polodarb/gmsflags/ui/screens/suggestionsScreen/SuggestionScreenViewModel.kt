@@ -47,6 +47,7 @@ class SuggestionScreenViewModel(
     private var rawSuggestedFlag = emptyList<SuggestedFlagInfo>()
 
     init {
+        initUsers()
         getAllOverriddenBoolFlags()
         initGmsPackages()
     }
@@ -162,35 +163,38 @@ class SuggestionScreenViewModel(
         extensionVal: String? = null,
         committed: Int = 0
     ) {
-        initUsers()
-        repository.deleteRowByFlagName(packageName, name)
-        repository.overrideFlag(
-            packageName = packageName,
-            user = "",
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed
-        )
-        for (i in usersList) {
-            repository.overrideFlag(
-                packageName = packageName,
-                user = i,
-                name = name,
-                flagType = flagType,
-                intVal = intVal,
-                boolVal = boolVal,
-                floatVal = floatVal,
-                stringVal = stringVal,
-                extensionVal = extensionVal,
-                committed = committed
-            )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteRowByFlagName(packageName, name)
+                repository.overrideFlag(
+                    packageName = packageName,
+                    user = "",
+                    name = name,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed
+                )
+                for (i in usersList) {
+                    repository.overrideFlag(
+                        packageName = packageName,
+                        user = i,
+                        name = name,
+                        flagType = flagType,
+                        intVal = intVal,
+                        boolVal = boolVal,
+                        floatVal = floatVal,
+                        stringVal = stringVal,
+                        extensionVal = extensionVal,
+                        committed = committed
+                    )
+                }
+                clearPhenotypeCache(packageName)
+            }
         }
-        clearPhenotypeCache(packageName)
     }
 
     fun resetSuggestedFlagValue(packageName: String, flags: List<FlagInfo>) {

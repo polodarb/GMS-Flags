@@ -38,6 +38,8 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -64,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
@@ -109,6 +112,15 @@ fun SuggestionsScreen(
     // Reset Flags list
     var resetFlagsList: MutableList<FlagInfo> = mutableListOf()
     var resetFlagPackage = ""
+
+    var suggestedItemSwitchEnabled by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(suggestedItemSwitchEnabled) {
+        delay(3000)
+        suggestedItemSwitchEnabled = true
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -179,6 +191,7 @@ fun SuggestionsScreen(
                                         withContext(Dispatchers.IO) {
                                             viewModel.updateFlagValue(bool, index)
                                             item.flag.flags.forEach { flag ->
+                                                suggestedItemSwitchEnabled = false
                                                 when (flag.type) {
                                                     FlagType.BOOL -> {
                                                         viewModel.overrideFlag(
@@ -272,8 +285,7 @@ fun SuggestedFlagItem(
                     checked = flagValue,
                     onCheckedChange = {
                         flagOnCheckedChange(it)
-                    },
-                    enabled = true
+                    }
                 )
             }
         },
