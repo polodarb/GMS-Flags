@@ -2,6 +2,7 @@ package ua.polodarb.gmsflags.data.repo.interactors
 
 import android.content.Context
 import android.util.Log
+import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 
 class MergeOverriddenFlagsInteractor(
@@ -12,21 +13,24 @@ class MergeOverriddenFlagsInteractor(
 
     fun getMergedOverriddenFlagsByPackage(pkg: String): MergedOverriddenFlag {
 
-        val boolFlags = gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(pkg)
-        val intFlags = gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(pkg)
-        val floatFlags = gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(pkg)
-        val stringFlags = gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(pkg)
+                val boolFlags =
+                    gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(pkg)
+                val intFlags = gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(pkg)
+                val floatFlags =
+                    gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(pkg)
+                val stringFlags =
+                    gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(pkg)
 
-        return (
-                MergedOverriddenFlag(
-                    boolFlag = boolFlags,
-                    intFlag = intFlags,
-                    floatFlag = floatFlags,
-                    stringFlag = stringFlags
+                return(
+                    MergedOverriddenFlag(
+                        boolFlag = boolFlags,
+                        intFlag = intFlags,
+                        floatFlag = floatFlags,
+                        stringFlag = stringFlags
+                    )
                 )
-        )
-    }
 
+    }
 }
 
 data class MergedOverriddenFlag(
