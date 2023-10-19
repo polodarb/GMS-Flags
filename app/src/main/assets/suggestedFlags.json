@@ -713,7 +713,7 @@
         "value": "1"
       }
     ],
-    "package": "com.google.android.gm#gmail_android.device",
+    "package": "gmail_android.device#com.google.android.gm",
     "isArchive": false
   },
   {
