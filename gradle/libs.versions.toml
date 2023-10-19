@@ -14,6 +14,7 @@ firebase = "32.3.1"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 gms = "4.4.0"
+hilt = "2.44"
 junit = "4.13.2"
 koin = "3.5.0"
 kotlin = "1.9.10"
@@ -48,6 +49,8 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf-ktx" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
@@ -77,6 +80,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

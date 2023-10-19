@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -118,6 +120,10 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.compose)
 
+    // Hilt DI
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
     // Ktor
     implementation(platform(libs.ktor.bom))
     implementation(libs.ktor.core)
@@ -147,4 +153,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
+}
+
+kapt {
+    correctErrorTypes = true
 }
