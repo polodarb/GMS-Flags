@@ -118,7 +118,13 @@ class GmsDBRepository(
         }
     }
 
-    fun getUsers(): MutableList<String> = gmsApplication.getRootDatabase().users
+    fun getUsers() = flow<MutableList<String>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                emit(gmsApplication.getRootDatabase().users)
+            }
+        }
+    }
 
     fun androidPackage(pkgName: String): String {
         val usersList = gmsApplication.getRootDatabase().androidPackage(pkgName)

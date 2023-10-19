@@ -209,7 +209,13 @@ class FlagChangeScreenViewModel(
     private val listStringFiltered: MutableMap<String, String> = mutableMapOf()
 
     init {
-        usersList.addAll(repository.getUsers())
+        viewModelScope.launch() {
+            withContext(Dispatchers.IO) {
+                repository.getUsers().collect {
+                    usersList.addAll(it)
+                }
+            }
+        }
         getAllSavedFlags()
         initBoolValues()
         initIntValues()

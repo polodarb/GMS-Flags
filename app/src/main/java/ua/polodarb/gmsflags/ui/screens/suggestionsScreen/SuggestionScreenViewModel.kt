@@ -73,7 +73,13 @@ class SuggestionScreenViewModel(
 
     private fun initUsers() {
         usersList.clear()
-        usersList.addAll(repository.getUsers())
+        viewModelScope.launch() {
+            withContext(Dispatchers.IO) {
+                repository.getUsers().collect {
+                    usersList.addAll(it)
+                }
+            }
+        }
     }
 
     private var overriddenFlags = mutableMapOf<String, MergedOverriddenFlag>()
@@ -89,7 +95,7 @@ class SuggestionScreenViewModel(
                         overriddenFlags = mutableMapOf()
                         rawSuggestedFlag.map { it.packageName }.forEach { pkg ->
                             if (overriddenFlags[pkg] == null) {
-                                overriddenFlags[pkg] = interactor.getMergedOverriddenFlagsByPackage(pkg)
+                                    overriddenFlags[pkg] = interactor.getMergedOverriddenFlagsByPackage(pkg)
                             }
                         }
                         _stateSuggestionsFlags.value = UiStates.Success(rawSuggestedFlag.map { flag ->
