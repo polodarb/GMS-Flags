@@ -193,19 +193,6 @@
     "isArchive": false
   },
   {
-    "name": "Play Store: Disable Ads",
-    "author": "GApps Flags & Leaks",
-    "flags": [
-      {
-        "tag": "RetailMode__is_force_enabled",
-        "type": "bool",
-        "value": "1"
-      }
-    ],
-    "package": "com.google.android.finsky.regular",
-    "isArchive": false
-  },
-  {
     "name": "Google Message: Enable new branding header",
     "author": "GApps Flags & Leaks",
     "flags": [
@@ -373,7 +360,7 @@
     "author": "GApps Flags & Leaks",
     "flags": [
       {
-        "tag": "DetailsPagePrimaryNav__enable_bottomnav_on_ details_page",
+        "tag": "DetailsPagePrimaryNav__enable_bottomnav_on_details_page",
         "type": "bool",
         "value": "1"
       }
@@ -430,7 +417,7 @@
         "value": "1"
       },
       {
-        "tag": "Guard__gm3_custom_colors_ with_tokens_replacement_enabled",
+        "tag": "Guard__gm3_custom_colors_with_tokens_replacement_enabled",
         "type": "bool",
         "value": "1"
       },
@@ -815,6 +802,24 @@
       }
     ],
     "package": "com.google.android.gms.credential_manager#com.google.android.gms",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable Pass and Smart Health QR Code Scan A13+",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "PlatformQuickScannerFeature__enable_boarding_pass_qr_handling",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "PlatformQuickScannerFeature__enable_shc_qr_handling",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.vision#com.google.android.gms",
     "isArchive": false
   }
 ]
