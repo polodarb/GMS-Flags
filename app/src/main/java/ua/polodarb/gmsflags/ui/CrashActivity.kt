@@ -69,7 +69,11 @@ class CrashActivity : ComponentActivity() {
                                 )
                                 putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
                             }
-                            startActivity(intent)
+                            if (intent.resolveActivity(getPackageManager()) != null) {
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(this, "No app to send email. Please install at least one", Toast.LENGTH_SHORT).show();
+                            }
                         } catch (_: ActivityNotFoundException) {
                             Toast.makeText(
                                 this,

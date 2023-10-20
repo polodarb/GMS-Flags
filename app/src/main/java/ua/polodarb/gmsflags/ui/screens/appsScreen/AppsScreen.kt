@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
@@ -73,6 +74,9 @@ fun AppsScreen(
     onPackageItemClick: (packageName: String) -> Unit,
 ) {
 
+    // Keyboard
+    val focusRequester = remember { FocusRequester() }
+
     val viewModel = koinViewModel<AppsScreenViewModel>()
     val uiState = viewModel.state.collectAsState()
     val dialogPackageText = viewModel.dialogPackage.collectAsState()
@@ -84,9 +88,6 @@ fun AppsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
-
-    // Keyboard
-    val focusRequester = remember { FocusRequester() }
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)
@@ -174,10 +175,10 @@ fun AppsScreen(
         Column(
             modifier = Modifier.padding(top = it.calculateTopPadding())
         ) {
-            when (uiState.value) {
+            when (val result = uiState.value) {
                 is UiStates.Success -> {
 
-                    val appsList = (uiState.value as UiStates.Success).data
+                    val appsList = result.data
 
                     if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
 
@@ -204,21 +205,16 @@ fun AppsScreen(
                         }
                     }
 
-                    when (dialogDataState.value) {
+                    when (val dialogResult = dialogDataState.value) {
                         is UiStates.Success -> {
-
-                            val dialogPackagesList =
-                                (dialogDataState.value as UiStates.Success).data.toMutableList()
-
                             AppsScreenDialog(
                                 showDialog.value,
                                 onDismiss = {
                                     showDialog.value = false
                                     viewModel.setEmptyList()
-                                    dialogPackagesList.clear()
                                 },
                                 pkgName = dialogPackageText.value,
-                                list = dialogPackagesList.toList(),
+                                list = dialogResult.data,
                                 onPackageClick = {
                                     onPackageItemClick(it)
                                     showDialog.value = false

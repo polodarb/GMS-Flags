@@ -90,16 +90,8 @@ fun SuggestionsScreen(
     val overriddenFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
-
-    val listState = rememberLazyListState()
-    val expandedFab by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 1 || listState.firstVisibleItemIndex == 0
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.getAllOverriddenBoolFlags()
@@ -112,15 +104,6 @@ fun SuggestionsScreen(
     // Reset Flags list
     var resetFlagsList: MutableList<FlagInfo> = mutableListOf()
     var resetFlagPackage = ""
-
-    var suggestedItemSwitchEnabled by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(suggestedItemSwitchEnabled) {
-        delay(3000)
-        suggestedItemSwitchEnabled = true
-    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -171,17 +154,16 @@ fun SuggestionsScreen(
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
-            when (overriddenFlags.value) {
+            when (val result = overriddenFlags.value) {
                 is UiStates.Success -> {
-                    val data = (overriddenFlags.value as UiStates.Success).data
+                    val data = result.data
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = listState
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         item {
                             WarningBanner(isFirstStart)
                         }
-                        itemsIndexed(data.toList()) { index, item ->
+                        itemsIndexed(data) { index, item ->
                             SuggestedFlagItem(
                                 flagName = item.flag.name,
                                 senderName = item.flag.author,
@@ -191,7 +173,6 @@ fun SuggestionsScreen(
                                         withContext(Dispatchers.IO) {
                                             viewModel.updateFlagValue(bool, index)
                                             item.flag.flags.forEach { flag ->
-                                                suggestedItemSwitchEnabled = false
                                                 when (flag.type) {
                                                     FlagType.BOOL -> {
                                                         viewModel.overrideFlag(
@@ -231,7 +212,6 @@ fun SuggestionsScreen(
                                     resetFlagsList.addAll(item.flag.flags)
                                     showResetDialog = true
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                                    Toast.makeText(context, "${item.flag.flags}", Toast.LENGTH_SHORT).show()
                                 }
                             )
                             ResetFlagToDefaultDialog(
@@ -260,10 +240,6 @@ fun SuggestionsScreen(
                 }
             }
         }
-//        FlagReportDialog(
-//            showDialog.value,
-//            onDismiss = { showDialog.value = false }
-//        )
     }
 }
 

@@ -22,8 +22,6 @@ class AppsListRepository(
                 val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
                 val pm = context.packageManager
 
-                val finskyPackages = gmsPackages.filter { it.contains("finsky") }
-
                 val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     pm.getInstalledApplications(
                         PackageManager.ApplicationInfoFlags.of(

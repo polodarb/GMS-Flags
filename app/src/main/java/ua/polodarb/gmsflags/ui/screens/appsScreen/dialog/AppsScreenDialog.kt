@@ -49,7 +49,6 @@ fun AppsScreenDialog(
 ) {
 
     val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
     var searchQuery = rememberSaveable {
@@ -140,7 +139,7 @@ fun DialogPackagesList(
     if (checkAppsListSeparation(allPackages, pkgName) && allPackages.size != 1) {
         DialogListWithSeparator(allPackages, pkgName, onPackageClick)
     } else {
-        DialogListWithoutSeparator(allPackages, pkgName, onPackageClick)
+        DialogListWithoutSeparator(allPackages, onPackageClick)
     }
 }
 
@@ -216,7 +215,6 @@ fun SeparatorText(text: String) {
 @Composable
 fun DialogListWithoutSeparator(
     packagesList: List<String>,
-    pkgName: String,
     onPackageClick: (packageName: String) -> Unit,
 ) {
     LazyColumn(

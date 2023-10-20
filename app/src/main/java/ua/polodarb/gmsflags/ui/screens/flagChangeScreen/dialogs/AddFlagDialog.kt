@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun AddFlagDialog(
@@ -41,8 +43,8 @@ fun AddFlagDialog(
     onDismiss: () -> Unit
 ) {
 
-    val rowTypes = listOf("Boolean", "Integer", "Float", "String")
-    val chipsBooleanSelect = listOf("True", "False")
+    val rowTypes = persistentListOf("Boolean", "Integer", "Float", "String")
+    val chipsBooleanSelect = persistentListOf("True", "False")
 
     val haptic = LocalHapticFeedback.current
 
