@@ -183,7 +183,7 @@ fun SettingsAboutListInfo(
     haptic: HapticFeedback
 ) {
     Column(
-        modifier = Modifier.padding(top = 36.dp, start = 8.dp)
+        modifier = Modifier.fillMaxWidth().padding(top = 36.dp)
     ) {
         ListItem(
             headlineContent = {
@@ -203,7 +203,7 @@ fun SettingsAboutListInfo(
             modifier = Modifier.clickable {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onDeveloperClick()
-            }
+            }.padding(start = 8.dp)
         )
         ListItem(
             headlineContent = {
@@ -222,7 +222,7 @@ fun SettingsAboutListInfo(
             modifier = Modifier.clickable {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onGitHubClick()
-            }
+            }.padding(start = 8.dp)
         )
         ListItem(
             headlineContent = {
@@ -241,7 +241,7 @@ fun SettingsAboutListInfo(
             modifier = Modifier.clickable {
                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onTelegramClick()
-            }
+            }.padding(start = 8.dp)
         )
     }
 }
