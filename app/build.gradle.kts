@@ -32,8 +32,8 @@ android {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
-        versionCode = 8
-        versionName = "1.0.7"
+        versionCode = 9
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -147,4 +147,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Kotlin immutable collections
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6")
 }

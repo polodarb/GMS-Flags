@@ -43,7 +43,6 @@ fun SavedFlagsScreen(
 
     val clipboardManager = LocalClipboardManager.current
     val haptic = LocalHapticFeedback.current
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -65,7 +64,7 @@ fun SavedFlagsScreen(
                             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
                     )
                 }
-                itemsIndexed(it.value) { index, item ->
+                itemsIndexed(it.value) { _, item ->
 
                     val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
                     val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
@@ -80,7 +79,6 @@ fun SavedFlagsScreen(
                         onCheckedChange = {
                             if (!it) viewModel.deleteSavedFlag(item.flagName, item.pkgName)
                         },
-                        lastItem = it.value.size - 1 == index,
                         modifier = Modifier.combinedClickable(
                             onClick = {
                                 onFlagClick(item.pkgName, item.flagName, item.type)
@@ -105,21 +103,13 @@ fun SavedFlagsScreen(
 @Composable
 fun SavedFlagsLazyItem(
     modifier: Modifier = Modifier,
-//    packageName: String,
     flagName: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    lastItem: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-//        Text(
-//            text = packageName,
-//            fontSize = 13.sp,
-//            color = MaterialTheme.colorScheme.outline,
-//            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
-//        )
         Row(
             modifier = Modifier
                 .padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically
@@ -149,5 +139,4 @@ fun SavedFlagsLazyItem(
             )
         }
     }
-//    if (!lastItem) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
 }

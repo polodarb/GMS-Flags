@@ -90,7 +90,6 @@ fun SuggestionsScreen(
     val overriddenFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -155,16 +154,16 @@ fun SuggestionsScreen(
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
-            when (overriddenFlags.value) {
+            when (val result = overriddenFlags.value) {
                 is UiStates.Success -> {
-                    val data = (overriddenFlags.value as UiStates.Success).data
+                    val data = result.data
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
                             WarningBanner(isFirstStart)
                         }
-                        itemsIndexed(data.toList()) { index, item ->
+                        itemsIndexed(data) { index, item ->
                             SuggestedFlagItem(
                                 flagName = item.flag.name,
                                 senderName = item.flag.author,

@@ -80,7 +80,6 @@ fun SavedScreen(
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
     // Tabs

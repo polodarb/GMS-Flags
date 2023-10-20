@@ -71,22 +71,18 @@ fun PackagesScreen(
     onBackPressed: () -> Unit
 ) {
 
-    val viewModel = koinViewModel<PackagesScreenViewModel>()
-    val uiState = viewModel.state.collectAsState()
-    val savedPackagesList = viewModel.stateSavedPackages.collectAsState()
-
-    val list = remember {
-        mutableStateMapOf<String, String>()
-    }
-
-    val topBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
-    val haptic = LocalHapticFeedback.current
-
     // Keyboard
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val viewModel = koinViewModel<PackagesScreenViewModel>()
+    val uiState = viewModel.state.collectAsState()
+    val savedPackagesList = viewModel.stateSavedPackages.collectAsState()
+
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
+    val haptic = LocalHapticFeedback.current
 
     var searchIconState by rememberSaveable {
         mutableStateOf(false)

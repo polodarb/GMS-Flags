@@ -66,6 +66,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -96,6 +97,9 @@ fun FlagChangeScreen(
     packageName: String?
 ) {
 
+    // Keyboard
+    val focusRequester = remember { FocusRequester() }
+
     // scroll to position
     val item: String? = "Video__hevc_default_value"
     val listState = rememberLazyListState()
@@ -114,20 +118,13 @@ fun FlagChangeScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    val localDensity = LocalDensity.current
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
 
     // Tab bar
     var tabState by remember { mutableIntStateOf(0) }
-    val titles = listOf(
-        "Bool",
-        "Int",
-        "Float",
-        "String",
-//        "ExtVal"
-    )
+    val titles = persistentListOf("Bool", "Int", "Float", "String")
 
     val pagerState = rememberPagerState(pageCount = {
         4 // 5 with extVal
@@ -188,9 +185,6 @@ fun FlagChangeScreen(
     var flagBoolean by rememberSaveable { mutableIntStateOf(0) }
     var flagAddValue by rememberSaveable { mutableStateOf("") }
     var flagAddName by rememberSaveable { mutableStateOf("") }
-
-    // Keyboard
-    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(searchIconState) {
         if (searchIconState)
@@ -447,11 +441,10 @@ fun FlagChangeScreen(
 
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                            when (uiStateBoolean.value) {
+                            when (val result = uiStateBoolean.value) {
                                 is UiStates.Success -> {
 
-                                    val listBool =
-                                        (uiStateBoolean.value as UiStates.Success).data.toSortMap()
+                                    val listBool = result.data
 
                                     val selectedItemsWithValues =
                                         viewModel.selectedItems.mapNotNull { selectedItem ->
@@ -528,11 +521,10 @@ fun FlagChangeScreen(
         ) { page ->
             when (page) {
                 0 -> {
-                    when (uiStateBoolean.value) {
+                    when (val result = uiStateBoolean.value) {
                         is UiStates.Success -> {
 
-                            val listBool =
-                                (uiStateBoolean.value as UiStates.Success).data.toSortMap()
+                            val listBool = result.data
 
 //                            if (listBool.isNotEmpty()) { // todo
 //                                val itemIndex = listBool.keys.indexOf(item)
@@ -556,7 +548,6 @@ fun FlagChangeScreen(
                                 packageName = packageName.toString(),
                                 haptic = haptic,
                                 savedFlagsList = savedFlags.value,
-                                isInSelectionMode = isInSelectionMode,
                                 isSelectedList = viewModel.selectedItems,
                                 selectedItemLongClick = { isSelected, flagName ->
                                     if (isInSelectionMode) {
@@ -599,7 +590,7 @@ fun FlagChangeScreen(
                     flagsType = SelectFlagsType.INTEGER,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
-                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, newShowDialog ->
+                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->
                         flagName = newFlagName
                         flagValue = newFlagValue
                         editTextValue.value = newEditTextValue
@@ -630,7 +621,7 @@ fun FlagChangeScreen(
                     flagsType = SelectFlagsType.FLOAT,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
-                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, newShowDialog ->
+                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->
                         flagName = newFlagName
                         flagValue = newFlagValue
                         editTextValue.value = newEditTextValue
@@ -661,7 +652,7 @@ fun FlagChangeScreen(
                     flagsType = SelectFlagsType.STRING,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
-                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, newShowDialog ->
+                    onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->
                         flagName = newFlagName
                         flagValue = newFlagValue
                         editTextValue.value = newEditTextValue
@@ -696,11 +687,10 @@ fun FlagChangeScreen(
                 senderName.value = it
             },
             onSend = {
-                when (uiStateBoolean.value) {
+                when (val result = uiStateBoolean.value) {
                     is UiStates.Success -> {
 
-                        val listBool =
-                            (uiStateBoolean.value as UiStates.Success).data.toSortMap()
+                        val listBool = result.data.toSortMap()
 
                         val selectedItemsWithValues =
                             viewModel.selectedItems.mapNotNull { selectedItem ->
@@ -756,11 +746,10 @@ fun FlagChangeScreen(
                 reportFlagDesc.value = it
             },
             onSend = {
-                when (uiStateBoolean.value) {
+                when (val result = uiStateBoolean.value) {
                     is UiStates.Success -> {
 
-                        val listBool =
-                            (uiStateBoolean.value as UiStates.Success).data.toSortMap()
+                        val listBool = result.data.toSortMap()
 
                         val selectedItemsWithValues =
                             viewModel.selectedItems.mapNotNull { selectedItem ->

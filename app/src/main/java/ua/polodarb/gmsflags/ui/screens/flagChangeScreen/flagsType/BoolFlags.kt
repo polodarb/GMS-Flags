@@ -41,7 +41,6 @@ fun BooleanFlagsScreen(
     packageName: String?,
     haptic: HapticFeedback,
     isSelectedList: List<String>,
-    isInSelectionMode: Boolean,
     selectedItemLongClick: (isSelected: Boolean, flagName: String) -> Unit,
     selectedItemShortClick: (isSelected: Boolean, flagName: String) -> Unit
 ) {
