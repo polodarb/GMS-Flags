@@ -94,8 +94,6 @@ fun SuggestionsScreen(
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
-    val listState = rememberLazyListState()
-
     LaunchedEffect(Unit) {
         viewModel.getAllOverriddenBoolFlags()
     }
@@ -161,8 +159,7 @@ fun SuggestionsScreen(
                 is UiStates.Success -> {
                     val data = (overriddenFlags.value as UiStates.Success).data
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = listState
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         item {
                             WarningBanner(isFirstStart)
