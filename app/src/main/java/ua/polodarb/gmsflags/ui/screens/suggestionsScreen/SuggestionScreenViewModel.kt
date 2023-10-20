@@ -88,7 +88,6 @@ class SuggestionScreenViewModel(
     fun getAllOverriddenBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                if (BuildConfig.VERSION_CODE >= 8) {
                     if (rawSuggestedFlag.isEmpty())
                         rawSuggestedFlag = loadSuggestedFlags()
 
@@ -113,9 +112,6 @@ class SuggestionScreenViewModel(
                             })
                         }
                     }
-                } else {
-                    _stateSuggestionsFlags.value = UiStates.Error()
-                }
             }
         }
     }
