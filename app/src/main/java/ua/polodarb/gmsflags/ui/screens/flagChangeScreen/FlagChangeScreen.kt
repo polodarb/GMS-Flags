@@ -3,6 +3,7 @@ package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -728,7 +729,12 @@ fun FlagChangeScreen(
                                         "Flags: \n${flagsText}"
                             )
                         }
-                        context.startActivity(intent)
+                        if (intent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(intent)
+                        } else {
+                            Toast.makeText(context, "No app to send email. Please install at least one",
+                                Toast.LENGTH_SHORT).show();
+                        }
                         showSendSuggestDialog.value = false
                         suggestFlagDesc.value = ""
                         senderName.value = ""
@@ -782,7 +788,12 @@ fun FlagChangeScreen(
                                         "Flags: \n${flagsText}"
                             )
                         }
-                        context.startActivity(intent)
+                        if (intent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(intent)
+                        } else {
+                            Toast.makeText(context, "No app to send email. Please install at least one",
+                                Toast.LENGTH_SHORT).show();
+                        }
                         showSendReportDialog.value = false
                         reportFlagDesc.value = ""
                     }
