@@ -1,11 +1,9 @@
 package ua.polodarb.gmsflags.ui.screens.suggestionsScreen
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
@@ -27,6 +24,7 @@ import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
 import ua.polodarb.gmsflags.data.repo.interactors.MergedOverriddenFlag
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
+import java.util.Collections
 
 typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlag>>
 
@@ -43,9 +41,9 @@ class SuggestionScreenViewModel(
         MutableStateFlow<SuggestionsScreenUiState>(UiStates.Loading())
     val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiState> = _stateSuggestionsFlags.asStateFlow()
 
-    private val usersList = mutableListOf<String>()
+    private val usersList  = Collections.synchronizedList(mutableListOf<String>())
 
-    private var rawSuggestedFlag = emptyList<SuggestedFlagInfo>()
+    private var rawSuggestedFlag = Collections.synchronizedList(emptyList<SuggestedFlagInfo>())
 
     init {
         initUsers()
@@ -74,7 +72,7 @@ class SuggestionScreenViewModel(
 
     private fun initUsers() {
         usersList.clear()
-        viewModelScope.launch() {
+        viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getUsers().collect {
                     usersList.addAll(it)
@@ -142,7 +140,7 @@ class SuggestionScreenViewModel(
 
     }
 
-    fun clearPhenotypeCache(pkgName: String) {
+    private fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val androidPkgName = repository.androidPackage(pkgName)

@@ -18,6 +18,7 @@ import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
+import java.util.Collections
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
 
@@ -203,10 +204,10 @@ class FlagChangeScreenViewModel(
     // Search
     var searchQuery = mutableStateOf("")
 
-    private val listBoolFiltered: MutableMap<String, String> = mutableMapOf()
-    private val listIntFiltered: MutableMap<String, String> = mutableMapOf()
-    private val listFloatFiltered: MutableMap<String, String> = mutableMapOf()
-    private val listStringFiltered: MutableMap<String, String> = mutableMapOf()
+    private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listFloatFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
 
     init {
         viewModelScope.launch() {
