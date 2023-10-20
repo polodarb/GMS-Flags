@@ -95,11 +95,6 @@ fun SuggestionsScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
-    val expandedFab by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 1 || listState.firstVisibleItemIndex == 0
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.getAllOverriddenBoolFlags()
@@ -112,15 +107,6 @@ fun SuggestionsScreen(
     // Reset Flags list
     var resetFlagsList: MutableList<FlagInfo> = mutableListOf()
     var resetFlagPackage = ""
-
-    var suggestedItemSwitchEnabled by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(suggestedItemSwitchEnabled) {
-        delay(3000)
-        suggestedItemSwitchEnabled = true
-    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -191,7 +177,6 @@ fun SuggestionsScreen(
                                         withContext(Dispatchers.IO) {
                                             viewModel.updateFlagValue(bool, index)
                                             item.flag.flags.forEach { flag ->
-                                                suggestedItemSwitchEnabled = false
                                                 when (flag.type) {
                                                     FlagType.BOOL -> {
                                                         viewModel.overrideFlag(
@@ -231,7 +216,6 @@ fun SuggestionsScreen(
                                     resetFlagsList.addAll(item.flag.flags)
                                     showResetDialog = true
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                                    Toast.makeText(context, "${item.flag.flags}", Toast.LENGTH_SHORT).show()
                                 }
                             )
                             ResetFlagToDefaultDialog(
@@ -260,10 +244,6 @@ fun SuggestionsScreen(
                 }
             }
         }
-//        FlagReportDialog(
-//            showDialog.value,
-//            onDismiss = { showDialog.value = false }
-//        )
     }
 }
 
