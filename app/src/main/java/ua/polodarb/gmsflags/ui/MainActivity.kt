@@ -46,9 +46,7 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
-        if (!isGranted) {
-            Toast.makeText(this, "By turning off notifications, you will not receive new information or updates.", Toast.LENGTH_SHORT).show()
-        }
+        if (!isGranted) { }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
