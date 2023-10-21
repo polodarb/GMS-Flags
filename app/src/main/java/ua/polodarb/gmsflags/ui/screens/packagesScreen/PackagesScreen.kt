@@ -84,7 +84,7 @@ fun PackagesScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
 
-    var searchIconState by rememberSaveable {
+    var searchIconState by remember {
         mutableStateOf(false)
     }
 

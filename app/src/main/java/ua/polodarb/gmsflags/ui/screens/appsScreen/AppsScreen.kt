@@ -89,7 +89,7 @@ fun AppsScreen(
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
-    var searchIconState by rememberSaveable {
+    var searchIconState by remember {
         mutableStateOf(false)
     }
 

@@ -170,7 +170,7 @@ fun FlagChangeScreen(
     var filterIconState by rememberSaveable {
         mutableStateOf(false)
     }
-    var searchIconState by rememberSaveable {
+    var searchIconState by remember {
         mutableStateOf(false)
     }
 

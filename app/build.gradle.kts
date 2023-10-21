@@ -149,5 +149,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Kotlin immutable collections
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6")
+    implementation(libs.kotlin.collections.immutable)
 }
