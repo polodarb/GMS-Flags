@@ -38,7 +38,7 @@ class AppsListRepository(
                                 && it.packageName.contains("com.google")
                                 || it.packageName.contains("com.android.vending")
                     }
-                    .map { AppInfo.create(pm, it) }
+                    .map { AppInfo(pm = pm, applicationInfo = it) }
                     .sortedBy { it.appName }
                     .toList()
 
