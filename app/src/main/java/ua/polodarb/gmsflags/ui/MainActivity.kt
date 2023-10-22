@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
             GMSFlagsTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     UpdateDialog(
                         githubApiService = githubApiService,

@@ -49,7 +49,7 @@ fun GFlagsSearchBar(
                         colorFraction
                     )
                 } else {
-                    MaterialTheme.colorScheme.background
+                    MaterialTheme.colorScheme.surface
                 }
             )
             .fillMaxWidth()

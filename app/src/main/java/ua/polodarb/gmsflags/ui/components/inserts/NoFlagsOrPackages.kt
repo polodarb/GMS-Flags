@@ -27,7 +27,7 @@ fun NoFlagsOrPackages(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(1f)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center
     ) {
         Text(

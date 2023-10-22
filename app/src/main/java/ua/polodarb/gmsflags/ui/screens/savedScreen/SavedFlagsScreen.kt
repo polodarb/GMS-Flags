@@ -60,7 +60,7 @@ fun SavedFlagsScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
+                            .background(MaterialTheme.colorScheme.surface)
                             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
                     )
                 }

@@ -54,7 +54,7 @@ fun BoolValItem(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+                .background(if (!isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             if (isSelected) {
@@ -99,7 +99,7 @@ fun BoolValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(if (!isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
             .padding(horizontal = 16.dp)
     )
 }
@@ -130,7 +130,7 @@ fun IntFloatStringValItem(
                     select = !select
                 }
             )
-            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(if (!select) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
     ) {
         Row(
             modifier = Modifier
@@ -173,7 +173,7 @@ fun IntFloatStringValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!select) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(if (!select) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
             .padding(horizontal = 16.dp)
     )
 }
