@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.data.databases.gms
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.os.IBinder
@@ -12,7 +11,6 @@ import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
 import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
 
-@SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
 
     private lateinit var gmsDB: SQLiteDatabase
