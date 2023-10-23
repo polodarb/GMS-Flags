@@ -57,6 +57,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
@@ -69,6 +70,7 @@ import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppsScreen(
+    rootDatabase: IRootDatabase,
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit,
     onPackageItemClick: (packageName: String) -> Unit,

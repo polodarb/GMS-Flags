@@ -9,8 +9,7 @@ import ua.polodarb.gmsflags.data.repo.GmsDatabaseRepository
 import ua.polodarb.gmsflags.data.repo.PlayStoreDatabaseRepository
 
 class OverrideFlagInteractor(
-    private val gmsRepository: GmsDatabaseRepository,
-    private val vendingRepository: PlayStoreDatabaseRepository,
+    private val repository: GmsDatabaseRepository
 ) {
     suspend fun overrideFlag(
         packageName: String,
@@ -25,7 +24,7 @@ class OverrideFlagInteractor(
         clearData: Boolean = true
     ) = withContext(Dispatchers.IO) {
 //        repository.deleteRowByFlagName(packageName, name)
-        gmsRepository.overrideFlag(
+        repository.overrideFlag(
             packageName = packageName,
             user = "",
             name = name,
@@ -37,32 +36,20 @@ class OverrideFlagInteractor(
             extensionVal = extensionVal,
             committed = committed
         )
-        vendingRepository.overrideFlag(
-            packageName = packageName,
-            user = "",
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed
-        )
-//        for (i in repository.getUsers().first()) {
-//            repository.overrideFlag(
-//                packageName = packageName,
-//                user = i,
-//                name = name,
-//                flagType = flagType,
-//                intVal = intVal,
-//                boolVal = boolVal,
-//                floatVal = floatVal,
-//                stringVal = stringVal,
-//                extensionVal = extensionVal,
-//                committed = committed
-//            )
-//        }
+        for (i in repository.getUsers().first()) {
+            repository.overrideFlag(
+                packageName = packageName,
+                user = i,
+                name = name,
+                flagType = flagType,
+                intVal = intVal,
+                boolVal = boolVal,
+                floatVal = floatVal,
+                stringVal = stringVal,
+                extensionVal = extensionVal,
+                committed = committed
+            )
+        }
         if (clearData) clearPhenotypeCache(packageName)
     }
 

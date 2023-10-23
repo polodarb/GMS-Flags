@@ -26,23 +26,6 @@ import ua.polodarb.gmsflags.utils.Constants
 data class DatabaseInitializationState(val isInitialized: Boolean)
 
 class GMSApplication : Application() {
-    private companion object {
-        const val SHELL_TIMEOUT = 10L
-    }
-
-    private val shellConfig = Shell.Builder.create()
-        .setFlags(Shell.FLAG_REDIRECT_STDERR or Shell.FLAG_MOUNT_MASTER)
-        .setTimeout(SHELL_TIMEOUT)
-
-    private val _databaseInitializationStateFlow = MutableStateFlow(DatabaseInitializationState(false))
-    val databaseInitializationStateFlow: Flow<DatabaseInitializationState> = _databaseInitializationStateFlow
-
-    fun setDatabaseInitialized(isInitialized: Boolean) {
-        _databaseInitializationStateFlow.value = DatabaseInitializationState(isInitialized)
-    }
-
-    var isRootDatabaseInitialized = false
-    private lateinit var rootDatabase: IRootDatabase
 
     override fun onCreate() {
         super.onCreate()
@@ -57,40 +40,6 @@ class GMSApplication : Application() {
             androidContext(this@GMSApplication)
             modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule, remoteModule))
         }
-    }
-
-    fun initShell() {
-        try {
-            Shell.setDefaultBuilder(shellConfig)
-        } catch (_: IllegalStateException) {
-            /* When application configuration changed (ex. orientation changed)
-             * this function are called again, since onCreate in MainActivity
-             * are called again, and since shell instance can be already created
-             * it throws runtime exception, so just ignore it, since this call is ok.
-             */
-        }
-    }
-
-    fun initDB() {
-        val intent = Intent(this, RootService::class.java)
-        val service = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                rootDatabase = IRootDatabase.Stub.asInterface(service)
-                isRootDatabaseInitialized = true
-                setDatabaseInitialized(true)
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-                isRootDatabaseInitialized = false
-                setDatabaseInitialized(false)
-            }
-        }
-        RootService.bind(intent, service)
-    }
-
-    fun getRootDatabase(): IRootDatabase {
-        check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
-        return rootDatabase
     }
 
 }

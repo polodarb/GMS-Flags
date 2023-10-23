@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
@@ -41,13 +42,13 @@ import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScree
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun RootAppNavigation(
+    rootDatabase: IRootDatabase,
     modifier: Modifier = Modifier,
     activity: MainActivity,
     isFirstStart: Boolean,
     navController: NavHostController
 ) {
     val uriHandler = LocalUriHandler.current
-    val appContext = koinInject<Context>()
     val activityContext = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
@@ -92,12 +93,11 @@ internal fun RootAppNavigation(
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     isButtonLoading.value = true
                     try {
-                        (appContext.applicationContext as GMSApplication).initShell()
-                    } catch (_: Exception) {
-                    }
+                        activity.initShell()
+                    } catch (_: Exception) { }
 
                     if (Shell.getShell().isRoot) {
-                        (appContext.applicationContext as GMSApplication).initDB()
+                        activity.initDB()
                         CoroutineScope(Dispatchers.Main).launch {
                             delay(700)
                             activity.setFirstLaunch()

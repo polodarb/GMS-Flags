@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import ua.polodarb.gmsflags.IRootDatabase
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreen
@@ -80,6 +81,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
 
 @Composable
 internal fun BottomBarNavigation( // Navigation realization for BottomBar
+    rootDatabase: IRootDatabase,
     isFirstStart: Boolean,
     modifier: Modifier = Modifier,
     parentNavController: NavController,
@@ -104,6 +106,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
     ) {
         composable(route = NavBarItem.Suggestions.screenRoute) {
             SuggestionsScreen(
+                rootDatabase = rootDatabase,
                 isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
@@ -115,6 +118,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
         }
         composable(route = NavBarItem.Apps.screenRoute) {
             AppsScreen(
+                rootDatabase = rootDatabase,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
