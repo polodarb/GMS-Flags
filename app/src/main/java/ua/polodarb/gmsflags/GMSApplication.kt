@@ -14,8 +14,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import ua.polodarb.gmsflags.core.Constants
-import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.databaseModule
 import ua.polodarb.gmsflags.di.remoteModule
@@ -23,6 +21,7 @@ import ua.polodarb.gmsflags.di.repositoryModule
 import ua.polodarb.gmsflags.di.viewModelsModule
 import ua.polodarb.gmsflags.ui.CrashActivity
 import ua.polodarb.gmsflags.ui.ExceptionHandler
+import ua.polodarb.gmsflags.utils.Constants
 
 data class DatabaseInitializationState(val isInitialized: Boolean)
 
@@ -73,7 +72,7 @@ class GMSApplication : Application() {
     }
 
     fun initDB() {
-        val intent = Intent(this, RootDatabase::class.java)
+        val intent = Intent(this, RootService::class.java)
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 rootDatabase = IRootDatabase.Stub.asInterface(service)
@@ -93,4 +92,5 @@ class GMSApplication : Application() {
         check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }
+
 }

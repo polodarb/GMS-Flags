@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
-import ua.polodarb.gmsflags.core.Extensions.toSortMap
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar

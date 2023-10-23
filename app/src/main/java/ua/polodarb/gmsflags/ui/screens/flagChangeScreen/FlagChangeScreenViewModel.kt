@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.core.Extensions.toSortMap
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
@@ -429,8 +429,10 @@ class FlagChangeScreenViewModel(
                     Shell.cmd("am force-stop com.android.vending").exec()
                 }
                 if (pkgName.contains("com.google.android.apps.photos")) {
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*").exec()
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml").exec()
+                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*")
+                        .exec()
+                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml")
+                        .exec()
                     Shell.cmd("am force-stop com.google.android.apps.photos").exec()
                 }
                 repeat(3) {
@@ -442,7 +444,7 @@ class FlagChangeScreenViewModel(
     }
 
     // Override Flag
-    fun overrideFlag(
+    suspend fun overrideFlag(
         packageName: String,
         name: String,
         flagType: Int = 0,
@@ -454,38 +456,34 @@ class FlagChangeScreenViewModel(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteRowByFlagName(packageName, name)
-                repository.overrideFlag(
-                    packageName = packageName,
-                    user = "",
-                    name = name,
-                    flagType = flagType,
-                    intVal = intVal,
-                    boolVal = boolVal,
-                    floatVal = floatVal,
-                    stringVal = stringVal,
-                    extensionVal = extensionVal,
-                    committed = committed
-                )
-                for (i in usersList) {
-                    repository.overrideFlag(
-                        packageName = packageName,
-                        user = i,
-                        name = name,
-                        flagType = flagType,
-                        intVal = intVal,
-                        boolVal = boolVal,
-                        floatVal = floatVal,
-                        stringVal = stringVal,
-                        extensionVal = extensionVal,
-                        committed = committed
-                    )
-                }
-                if (clearData) clearPhenotypeCache(pkgName)
-            }
+        repository.deleteRowByFlagName(packageName, name)
+        repository.overrideFlag(
+            packageName = packageName,
+            user = "",
+            name = name,
+            flagType = flagType,
+            intVal = intVal,
+            boolVal = boolVal,
+            floatVal = floatVal,
+            stringVal = stringVal,
+            extensionVal = extensionVal,
+            committed = committed
+        )
+        for (i in usersList) {
+            repository.overrideFlag(
+                packageName = packageName,
+                user = i,
+                name = name,
+                flagType = flagType,
+                intVal = intVal,
+                boolVal = boolVal,
+                floatVal = floatVal,
+                stringVal = stringVal,
+                extensionVal = extensionVal,
+                committed = committed
+            )
         }
+        if (clearData) clearPhenotypeCache(pkgName)
     }
 
     fun overrideAllFlag() { // todo
@@ -620,7 +618,8 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (stateBoolean.value) {
                     is UiStates.Success -> {
-                        val data = (stateBoolean.value as UiStates.Success<Map<String, String>>).data
+                        val data =
+                            (stateBoolean.value as UiStates.Success<Map<String, String>>).data
                         data.forEach { (key, value) ->
                             if (selectedItems.contains(key) && value == "1") {
                                 overrideFlag(

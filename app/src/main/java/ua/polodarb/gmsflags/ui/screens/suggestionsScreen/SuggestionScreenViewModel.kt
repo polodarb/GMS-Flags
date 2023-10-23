@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okhttp3.internal.toImmutableList
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
@@ -21,8 +20,8 @@ import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
-import ua.polodarb.gmsflags.data.repo.interactors.MergedOverriddenFlag
+import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsMapper
+import ua.polodarb.gmsflags.data.repo.mappers.MergedOverriddenFlag
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 import java.util.Collections
@@ -34,7 +33,7 @@ class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
     private val appsRepository: AppsListRepository,
     private val flagsApiService: FlagsApiService,
-    private val interactor: MergeOverriddenFlagsInteractor
+    private val interactor: MergeOverriddenFlagsMapper
 ) : ViewModel() {
     private val gmsApplication = application as GMSApplication
 

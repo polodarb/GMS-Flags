@@ -12,7 +12,7 @@ class GmsDBRepository(
 
     private val gmsApplication = context as GMSApplication
 
-    fun overrideFlag(
+    suspend fun overrideFlag(
         packageName: String?,
         user: String?,
         name: String?,
@@ -24,19 +24,22 @@ class GmsDBRepository(
         extensionVal: String?,
         committed: Int
     ) {
-
-        gmsApplication.getRootDatabase().overrideFlag(
-            packageName,
-            user,
-            name,
-            flagType,
-            intVal,
-            boolVal,
-            floatVal,
-            stringVal,
-            extensionVal,
-            committed
-        )
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                gmsApplication.getRootDatabase().overrideFlag(
+                    packageName,
+                    user,
+                    name,
+                    flagType,
+                    intVal,
+                    boolVal,
+                    floatVal,
+                    stringVal,
+                    extensionVal,
+                    committed
+                )
+            }
+        }
     }
 
     suspend fun getGmsPackages() = flow<UiStates<Map<String, String>>> {
@@ -52,38 +55,42 @@ class GmsDBRepository(
 
     }
 
-    suspend fun getBoolFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getBoolFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
-        if (boolFlags.isNotEmpty())
-            emit(UiStates.Success(boolFlags))
-    }
+            val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
+            if (boolFlags.isNotEmpty())
+                emit(UiStates.Success(boolFlags))
+        }
 
-    suspend fun getIntFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getIntFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
-        if (intFlags.isNotEmpty())
-            emit(UiStates.Success(intFlags))
-    }
+            val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
+            if (intFlags.isNotEmpty())
+                emit(UiStates.Success(intFlags))
+        }
 
-    suspend fun getFloatFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getFloatFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
-        if (floatFlags.isNotEmpty())
-            emit(UiStates.Success(floatFlags))
-    }
+            val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
+            if (floatFlags.isNotEmpty())
+                emit(UiStates.Success(floatFlags))
+        }
 
-    suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getStringFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-        if (stringFlags.isNotEmpty())
-            emit(UiStates.Success(stringFlags))
+            val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
+            if (stringFlags.isNotEmpty())
+                emit(UiStates.Success(stringFlags))
 
-    }
+        }
 
     fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
         val boolOverriddenFlags =
@@ -131,8 +138,12 @@ class GmsDBRepository(
         return usersList
     }
 
-    fun deleteRowByFlagName(packageName: String, name: String) {
-        gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
+    suspend fun deleteRowByFlagName(packageName: String, name: String) {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
+            }
+        }
     }
 
     fun deleteOverriddenFlagByPackage(packageName: String) {

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,8 +34,7 @@ import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.core.Constants
-import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.CRASH_MESSAGE
+import ua.polodarb.gmsflags.utils.Constants
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.util.Locale

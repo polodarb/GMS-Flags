@@ -59,7 +59,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -72,7 +71,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.core.Extensions.toSortMap
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown

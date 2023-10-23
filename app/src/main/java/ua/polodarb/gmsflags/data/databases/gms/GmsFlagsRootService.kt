@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.data.databases.gms
 
-import android.content.ContentValues
 import android.content.Intent
 import android.os.IBinder
 import com.topjohnwu.superuser.ipc.RootService
@@ -8,79 +7,90 @@ import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
+import ua.polodarb.gmsflags.data.repo.GmsDatabaseRepository
+import ua.polodarb.gmsflags.data.repo.PlayStoreDatabaseRepository
+import ua.polodarb.gmsflags.domain.interactors.OverrideFlagInteractor
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_GMS
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_VENDING
 
-class RootDatabase : RootService() {
+class GmsFlagsRootService : RootService() {
 
     private lateinit var gmsDB: SQLiteDatabase
     private lateinit var vendingDB: SQLiteDatabase
+    private lateinit var repository: GmsDatabaseRepository
+    private lateinit var repositoryVending: PlayStoreDatabaseRepository
+    private lateinit var interactor: OverrideFlagInteractor
 
     override fun onBind(intent: Intent): IBinder {
         gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
         vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
+        repository = GmsDatabaseRepository(gmsDB)
+        repositoryVending = PlayStoreDatabaseRepository(vendingDB)
+        interactor = OverrideFlagInteractor(repository, repositoryVending)
         return object : IRootDatabase.Stub() {
 
-            override fun getGmsPackages(): Map<String, String> = this@RootDatabase.getGmsPackages()
+            suspend fun overrideAllFlags() = interactor.overrideFlag()
 
-            override fun getGooglePackages(): List<String> = this@RootDatabase.getGooglePackages()
+            override fun getGmsPackages(): Map<String, String> = this@GmsFlagsRootService.getGmsPackages()
+
+            override fun getGooglePackages(): List<String> = repository.getGooglePackages()
 
             override fun getBoolFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getBoolFlags(pkgName)
+                this@GmsFlagsRootService.getBoolFlags(pkgName)
 
             override fun getIntFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getIntFlags(pkgName)
+                this@GmsFlagsRootService.getIntFlags(pkgName)
 
             override fun getFloatFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getFloatFlags(pkgName)
+                this@GmsFlagsRootService.getFloatFlags(pkgName)
 
             override fun getStringFlags(pkgName: String): Map<String, String> =
-                this@RootDatabase.getStringFlags(pkgName)
+                this@GmsFlagsRootService.getStringFlags(pkgName)
 
             override fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> =
-                this@RootDatabase.getOverriddenBoolFlagsByPackage(pkgName)
+                this@GmsFlagsRootService.getOverriddenBoolFlagsByPackage(pkgName)
 
             override fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> =
-                this@RootDatabase.getOverriddenIntFlagsByPackage(pkgName)
+                this@GmsFlagsRootService.getOverriddenIntFlagsByPackage(pkgName)
 
             override fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String?, String?> =
-                this@RootDatabase.getOverriddenFloatFlagsByPackage(pkgName)
+                this@GmsFlagsRootService.getOverriddenFloatFlagsByPackage(pkgName)
 
             override fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String?, String?> =
-                this@RootDatabase.getOverriddenStringFlagsByPackage(pkgName)
+                this@GmsFlagsRootService.getOverriddenStringFlagsByPackage(pkgName)
 
             override fun getAllOverriddenBoolFlags(): Map<String?, String?> =
-                this@RootDatabase.getAllOverriddenBoolFlags()
+                this@GmsFlagsRootService.getAllOverriddenBoolFlags()
 
             override fun getAllOverriddenIntFlags(): Map<String?, String?> =
-                this@RootDatabase.getAllOverriddenIntFlags()
+                this@GmsFlagsRootService.getAllOverriddenIntFlags()
 
             override fun getAllOverriddenFloatFlags(): Map<String?, String?> =
-                this@RootDatabase.getAllOverriddenFloatFlags()
+                this@GmsFlagsRootService.getAllOverriddenFloatFlags()
 
             override fun getAllOverriddenStringFlags(): Map<String?, String?> =
-                this@RootDatabase.getAllOverriddenStringFlags()
+                this@GmsFlagsRootService.getAllOverriddenStringFlags()
 
             override fun androidPackage(pkgName: String): String =
-                this@RootDatabase.androidPackage(pkgName)
+                this@GmsFlagsRootService.androidPackage(pkgName)
 
             override fun getUsers(): MutableList<String> =
-                this@RootDatabase.getUsers()
+                this@GmsFlagsRootService.getUsers()
 
             override fun getListByPackages(pkgName: String): List<String> =
-                this@RootDatabase.getListByPackages(pkgName)
+                this@GmsFlagsRootService.getListByPackages(pkgName)
 
             override fun deleteAllOverriddenFlagsFromGMS() =
-                this@RootDatabase.deleteAllOverriddenFlagsFromGMS()
+                this@GmsFlagsRootService.deleteAllOverriddenFlagsFromGMS()
 
             override fun deleteAllOverriddenFlagsFromPlayStore() =
-                this@RootDatabase.deleteAllOverriddenFlagsFromPlayStore()
+                this@GmsFlagsRootService.deleteAllOverriddenFlagsFromPlayStore()
 
             override fun deleteRowByFlagName(packageName: String, name: String) =
-                this@RootDatabase.deleteRowByFlagName(packageName, name)
+                this@GmsFlagsRootService.deleteRowByFlagName(packageName, name)
 
             override fun deleteOverriddenFlagByPackage(packageName: String) =
-                this@RootDatabase.deleteOverriddenFlagByPackage(packageName)
+                this@GmsFlagsRootService.deleteOverriddenFlagByPackage(packageName)
 
             override fun overrideFlag(
                 packageName: String?,
@@ -94,7 +104,7 @@ class RootDatabase : RootService() {
                 extensionVal: String?,
                 committed: Int
             ) {
-                return this@RootDatabase.overrideFlag(
+                return this@GmsFlagsRootService.overrideFlag(
                     packageName,
                     user,
                     name,
@@ -122,24 +132,24 @@ class RootDatabase : RootService() {
         super.onDestroy()
     }
 
-    fun getGooglePackages(): List<String> {
-        val cursor = gmsDB.rawQuery(
-            "SELECT DISTINCT P.androidPackageName\n" +
-                    "FROM Packages P\n" +
-                    "JOIN (\n" +
-                    "    SELECT DISTINCT\n" +
-                    "        SUBSTR(packageName, INSTR(packageName, '#') + 1) AS sub_package\n" +
-                    "    FROM Flags\n" +
-                    ") F ON P.androidPackageName = F.sub_package;", null
-        )
-        val list = mutableListOf<String>()
-        while (cursor.moveToNext()) {
-            val item = cursor.getString(0)
-            list.add(item)
-        }
-        cursor.close()
-        return list
-    }
+//    fun getGooglePackages(): List<String> {
+//        val cursor = gmsDB.rawQuery(
+//            "SELECT DISTINCT P.androidPackageName\n" +
+//                    "FROM Packages P\n" +
+//                    "JOIN (\n" +
+//                    "    SELECT DISTINCT\n" +
+//                    "        SUBSTR(packageName, INSTR(packageName, '#') + 1) AS sub_package\n" +
+//                    "    FROM Flags\n" +
+//                    ") F ON P.androidPackageName = F.sub_package;", null
+//        )
+//        val list = mutableListOf<String>()
+//        while (cursor.moveToNext()) {
+//            val item = cursor.getString(0)
+//            list.add(item)
+//        }
+//        cursor.close()
+//        return list
+//    }
 
     fun getUsers(): MutableList<String> {
         val cursor = gmsDB.rawQuery(
@@ -215,38 +225,46 @@ class RootDatabase : RootService() {
         }
     }
 
-    fun overrideFlag(
-        packageName: String?,
-        user: String?,
-        name: String?,
-        flagType: Int,
-        intVal: String?,
-        boolVal: String?,
-        floatVal: String?,
-        stringVal: String?,
-        extensionVal: String?,
-        committed: Int
-    ) {
-        val values = ContentValues().apply {
-            put("packageName", packageName)
-            put("user", user)
-            put("name", name)
-            put("flagType", flagType)
-            put("intVal", intVal)
-            put("boolVal", boolVal)
-            put("floatVal", floatVal)
-            put("stringVal", stringVal)
-            put("extensionVal", extensionVal)
-            put("committed", committed)
-        }
-
-        gmsDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
-
-        if (packageName?.contains("finsky") == true || packageName?.contains("vending") == true) {
-            vendingDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
-        }
-
-    }
+//    fun overrideFlag(
+//        packageName: String?,
+//        user: String?,
+//        name: String?,
+//        flagType: Int,
+//        intVal: String?,
+//        boolVal: String?,
+//        floatVal: String?,
+//        stringVal: String?,
+//        extensionVal: String?,
+//        committed: Int
+//    ) {
+//        val values = ContentValues().apply {
+//            put("packageName", packageName)
+//            put("user", user)
+//            put("name", name)
+//            put("flagType", flagType)
+//            put("intVal", intVal)
+//            put("boolVal", boolVal)
+//            put("floatVal", floatVal)
+//            put("stringVal", stringVal)
+//            put("extensionVal", extensionVal)
+//            put("committed", committed)
+//        }
+//
+//        val measureNanoTime = measureTimeMillis {
+//            gmsDB.insertWithOnConflict(
+//                "FlagOverrides",
+//                null,
+//                values,
+//                SQLiteDatabase.CONFLICT_REPLACE
+//            )
+//        }
+//        Log.d("db_test", measureNanoTime.toString())
+//
+//        if (packageName?.contains("finsky") == true || packageName?.contains("vending") == true) {
+//            vendingDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+//        }
+//
+//    }
 
     private fun getBoolFlags(pkgName: String): Map<String, String> {
         val cursor = gmsDB.rawQuery(

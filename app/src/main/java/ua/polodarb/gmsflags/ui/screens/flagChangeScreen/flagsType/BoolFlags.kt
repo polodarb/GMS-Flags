@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen.flagsType
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -12,15 +11,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
-import ua.polodarb.gmsflags.core.Extensions.toInt
+import ua.polodarb.gmsflags.utils.Extensions.toInt
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
