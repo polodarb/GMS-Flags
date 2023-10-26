@@ -1,5 +1,6 @@
 import java.io.FileInputStream
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.application)
@@ -156,4 +157,18 @@ dependencies {
 
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
+}
+
+tasks.withType<KotlinCompile> {
+    if (this.name.contains(other = "Release")) {
+        kotlinOptions {
+            val buildDir = project.layout.buildDirectory.asFile.get().absolutePath
+            freeCompilerArgs += listOf(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/compose_reports",
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/compose_metrics"
+            )
+        }
+    }
 }
