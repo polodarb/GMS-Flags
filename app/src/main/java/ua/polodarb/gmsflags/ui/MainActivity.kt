@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.IGmsFlagsRootService
 import ua.polodarb.gmsflags.data.remote.github.GithubApiServiceImpl
 import ua.polodarb.gmsflags.ui.components.UpdateDialog
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
@@ -48,7 +48,7 @@ import java.io.File
 class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
 
-    private lateinit var rootDatabase: IRootDatabase
+    private lateinit var rootDatabase: IGmsFlagsRootService
     var isRootDatabaseInitialized = false
 
     private companion object {
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, RootService::class.java)
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                rootDatabase = IRootDatabase.Stub.asInterface(service)
+                rootDatabase = IGmsFlagsRootService.Stub.asInterface(service)
                 isRootDatabaseInitialized = true
                 setContent {
                     GMSFlagsTheme {

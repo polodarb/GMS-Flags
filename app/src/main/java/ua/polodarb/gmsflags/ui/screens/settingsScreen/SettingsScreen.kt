@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.IGmsFlagsRootService
 import ua.polodarb.gmsflags.R
 
 @OptIn(ExperimentalMaterial3Api::class)

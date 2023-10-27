@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,14 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
 typealias PackagesScreenUiStates = UiStates<Map<String, String>>
 
 class PackagesScreenViewModel(
-    private val gmsRepository: GmsDBRepository,
+//    private val gmsRepository: GmsDBRepository,
     private val roomRepository: RoomDBRepository,
 ) : ViewModel() {
 
@@ -38,26 +36,26 @@ class PackagesScreenViewModel(
     }
 
     private fun initGmsPackagesList() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                gmsRepository.getGmsPackages().collect { uiState ->
-                    when (uiState) {
-                        is UiStates.Success -> {
-                            listFiltered.putAll(uiState.data)
-                            getGmsPackagesList()
-                        }
-
-                        is UiStates.Loading -> {
-                            _state.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _state.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+//                gmsRepository.getGmsPackages().collect { uiState ->
+//                    when (uiState) {
+//                        is UiStates.Success -> {
+//                            listFiltered.putAll(uiState.data)
+//                            getGmsPackagesList()
+//                        }
+//
+//                        is UiStates.Loading -> {
+//                            _state.value = UiStates.Loading()
+//                        }
+//
+//                        is UiStates.Error -> {
+//                            _state.value = UiStates.Error()
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun getGmsPackagesList() {

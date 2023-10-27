@@ -6,8 +6,9 @@ import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
-import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.IGmsFlagsRootService
 import ua.polodarb.gmsflags.data.repo.GmsDatabaseRepository
+import ua.polodarb.gmsflags.data.repo.SettingsResetPhenotypeFlags
 import ua.polodarb.gmsflags.domain.interactors.OverrideFlagInteractor
 import ua.polodarb.gmsflags.utils.Constants.DB_PATH_GMS
 import ua.polodarb.gmsflags.utils.Constants.DB_PATH_VENDING
@@ -17,14 +18,20 @@ class GmsFlagsRootService : RootService() {
     private lateinit var gmsDB: SQLiteDatabase
     private lateinit var vendingDB: SQLiteDatabase
     private lateinit var repository: GmsDatabaseRepository
+    private lateinit var settingsResetPhenotypeFlags: SettingsResetPhenotypeFlags
     private lateinit var interactor: OverrideFlagInteractor
 
     override fun onBind(intent: Intent): IBinder {
         gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
         vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
         repository = GmsDatabaseRepository(gmsDB, vendingDB)
+        settingsResetPhenotypeFlags = SettingsResetPhenotypeFlags(gmsDB, vendingDB)
         interactor = OverrideFlagInteractor(repository)
-        return object : IRootDatabase.Stub() {
+        return object : IGmsFlagsRootService.Stub() {
+
+            fun getInteractor(): OverrideFlagInteractor = interactor
+
+            fun getSettingsRepository(): SettingsResetPhenotypeFlags = settingsResetPhenotypeFlags
 
             override fun getGmsPackages(): Map<String, String> = repository.getGmsPackages()
 
@@ -75,11 +82,11 @@ class GmsFlagsRootService : RootService() {
             override fun getListByPackages(pkgName: String): List<String> =
                 repository.getListByPackages(pkgName)
 
-            override fun deleteAllOverriddenFlagsFromGMS() =
-                repository.deleteAllOverriddenFlagsFromGMS()
-
-            override fun deleteAllOverriddenFlagsFromPlayStore() =
-                repository.deleteAllOverriddenFlagsFromPlayStore()
+//            override fun deleteAllOverriddenFlagsFromGMS() =
+//                settingsResetPhenotypeFlags.deleteAllOverriddenFlagsFromGMS()
+//
+//            override fun deleteAllOverriddenFlagsFromPlayStore() =
+//                settingsResetPhenotypeFlags.deleteAllOverriddenFlagsFromPlayStore()
 
             override fun deleteRowByFlagName(pkgName: String, flagName: String) =
                 repository.deleteRowByFlagName(pkgName, flagName)

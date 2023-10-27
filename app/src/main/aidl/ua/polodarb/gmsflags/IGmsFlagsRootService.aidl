@@ -1,6 +1,6 @@
 package ua.polodarb.gmsflags;
 
-interface IRootDatabase {
+interface IGmsFlagsRootService {
     Map<String, String> getGmsPackages();
     List<String> getGooglePackages();
 
@@ -24,8 +24,8 @@ interface IRootDatabase {
     String androidPackage(String pkgName);
     List<String> getUsers();
 
-    void deleteAllOverriddenFlagsFromGMS();
-    void deleteAllOverriddenFlagsFromPlayStore();
+//    void deleteAllOverriddenFlagsFromGMS();
+//    void deleteAllOverriddenFlagsFromPlayStore();
     void deleteRowByFlagName(String packageName, String name);
     void deleteOverriddenFlagByPackage(String packageName);
 

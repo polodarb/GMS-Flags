@@ -23,8 +23,6 @@ import ua.polodarb.gmsflags.ui.CrashActivity
 import ua.polodarb.gmsflags.ui.ExceptionHandler
 import ua.polodarb.gmsflags.utils.Constants
 
-data class DatabaseInitializationState(val isInitialized: Boolean)
-
 class GMSApplication : Application() {
 
     override fun onCreate() {

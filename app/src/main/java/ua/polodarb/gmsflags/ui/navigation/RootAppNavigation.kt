@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.IGmsFlagsRootService
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
@@ -42,7 +42,7 @@ import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScree
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun RootAppNavigation(
-    rootDatabase: IRootDatabase,
+    rootDatabase: IGmsFlagsRootService,
     modifier: Modifier = Modifier,
     activity: MainActivity,
     isFirstStart: Boolean,
@@ -66,7 +66,7 @@ internal fun RootAppNavigation(
             enterTransition = { enterAnim(toLeft = false) },
             exitTransition = { exitAnim(toLeft = true) }
         ) {
-            RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
+            RootScreen(isFirstStart = isFirstStart, parentNavController = navController, rootDatabase = rootDatabase)
         }
         composable(
             route = ScreensDestination.Welcome.screenRoute,

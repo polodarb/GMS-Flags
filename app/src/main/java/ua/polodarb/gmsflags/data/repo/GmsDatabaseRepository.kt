@@ -440,23 +440,23 @@ class GmsDatabaseRepository(
         return list
     }
 
-    /**
-     * This method deletes all overridden flags from GMS Database
-     */
-    fun deleteAllOverriddenFlagsFromGMS() {
-        gmsDB.execSQL(
-            "DELETE FROM FlagOverrides;"
-        )
-    }
+//    /**
+//     * This method deletes all overridden flags from GMS Database
+//     */
+//    fun deleteAllOverriddenFlagsFromGMS() {
+//        gmsDB.execSQL(
+//            "DELETE FROM FlagOverrides;"
+//        )
+//    }
 
-    /**
-     * This method deletes all overridden flags from PlayStore (Vending) Database
-     */
-    fun deleteAllOverriddenFlagsFromPlayStore() {
-        vendingDB.execSQL(
-            "DELETE FROM FlagOverrides;"
-        )
-    }
+//    /**
+//     * This method deletes all overridden flags from PlayStore (Vending) Database
+//     */
+//    fun deleteAllOverriddenFlagsFromPlayStore() {
+//        vendingDB.execSQL(
+//            "DELETE FROM FlagOverrides;"
+//        )
+//    }
 
     /**
      * This method overrides **one flag** to GMS and Vending databases.

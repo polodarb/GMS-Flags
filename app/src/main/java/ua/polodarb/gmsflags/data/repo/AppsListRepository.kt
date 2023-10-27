@@ -14,12 +14,13 @@ class AppsListRepository(
 
     private val gmsApplication = context as GMSApplication
 
-    fun getAllInstalledApps() = flow {
+    fun getAllInstalledApps(
+        gmsPackages: List<String>,
+    ) = flow {
         emit(UiStates.Loading())
 
-        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
-            if (isInitialized.isInitialized) {
-                val gmsPackages = (context as GMSApplication).getRootDatabase().googlePackages
+//        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+//            if (isInitialized.isInitialized) {
                 val pm = context.packageManager
 
                 val appInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -45,8 +46,8 @@ class AppsListRepository(
                 if (filteredAppInfoList.isNotEmpty()) {
                     emit(UiStates.Success(filteredAppInfoList))
                 }
-            }
-        }
+//            }
+//        }
     }
 
     fun getListByPackages(pkgName: String) = flow<UiStates<List<String>>> {

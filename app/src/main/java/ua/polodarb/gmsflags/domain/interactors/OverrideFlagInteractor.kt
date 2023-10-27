@@ -2,11 +2,8 @@ package ua.polodarb.gmsflags.domain.interactors
 
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.GmsDatabaseRepository
-import ua.polodarb.gmsflags.data.repo.PlayStoreDatabaseRepository
 
 class OverrideFlagInteractor(
     private val repository: GmsDatabaseRepository
@@ -39,7 +36,7 @@ class OverrideFlagInteractor(
         for (i in repository.getUsers().first()) {
             repository.overrideFlag(
                 packageName = packageName,
-                user = i,
+                user = i.toString(),
                 name = name,
                 flagType = flagType,
                 intVal = intVal,

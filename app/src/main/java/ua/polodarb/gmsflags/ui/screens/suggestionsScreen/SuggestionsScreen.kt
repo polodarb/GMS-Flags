@@ -70,7 +70,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
-import ua.polodarb.gmsflags.IRootDatabase
+import ua.polodarb.gmsflags.IGmsFlagsRootService
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
@@ -82,12 +82,14 @@ import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.dialog.ResetFlagToDefau
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuggestionsScreen(
-    rootDatabase: IRootDatabase,
+    rootDatabase: IGmsFlagsRootService,
     isFirstStart: Boolean,
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit
 ) {
     val viewModel = koinViewModel<SuggestionScreenViewModel>()
+
+
 
     val overriddenFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
