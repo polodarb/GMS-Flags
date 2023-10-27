@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.detekt)
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -174,5 +175,18 @@ tasks.withType<KotlinCompile> {
                 "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/compose_metrics"
             )
         }
+    }
+}
+
+detekt {
+    source.setFrom("src/main/java", "src/main/kotlin")
+    config.setFrom("../config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    ignoreFailures = true
+}
+
+afterEvaluate {
+    tasks.names.filter { Regex("^compile.*Kotlin\$").matches(it) }.forEach { task ->
+        tasks.findByName(task)?.dependsOn(tasks.detekt)
     }
 }

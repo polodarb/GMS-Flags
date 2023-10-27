@@ -9,6 +9,7 @@ composeMaterial3 = "1.2.0-alpha04"
 coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
+detekt = "1.23.1"
 espresso = "3.5.1"
 firebase = "32.3.1"
 firebaseCrashlyticsPlugin = "2.9.9"
@@ -78,6 +79,7 @@ firebase-crashlytics-gradle = { group = "com.google.firebase", name = "firebase-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
