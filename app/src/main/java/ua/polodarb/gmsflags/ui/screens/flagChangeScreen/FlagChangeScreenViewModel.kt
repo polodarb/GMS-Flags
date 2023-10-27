@@ -17,6 +17,7 @@ import ua.polodarb.gmsflags.core.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.util.Collections
 
@@ -25,7 +26,8 @@ typealias FlagChangeUiStates = UiStates<Map<String, String>>
 class FlagChangeScreenViewModel(
     private val pkgName: String,
     private val repository: GmsDBRepository,
-    private val roomRepository: RoomDBRepository
+    private val roomRepository: RoomDBRepository,
+    private val gmsDBInteractor: GmsDBInteractor
 ) : ViewModel() {
 
     private val _stateBoolean =
@@ -420,24 +422,7 @@ class FlagChangeScreenViewModel(
 
     fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val androidPkgName = repository.androidPackage(pkgName)
-                Shell.cmd("am force-stop $androidPkgName").exec()
-                Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-                if (pkgName.contains("finsky") || pkgName.contains("vending")) {
-                    Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
-                    Shell.cmd("am force-stop com.android.vending").exec()
-                }
-                if (pkgName.contains("com.google.android.apps.photos")) {
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*").exec()
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml").exec()
-                    Shell.cmd("am force-stop com.google.android.apps.photos").exec()
-                }
-                repeat(3) {
-                    Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
-                    Shell.cmd("am force-stop $androidPkgName").exec()
-                }
-            }
+            gmsDBInteractor.clearPhenotypeCache(pkgName)
         }
     }
 

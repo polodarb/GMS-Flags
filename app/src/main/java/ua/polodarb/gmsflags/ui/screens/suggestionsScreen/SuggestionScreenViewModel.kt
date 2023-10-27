@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okhttp3.internal.toImmutableList
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
@@ -21,8 +20,9 @@ import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
-import ua.polodarb.gmsflags.data.repo.interactors.MergedOverriddenFlag
+import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.MergedOverriddenFlag
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 import java.util.Collections
@@ -34,7 +34,8 @@ class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
     private val appsRepository: AppsListRepository,
     private val flagsApiService: FlagsApiService,
-    private val interactor: MergeOverriddenFlagsInteractor
+    private val mapper: MergeOverriddenFlagsInteractor,
+    private val interactor: GmsDBInteractor
 ) : ViewModel() {
     private val gmsApplication = application as GMSApplication
 
@@ -95,7 +96,7 @@ class SuggestionScreenViewModel(
                             overriddenFlags = mutableMapOf()
                             rawSuggestedFlag.map { it.packageName }.forEach { pkg ->
                                 if (overriddenFlags[pkg] == null) {
-                                    overriddenFlags[pkg] = interactor.getMergedOverriddenFlagsByPackage(pkg)
+                                    overriddenFlags[pkg] = mapper.getMergedOverriddenFlagsByPackage(pkg)
                                 }
                             }
                             _stateSuggestionsFlags.value = UiStates.Success(rawSuggestedFlag.map { flag ->
@@ -144,22 +145,7 @@ class SuggestionScreenViewModel(
     private fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val androidPkgName = repository.androidPackage(pkgName)
-                Shell.cmd("am force-stop $androidPkgName").exec()
-                Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-                if (pkgName.contains("finsky") || pkgName.contains("vending")) {
-                    Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
-                    Shell.cmd("am force-stop com.android.vending").exec()
-                }
-                if (pkgName.contains("com.google.android.apps.photos")) {
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*").exec()
-                    Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml").exec()
-                    Shell.cmd("am force-stop com.google.android.apps.photos").exec()
-                }
-                repeat(3) {
-                    Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
-                    Shell.cmd("am force-stop $androidPkgName").exec()
-                }
+                interactor.clearPhenotypeCache(pkgName)
             }
         }
     }

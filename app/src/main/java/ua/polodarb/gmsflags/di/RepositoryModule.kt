@@ -5,7 +5,7 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.SettingsRepository
-import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsInteractor
 
 val repositoryModule = module {
 

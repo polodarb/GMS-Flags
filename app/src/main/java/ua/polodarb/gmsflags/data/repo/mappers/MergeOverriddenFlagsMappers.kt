@@ -1,8 +1,6 @@
-package ua.polodarb.gmsflags.data.repo.interactors
+package ua.polodarb.gmsflags.data.repo.mappers
 
 import android.content.Context
-import android.util.Log
-import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 
 class MergeOverriddenFlagsInteractor(
