@@ -159,40 +159,22 @@ class SuggestionScreenViewModel(
         floatVal: String? = null,
         stringVal: String? = null,
         extensionVal: String? = null,
-        committed: Int = 0
+        committed: Int = 0,
+        clearData: Boolean = true
     ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteRowByFlagName(packageName, name)
-                repository.overrideFlag(
-                    packageName = packageName,
-                    user = "",
-                    name = name,
-                    flagType = flagType,
-                    intVal = intVal,
-                    boolVal = boolVal,
-                    floatVal = floatVal,
-                    stringVal = stringVal,
-                    extensionVal = extensionVal,
-                    committed = committed
-                )
-                for (i in usersList) {
-                    repository.overrideFlag(
-                        packageName = packageName,
-                        user = i,
-                        name = name,
-                        flagType = flagType,
-                        intVal = intVal,
-                        boolVal = boolVal,
-                        floatVal = floatVal,
-                        stringVal = stringVal,
-                        extensionVal = extensionVal,
-                        committed = committed
-                    )
-                }
-                clearPhenotypeCache(packageName)
-            }
-        }
+        interactor.overrideFlag(
+            packageName = packageName,
+            name = name,
+            flagType = flagType,
+            intVal = intVal,
+            boolVal = boolVal,
+            floatVal = floatVal,
+            stringVal = stringVal,
+            extensionVal = extensionVal,
+            committed = committed,
+            clearData = clearData,
+            usersList = usersList
+        )
     }
 
     fun resetSuggestedFlagValue(packageName: String, flags: List<FlagInfo>) {

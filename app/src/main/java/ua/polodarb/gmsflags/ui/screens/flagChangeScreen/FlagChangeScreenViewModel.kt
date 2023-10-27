@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -439,38 +438,19 @@ class FlagChangeScreenViewModel(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteRowByFlagName(packageName, name)
-                repository.overrideFlag(
-                    packageName = packageName,
-                    user = "",
-                    name = name,
-                    flagType = flagType,
-                    intVal = intVal,
-                    boolVal = boolVal,
-                    floatVal = floatVal,
-                    stringVal = stringVal,
-                    extensionVal = extensionVal,
-                    committed = committed
-                )
-                for (i in usersList) {
-                    repository.overrideFlag(
-                        packageName = packageName,
-                        user = i,
-                        name = name,
-                        flagType = flagType,
-                        intVal = intVal,
-                        boolVal = boolVal,
-                        floatVal = floatVal,
-                        stringVal = stringVal,
-                        extensionVal = extensionVal,
-                        committed = committed
-                    )
-                }
-                if (clearData) clearPhenotypeCache(pkgName)
-            }
-        }
+        gmsDBInteractor.overrideFlag(
+            packageName = packageName,
+            name = name,
+            flagType = flagType,
+            intVal = intVal,
+            boolVal = boolVal,
+            floatVal = floatVal,
+            stringVal = stringVal,
+            extensionVal = extensionVal,
+            committed = committed,
+            clearData = clearData,
+            usersList = usersList
+        )
     }
 
     fun overrideAllFlag() { // todo
@@ -492,15 +472,14 @@ class FlagChangeScreenViewModel(
 
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-        repository.deleteOverriddenFlagByPackage(packageName)
-//            }
-//        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteOverriddenFlagByPackage(packageName)
+            }
+        }
     }
 
     // Saved flags
-
     private fun getAllSavedFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -568,33 +547,21 @@ class FlagChangeScreenViewModel(
     fun enableSelectedFlag() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (stateBoolean.value) {
-                    is UiStates.Success -> {
-                        listBoolFiltered.forEach { (key, value) ->
-                            if (selectedItems.contains(key) && value == "0") {
-                                overrideFlag(
-                                    packageName = pkgName,
-                                    key,
-                                    boolVal = "1",
-                                    clearData = false
-                                )
-                            }
-                        }
-                        clearPhenotypeCache(pkgName)
-                        if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
-                            turnOnAllBoolFlags()
-                        } else {
-                            updateBoolFlagValues(selectedItems, "1")
-                        }
+                listBoolFiltered.forEach { (key, value) ->
+                    if (selectedItems.contains(key) && value == "0") {
+                        overrideFlag(
+                            packageName = pkgName,
+                            key,
+                            boolVal = "1",
+                            clearData = false
+                        )
                     }
-
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
-
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
-                    }
+                }
+                clearPhenotypeCache(pkgName)
+                if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+                    turnOnAllBoolFlags()
+                } else {
+                    updateBoolFlagValues(selectedItems, "1")
                 }
             }
         }
@@ -603,34 +570,21 @@ class FlagChangeScreenViewModel(
     fun disableSelectedFlag() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (stateBoolean.value) {
-                    is UiStates.Success -> {
-                        val data = (stateBoolean.value as UiStates.Success<Map<String, String>>).data
-                        data.forEach { (key, value) ->
-                            if (selectedItems.contains(key) && value == "1") {
-                                overrideFlag(
-                                    packageName = pkgName,
-                                    key,
-                                    boolVal = "0",
-                                    clearData = false
-                                )
-                            }
-                        }
-                        clearPhenotypeCache(pkgName)
-                        if (data.keys.size == selectedItems.size) {
-                            turnOffAllBoolFlags()
-                        } else {
-                            updateBoolFlagValues(selectedItems, "0")
-                        }
+                listBoolFiltered.forEach { (key, value) ->
+                    if (selectedItems.contains(key) && value == "1") {
+                        overrideFlag(
+                            packageName = pkgName,
+                            key,
+                            boolVal = "0",
+                            clearData = false
+                        )
                     }
-
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
-
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
-                    }
+                }
+                clearPhenotypeCache(pkgName)
+                if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+                    turnOffAllBoolFlags()
+                } else {
+                    updateBoolFlagValues(selectedItems, "0")
                 }
             }
         }

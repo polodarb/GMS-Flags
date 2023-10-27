@@ -24,7 +24,6 @@ class GmsDBRepository(
         extensionVal: String?,
         committed: Int
     ) {
-
         gmsApplication.getRootDatabase().overrideFlag(
             packageName,
             user,

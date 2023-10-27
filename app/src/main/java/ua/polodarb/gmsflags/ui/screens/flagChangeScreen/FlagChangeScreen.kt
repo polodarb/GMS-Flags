@@ -59,7 +59,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -294,12 +293,14 @@ fun FlagChangeScreen(
                                     showAddFlagDialog.value = true
                                 },
                                 onDeleteOverriddenFlags = {
-                                    viewModel.showProgressDialog.value = true
-                                    viewModel.showFalseProgressDialog()
-                                    viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    viewModel.initBoolValues()
                                     dropDownExpanded = false
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    coroutineScope.launch {
+                                        viewModel.showProgressDialog.value = true
+                                        viewModel.showFalseProgressDialog()
+                                        viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
+                                        viewModel.initBoolValues()
+                                    }
                                 },
                                 onOpenAppDetailsSettings = {
                                     val intent =
@@ -472,6 +473,7 @@ fun FlagChangeScreen(
                                     }
                                     context.startActivity(intent)
                                 }
+
                                 else -> {}
                             }
                         }, enabled = true) {
@@ -722,8 +724,10 @@ fun FlagChangeScreen(
                         if (intent.resolveActivity(context.packageManager) != null) {
                             context.startActivity(intent)
                         } else {
-                            Toast.makeText(context, "No app to send email. Please install at least one",
-                                Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                context, "No app to send email. Please install at least one",
+                                Toast.LENGTH_SHORT
+                            ).show();
                         }
                         showSendSuggestDialog.value = false
                         suggestFlagDesc.value = ""
@@ -780,8 +784,10 @@ fun FlagChangeScreen(
                         if (intent.resolveActivity(context.packageManager) != null) {
                             context.startActivity(intent)
                         } else {
-                            Toast.makeText(context, "No app to send email. Please install at least one",
-                                Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                context, "No app to send email. Please install at least one",
+                                Toast.LENGTH_SHORT
+                            ).show();
                         }
                         showSendReportDialog.value = false
                         reportFlagDesc.value = ""
