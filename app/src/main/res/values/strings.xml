@@ -46,4 +46,7 @@
     <string name="update_dialog_confirm">Update GMS Flags</string>
     <string name="finder">"Finder: "</string>
     <string name="open_app_details_settings">Open app details settings</string>
+    <string name="notifications_toast">You will not receive notifications</string>
+    <string name="notification_finish">Finish!</string>
+    <string name="notifications_open_settings">Open settings</string>
 </resources>

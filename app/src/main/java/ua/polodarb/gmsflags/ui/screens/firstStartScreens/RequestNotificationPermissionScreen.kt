@@ -1,5 +1,12 @@
 package ua.polodarb.gmsflags.ui.screens.firstStartScreens
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,12 +19,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import ua.polodarb.gmsflags.R
 
@@ -26,10 +39,31 @@ fun RequestNotificationPermissionScreen(
     onSkip: () -> Unit,
     onNotificationRequest: () -> Unit
 ) {
+    val context = LocalContext.current
+    var hasNotificationPermission by remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+        } else mutableStateOf(true)
+    }
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
+            var isPermissionGranted by remember {
+                mutableStateOf(true)
+            }
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = { isGranted ->
+                    hasNotificationPermission = isGranted
+                    isPermissionGranted = isGranted
+                }
+            )
             AsyncImage(
                 model = R.drawable.notifiaction_request_welcome,
                 contentDescription = null,
@@ -74,14 +108,37 @@ fun RequestNotificationPermissionScreen(
                 }
                 Spacer(modifier = Modifier.weight(0.1f))
                 Button(
-                    onClick = onNotificationRequest,
+                    onClick = {
+                        if (isPermissionGranted) {
+                            if (hasNotificationPermission) {
+                                onNotificationRequest()
+                            } else {
+                                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        } else {
+                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                            context.startActivity(intent)
+                            isPermissionGranted = true
+                            hasNotificationPermission = true
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .height(48.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.notification_request),
+                        text = if (isPermissionGranted) {
+                            if (hasNotificationPermission)
+                                stringResource(R.string.notification_finish)
+                            else
+                                stringResource(R.string.notification_request)
+                        } else {
+                            stringResource(R.string.notifications_open_settings)
+                        },
                         fontWeight = FontWeight.Medium,
                         fontSize = 15.sp
                     )

@@ -41,15 +41,8 @@ class MainActivity : ComponentActivity() {
 
     private val configuredFilePath =
         "${appContext.filesDir.absolutePath}${File.separator}configured"
-    private var isFirstStart = !File(configuredFilePath).exists()
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        if (!isGranted) {
-            Toast.makeText(this, "By turning off notifications, you will not receive new information or updates.", Toast.LENGTH_SHORT).show()
-        }
-    }
+    private var isFirstStart = !File(configuredFilePath).exists()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +60,6 @@ class MainActivity : ComponentActivity() {
         }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-//        Toast.makeText(this, "$isFirstStart", Toast.LENGTH_SHORT).show()
 
         setContent {
             GMSFlagsTheme {
@@ -90,31 +81,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        if (!isFirstStart) {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(1000)
-                askNotificationPermission()
-            }
-        }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        requestPermissionLauncher.unregister()
-    }
-
-    private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                // FCM SDK (and your app) can post notifications.
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
     }
 
     fun setFirstLaunch() = File(configuredFilePath).createNewFile()

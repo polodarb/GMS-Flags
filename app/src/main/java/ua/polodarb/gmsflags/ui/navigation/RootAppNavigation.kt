@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
@@ -122,6 +123,7 @@ internal fun RootAppNavigation(
             )
         }
 
+        // Notification request
         composable(
             route = ScreensDestination.NotificationRequest.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
@@ -133,12 +135,12 @@ internal fun RootAppNavigation(
                 onSkip = {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     activity.setFirstLaunch()
+                    Toast.makeText(activityContext, activityContext.getString(R.string.notifications_toast), Toast.LENGTH_SHORT).show()
                     navController.navigate(ScreensDestination.Root.screenRoute)
                 },
                 onNotificationRequest = {
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     activity.setFirstLaunch()
-                    // todo: notification request logic
                     navController.navigate(ScreensDestination.Root.screenRoute)
                 }
             )
