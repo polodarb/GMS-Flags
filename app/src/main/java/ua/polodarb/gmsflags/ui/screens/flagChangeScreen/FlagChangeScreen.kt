@@ -156,7 +156,7 @@ fun FlagChangeScreen(
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
-    val chipsList = listOf("All", "Enabled", "Disabled", "Changed")
+    val chipsList = listOf("All", "Changed", "Disabled", "Enabled")
 
     // Tab state for filter button
     var tabFilterState by rememberSaveable {
@@ -364,9 +364,9 @@ fun FlagChangeScreen(
                         chipOnClick = {
                             when (it) {
                                 0 -> viewModel.filterMethod.value = ALL
-                                1 -> viewModel.filterMethod.value = ENABLED
+                                1 -> viewModel.filterMethod.value = CHANGED
                                 2 -> viewModel.filterMethod.value = DISABLED
-                                3 -> viewModel.filterMethod.value = CHANGED
+                                3 -> viewModel.filterMethod.value = ENABLED
                             }
                             selectedChips = it
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)

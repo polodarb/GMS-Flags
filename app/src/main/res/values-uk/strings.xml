@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="crash_title">Помилка сервісу</string>
+    <string name="crash_advice">Будь ласка, перезапустіть додаток</string>
+    <string name="crash_msg">На жаль, сталася помилка і доступ до бази даних GMS неможливий.</string>
+    <string name="crash_report">Надіслати звіт</string>
+    <string name="crash_report_failed">Перезапустити</string>
+    <string name="crash_restart">Перезапустити</string>
+    <string name="welcome_title">Вітаємо!</string>
+    <string name="welcome_msg">Досліджуйте додатки Google, щоб дізнатися про приховані функції, оновлені інтерфейси, а також майте можливість вимкнути регіональні обмеження та багато чого іншого</string>
+    <string name="welcome_advice">Станьте частиною спільноти!</string>
+    <string name="welcome_start">Почати!</string>
+    <string name="welcome_disclaimer">Продовжуючи, ви погоджуєтеся з нашими Умовами користування та Політикою конфіденційності</string>
+    <string name="welcome_terms_chunk">Умовами користування</string>
+    <string name="welcome_policy_chunk">Політикою конфіденційності</string>
+    <string name="root_title">Необхідні root-права</string>
+    <string name="root_msg">"Для роботи програми потрібні права суперкористувача. "</string>
+    <string name="root_advice">Щоб запитати дозвіл, натисніть на відповідну кнопку</string>
+    <string name="root_exit">Вийти</string>
+    <string name="root_request">Запитати права</string>
+    <string name="notification_title">Повідомлення</string>
+    <string name="notification_msg">"Дозвольте отримувати сповіщення, щоб бути в курсі нових флагів та новин. "</string>
+    <string name="notification_advice">Для запиту натисність відповідну кнопку</string>
+    <string name="notification_request">Дозволити</string>
+    <string name="notification_skip">Пропустити</string>
+    <string name="packages_title">Список пакетів</string>
+    <string name="packages_search_advice">Пошук по пакетах</string>
+    <string name="nav_bar_suggestions">Рекомендації</string>
+    <string name="nav_bar_apps">Додатки</string>
+    <string name="nav_bar_saved">Збережене</string>
+    <string name="nav_bar_history">Історія</string>
+    <string name="component_error_load">Помилка завантаження даних</string>
+    <string name="component_no_flags">Флаги не знайдені</string>
+    <string name="component_no_apps">Додатки не знайдені</string>
+    <string name="component_not_implemented">Скоро буде</string>
+    <string name="component_add_flag">Додати флаг</string>
+    <string name="component_reset_flags">Скинути перезаписані флаги</string>
+    <string name="update_dialog_info">Натиснувши кнопку \"Оновити GMS Flags\", ви перейдете на GitHub з=до останньою версії</string>
+    <string name="update_dialog_title">Оновити додаток до v%1$s</string>
+    <string name="update_dialog_close">Закрити</string>
+    <string name="update_dialog_confirm">Оновити GMS Flags</string>
+    <string name="finder">"Джерело: "</string>
+    <string name="open_app_details_settings">Відкрити додаток у налаштуваннях</string>
+    <string name="notifications_toast">Ви не будете отримувати сповіщення</string>
+    <string name="notification_finish">Продовжити</string>
+    <string name="notifications_open_settings">Відкрити налаштування</string>
+    <string name="suggestion_banner">Щоб примінити флаг, потрібно кілька разів натиснути \"Зупинити\" в налаштуваннях відповідного додатку.</string>
+    <string name="close">Закрити</string>
+    <string name="apps_dialog_choose_package">Оберіть пакет</string>
+    <string name="primary">Головні</string>
+    <string name="secondary">Другорядні</string>
+</resources>

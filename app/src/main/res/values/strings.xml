@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">GMS Flags</string>
+    <string name="app_name" translatable="false">GMS Flags</string>
     <string name="crash_title">Service error</string>
     <string name="crash_advice">Please restart the application.</string>
     <string name="crash_msg">Unfortunately, a service error occurred and access to the GMS database is impossible.</string>
     <string name="crash_report">Send report</string>
-    <string name="crash_report_subject">"GMS Flags has crashed!"</string>
+    <string name="crash_report_subject" translatable="false">"GMS Flags has crashed!"</string>
     <string name="crash_report_failed">Restart app</string>
     <string name="crash_restart">Restart app</string>
     <string name="welcome_title">Welcome!</string>
@@ -12,17 +12,17 @@
     <string name="welcome_advice">Become part of the community!</string>
     <string name="welcome_start">Start!</string>
     <string name="welcome_disclaimer">By continuing, you agree to our Terms of Service and Privacy Policy</string>
-    <string name="welcome_terms_chunk">Terms of Service</string>
+    <string name="welcome_terms_chunk" translatable="false">Terms of Service</string>
     <string name="welcome_terms_url" translatable="false">https://polodarb.github.io/gms-flags/terms-of-service</string>
-    <string name="welcome_policy_chunk">Privacy Policy</string>
+    <string name="welcome_policy_chunk" translatable="false">Privacy Policy</string>
     <string name="welcome_policy_url" translatable="false">https://polodarb.github.io/gms-flags/privacy</string>
     <string name="root_title">Root required</string>
-    <string name="root_msg">Unfortunately, the application requires superuser rights to function. </string>
+    <string name="root_msg">"The application requires superuser rights to function. "</string>
     <string name="root_advice">To request click the "Request root"</string>
     <string name="root_exit">Exit</string>
     <string name="root_request">Request root</string>
     <string name="notification_title">Notifications</string>
-    <string name="notification_msg">Request permission to receive notifications to stay up to date with new flags and news stories. </string>
+    <string name="notification_msg">Allow notifications to stay up to date with new flags and news.</string>
     <string name="notification_advice">To request click the "Request" button</string>
     <string name="notification_request">Request</string>
     <string name="notification_skip">Skip</string>
@@ -49,4 +49,9 @@
     <string name="notifications_toast">You will not receive notifications</string>
     <string name="notification_finish">Finish!</string>
     <string name="notifications_open_settings">Open settings</string>
+    <string name="suggestion_banner">To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.</string>
+    <string name="close">Close</string>
+    <string name="apps_dialog_choose_package">Choose a package</string>
+    <string name="primary">Primary</string>
+    <string name="secondary">Secondary</string>
 </resources>

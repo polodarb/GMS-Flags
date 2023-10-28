@@ -306,7 +306,7 @@ fun WarningBanner(
                         .size(28.dp)
                 )
                 Text(
-                    text = "To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.",
+                    text = stringResource(R.string.suggestion_banner),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
                     fontWeight = FontWeight.Medium,
@@ -326,7 +326,7 @@ fun WarningBanner(
                             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Text(text = "Close")
+                        Text(text = stringResource(R.string.close))
                     }
                 }
             }

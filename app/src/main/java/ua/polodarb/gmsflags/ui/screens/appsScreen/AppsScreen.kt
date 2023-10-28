@@ -50,6 +50,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -115,7 +116,7 @@ fun AppsScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            "Apps",
+                            stringResource(id = R.string.nav_bar_apps),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -164,7 +165,7 @@ fun AppsScreen(
                         onQueryChange = { newQuery ->
                             viewModel.searchQuery.value = newQuery
                         },
-                        placeHolderText = "Search a package name",
+                        placeHolderText = stringResource(id = R.string.packages_search_advice),
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""

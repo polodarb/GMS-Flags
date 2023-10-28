@@ -33,10 +33,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import ua.polodarb.gmsflags.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +65,7 @@ fun AppsScreenDialog(
                 onDismiss()
                 searchQuery.value = ""
             },
-            title = { Text(text = "Choose a package") },
+            title = { Text(text = stringResource(R.string.apps_dialog_choose_package)) },
             text = {
                 Column(
                     modifier = Modifier.width(screenWidth - 78.dp) //todo: change dialog width
@@ -75,7 +77,7 @@ fun AppsScreenDialog(
                         },
                         onSearch = {},
                         placeholder = {
-                            Text(text = "Search a package")
+                            Text(text = stringResource(id = R.string.packages_search_advice))
                         },
                         leadingIcon = {
                             Icon(
@@ -123,7 +125,7 @@ fun AppsScreenDialog(
             },
             confirmButton = {
                 OutlinedButton(onClick = onDismiss) {
-                    Text(text = "Exit")
+                    Text(text = stringResource(id = R.string.close))
                 }
             }
         )
@@ -177,7 +179,7 @@ fun DialogListWithSeparator(
         modifier = Modifier.clip(RoundedCornerShape(16.dp))
     ) {
         item {
-            SeparatorText("Primary")
+            SeparatorText(stringResource(R.string.primary))
         }
         itemsIndexed(filteredPrimaryList.toList()) { index: Int, item: String ->
             DialogListItem(
@@ -188,7 +190,7 @@ fun DialogListWithSeparator(
             )
         }
         item {
-            SeparatorText("Secondary")
+            SeparatorText(stringResource(R.string.secondary))
         }
         itemsIndexed(filteredSecondaryList.toList()) { index: Int, item: String ->
             DialogListItem(
