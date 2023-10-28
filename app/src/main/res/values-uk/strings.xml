@@ -20,7 +20,7 @@
     <string name="root_request">Запитати права</string>
     <string name="notification_title">Повідомлення</string>
     <string name="notification_msg">"Дозвольте отримувати сповіщення, щоб бути в курсі нових флагів та новин. "</string>
-    <string name="notification_advice">Для запиту натисність відповідну кнопку</string>
+    <string name="notification_advice">Щоб запитати дозвіл, натисніть на відповідну кнопку</string>
     <string name="notification_request">Дозволити</string>
     <string name="notification_skip">Пропустити</string>
     <string name="packages_title">Список пакетів</string>
@@ -35,15 +35,15 @@
     <string name="component_not_implemented">Скоро буде</string>
     <string name="component_add_flag">Додати флаг</string>
     <string name="component_reset_flags">Скинути перезаписані флаги</string>
-    <string name="update_dialog_info">Натиснувши кнопку \"Оновити GMS Flags\", ви перейдете на GitHub з=до останньою версії</string>
-    <string name="update_dialog_title">Оновити додаток до v%1$s</string>
+    <string name="update_dialog_info">Натиснувши кнопку \"Оновити GMS Flags\", ви перейдете на GitHub до останньою версії</string>
+    <string name="update_dialog_title">Оновіть додаток до v%1$s</string>
     <string name="update_dialog_close">Закрити</string>
     <string name="update_dialog_confirm">Оновити GMS Flags</string>
     <string name="finder">"Джерело: "</string>
     <string name="open_app_details_settings">Відкрити додаток у налаштуваннях</string>
     <string name="notifications_toast">Ви не будете отримувати сповіщення</string>
     <string name="notification_finish">Продовжити</string>
-    <string name="notifications_open_settings">Відкрити налаштування</string>
+    <string name="notifications_open_settings">Налаштування</string>
     <string name="suggestion_banner">Щоб примінити флаг, потрібно кілька разів натиснути \"Зупинити\" в налаштуваннях відповідного додатку.</string>
     <string name="close">Закрити</string>
     <string name="apps_dialog_choose_package">Оберіть пакет</string>
