@@ -28,7 +28,7 @@ GMS Flags is a tool for changing parameters in Google services to activate or de
 # Download
 [<img src="gh_download.png"
      alt="Get it on GitHub"
-     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.0.7/gms_flags_1.0.7.apk)
+     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.0.8/gms_flags_1.0.8.apk)
 
 ## License
 

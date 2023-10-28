@@ -76,6 +76,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     data object Packages : ScreensDestination("packages")
     data object Welcome : ScreensDestination("welcome")
     data object RootRequest : ScreensDestination("rootRequest")
+    data object NotificationRequest : ScreensDestination("notificationRequest")
 }
 
 @Composable

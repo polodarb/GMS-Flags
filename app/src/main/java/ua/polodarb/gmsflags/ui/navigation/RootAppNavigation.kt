@@ -24,10 +24,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
 import ua.polodarb.gmsflags.ui.screens.RootScreen
+import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RequestNotificationPermissionScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RootRequestScreen
 import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
@@ -62,8 +64,10 @@ internal fun RootAppNavigation(
     ) {
         composable(
             route = ScreensDestination.Root.screenRoute,
-            enterTransition = { enterAnim(toLeft = false) },
-            exitTransition = { exitAnim(toLeft = true) }
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
         ) {
             RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
         }
@@ -84,7 +88,9 @@ internal fun RootAppNavigation(
         composable(
             route = ScreensDestination.RootRequest.screenRoute,
             enterTransition = { enterAnim(toLeft = true) },
-            exitTransition = { exitAnim(toLeft = false) }
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
         ) {
             RootRequestScreen(
                 onExit = { activity.finish() },
@@ -100,8 +106,7 @@ internal fun RootAppNavigation(
                         (appContext.applicationContext as GMSApplication).initDB()
                         CoroutineScope(Dispatchers.Main).launch {
                             delay(700)
-                            activity.setFirstLaunch()
-                            navController.navigate(ScreensDestination.Root.screenRoute)
+                            navController.navigate(ScreensDestination.NotificationRequest.screenRoute)
                         }
                     } else {
                         CoroutineScope(Dispatchers.Main).launch {
@@ -115,6 +120,29 @@ internal fun RootAppNavigation(
                     }
                 },
                 isButtonLoading = isButtonLoading.value
+            )
+        }
+
+        // Notification request
+        composable(
+            route = ScreensDestination.NotificationRequest.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
+        ) {
+            RequestNotificationPermissionScreen(
+                onSkip = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    activity.setFirstLaunch()
+                    Toast.makeText(activityContext, activityContext.getString(R.string.notifications_toast), Toast.LENGTH_SHORT).show()
+                    navController.navigate(ScreensDestination.Root.screenRoute)
+                },
+                onNotificationRequest = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    activity.setFirstLaunch()
+                    navController.navigate(ScreensDestination.Root.screenRoute)
+                }
             )
         }
 

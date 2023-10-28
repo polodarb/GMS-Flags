@@ -41,13 +41,8 @@ class MainActivity : ComponentActivity() {
 
     private val configuredFilePath =
         "${appContext.filesDir.absolutePath}${File.separator}configured"
-    private var isFirstStart = !File(configuredFilePath).exists()
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        if (!isGranted) { }
-    }
+    private var isFirstStart = !File(configuredFilePath).exists()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,13 +61,11 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-//        Toast.makeText(this, "$isFirstStart", Toast.LENGTH_SHORT).show()
-
         setContent {
             GMSFlagsTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     UpdateDialog(
                         githubApiService = githubApiService,
@@ -88,31 +81,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        if (!isFirstStart) {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(1000)
-                askNotificationPermission()
-            }
-        }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        requestPermissionLauncher.unregister()
-    }
-
-    private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                // FCM SDK (and your app) can post notifications.
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
     }
 
     fun setFirstLaunch() = File(configuredFilePath).createNewFile()

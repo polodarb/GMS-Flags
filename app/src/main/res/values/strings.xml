@@ -21,6 +21,11 @@
     <string name="root_advice">To request click the "Request root"</string>
     <string name="root_exit">Exit</string>
     <string name="root_request">Request root</string>
+    <string name="notification_title">Notifications</string>
+    <string name="notification_msg">Request permission to receive notifications to stay up to date with new flags and news stories. </string>
+    <string name="notification_advice">To request click the "Request" button</string>
+    <string name="notification_request">Request</string>
+    <string name="notification_skip">Skip</string>
     <string name="packages_title">Packages</string>
     <string name="packages_search_advice">Search a package name</string>
 
@@ -41,4 +46,7 @@
     <string name="update_dialog_confirm">Update GMS Flags</string>
     <string name="finder">"Source: "</string>
     <string name="open_app_details_settings">Open app details settings</string>
+    <string name="notifications_toast">You will not receive notifications</string>
+    <string name="notification_finish">Finish!</string>
+    <string name="notifications_open_settings">Open settings</string>
 </resources>
