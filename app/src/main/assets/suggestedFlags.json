@@ -1,5 +1,5 @@
-[  
-    {
+[
+  {
     "name": "\"G\" on space in GBoard",
     "author": "RBoard Themes",
     "flags": [
@@ -7,12 +7,7 @@
         "tag": "show_branding_interval_seconds",
         "type": "int",
         "value": "0"
-      },
-      {
-        "tag": "show_branding_on_space",
-        "type": "bool",
-        "value": "1"
-      },
+      }
     ],
     "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
     "isArchive": false
