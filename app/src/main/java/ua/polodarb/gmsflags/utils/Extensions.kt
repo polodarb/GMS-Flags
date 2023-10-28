@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.core
+package ua.polodarb.gmsflags.utils
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -28,6 +28,26 @@ object Extensions {
             compareByDescending<String> {
                 it.toIntOrNull() ?: 0
             }.thenBy { it })
+    }
+
+    fun Map<String, String>.filterByEnabled(): Map<String, String> {
+        val filteredMap = mutableMapOf<String, String>()
+        for ((key, value) in this) {
+            if (value == "1") {
+                filteredMap[key] = value
+            }
+        }
+        return filteredMap
+    }
+
+    fun Map<String, String>.filterByDisabled(): Map<String, String> {
+        val filteredMap = mutableMapOf<String, String>()
+        for ((key, value) in this) {
+            if (value == "0") {
+                filteredMap[key] = value
+            }
+        }
+        return filteredMap
     }
 
     fun Modifier.customTabIndicatorOffset(

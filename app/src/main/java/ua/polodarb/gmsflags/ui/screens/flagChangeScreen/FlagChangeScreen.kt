@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.core.Extensions.toSortMap
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown

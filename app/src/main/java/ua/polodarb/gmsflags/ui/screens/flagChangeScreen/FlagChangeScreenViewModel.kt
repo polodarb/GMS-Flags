@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.core.Extensions.toSortMap
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
+import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
 import java.util.Collections
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
@@ -175,26 +177,6 @@ class FlagChangeScreenViewModel(
 
     }
 
-    fun Map<String, String>.filterByEnabled(): Map<String, String> {
-        val filteredMap = mutableMapOf<String, String>()
-        for ((key, value) in this) {
-            if (value == "1") {
-                filteredMap[key] = value
-            }
-        }
-        return filteredMap
-    }
-
-    fun Map<String, String>.filterByDisabled(): Map<String, String> {
-        val filteredMap = mutableMapOf<String, String>()
-        for ((key, value) in this) {
-            if (value == "0") {
-                filteredMap[key] = value
-            }
-        }
-        return filteredMap
-    }
-
     fun getAndroidPackage(pkgName: String): String {
         return repository.androidPackage(pkgName)
     }
@@ -211,7 +193,7 @@ class FlagChangeScreenViewModel(
     private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
 
     init {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getUsers().collect {
                     usersList.addAll(it)
@@ -438,34 +420,21 @@ class FlagChangeScreenViewModel(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        gmsDBInteractor.overrideFlag(
-            packageName = packageName,
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed,
-            clearData = clearData,
-            usersList = usersList
-        )
-    }
-
-    fun overrideAllFlag() { // todo
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                listBoolFiltered.forEach {
-                    if (it.value == "0") {
-                        overrideFlag(
-                            packageName = pkgName,
-                            it.key,
-                            boolVal = "1"
-                        )
-                    }
-                }
-                turnOnAllBoolFlags()
+                gmsDBInteractor.overrideFlag(
+                    packageName = packageName,
+                    name = name,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed,
+                    clearData = clearData,
+                    usersList = usersList
+                )
             }
         }
     }
@@ -526,10 +495,10 @@ class FlagChangeScreenViewModel(
     fun selectAllItems() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (stateBoolean.value) {
+                when (val result = stateBoolean.value) {
                     is UiStates.Success -> {
                         selectedItems.clear()
-                        selectedItems.addAll((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys)
+                        selectedItems.addAll(result.data.keys)
                     }
 
                     is UiStates.Loading -> {

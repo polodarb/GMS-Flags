@@ -8,8 +8,8 @@ import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_GMS
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_VENDING
 
 class RootDatabase : RootService() {
 

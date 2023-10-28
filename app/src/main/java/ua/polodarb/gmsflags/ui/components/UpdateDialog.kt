@@ -25,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.core.Extensions.toFormattedInt
+import ua.polodarb.gmsflags.utils.Extensions.toFormattedInt
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.github.GithubApiService
 
