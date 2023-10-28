@@ -55,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import my.nanihadesuka.compose.LazyColumnScrollbar
 import okhttp3.internal.toImmutableMap
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
@@ -87,6 +88,8 @@ fun PackagesScreen(
     var searchIconState by remember {
         mutableStateOf(false)
     }
+
+    val listState = rememberLazyListState()
 
 
     LaunchedEffect(searchIconState) {
@@ -179,7 +182,8 @@ fun PackagesScreen(
                             focusManager.clearFocus()
                             keyboardController?.hide()
                             onFlagClick(it)
-                        }
+                        },
+                        listState = listState
                     )
                 }
 
@@ -193,35 +197,44 @@ fun PackagesScreen(
 @Composable
 private fun SuccessListItems(
     list: Map<String, String>,
-//    listState: LazyListState,
+    listState: LazyListState,
     savedPackagesList: List<String>,
     viewModel: PackagesScreenViewModel,
     onFlagClick: (packageName: String) -> Unit
 ) {
 
-    LazyColumn(
-//        state = listState,
-        modifier = Modifier.imePadding()
+    LazyColumnScrollbar(
+        listState = listState,
+        thickness = 8.dp,
+        padding = 0.dp,
+        thumbColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+        thumbSelectedColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+        thumbMinHeight = 0.075f
     ) {
-        itemsIndexed(list.toList()) { index, item ->
-            PackagesLazyItem(
-                packageName = item.first,
-                packagesCount = item.second.toInt(),
-                checked = savedPackagesList.contains(item.first),
-                onCheckedChange = {
-                    if (it) {
-                        viewModel.savePackage(item.first)
-                    } else {
-                        viewModel.deleteSavedPackage(item.first)
-                    }
-                },
-                lastItem = index == list.size - 1,
-                modifier = Modifier.clickable {
-                    onFlagClick(item.first)
-                })
-        }
-        item {
-            Spacer(modifier = Modifier.padding(12.dp))
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.imePadding()
+        ) {
+            itemsIndexed(list.toList()) { index, item ->
+                PackagesLazyItem(
+                    packageName = item.first,
+                    packagesCount = item.second.toInt(),
+                    checked = savedPackagesList.contains(item.first),
+                    onCheckedChange = {
+                        if (it) {
+                            viewModel.savePackage(item.first)
+                        } else {
+                            viewModel.deleteSavedPackage(item.first)
+                        }
+                    },
+                    lastItem = index == list.size - 1,
+                    modifier = Modifier.clickable {
+                        onFlagClick(item.first)
+                    })
+            }
+            item {
+                Spacer(modifier = Modifier.padding(12.dp))
+            }
         }
     }
 

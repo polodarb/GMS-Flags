@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -56,6 +59,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import my.nanihadesuka.compose.LazyColumnScrollbar
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
@@ -65,6 +69,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.appsScreen.dialog.AppsScreenDialog
+import ua.polodarb.gmsflags.utils.Extensions.simpleVerticalScrollbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +93,7 @@ fun AppsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     var searchIconState by remember {
         mutableStateOf(false)
@@ -182,26 +188,35 @@ fun AppsScreen(
 
                     if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
 
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                    LazyColumnScrollbar(
+                        listState = listState,
+                        thickness = 8.dp,
+                        padding = 0.dp,
+                        thumbColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+                        thumbSelectedColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
                     ) {
-                        this.items(appsList) { item: AppInfo ->
-                            AppListItem(
-                                appName = item.appName,
-                                pkg = item.applicationInfo.packageName,
-                                appIcon = item.icon,
-                                onClick = {
-                                    showDialog.value = true
-                                    coroutineScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            viewModel.getListByPackages(item.applicationInfo.packageName)
-                                            viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            this.items(appsList) { item: AppInfo ->
+                                AppListItem(
+                                    appName = item.appName,
+                                    pkg = item.applicationInfo.packageName,
+                                    appIcon = item.icon,
+                                    onClick = {
+                                        showDialog.value = true
+                                        coroutineScope.launch {
+                                            withContext(Dispatchers.IO) {
+                                                viewModel.getListByPackages(item.applicationInfo.packageName)
+                                                viewModel.setPackageToDialog(item.applicationInfo.packageName)
+                                            }
                                         }
-                                    }
-                                })
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(12.dp))
+                                    })
+                            }
+                            item {
+                                Spacer(modifier = Modifier.padding(12.dp))
+                            }
                         }
                     }
 

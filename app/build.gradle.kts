@@ -80,6 +80,7 @@ android {
 }
 
 dependencies {
+
     // Core
     implementation(libs.core.ktx)
 
@@ -110,6 +111,9 @@ dependencies {
     androidTestImplementation(libs.compose.test.juni4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
+
+    // Scrollbar library for Jetpack Compose
+    implementation(libs.lazyColumnScrollbar)
 
     // Material
     implementation(libs.google.material)

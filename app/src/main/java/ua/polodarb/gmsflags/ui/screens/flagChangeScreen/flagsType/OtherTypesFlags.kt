@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
+import my.nanihadesuka.compose.LazyColumnScrollbar
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
@@ -44,6 +47,9 @@ fun OtherTypesFlagsScreen(
     haptic: HapticFeedback,
     context: Context
 ) {
+
+    val lazyListState = rememberLazyListState()
+
     when (uiState) {
         is UiStates.Success -> {
 
@@ -95,8 +101,7 @@ fun OtherTypesFlagsScreen(
                 }
             }
 
-            val listInt =
-                uiState.data.toList().sortedBy { it.first }.toMap().toSortMap()
+            val listInt = uiState.data.toList().sortedBy { it.first }.toMap().toSortMap()
 
             if (listInt.isEmpty()) NoFlagsOrPackages()
 
@@ -106,53 +111,65 @@ fun OtherTypesFlagsScreen(
                     .imePadding()
             ) {
                 if (listInt.isNotEmpty()) {
-                    LazyColumn {
-                        itemsIndexed(listInt.toList()) { index, item ->
+                    LazyColumnScrollbar(
+                        listState = lazyListState,
+                        thickness = 8.dp,
+                        padding = 0.dp,
+                        thumbColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+                        thumbSelectedColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+                        thumbMinHeight = 0.075f,
+                        enabled = listInt.size >= 15
+                    ) {
+                        LazyColumn(
+                            state = lazyListState
+                        ) {
+                            itemsIndexed(listInt.toList()) { index, item ->
 
-                            val targetFlag = SavedFlags(
-                                packageName.toString(),
-                                item.first,
-                                flagsType.name
-                            )
-                            val isEqual =
-                                savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                                    packageName == targetFlag.pkgName &&
-                                            flag == targetFlag.flagName &&
-                                            selectFlagsType == targetFlag.type
-                                }
-
-                            IntFloatStringValItem(
-                                flagName = listInt.keys.toList()[index],
-                                flagValue = listInt.values.toList()[index],
-                                lastItem = index == listInt.size - 1,
-                                saveChecked = isEqual,
-                                saveOnCheckedChange = {
-                                    if (it) {
-                                        viewModel.saveFlag(
-                                            item.first,
-                                            packageName.toString(),
-                                            flagsType.name
-                                        )
-                                    } else {
-                                        viewModel.deleteSavedFlag(
-                                            item.first,
-                                            packageName.toString()
-                                        )
+                                val targetFlag = SavedFlags(
+                                    packageName.toString(),
+                                    item.first,
+                                    flagsType.name
+                                )
+                                val isEqual =
+                                    savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
+                                        packageName == targetFlag.pkgName &&
+                                                flag == targetFlag.flagName &&
+                                                selectFlagsType == targetFlag.type
                                     }
-                                },
-                                onClick = {
-                                    onFlagClick(
-                                        item.first,
-                                        item.second,
-                                        flagValue,
-                                        showDialog
-                                    )
-                                },
-                                onLongClick = { }
-                            )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(12.dp))
+
+                                IntFloatStringValItem(
+                                    flagName = listInt.keys.toList()[index],
+                                    flagValue = listInt.values.toList()[index],
+                                    lastItem = index == listInt.size - 1,
+                                    saveChecked = isEqual,
+                                    saveOnCheckedChange = {
+                                        if (it) {
+                                            viewModel.saveFlag(
+                                                item.first,
+                                                packageName.toString(),
+                                                flagsType.name
+                                            )
+                                        } else {
+                                            viewModel.deleteSavedFlag(
+                                                item.first,
+                                                packageName.toString()
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        onFlagClick(
+                                            item.first,
+                                            item.second,
+                                            flagValue,
+                                            showDialog
+                                        )
+                                    },
+                                    onLongClick = { }
+                                )
+                            }
+                            item {
+                                Spacer(modifier = Modifier.padding(12.dp))
+                            }
                         }
                     }
                     FlagChangeDialog(

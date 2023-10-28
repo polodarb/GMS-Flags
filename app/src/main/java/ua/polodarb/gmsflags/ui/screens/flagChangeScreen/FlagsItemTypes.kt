@@ -141,8 +141,8 @@ fun IntFloatStringValItem(
             IconToggleButton(
                 checked = saveChecked,
                 onCheckedChange = saveOnCheckedChange
-            ) { // todo
-                if (saveChecked) { //todo
+            ) {
+                if (saveChecked) {
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),
                         contentDescription = "Localized description"

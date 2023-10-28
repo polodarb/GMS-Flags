@@ -20,6 +20,7 @@ kotlin = "1.9.10"
 kotlinCollectionsImmutable = "0.3.6"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.5"
+lazyColumnScrollbar = "1.8.0"
 libsu = "5.2.1"
 lifecycle = "2.6.2"
 material = "1.10.0"
@@ -59,6 +60,7 @@ ktor-core = { group = "io.ktor", name = "ktor-client-core" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging" }
 ktor-negotation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
+lazyColumnScrollbar = { group = "com.github.nanihadesuka", name = "LazyColumnScrollbar", version.ref = "lazyColumnScrollbar" }
 libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }

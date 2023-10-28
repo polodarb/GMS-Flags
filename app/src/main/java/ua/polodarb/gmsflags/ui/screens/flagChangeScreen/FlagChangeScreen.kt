@@ -101,7 +101,6 @@ fun FlagChangeScreen(
 
     // scroll to position
     val item: String? = "Video__hevc_default_value"
-    val listState = rememberLazyListState()
 
     val viewModel =
         koinViewModel<FlagChangeScreenViewModel>(parameters = { parametersOf(packageName) })
@@ -543,7 +542,6 @@ fun FlagChangeScreen(
 //                            }
 
                             BooleanFlagsScreen(
-                                lazyListState = listState,
                                 listBool = listBool,
                                 uiState = uiStateBoolean.value,
                                 viewModel = viewModel,
