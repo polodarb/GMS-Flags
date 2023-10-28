@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -48,6 +49,7 @@ fun RootRequestScreen(
                 text = stringResource(id = R.string.root_title),
                 fontSize = 46.sp,
                 fontWeight = FontWeight.W600,
+                lineHeight = 44.sp,
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
             )
             Text(
@@ -76,6 +78,8 @@ fun RootRequestScreen(
                     Text(
                         text = stringResource(id = R.string.root_exit),
                         fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         fontSize = 15.sp
                     )
                 }
@@ -98,6 +102,8 @@ fun RootRequestScreen(
                         Text(
                             text = stringResource(id = R.string.root_request),
                             fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             fontSize = 15.sp
                         )
                     }

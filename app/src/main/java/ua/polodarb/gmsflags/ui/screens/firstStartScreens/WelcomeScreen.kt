@@ -22,6 +22,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +48,7 @@ fun WelcomeScreen(
             text = stringResource(id = R.string.welcome_title),
             fontSize = 46.sp,
             fontWeight = FontWeight.W600,
+            lineHeight = 44.sp,
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
         )
         Text(
@@ -70,6 +72,8 @@ fun WelcomeScreen(
             Text(
                 text = stringResource(id = R.string.welcome_start),
                 fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 fontSize = 15.sp
             )
         }
