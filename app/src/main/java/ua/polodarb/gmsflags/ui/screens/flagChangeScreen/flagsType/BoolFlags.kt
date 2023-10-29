@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -77,12 +76,11 @@ fun BooleanFlagsScreen(
                                     flagName,
                                     SelectFlagsType.BOOLEAN.name
                                 )
-                                val isEqual =
-                                    savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                                        packageName == targetFlag.pkgName &&
-                                                flag == targetFlag.flagName &&
-                                                selectFlagsType == targetFlag.type
-                                    }
+                                val isEqual = savedFlagsList.any { flag ->
+                                    flag.pkgName == targetFlag.pkgName &&
+                                            flag.flagName == targetFlag.flagName &&
+                                            flag.type == targetFlag.type
+                                }
 
                                 BoolValItem(
                                     flagName = flagName,

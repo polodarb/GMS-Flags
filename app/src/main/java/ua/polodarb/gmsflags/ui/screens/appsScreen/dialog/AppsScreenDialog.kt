@@ -28,8 +28,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
@@ -53,17 +55,15 @@ fun AppsScreenDialog(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
-    var searchQuery = rememberSaveable {
-        mutableStateOf("")
-    }
+    var searchQuery by rememberSaveable { mutableStateOf(value = "") }
 
-    val filteredList = list.filter { it.contains(searchQuery.value) }
+    val filteredList = list.filter { it.contains(searchQuery) }
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
                 onDismiss()
-                searchQuery.value = ""
+                searchQuery = ""
             },
             title = { Text(text = stringResource(R.string.apps_dialog_choose_package)) },
             text = {
@@ -71,9 +71,9 @@ fun AppsScreenDialog(
                     modifier = Modifier.width(screenWidth - 78.dp) //todo: change dialog width
                 ) {
                     DockedSearchBar(
-                        query = searchQuery.value,
-                        onQueryChange = {
-                            searchQuery.value = it
+                        query = searchQuery,
+                        onQueryChange = { query ->
+                            searchQuery = query
                         },
                         onSearch = {},
                         placeholder = {
@@ -87,12 +87,12 @@ fun AppsScreenDialog(
                         },
                         trailingIcon = {
                             AnimatedVisibility(
-                                visible = searchQuery.value.isNotEmpty(),
+                                visible = searchQuery.isNotEmpty(),
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
                                 IconButton(onClick = {
-                                    searchQuery.value = ""
+                                    searchQuery = ""
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,
@@ -111,7 +111,7 @@ fun AppsScreenDialog(
                     Spacer(modifier = Modifier.height(6.dp))
                     DialogPackagesList(filteredList, pkgName) {
                         onPackageClick(it)
-                        searchQuery.value = ""
+                        searchQuery = ""
                     }
                 }
             },
@@ -244,20 +244,7 @@ fun DialogListItem(
 ) {
     Box(
         modifier = Modifier
-            .padding(
-                bottom =
-                if (listStart) {
-                    2.dp
-                } else {
-                    2.dp
-                },
-                top =
-                if (listEnd) {
-                    2.dp
-                } else {
-                    2.dp
-                }
-            )
+            .padding(vertical = 2.dp)
             .clip(
                 if (listStart && !listEnd) {
                     RoundedCornerShape(
@@ -273,7 +260,7 @@ fun DialogListItem(
                         topStart = 4.dp,
                         topEnd = 4.dp
                     )
-                } else if (listEnd && listStart) {
+                } else if (listEnd) {
                     RoundedCornerShape(
                         bottomStart = 16.dp,
                         bottomEnd = 16.dp,

@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.immutableListOf
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -108,7 +107,7 @@ fun FlagTypeChips(
             .fillMaxWidth()
             .padding(top = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(-4.dp)
+        verticalArrangement = Arrangement.spacedBy((-4).dp)
     ) {
         valuesList.forEachIndexed { index, item ->
             FilterChip(

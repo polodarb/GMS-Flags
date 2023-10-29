@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.packagesScreen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
@@ -36,10 +35,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +53,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import my.nanihadesuka.compose.LazyColumnScrollbar
-import okhttp3.internal.toImmutableMap
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
@@ -178,10 +174,10 @@ fun PackagesScreen(
                         list = (uiState.value as UiStates.Success).data,
                         savedPackagesList = savedPackagesList.value,
                         viewModel = viewModel,
-                        onFlagClick = {
+                        onFlagClick = { packageName ->
                             focusManager.clearFocus()
                             keyboardController?.hide()
-                            onFlagClick(it)
+                            onFlagClick(packageName)
                         },
                         listState = listState
                     )

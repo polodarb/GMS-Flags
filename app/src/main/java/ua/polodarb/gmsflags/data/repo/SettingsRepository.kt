@@ -6,14 +6,12 @@ import ua.polodarb.gmsflags.data.databases.local.dao.FlagsDAO
 import ua.polodarb.gmsflags.data.databases.local.dao.PackagesDAO
 
 class SettingsRepository(
-    private val context: Context,
+    context: Context,
     private val flagsDao: FlagsDAO,
     private val packagesDAO: PackagesDAO
 ) {
-
     private val gmsApplication = context as GMSApplication
 
-    // GMS Database
     fun deleteAllOverriddenFlagsFromGMS() {
         gmsApplication.getRootDatabase().deleteAllOverriddenFlagsFromGMS()
     }
@@ -22,13 +20,11 @@ class SettingsRepository(
         gmsApplication.getRootDatabase().deleteAllOverriddenFlagsFromPlayStore()
     }
 
-    // Local Database
-    suspend fun deleteAllSavedFlags() {
+    fun deleteAllSavedFlags() {
         flagsDao.deleteAllSavedFlags()
     }
 
-    suspend fun deleteAllSavedPackages() {
+    fun deleteAllSavedPackages() {
         packagesDAO.deleteAllSavedPackages()
     }
-
 }

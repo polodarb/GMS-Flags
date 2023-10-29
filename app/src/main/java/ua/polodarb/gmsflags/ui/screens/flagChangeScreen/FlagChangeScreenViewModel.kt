@@ -108,7 +108,7 @@ class FlagChangeScreenViewModel(
     }
 
 
-    fun turnOnAllBoolFlags() {
+    private fun turnOnAllBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
@@ -121,7 +121,7 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    fun turnOffAllBoolFlags() {
+    private fun turnOffAllBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val currentState = _stateBoolean.value
@@ -207,7 +207,7 @@ class FlagChangeScreenViewModel(
         initStringValues()
     }
 
-    fun initOverriddenBoolFlags(pkgName: String, delay: Boolean = false) {
+    fun initOverriddenBoolFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 when (val data = repository.getOverriddenBoolFlagsByPackage(pkgName)) {
@@ -294,7 +294,7 @@ class FlagChangeScreenViewModel(
     }
 
     // Integer
-    fun initIntValues(delay: Boolean = true) {
+    private fun initIntValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getIntFlags(pkgName, delay).collect { uiStates ->
@@ -330,7 +330,7 @@ class FlagChangeScreenViewModel(
     }
 
     // Float
-    fun initFloatValues(delay: Boolean = true) {
+    private fun initFloatValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getFloatFlags(pkgName, delay).collect { uiStates ->
@@ -366,7 +366,7 @@ class FlagChangeScreenViewModel(
     }
 
     // String
-    fun initStringValues(delay: Boolean = true) {
+    private fun initStringValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getStringFlags(pkgName, delay).collect { uiStates ->

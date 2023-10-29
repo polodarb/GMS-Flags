@@ -95,12 +95,7 @@ fun FlagChangeScreen(
     onBackPressed: () -> Unit,
     packageName: String?
 ) {
-
-    // Keyboard
     val focusRequester = remember { FocusRequester() }
-
-    // scroll to position
-    val item: String? = "Video__hevc_default_value"
 
     val viewModel =
         koinViewModel<FlagChangeScreenViewModel>(parameters = { parametersOf(packageName) })
@@ -305,7 +300,7 @@ fun FlagChangeScreen(
                                     val intent =
                                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                                     val uri = Uri.fromParts("package", androidPackage, null)
-                                    intent.setData(uri)
+                                    intent.data = uri
                                     startActivity(context, intent, null)
                                 },
                                 modifier = Modifier
@@ -345,7 +340,7 @@ fun FlagChangeScreen(
                         list = titles,
                         tabState = tabState,
                         topBarState = topBarState,
-                        enabled = if (isInSelectionMode) false else true,
+                        enabled = !isInSelectionMode,
                         onClick = { index ->
                             coroutineScope.launch {
                                 pagerState.scrollToPage(index)
@@ -459,7 +454,7 @@ fun FlagChangeScreen(
                                     val flagsText = selectedItemsWithValues.joinToString("\n")
 
                                     val intent = Intent(Intent.ACTION_SEND).apply {
-                                        setType("text/plain")
+                                        type = "text/plain"
                                         putExtra(
                                             Intent.EXTRA_SUBJECT,
                                             "Extracted flags from GMS Flags"
@@ -472,7 +467,6 @@ fun FlagChangeScreen(
                                     }
                                     context.startActivity(intent)
                                 }
-
                                 else -> {}
                             }
                         }, enabled = true) {
@@ -517,7 +511,7 @@ fun FlagChangeScreen(
 
         HorizontalPager(
             state = pagerState,
-            userScrollEnabled = if (isInSelectionMode) false else true,
+            userScrollEnabled = !isInSelectionMode,
             contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
         ) { page ->
             when (page) {
@@ -725,7 +719,7 @@ fun FlagChangeScreen(
                             Toast.makeText(
                                 context, "No app to send email. Please install at least one",
                                 Toast.LENGTH_SHORT
-                            ).show();
+                            ).show()
                         }
                         showSendSuggestDialog.value = false
                         suggestFlagDesc.value = ""
@@ -785,7 +779,7 @@ fun FlagChangeScreen(
                             Toast.makeText(
                                 context, "No app to send email. Please install at least one",
                                 Toast.LENGTH_SHORT
-                            ).show();
+                            ).show()
                         }
                         showSendReportDialog.value = false
                         reportFlagDesc.value = ""
@@ -846,7 +840,7 @@ fun FlagChangeScreen(
                         )
                     }
                 }
-                viewModel.initOverriddenBoolFlags(packageName.toString(), false)
+                viewModel.initOverriddenBoolFlags(packageName.toString())
                 viewModel.clearPhenotypeCache(packageName.toString())
                 dropDownExpanded = false
                 showAddFlagDialog.value = false

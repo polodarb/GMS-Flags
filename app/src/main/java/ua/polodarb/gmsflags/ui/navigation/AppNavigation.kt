@@ -13,9 +13,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreen
-import ua.polodarb.gmsflags.ui.screens.historyScreen.HistoryScreen
 import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreen
 
@@ -54,7 +54,7 @@ sealed class NavBarItem(
 //    )
 }
 
-val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved, /*NavBarItem.History*/)
+val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved /*, NavBarItem.History*/)
 
 internal sealed class ScreensDestination(var screenRoute: String) {
 
@@ -86,13 +86,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
     parentNavController: NavController,
     navController: NavHostController
 ) {
-
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager(context) }
-    val data = remember {
+    val startScreen = remember {
         mutableStateOf(
             preferencesManager.getData(
-                "settings_navigation",
+                PreferenceConstants.START_SCREEN_KEY,
                 NavBarItem.Suggestions.screenRoute
             )
         )
@@ -100,7 +99,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
 
     NavHost(
         navController = navController,
-        startDestination = data.value,
+        startDestination = startScreen.value,
         modifier = modifier
     ) {
         composable(route = NavBarItem.Suggestions.screenRoute) {

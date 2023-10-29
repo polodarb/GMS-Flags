@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -23,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -51,10 +49,10 @@ fun SavedFlagsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             val grouped = savedFlagsList.toList().groupBy { it.pkgName }
-            grouped.entries.forEachIndexed { index, it ->
+            grouped.entries.forEachIndexed { index, entry ->
                 stickyHeader {
                     Text(
-                        text = it.key,
+                        text = entry.key,
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -64,7 +62,7 @@ fun SavedFlagsScreen(
                             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
                     )
                 }
-                itemsIndexed(it.value) { _, item ->
+                itemsIndexed(entry.value) { _, item ->
 
                     val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
                     val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->

@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.data.repo
 
-import android.util.Log
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.data.databases.local.dao.FlagsDAO
 import ua.polodarb.gmsflags.data.databases.local.dao.PackagesDAO
@@ -12,7 +11,7 @@ class RoomDBRepository(
     private val savedFlagsDao: FlagsDAO
 ) {
 
-    suspend fun getSavedPackages() = flow<List<String>> {
+    suspend fun getSavedPackages() = flow {
         savedPackagesDao.getSavedPackages().collect {
             emit(it)
         }
@@ -39,5 +38,4 @@ class RoomDBRepository(
     suspend fun saveFlag(flagName: String, pkgName: String, flagType: String) {
         savedFlagsDao.saveFlag(SavedFlags(pkgName, flagName, flagType))
     }
-
 }

@@ -35,10 +35,10 @@ import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.about.AboutScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.changeNavigation.ChangeNavigationScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetFlags.ResetFlagsScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.resetSaved.ResetSavedScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.about.AboutScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.startRoute.ChangeNavigationScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.resetFlags.ResetFlagsScreen
+import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.resetSaved.ResetSavedScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -59,7 +59,11 @@ internal fun RootAppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = if (isFirstStart) ScreensDestination.Welcome.screenRoute else ScreensDestination.Root.screenRoute,
+        startDestination = if (isFirstStart) {
+            ScreensDestination.Welcome.screenRoute
+        } else {
+            ScreensDestination.Root.screenRoute
+        },
         modifier = modifier
     ) {
         composable(

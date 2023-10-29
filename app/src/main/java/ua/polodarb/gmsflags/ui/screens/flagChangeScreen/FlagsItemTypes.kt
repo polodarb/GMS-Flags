@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChangeScreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,24 +35,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BoolValItem(
+    modifier: Modifier = Modifier,
     flagName: String,
     checked: Boolean,
     isSelected: Boolean,
     lastItem: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     saveChecked: Boolean,
-    saveOnCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    saveOnCheckedChange: (Boolean) -> Unit
 ) {
 
-    Column() {
+    Column {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(if (!isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
+                .background(
+                    if (!isSelected) {
+                        MaterialTheme.colorScheme.surface
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerHighest
+                    }
+                )
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             if (isSelected) {
@@ -99,7 +102,13 @@ fun BoolValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(
+                if (!isSelected) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                }
+            )
             .padding(horizontal = 16.dp)
     )
 }
@@ -107,14 +116,14 @@ fun BoolValItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IntFloatStringValItem(
+    modifier: Modifier = Modifier,
     flagName: String,
     flagValue: String,
     lastItem: Boolean = false,
     saveChecked: Boolean,
     saveOnCheckedChange: (Boolean) -> Unit,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onLongClick: () -> Unit
 ) {
 
     var select by rememberSaveable {
@@ -130,7 +139,13 @@ fun IntFloatStringValItem(
                     select = !select
                 }
             )
-            .background(if (!select) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(
+                if (!select) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                }
+            )
     ) {
         Row(
             modifier = Modifier
@@ -173,7 +188,13 @@ fun IntFloatStringValItem(
     }
     if (!lastItem) HorizontalDivider(
         Modifier
-            .background(if (!select) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(
+                if (!select) {
+                    MaterialTheme.colorScheme.surface
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                }
+            )
             .padding(horizontal = 16.dp)
     )
 }

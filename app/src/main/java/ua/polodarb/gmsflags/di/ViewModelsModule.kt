@@ -3,7 +3,6 @@ package ua.polodarb.gmsflags.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsInteractor
 import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreenViewModel
@@ -41,7 +40,7 @@ val viewModelsModule = module {
             repository = get(),
             appsRepository = get(),
             flagsApiService = get<FlagsApiServiceImpl>(),
-            mapper = get<MergeOverriddenFlagsInteractor>(),
+            mapper = get(),
             interactor = get()
         )
     }
@@ -57,5 +56,4 @@ val viewModelsModule = module {
             settingsRepository = get()
         )
     }
-
 }

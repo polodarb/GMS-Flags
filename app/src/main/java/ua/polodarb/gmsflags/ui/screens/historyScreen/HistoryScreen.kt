@@ -77,8 +77,8 @@ fun HistoryScreen(
                 scrollBehavior = scrollBehavior
             )
         }
-    ) { it ->
-        Column(modifier = Modifier.padding(it)) {
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
             NotImplementedScreen()
         }
     }

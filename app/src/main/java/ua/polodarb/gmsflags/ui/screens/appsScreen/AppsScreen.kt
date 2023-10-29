@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import my.nanihadesuka.compose.LazyColumnScrollbar
@@ -178,9 +177,9 @@ fun AppsScreen(
                 }
             }
         }
-    ) { it ->
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.padding(top = it.calculateTopPadding())
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
         ) {
             when (val result = uiState.value) {
                 is UiStates.Success -> {

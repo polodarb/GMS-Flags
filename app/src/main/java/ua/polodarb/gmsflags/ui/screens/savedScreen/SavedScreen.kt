@@ -1,7 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.savedScreen
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
@@ -22,7 +20,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,7 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -53,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,9 +57,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.SelectFlagsType
-import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -83,7 +76,7 @@ fun SavedScreen(
     val haptic = LocalHapticFeedback.current
 
     // Tabs
-    var state by rememberSaveable { mutableStateOf(0) }
+    var state by rememberSaveable { mutableIntStateOf(0) }
     val titles = listOf("Saved packages", "Saved flags")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
@@ -122,7 +115,7 @@ fun SavedScreen(
                         }) {
                             Icon(
                                 painterResource(id = R.drawable.ic_packages),
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                         IconButton(onClick = {
@@ -160,7 +153,11 @@ fun SavedScreen(
                                     text = title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (state == index) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
                                 )
                             },
                             modifier = Modifier

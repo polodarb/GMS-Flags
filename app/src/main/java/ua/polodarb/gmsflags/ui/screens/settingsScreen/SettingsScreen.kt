@@ -1,5 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.settingsScreen
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +49,7 @@ fun SettingsScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            "Settings",
+                            text = stringResource(id = R.string.settings_title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.displaySmall
@@ -56,7 +59,7 @@ fun SettingsScreen(
                         IconButton(onClick = onBackPressed) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                     },
@@ -64,13 +67,33 @@ fun SettingsScreen(
                 )
             }
         }
-    ) { it ->
-        Column(modifier = Modifier.padding(it)) {
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
             Column {
-                SettingsItem(R.drawable.ic_reset_flags, "Reset flags", "Reset all overridden flags", onResetFlagsClick)
-                SettingsItem(R.drawable.ic_reset_saved, "Reset saved", "Reset all saved packages or flags", onResetSavedClick)
-                SettingsItem(R.drawable.ic_home, "Change the start screen", "Select from which screen the app will start", onChangeNavigationClick)
-                SettingsItem(R.drawable.ic_info, "About & support", "Useful information and resources", onAboutClick)
+                SettingsItem(
+                    icon = R.drawable.ic_reset_flags,
+                    headline = R.string.settings_item_reset_flags_headline,
+                    description = R.string.settings_item_reset_flags_description,
+                    onResetFlagsClick
+                )
+                SettingsItem(
+                    R.drawable.ic_reset_saved,
+                    headline = R.string.settings_item_reset_saved_headline,
+                    description = R.string.settings_item_reset_saved_description,
+                    onResetSavedClick
+                )
+                SettingsItem(
+                    R.drawable.ic_home,
+                    headline = R.string.settings_item_start_route_headline,
+                    description = R.string.settings_item_start_route_description,
+                    onChangeNavigationClick
+                )
+                SettingsItem(
+                    R.drawable.ic_info,
+                    headline = R.string.settings_item_about_headline,
+                    description = R.string.settings_item_about_description,
+                    onAboutClick
+                )
             }
         }
     }
@@ -78,9 +101,9 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsItem(
-    icon: Int,
-    headline: String,
-    description: String,
+    @DrawableRes icon: Int,
+    @StringRes headline: Int,
+    @StringRes description: Int,
     onItemClick: () -> Unit
 ) {
     Row(
@@ -89,14 +112,23 @@ fun SettingsItem(
             .clickable { onItemClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = painterResource(id = icon), contentDescription = null,
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp).size(26.dp))
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 28.dp)
+                .size(26.dp)
+        )
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(text = headline, fontSize = 20.sp)
-            Text(text = description, color = MaterialTheme.colorScheme.outline, fontSize = 15.sp)
+            Text(text = stringResource(id = headline), fontSize = 20.sp)
+            Text(
+                text = stringResource(id = description),
+                color = MaterialTheme.colorScheme.outline,
+                fontSize = 15.sp
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.settingsScreen.about
+package ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.about
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -26,7 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,9 +37,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ua.polodarb.gmsflags.BuildConfig
@@ -50,18 +52,18 @@ import ua.polodarb.gmsflags.R
 fun AboutScreen(
     onBackPressed: () -> Unit
 ) {
-
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "About & Support") },
+                title = { Text(text = stringResource(id = R.string.settings_about_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = null
                         )
                     }
                 },
@@ -71,13 +73,13 @@ fun AboutScreen(
         Box(modifier = Modifier.padding(top = it.calculateTopPadding())) {
             AboutSettingsContent(
                 onDeveloperClick = {
-                    uriHandler.openUri("https://github.com/polodarb")
+                    uriHandler.openUri(context.getString(R.string.settings_about_developer_url))
                 },
                 onGitHubClick = {
-                    uriHandler.openUri("https://github.com/polodarb/GMS-Flags")
+                    uriHandler.openUri(context.getString(R.string.settings_about_project_url))
                 },
                 onTelegramClick = {
-                    uriHandler.openUri("https://t.me/gmsflags")
+                    uriHandler.openUri(context.getString(R.string.settings_about_telegram_url))
                 }
             )
         }
@@ -90,7 +92,6 @@ fun AboutSettingsContent(
     onGitHubClick: () -> Unit,
     onTelegramClick: () -> Unit
 ) {
-
     val haptic = LocalHapticFeedback.current
 
     Column {
@@ -103,12 +104,12 @@ fun AboutSettingsContent(
 fun Header(
     haptic: HapticFeedback
 ) {
-
-    var rotationState by remember { mutableStateOf(0f) }
+    var rotationState by remember { mutableFloatStateOf(0f) }
 
     val rotationDegrees by animateFloatAsState(
         targetValue = rotationState,
-        animationSpec = tween(durationMillis = 300), label = ""
+        animationSpec = tween(durationMillis = 300),
+        label = "rotation"
     )
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -143,12 +144,14 @@ fun Header(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
-                    modifier = Modifier.size(292.dp).offset(x = 8.dp)
+                    modifier = Modifier
+                        .size(292.dp)
+                        .offset(x = 8.dp)
                 )
             }
         }
         Text(
-            text = "GMS Flags",
+            text = stringResource(id = R.string.app_name),
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.headlineLarge
         )
@@ -183,11 +186,13 @@ fun SettingsAboutListInfo(
     haptic: HapticFeedback
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 36.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 36.dp)
     ) {
         ListItem(
             headlineContent = {
-                Text(text = "Danyil Kobzar")
+                Text(text = stringResource(id = R.string.settings_about_developer_content))
             },
             leadingContent = {
                 Image(
@@ -198,16 +203,18 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = "Developer")
+                Text(text = stringResource(id = R.string.settings_about_developer_title))
             },
-            modifier = Modifier.clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onDeveloperClick()
-            }.padding(start = 8.dp)
+            modifier = Modifier
+                .clickable {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onDeveloperClick()
+                }
+                .padding(start = 8.dp)
         )
         ListItem(
             headlineContent = {
-                Text(text = "Source code")
+                Text(text = stringResource(id = R.string.settings_about_project_title))
             },
             leadingContent = {
                 Image(
@@ -217,16 +224,18 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = "GitHub")
+                Text(text = stringResource(id = R.string.settings_about_project_content))
             },
-            modifier = Modifier.clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onGitHubClick()
-            }.padding(start = 8.dp)
+            modifier = Modifier
+                .clickable {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onGitHubClick()
+                }
+                .padding(start = 8.dp)
         )
         ListItem(
             headlineContent = {
-                Text(text = "Telegram channel")
+                Text(text = stringResource(id = R.string.settings_about_telegram_title))
             },
             leadingContent = {
                 Image(
@@ -236,12 +245,14 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = "Support & updates")
+                Text(text = stringResource(id = R.string.settings_about_project_content))
             },
-            modifier = Modifier.clickable {
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onTelegramClick()
-            }.padding(start = 8.dp)
+            modifier = Modifier
+                .clickable {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onTelegramClick()
+                }
+                .padding(start = 8.dp)
         )
     }
 }

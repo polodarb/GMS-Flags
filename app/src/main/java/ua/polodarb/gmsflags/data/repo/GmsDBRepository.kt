@@ -126,8 +126,7 @@ class GmsDBRepository(
     }
 
     fun androidPackage(pkgName: String): String {
-        val usersList = gmsApplication.getRootDatabase().androidPackage(pkgName)
-        return usersList
+        return gmsApplication.getRootDatabase().androidPackage(pkgName)
     }
 
     fun deleteRowByFlagName(packageName: String, name: String) {
@@ -137,5 +136,4 @@ class GmsDBRepository(
     fun deleteOverriddenFlagByPackage(packageName: String) {
         gmsApplication.getRootDatabase().deleteOverriddenFlagByPackage(packageName)
     }
-
 }

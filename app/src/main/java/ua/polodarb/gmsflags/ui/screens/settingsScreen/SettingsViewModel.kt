@@ -5,14 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.SettingsRepository
+
+private object LocalConstants {
+    const val PLAY_STORE_PKG = "com.android.vending"
+    const val STOP_PLAY_STORE_CMD = "am force-stop $PLAY_STORE_PKG"
+    const val CLEAN_PLAY_STORE_CMD = "rm -rf /data/data/$PLAY_STORE_PKG/files/experiment*"
+    const val PHOTOS_PKG = "com.google.android.apps.photos"
+    const val STOP_PHOTOS_CMD = "am force-stop $PHOTOS_PKG"
+    const val CLEAN_PHOTOS_CMD = "rm -rf /data/data/$PHOTOS_PKG/shared_prefs/*phenotype*"
+}
 
 class SettingsViewModel(
     val settingsRepository: SettingsRepository
 ) : ViewModel() {
-
-    // GMS DATABASE
     fun deleteAllOverriddenFlagsFromGMS() {
         settingsRepository.deleteAllOverriddenFlagsFromGMS()
         clearCache()
@@ -29,43 +35,31 @@ class SettingsViewModel(
         clearCache()
     }
 
-    // Clear Google Photos and Play Store phenotype cache
     private fun clearCache() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
-                Shell.cmd("am force-stop com.android.vending").exec()
-                Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*").exec()
-                Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml").exec()
-                Shell.cmd("am force-stop com.google.android.apps.photos").exec()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            Shell.cmd(LocalConstants.STOP_PLAY_STORE_CMD).exec()
+            Shell.cmd(LocalConstants.CLEAN_PLAY_STORE_CMD).exec()
+            Shell.cmd(LocalConstants.STOP_PHOTOS_CMD).exec()
+            Shell.cmd(LocalConstants.CLEAN_PHOTOS_CMD).exec()
         }
     }
 
-    // Local Room DATABASE
     fun deleteAllSavedFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                settingsRepository.deleteAllSavedFlags()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.deleteAllSavedFlags()
         }
     }
 
     fun deleteAllSavedPackages() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                settingsRepository.deleteAllSavedPackages()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.deleteAllSavedPackages()
         }
     }
 
     fun deleteAllSavedFlagsAndPackages() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                settingsRepository.deleteAllSavedFlags()
-                settingsRepository.deleteAllSavedPackages()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.deleteAllSavedFlags()
+            settingsRepository.deleteAllSavedPackages()
         }
     }
-
 }

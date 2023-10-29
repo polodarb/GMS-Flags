@@ -4,7 +4,7 @@ import android.content.Context
 import ua.polodarb.gmsflags.GMSApplication
 
 class MergeOverriddenFlagsInteractor(
-    private val context: Context
+    context: Context
 ) {
 
     private val gmsApplication = (context as GMSApplication)
