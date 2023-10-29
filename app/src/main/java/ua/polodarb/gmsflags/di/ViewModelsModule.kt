@@ -3,12 +3,12 @@ package ua.polodarb.gmsflags.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsViewModel
-import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.apps.AppsScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
+import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
 
 val viewModelsModule = module {
 

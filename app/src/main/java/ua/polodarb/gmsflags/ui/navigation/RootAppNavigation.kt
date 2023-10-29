@@ -29,16 +29,16 @@ import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.animations.enterAnim
 import ua.polodarb.gmsflags.ui.animations.exitAnim
 import ua.polodarb.gmsflags.ui.screens.RootScreen
-import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RequestNotificationPermissionScreen
-import ua.polodarb.gmsflags.ui.screens.firstStartScreens.RootRequestScreen
-import ua.polodarb.gmsflags.ui.screens.firstStartScreens.WelcomeScreen
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreen
-import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.about.AboutScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.startRoute.ChangeNavigationScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.resetFlags.ResetFlagsScreen
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.screens.resetSaved.ResetSavedScreen
+import ua.polodarb.gmsflags.ui.screens.firstStart.RequestNotificationPermissionScreen
+import ua.polodarb.gmsflags.ui.screens.firstStart.RootRequestScreen
+import ua.polodarb.gmsflags.ui.screens.firstStart.WelcomeScreen
+import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreen
+import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreen
+import ua.polodarb.gmsflags.ui.screens.settings.SettingsScreen
+import ua.polodarb.gmsflags.ui.screens.settings.screens.about.AboutScreen
+import ua.polodarb.gmsflags.ui.screens.settings.screens.startRoute.ChangeNavigationScreen
+import ua.polodarb.gmsflags.ui.screens.settings.screens.resetFlags.ResetFlagsScreen
+import ua.polodarb.gmsflags.ui.screens.settings.screens.resetSaved.ResetSavedScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
