@@ -59,16 +59,16 @@ fun SavedFlagsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surface)
-                            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
                     )
                 }
                 itemsIndexed(entry.value) { _, item ->
 
                     val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
-                    val isEqual = savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
-                        packageName == targetFlag.pkgName &&
-                                flag == targetFlag.flagName &&
-                                selectFlagsType == targetFlag.type
+                    val isEqual = savedFlagsList.any { flag ->
+                        flag.pkgName == targetFlag.pkgName &&
+                                flag.flagName == targetFlag.flagName &&
+                                flag.type == targetFlag.type
                     }
 
                     SavedFlagsLazyItem(
@@ -91,7 +91,9 @@ fun SavedFlagsScreen(
                 }
                 item { 
                     Spacer(modifier = Modifier.height(16.dp))
-                    if (grouped.size - 1 != index) HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+                    if (grouped.size - 1 != index) HorizontalDivider(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp))
                 }
             }
         }
@@ -109,8 +111,8 @@ fun SavedFlagsLazyItem(
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier
-                .padding(bottom = 4.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconToggleButton(checked = checked, onCheckedChange = onCheckedChange) {
                 if (checked) {
@@ -129,8 +131,7 @@ fun SavedFlagsLazyItem(
                 Text(text = flagName, fontSize = 15.sp)
             }
             Icon(
-                modifier = Modifier
-                    .padding(16.dp),
+                modifier = Modifier.padding(16.dp),
                 painter = painterResource(id = R.drawable.ic_next),
                 tint = MaterialTheme.colorScheme.outline,
                 contentDescription = null

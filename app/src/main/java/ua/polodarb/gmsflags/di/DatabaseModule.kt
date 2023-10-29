@@ -5,22 +5,20 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.databases.local.AppDatabase
 
+private object LocalConstants {
+    const val DATABASE_NAME = "gms_flags_database"
+}
+
 val databaseModule = module {
     single {
         Room.databaseBuilder(
             androidApplication().applicationContext,
             AppDatabase::class.java,
-            "gms_flags_database"
+            LocalConstants.DATABASE_NAME
         ).build()
     }
 
-    single {
-        val database = get<AppDatabase>()
-        database.packagesDao()
-    }
+    single { get<AppDatabase>().packagesDao()  }
 
-    single {
-        val database = get<AppDatabase>()
-        database.flagsDao()
-    }
+    single { get<AppDatabase>().flagsDao() }
 }

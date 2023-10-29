@@ -67,7 +67,6 @@ fun SavedScreen(
     onSavedPackageClick: (packageName: String) -> Unit,
     onSavedFlagClick: (packageName: String, flagName: String, type: String) -> Unit,
 ) {
-
     val viewModel = koinViewModel<SavedScreenViewModel>()
     val savedPackages = viewModel.stateSavedPackages.collectAsState()
     val savedFlags = viewModel.stateSavedFlags.collectAsState()
@@ -80,7 +79,7 @@ fun SavedScreen(
     var state by rememberSaveable { mutableIntStateOf(0) }
     val titles = listOf("Saved packages", "Saved flags")
     val indicator = @Composable { tabPositions: List<TabPosition> ->
-        CustomTabIndicatorAnimaton(tabPositions = tabPositions, selectedTabIndex = state)
+        CustomTabIndicatorAnimation(tabPositions = tabPositions, selectedTabIndex = state)
     }
     val pagerState = rememberPagerState(pageCount = {
         2
@@ -214,7 +213,7 @@ fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CustomTabIndicatorAnimaton(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+fun CustomTabIndicatorAnimation(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
     val transition = updateTransition(selectedTabIndex, label = "")
     val indicatorStart by transition.animateDp(
         transitionSpec = {
@@ -235,13 +234,15 @@ fun CustomTabIndicatorAnimaton(tabPositions: List<TabPosition>, selectedTabIndex
             } else {
                 spring(dampingRatio = 1f, stiffness = 500f)
             }
-        }, label = ""
-    ) {
+        },
+        label = ""
+    ) { 
         tabPositions[it].right
     }
 
     CustomTabIndicator(
-        color = MaterialTheme.colorScheme.primary, modifier = Modifier
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(align = Alignment.BottomStart)
             .offset(x = indicatorStart)

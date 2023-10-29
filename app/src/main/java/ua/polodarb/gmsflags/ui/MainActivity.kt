@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
                     )
                     RootAppNavigation(
                         navController = rememberNavController(),
-                        activity = this@MainActivity,
                         isFirstStart = isFirstStart,
                         modifier = Modifier.fillMaxSize()
                     )

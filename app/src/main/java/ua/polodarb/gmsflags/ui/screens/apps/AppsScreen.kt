@@ -74,12 +74,10 @@ fun AppsScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit,
     onPackageItemClick: (packageName: String) -> Unit,
+    viewModel: AppsScreenViewModel = koinViewModel()
 ) {
-
-    // Keyboard
     val focusRequester = remember { FocusRequester() }
 
-    val viewModel = koinViewModel<AppsScreenViewModel>()
     val uiState = viewModel.state.collectAsState()
     val dialogPackageText = viewModel.dialogPackage.collectAsState()
     val dialogDataState = viewModel.dialogDataState.collectAsState()
@@ -284,5 +282,6 @@ fun AppListItem(
                     contentDescription = null
                 )
             }
-        })
+        }
+    )
 }
