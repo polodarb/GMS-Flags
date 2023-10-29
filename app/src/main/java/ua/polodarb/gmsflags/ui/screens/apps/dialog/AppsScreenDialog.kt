@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import ua.polodarb.gmsflags.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +60,7 @@ fun AppsScreenDialog(
 
     var searchQuery by rememberSaveable { mutableStateOf(value = "") }
 
-    val filteredList = list.filter { it.contains(searchQuery) }
+    val filteredList = list.filter { it.contains(searchQuery) }.toPersistentList()
 
     if (showDialog) {
         AlertDialog(
@@ -136,7 +137,7 @@ fun AppsScreenDialog(
 
 @Composable
 fun DialogPackagesList(
-    allPackages: List<String>,
+    allPackages: PersistentList<String>,
     pkgName: String,
     onPackageClick: (packageName: String) -> Unit
 ) {
@@ -149,7 +150,7 @@ fun DialogPackagesList(
 
 @Composable
 fun DialogListWithSeparator(
-    packagesList: List<String>,
+    packagesList: PersistentList<String>,
     pkgName: String,
     onPackageClick: (packageName: String) -> Unit,
 ) {
@@ -218,7 +219,7 @@ fun SeparatorText(text: String) {
 
 @Composable
 fun DialogListWithoutSeparator(
-    packagesList: List<String>,
+    packagesList: PersistentList<String>,
     onPackageClick: (packageName: String) -> Unit,
 ) {
     LazyColumn(

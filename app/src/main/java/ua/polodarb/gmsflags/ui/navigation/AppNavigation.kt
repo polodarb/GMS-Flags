@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -79,6 +80,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     data object NotificationRequest : ScreensDestination("notificationRequest")
 }
 
+@Stable
 @Composable
 internal fun BottomBarNavigation( // Navigation realization for BottomBar
     isFirstStart: Boolean,

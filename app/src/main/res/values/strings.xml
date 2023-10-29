@@ -50,19 +50,18 @@
     <string name="settings_about_developer_content">Danyil Kobzar</string>
     <string name="settings_about_developer_url" translatable="false">https://github.com/polodarb</string>
     <string name="settings_about_project_title">Source code</string>
-    <string name="settings_about_project_content" translatable="false">GitHub</string>
     <string name="settings_about_project_url" translatable="false">https://github.com/polodarb/GMS-Flags</string>
     <string name="settings_about_telegram_title">Telegram channel</string>
     <string name="settings_about_telegram_content">Support &amp; updates</string>
     <string name="settings_about_telegram_url" translatable="false">https://t.me/gmsflags</string>
     <!-- Settings Reset Flags -->
-    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized         (overridden) flags or preferences within the application, providing a clean slate for configuration.</string>
+    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized (overridden) flags or preferences within the application</string>
     <string name="settings_reset_flags_opt_gms">Reset flags in GMS Database</string>
     <string name="settings_reset_flags_opt_vending">Reset flags in Play Store Database</string>
     <string name="settings_reset_flags_opt_all">Reset all overridden flags</string>
     <string name="settings_reset_flags_warning">All flags that you changed will be reset!</string>
     <!-- Settings Reset Saved -->
-    <string name="settings_reset_saved_description">In this section you can reset all packages and flags         on the Saved screen that you have saved before.</string>
+    <string name="settings_reset_saved_description">In this section you can reset all packages and flags on the Saved screen that you have saved before.</string>
     <string name="settings_reset_saved_opt_packages">Reset saved packages</string>
     <string name="settings_reset_saved_opt_flags">Reset saved flags</string>
     <string name="settings_reset_saved_opt_all">Reset all saved flags and packages</string>
@@ -102,4 +101,8 @@
     <string name="apps_dialog_choose_package">Choose a package</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
+    <string name="saved_packages">Saved packages</string>
+    <string name="saved_flags">Saved flags</string>
+    <string name="settings_about_project_source_code" translatable="false">GitHub</string>
+    <string name="component_no_packages">Packages not found</string>
 </resources>

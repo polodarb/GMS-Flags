@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
+import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -45,55 +47,61 @@ fun SavedFlagsScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val grouped = savedFlagsList.toList().groupBy { it.pkgName }
-            grouped.entries.forEachIndexed { index, entry ->
-                stickyHeader {
-                    Text(
-                        text = entry.key,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                    )
-                }
-                itemsIndexed(entry.value) { _, item ->
-
-                    val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
-                    val isEqual = savedFlagsList.any { flag ->
-                        flag.pkgName == targetFlag.pkgName &&
-                                flag.flagName == targetFlag.flagName &&
-                                flag.type == targetFlag.type
-                    }
-
-                    SavedFlagsLazyItem(
-                        flagName = item.flagName,
-                        checked = isEqual,
-                        onCheckedChange = {
-                            if (!it) viewModel.deleteSavedFlag(item.flagName, item.pkgName)
-                        },
-                        modifier = Modifier.combinedClickable(
-                            onClick = {
-                                onFlagClick(item.pkgName, item.flagName, item.type)
-                            },
-                            onLongClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                clipboardManager.setText(AnnotatedString(item.flagName))
-                            }
+        if (savedFlagsList.isEmpty()) {
+            NotFoundContent(NoFlagsOrPackages.FLAGS)
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val grouped = savedFlagsList.toList().groupBy { it.pkgName }
+                grouped.entries.forEachIndexed { index, entry ->
+                    stickyHeader {
+                        Text(
+                            text = entry.key,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(horizontal = 16.dp, vertical = 12.dp)
                         )
-                    )
+                    }
+                    itemsIndexed(entry.value) { _, item ->
 
-                }
-                item { 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    if (grouped.size - 1 != index) HorizontalDivider(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp))
+                        val targetFlag = SavedFlags(item.pkgName, item.flagName, item.type)
+                        val isEqual = savedFlagsList.any { flag ->
+                            flag.pkgName == targetFlag.pkgName &&
+                                    flag.flagName == targetFlag.flagName &&
+                                    flag.type == targetFlag.type
+                        }
+
+                        SavedFlagsLazyItem(
+                            flagName = item.flagName,
+                            checked = isEqual,
+                            onCheckedChange = {
+                                if (!it) viewModel.deleteSavedFlag(item.flagName, item.pkgName)
+                            },
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onFlagClick(item.pkgName, item.flagName, item.type)
+                                },
+                                onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    clipboardManager.setText(AnnotatedString(item.flagName))
+                                }
+                            )
+                        )
+
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (grouped.size - 1 != index) HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
                 }
             }
         }

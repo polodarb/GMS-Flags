@@ -221,7 +221,7 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = stringResource(id = R.string.settings_about_project_content))
+                Text(text = stringResource(R.string.settings_about_project_source_code))
             },
             modifier = Modifier
                 .clickable {
@@ -242,7 +242,7 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = stringResource(id = R.string.settings_about_project_content))
+                Text(text = stringResource(id = R.string.settings_about_telegram_content))
             },
             modifier = Modifier
                 .clickable {

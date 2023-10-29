@@ -15,12 +15,13 @@ import androidx.compose.ui.text.style.TextAlign
 import ua.polodarb.gmsflags.R
 
 @Composable
-fun NoFlagsOrPackages(
+fun NotFoundContent(
     type: NoFlagsOrPackages = NoFlagsOrPackages.FLAGS
 ) {
     val text = "¯\\_(ツ)_/¯\n\n" + when (type) {
         NoFlagsOrPackages.FLAGS -> stringResource(id = R.string.component_no_flags)
         NoFlagsOrPackages.APPS -> stringResource(id = R.string.component_no_apps)
+        NoFlagsOrPackages.PACKAGES -> stringResource(R.string.component_no_packages)
     }
 
     Box(
@@ -41,5 +42,5 @@ fun NoFlagsOrPackages(
 }
 
 enum class NoFlagsOrPackages {
-    APPS, FLAGS
+    APPS, PACKAGES, FLAGS
 }

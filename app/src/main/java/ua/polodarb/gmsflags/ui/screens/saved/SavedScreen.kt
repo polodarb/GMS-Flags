@@ -55,6 +55,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
@@ -77,9 +80,9 @@ fun SavedScreen(
 
     // Tabs
     var state by rememberSaveable { mutableIntStateOf(0) }
-    val titles = listOf("Saved packages", "Saved flags")
+    val titles = persistentListOf(stringResource(R.string.saved_packages), stringResource(R.string.saved_flags))
     val indicator = @Composable { tabPositions: List<TabPosition> ->
-        CustomTabIndicatorAnimation(tabPositions = tabPositions, selectedTabIndex = state)
+        CustomTabIndicatorAnimation(tabPositions = tabPositions.toPersistentList(), selectedTabIndex = state)
     }
     val pagerState = rememberPagerState(pageCount = {
         2
@@ -213,7 +216,7 @@ fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CustomTabIndicatorAnimation(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+fun CustomTabIndicatorAnimation(tabPositions: PersistentList<TabPosition>, selectedTabIndex: Int) {
     val transition = updateTransition(selectedTabIndex, label = "")
     val indicatorStart by transition.animateDp(
         transitionSpec = {

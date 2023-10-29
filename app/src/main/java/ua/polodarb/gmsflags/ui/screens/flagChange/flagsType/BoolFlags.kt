@@ -20,7 +20,7 @@ import my.nanihadesuka.compose.LazyColumnScrollbar
 import ua.polodarb.gmsflags.utils.Extensions.toInt
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.BoolValItem
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
@@ -46,7 +46,7 @@ fun BooleanFlagsScreen(
     when (uiState) {
         is UiStates.Success -> {
 
-            if (listBool.isEmpty()) NoFlagsOrPackages()
+            if (listBool.isEmpty()) NotFoundContent()
 
             Box(
                 modifier = Modifier
@@ -142,7 +142,7 @@ fun BooleanFlagsScreen(
         }
 
         is UiStates.Error -> {
-            NoFlagsOrPackages()
+            NotFoundContent()
         }
     }
 }

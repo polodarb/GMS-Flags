@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,7 @@ import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.apps.dialog.AppsScreenDialog
@@ -181,7 +183,7 @@ fun AppsScreen(
 
                     val appsList = result.data
 
-                    if (appsList.isEmpty()) NoFlagsOrPackages(NoFlagsOrPackages.APPS)
+                    if (appsList.isEmpty()) NotFoundContent(NoFlagsOrPackages.APPS)
 
                     LazyColumnScrollbar(
                         listState = listState,
@@ -255,6 +257,7 @@ fun AppsScreen(
     }
 }
 
+@Stable
 @Composable
 fun AppListItem(
     appName: String,

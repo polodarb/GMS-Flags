@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -45,8 +46,6 @@ fun AddFlagDialog(
     val rowTypes = persistentListOf("Boolean", "Integer", "Float", "String")
     val chipsBooleanSelect = persistentListOf("True", "False")
 
-    val haptic = LocalHapticFeedback.current
-
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { onDismiss() },
@@ -56,15 +55,13 @@ fun AddFlagDialog(
                     FlagTypeChips(
                         valuesList = rowTypes,
                         selectedChips = flagType,
-                        onChipClick = onFlagTypeChange,
-                        haptic = haptic
+                        onChipClick = onFlagTypeChange
                     )
                     FlagBooleanChips(
                         valuesList = chipsBooleanSelect,
                         selectedValue = flagBoolean,
                         onValueClick = onFlagBooleanChange,
-                        enabled = flagType == 0,
-                        haptic = haptic
+                        enabled = flagType == 0
                     )
                     FlagNameInput(
                         flagName = flagName,
@@ -95,11 +92,13 @@ fun AddFlagDialog(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FlagTypeChips(
-    valuesList: List<String>,
+    valuesList: PersistentList<String>,
     selectedChips: Int,
-    onChipClick: (Int) -> Unit,
-    haptic: HapticFeedback
+    onChipClick: (Int) -> Unit
 ) {
+
+    val haptic = LocalHapticFeedback.current
+
     Text(text = "Choose a type of flag")
     FlowRow(
         maxItemsInEachRow = 2,
@@ -151,12 +150,14 @@ fun FlagTypeChips(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlagBooleanChips(
-    valuesList: List<String>,
+    valuesList: PersistentList<String>,
     selectedValue: Int,
     onValueClick: (Int) -> Unit,
-    enabled: Boolean,
-    haptic: HapticFeedback
+    enabled: Boolean
 ) {
+
+    val haptic = LocalHapticFeedback.current
+
     Text(
         text = "Select a value",
         color = if (enabled)

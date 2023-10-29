@@ -551,7 +551,7 @@ class RootDatabase : RootService() {
     }
 
     private fun getGmsPackages(): Map<String, String> {
-        val cursor = gmsDB.rawQuery("SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName", null)
+        val cursor = gmsDB.rawQuery("SELECT packageName, COUNT(DISTINCT CASE WHEN extensionVal IS NULL THEN name END) FROM Flags GROUP BY packageName", null)
         val list = mutableMapOf<String, String>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)

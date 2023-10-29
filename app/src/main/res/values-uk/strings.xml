@@ -32,10 +32,9 @@
     <string name="settings_item_reset_saved_headline">Скинути збережене</string>
     <string name="settings_item_reset_saved_description">Скидання всіх збережених флагів</string>
     <string name="settings_item_start_route_headline">Змінити початковий екран</string>
-    <string name="settings_item_start_route_description">Вибір екрана з якого запускатиметься додаток</string>
+    <string name="settings_item_start_route_description">Вибір стартового екрану при запуску</string>
     <string name="settings_item_about_headline">Про додаток</string>
     <string name="settings_item_about_description">Інформація про додаток та посилання</string>
-    <string name="settings_about_title">Про додаток</string>
     <string name="settings_about_developer_title">Розробник</string>
     <string name="settings_about_developer_content">Даниїл Кобзар</string>
     <string name="settings_about_project_title">Вихідний код</string>
@@ -65,7 +64,7 @@
     <string name="apps_dialog_choose_package">Оберіть пакет</string>
     <string name="primary">Первинне</string>
     <string name="secondary">Вторинне</string>
-    <string name="settings_reset_flags_description">Відновлення налаштувань за замовчуванням і очищення всіх призначених для користувача (перевизначених) прапорів і параметрів у застосунку, забезпечуючи \"чистий аркуш\" для подальших змін.</string>
+    <string name="settings_reset_flags_description">Відновлення налаштувань за замовчуванням і очищення всіх призначених для користувача (перевизначених) флагів і параметрів у застосунку</string>
     <string name="settings_reset_flags_opt_gms">Скинути флаги у GMS</string>
     <string name="settings_reset_flags_opt_vending">Скинути флаги у Play Store</string>
     <string name="settings_reset_flags_opt_all">Скинути всі флаги</string>
@@ -73,11 +72,14 @@
     <string name="settings_reset_saved_description">У цьому розділі ви можете скинути всі збережені Вами пакети і флаги</string>
     <string name="settings_reset_saved_opt_packages">Скинути збережені пакети</string>
     <string name="settings_reset_saved_opt_flags">Скинути збережені флаги</string>
-    <string name="settings_reset_saved_opt_all">Скидання всіх збережених флагів і пакетів</string>
+    <string name="settings_reset_saved_opt_all">Скинути всі збережених флагів і пакетів</string>
     <string name="settings_reset_saved_warning">Всі збережені Вами прапори буде скинуто!</string>
     <string name="settings_start_route_title">Змінити початковий екран</string>
     <string name="settings_start_route_description">Виберіть екран, який відображатиметься під час запуску програми. Екран за замовчуванням - Рекомендації.</string>
     <string name="settings_confirmation_dialog_title">Підтвердіть дію</string>
     <string name="settings_confirmation_dialog_confirm">Підтвердити</string>
     <string name="settings_confirmation_dialog_close">Закрити</string>
+    <string name="saved_packages">Імена пакетів</string>
+    <string name="saved_flags">Флаги</string>
+    <string name="component_no_packages">Пакети не знайдено</string>
 </resources>

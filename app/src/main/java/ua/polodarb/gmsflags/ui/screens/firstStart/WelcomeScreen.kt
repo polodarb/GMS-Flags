@@ -25,6 +25,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import ua.polodarb.gmsflags.R
 
 @Composable
@@ -80,7 +82,7 @@ fun WelcomeScreen(
                 .fillMaxWidth()
                 .padding(start = 24.dp, end = 24.dp, bottom = 36.dp, top = 24.dp),
             disclaimer = context.getString(R.string.welcome_disclaimer),
-            links = listOf(
+            links = persistentListOf(
                 Pair(
                     context.getString(R.string.welcome_terms_chunk),
                     context.getString(R.string.welcome_terms_url)
@@ -99,7 +101,7 @@ fun WelcomeScreen(
 private fun Disclaimer(
     modifier: Modifier = Modifier,
     disclaimer: String,
-    links: List<Pair<String, String>>,
+    links: PersistentList<Pair<String, String>>,
     openLink: (String) -> Unit
 ) {
     val chunks = mutableListOf<Pair<String, String?>>()

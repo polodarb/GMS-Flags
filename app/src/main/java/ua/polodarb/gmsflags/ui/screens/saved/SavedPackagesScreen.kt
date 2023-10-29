@@ -20,6 +20,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
+import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -28,24 +30,27 @@ fun SavedPackagesScreen(
     viewModel: SavedScreenViewModel,
     onPackageClick: (packageName: String) -> Unit
 ) {
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        itemsIndexed(savedPackagesList) { index, item ->
-            SavedPackagesLazyItem(
-                packageName = item,
-                checked = savedPackagesList.contains(item),
-                onCheckedChange = {
-                    if (!it) viewModel.deleteSavedPackage(item)
-                },
-                lastItem = savedPackagesList.size - 1 == index,
-                modifier = Modifier
-                    .clickable {
-                        onPackageClick(item)
-                    }
-                    .animateItemPlacement()
-            )
+    if (savedPackagesList.isEmpty()) {
+        NotFoundContent(NoFlagsOrPackages.PACKAGES)
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            itemsIndexed(savedPackagesList) { index, item ->
+                SavedPackagesLazyItem(
+                    packageName = item,
+                    checked = savedPackagesList.contains(item),
+                    onCheckedChange = {
+                        if (!it) viewModel.deleteSavedPackage(item)
+                    },
+                    lastItem = savedPackagesList.size - 1 == index,
+                    modifier = Modifier
+                        .clickable {
+                            onPackageClick(item)
+                        }
+                        .animateItemPlacement()
+                )
+            }
         }
     }
 }
