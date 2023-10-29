@@ -10,11 +10,13 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GFlagsTabRow(
-    list: List<String>,
+    list: PersistentList<String>,
     tabState: Int,
     topBarState: TopAppBarState,
     enabled: Boolean = true,
@@ -22,7 +24,10 @@ fun GFlagsTabRow(
 ) {
 
     val indicator = @Composable { tabPositions: List<TabPosition> ->
-        CustomTabIndicatorAnimation(tabPositions = tabPositions, selectedTabIndex = tabState)
+        CustomTabIndicatorAnimation(
+            tabPositions = tabPositions.toPersistentList(),
+            selectedTabIndex = tabState
+        )
     }
 
     TabRow(

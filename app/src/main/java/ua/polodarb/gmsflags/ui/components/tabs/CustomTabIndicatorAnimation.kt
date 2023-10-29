@@ -13,10 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.collections.immutable.PersistentList
 
 
 @Composable
-fun CustomTabIndicatorAnimation(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+fun CustomTabIndicatorAnimation(
+    tabPositions: PersistentList<TabPosition>,
+    selectedTabIndex: Int
+) {
     val transition = updateTransition(selectedTabIndex, label = "")
     val indicatorStart by transition.animateDp(
         transitionSpec = {

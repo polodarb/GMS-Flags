@@ -11,15 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
+import com.google.firebase.crashlytics.internal.model.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun GFlagFilterChipRow(
-    list: List<String>,
+    list: PersistentList<String>,
     selectedChips: Int,
     pagerCurrentState: Int,
     colorFraction: Float? = null,
     chipOnClick: (index: Int) -> Unit
-
 ) {
     Row(
         modifier = Modifier

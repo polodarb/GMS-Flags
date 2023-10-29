@@ -35,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -58,7 +57,7 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(id = R.string.settings_about_title)) },
+                title = { Text(text = stringResource(id = R.string.settings_item_about_headline)) },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(
@@ -92,18 +91,15 @@ fun AboutSettingsContent(
     onGitHubClick: () -> Unit,
     onTelegramClick: () -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
-
     Column {
-        Header(haptic)
-        SettingsAboutListInfo(onDeveloperClick, onGitHubClick, onTelegramClick, haptic)
+        AboutHeader()
+        SettingsAboutListInfo(onDeveloperClick, onGitHubClick, onTelegramClick)
     }
 }
 
 @Composable
-fun Header(
-    haptic: HapticFeedback
-) {
+fun AboutHeader() {
+    val haptic = LocalHapticFeedback.current
     var rotationState by remember { mutableFloatStateOf(0f) }
 
     val rotationDegrees by animateFloatAsState(
@@ -182,9 +178,10 @@ fun SettingsAboutVersionBadge() {
 fun SettingsAboutListInfo(
     onDeveloperClick: () -> Unit,
     onGitHubClick: () -> Unit,
-    onTelegramClick: () -> Unit,
-    haptic: HapticFeedback
+    onTelegramClick: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()

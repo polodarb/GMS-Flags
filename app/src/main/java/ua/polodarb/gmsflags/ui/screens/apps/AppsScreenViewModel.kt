@@ -3,6 +3,9 @@ package ua.polodarb.gmsflags.ui.screens.apps
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +17,8 @@ import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
-typealias AppInfoList = UiStates<List<AppInfo>>
-typealias AppDialogList = UiStates<List<String>>
+typealias AppInfoList = UiStates<PersistentList<AppInfo>>
+typealias AppDialogList = UiStates<PersistentList<String>>
 
 class AppsScreenViewModel(
     private val repository: AppsListRepository
@@ -46,7 +49,7 @@ class AppsScreenViewModel(
     }
 
     fun setEmptyList() {
-        _dialogDataState.value = UiStates.Success(emptyList())
+        _dialogDataState.value = UiStates.Success(persistentListOf())
     }
 
     fun getListByPackages(pkgName: String) {
@@ -55,7 +58,7 @@ class AppsScreenViewModel(
                 repository.getListByPackages(pkgName).collect { uiStates ->
                     when (uiStates) {
                         is UiStates.Success -> {
-                            _dialogDataState.value = UiStates.Success(uiStates.data)
+                            _dialogDataState.value = UiStates.Success(uiStates.data.toPersistentList())
                         }
 
                         is UiStates.Loading -> {
@@ -99,7 +102,7 @@ class AppsScreenViewModel(
             _state.value = UiStates.Success(
                 listAppsFiltered.filter {
                     it.appName.contains(searchQuery.value, ignoreCase = true)
-                }
+                }.toPersistentList()
             )
         }
     }

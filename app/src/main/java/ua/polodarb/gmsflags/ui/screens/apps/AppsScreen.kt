@@ -147,7 +147,7 @@ fun AppsScreen(
                         }) {
                             Icon(
                                 imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Settings"
+                                contentDescription = null
                             )
                         }
                     },

@@ -67,6 +67,7 @@ import androidx.core.content.ContextCompat.startActivity
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.immutableListOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
@@ -150,7 +151,7 @@ fun FlagChangeScreen(
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
-    val chipsList = listOf("All", "Changed", "Disabled", "Enabled")
+    val chipsList = persistentListOf("All", "Changed", "Disabled", "Enabled")
 
     // Tab state for filter button
     var tabFilterState by rememberSaveable {

@@ -50,7 +50,7 @@ fun ResetFlagsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(id = R.string.settings_reset_flags_title)) },
+                title = { Text(text = stringResource(id = R.string.settings_item_reset_flags_headline)) },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(
