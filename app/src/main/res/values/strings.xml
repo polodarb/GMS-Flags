@@ -46,28 +46,23 @@
     <string name="settings_item_about_headline">About &amp; support</string>
     <string name="settings_item_about_description">Useful information and resources</string>
     <!-- Settings About Screen -->
-    <string name="settings_about_title">About &amp; Support</string>
     <string name="settings_about_developer_title">Developer</string>
     <string name="settings_about_developer_content">Danyil Kobzar</string>
     <string name="settings_about_developer_url" translatable="false">https://github.com/polodarb</string>
     <string name="settings_about_project_title">Source code</string>
-    <string name="settings_about_project_content">GitHub</string>
+    <string name="settings_about_project_content" translatable="false">GitHub</string>
     <string name="settings_about_project_url" translatable="false">https://github.com/polodarb/GMS-Flags</string>
     <string name="settings_about_telegram_title">Telegram channel</string>
     <string name="settings_about_telegram_content">Support &amp; updates</string>
     <string name="settings_about_telegram_url" translatable="false">https://t.me/gmsflags</string>
     <!-- Settings Reset Flags -->
-    <string name="settings_reset_flags_title">Reset flags</string>
-    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized
-        (overridden) flags or preferences within the application, providing a clean slate for configuration.</string>
+    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized         (overridden) flags or preferences within the application, providing a clean slate for configuration.</string>
     <string name="settings_reset_flags_opt_gms">Reset flags in GMS Database</string>
     <string name="settings_reset_flags_opt_vending">Reset flags in Play Store Database</string>
     <string name="settings_reset_flags_opt_all">Reset all overridden flags</string>
     <string name="settings_reset_flags_warning">All flags that you changed will be reset!</string>
     <!-- Settings Reset Saved -->
-    <string name="settings_reset_saved_title">Reset saved</string>
-    <string name="settings_reset_saved_description">In this section you can reset all packages and flags
-        on the "Saved" screen that you have saved before.</string>
+    <string name="settings_reset_saved_description">In this section you can reset all packages and flags         on the Saved screen that you have saved before.</string>
     <string name="settings_reset_saved_opt_packages">Reset saved packages</string>
     <string name="settings_reset_saved_opt_flags">Reset saved flags</string>
     <string name="settings_reset_saved_opt_all">Reset all saved flags and packages</string>

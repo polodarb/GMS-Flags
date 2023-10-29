@@ -98,7 +98,7 @@ fun SuggestionsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Suggestions",
+                        stringResource(id = R.string.nav_bar_suggestions),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

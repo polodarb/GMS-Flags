@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="toast_done">Готово!</string>
     <string name="crash_title">Ошибка сервиса</string>
     <string name="crash_advice">Пожалуйста, перезапустите приложение</string>
     <string name="crash_msg">К сожалению, произошла ошибка и доступ к базе данных GMS невозможен</string>
@@ -23,9 +24,24 @@
     <string name="notification_skip">Пропустить</string>
     <string name="packages_title">Список пакетов</string>
     <string name="packages_search_advice">Поиск по пакетам</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_item_reset_flags_headline">Сбросить флаги</string>
+    <string name="settings_item_reset_flags_description">Сброс всех перезаписанных флагов</string>
+    <string name="settings_item_reset_saved_headline">Сбросить избранное</string>
+    <string name="settings_item_reset_saved_description">Сброс всех избранных флагов</string>
+    <string name="settings_item_start_route_headline">Изменить начальный экран</string>
+    <string name="settings_item_start_route_description">Выбор экрана с которого будет запускаться приложение</string>
+    <string name="settings_item_about_headline">О приложении</string>
+    <string name="settings_item_about_description">Информация о приложении и ресурсы</string>
+    <string name="settings_about_title">О приложении</string>
+    <string name="settings_about_developer_title">Разработчик</string>
+    <string name="settings_about_developer_content">Danyil Kobzar</string>
+    <string name="settings_about_project_title">Исходный код</string>
+    <string name="settings_about_telegram_title">Telegram канал</string>
+    <string name="settings_about_telegram_content">Обновления и информация</string>
     <string name="nav_bar_suggestions">Рекомендации</string>
     <string name="nav_bar_apps">Приложения</string>
-    <string name="nav_bar_saved">Сохранённое</string>
+    <string name="nav_bar_saved">Избранное</string>
     <string name="nav_bar_history">История</string>
     <string name="component_error_load">Ошибка загрузки данных</string>
     <string name="component_no_flags">Флаги не найдены</string>
@@ -47,6 +63,21 @@
     <string name="suggestion_banner">Чтобы применить флаг, нужно несколько раз нажать \"Остановить\" в настройках соответствующего приложения.</string>
     <string name="close">Закрыть</string>
     <string name="apps_dialog_choose_package">Выберите пакет</string>
-    <string name="primary">Главное</string>
-    <string name="secondary">Второстепенное</string>
+    <string name="primary">Первичное</string>
+    <string name="secondary">Вторичное</string>
+    <string name="settings_reset_flags_description">Восстановление настроек по умолчанию и очистка всех пользовательских (переопределенных) флагов и параметров в приложении, обеспечивая \"чистый лист\" для подальших изменений.</string>
+    <string name="settings_reset_flags_opt_gms">Сбросить флаги у GMS</string>
+    <string name="settings_reset_flags_opt_vending">Сбросить флаги у Play Store</string>
+    <string name="settings_reset_flags_opt_all">Сбросить все флаги</string>
+    <string name="settings_reset_flags_warning">Все переопределенные флаги будут сброшены!</string>
+    <string name="settings_reset_saved_description">В этом разделе вы можете сбросить все сохраненные Вами пакеты и флаги</string>
+    <string name="settings_reset_saved_opt_packages">Сбросить сохранённые пакеты</string>
+    <string name="settings_reset_saved_opt_flags">Сбросить сохранённые флаги</string>
+    <string name="settings_reset_saved_opt_all">Сброс всех сохраненных флагов и пакетов</string>
+    <string name="settings_reset_saved_warning">Все сохраненные Вами флаги будут сброшены!</string>
+    <string name="settings_start_route_title">Изменить начальный экран</string>
+    <string name="settings_start_route_description">Выберите экран, который будет отображаться при запуске приложения. Экран по умолчанию - Рекомендации.</string>
+    <string name="settings_confirmation_dialog_title">Подтвердите действие</string>
+    <string name="settings_confirmation_dialog_confirm">Подтвердить</string>
+    <string name="settings_confirmation_dialog_close">Закрыть</string>
 </resources>
