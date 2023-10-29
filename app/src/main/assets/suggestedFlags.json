@@ -183,5 +183,661 @@
     ],
     "package": "com.google.android.projection.gearhead",
     "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable new app page header",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Fougasse__enable_multicolumn_dp",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable baseline material theme",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "MaterialNextBaselineTheming__enable_baseline_theming_everywhere",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Google Message: Enable new branding header",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "bugle_phenotype__enable_home_screen_redesign",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.messaging#com.google.android.apps.messaging",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable updated UI in autofill settings",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Autofill__enable_new_branded_settings",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.autofill",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services:Enable QR code scan to transfer files with Nearby Share + New Send Option to select files from Google files app directly",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "sharing_enable_qr_code_visual_revamp",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "sharing_enable_qr_code_sender_ux",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "sharing_enable_quick_settings_files_share",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.nearby",
+    "isArchive": false
+  },
+  {
+    "name": "Google Calendar: Enable event link sharing",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "EnableCalendarShareLink_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.calendar",
+    "isArchive": false
+  },
+  {
+    "name": "Google Calendar: Enable Google Material 3 Widgets",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Gm3Widget__enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.calendar",
+    "isArchive": false
+  },
+  {
+    "name": "Google Contacts: Enable weather and local time of contact in info page",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45401279",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.contacts#com.google.android.contacts",
+    "isArchive": false
+  },
+  {
+    "name": "Google: Enable universal search UI on all devices, Material Tabs/UI and and Google Labs icon",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45410632",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45410315",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45369077",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable Form Factor Chips",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "FormFactorDetailsPage__enable_form_factor_details_page",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Google Contacts: Enable reminder settings screen for birthdays",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45415933",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.contacts#com.google.android.contacts",
+    "isArchive": false
+  },
+  {
+    "name": "Google Calendar: Show completed tasks",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Tasks__hide_completed_tasks_setting",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.calendar",
+    "isArchive": false
+  },
+  {
+    "name": "Google Contacts: Enable rounded buttons",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45402053",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.contacts#com.google.android.contacts",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable bottom navigation bar when you open an app listing through a URL",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "DetailsPagePrimaryNav__enable_bottomnav_on_details_page",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Files: Enable the new nearby share tab V2 UI revamp",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "NearbyShareTabV2__is_nearby_share_tab_v2_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.nbu.files.device#com.google.android.apps.nbu.files.device",
+    "isArchive": false
+  },
+  {
+    "name": "Google Calendar: Enable Jump to today",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "DynamicTodaylcon__enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.calendar",
+    "isArchive": false
+  },
+  {
+    "name": "Google Calendar: Enable Task Overdue",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "TasksOverdue__Notifications_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.calendar",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable the new recommended tab and dynamic colors in Google account manager",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Guard__gm3_background_tinting_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Guard__gm3_custom_colors_with_tokens_replacement_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Guard__gm3_dynamic_color_overlay_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Guard__gm3_octarine_background_tinting_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Guard__gm3_octarine_dynamic_color_overlay_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Guard__recommended_tab_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.accountsettings",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable swipe between tabs",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "RemoveLeftRightSwipeGestureToSwitchTab__is_enabled",
+        "type": "bool",
+        "value": "0"
+      }
+    ],
+    "package": "com.google.android.finsky.regular",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable App Archive",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Hibernation__auto_hibernation",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Hibernation__hibernation_installation",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Hibernation__hibernation_my_apps",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "Hibernation__hibernation_my_apps_filter",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Google: Enable rounded outline Card UI in Google side panel and Feed",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45400318",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45410632",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45409134",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45381108",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.libraries.search.googleapp.device#com.google.android.googlequicksearchbox",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable QR Code Scanner Auto-Zoom feature ",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "PlatformQuickScannerFeature__enable_auto_zoom",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "PlatformQuickScannerFeature__enable_scan_from_photos",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.vision",
+    "isArchive": false
+  },
+  {
+    "name": "Google Messages: Enable Compose UI",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45403082",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.messaging.auto#com.google.android.apps.messaging",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable Cast to multiple devices from the media output switcher",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "DynamicSession__enable_stream_expansion_transfer_for_allowlisted_groups",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "DynamicSession__enable_stream_expansion_transfer_for_audio_app",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.cast",
+    "isArchive": false
+  },
+  {
+    "name": "Google Keep: Enable text formatting toolbar",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45372155",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45357152",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.keep#com.google.android.keep",
+    "isArchive": false
+  },
+  {
+    "name": "Google Docs: Enable Markup Toolbar",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45375933",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.apps.docs.android.device#com.google.android.apps.docs.editors.docs",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable Link Your Device",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "MultideviceSettingsConfig__enable_link_your_devices",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.multidevice#com.google.android.gms",
+    "isArchive": false
+  },
+  {
+    "name": "Google Messages: Enable Message Organisation",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "bugle_phenotype__untangle_otp_auto_delete_from_super_sort",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.messaging#com.google.android.apps.messaging",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable Darker Theme",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "MaterialNextDynamicTheming__killswitch_dynamic_theming_bottomnavbar_flag",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "MaterialNextSemanticColors__enable_gm3_semantic_colors_phase1",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Google Notes: Enalbe Sorting Feature",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45414568",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.keep#com.google.android.keep",
+    "isArchive": false
+  },
+  {
+    "name": "Gboard: Enable New language search bar",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "enable_new_language_search_bar",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "isArchive": false
+  },
+  {
+    "name": "Gboard: Enable Two panel settings in Landscape mode",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "enable_settings_two_pane_display",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "isArchive": false
+  },
+  {
+    "name": "Gboard: Disable Masked Workds",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "writing_helper_mask_bad_word",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "isArchive": false
+  },
+  {
+    "name": "Gmail: Enable the Select all button to select multiple emails at once",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45402542",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "gmail_android.device#com.google.android.gm",
+    "isArchive": false
+  },
+  {
+    "name": "Fit: Enable Heart rate and Respiratory rate feature",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45365831",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45365832",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.fitness_V2.device#com.google.android.apps.fitness",
+    "isArchive": false
+  },
+  {
+    "name": "Google Files: Digilocker (India)",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "Naagrik__is_digilocker_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.nbu.files.device#com.google.android.apps.nbu.files",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: New Rating Slider",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "StarRatingSlider__enable_star_rating_slider",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Google Clock: Enable local weather A13+",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "45408428",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "45410158",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.deskclock#com.google.android.deskclock",
+    "isArchive": false
+  },
+  {
+    "name": "Google Messages: Enable Screen Sharing Detection",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "bugle_phenotype__enable_screen_detection_checker",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.messaging#com.google.android.apps.messaging",
+    "isArchive": false
+  },
+  {
+    "name": "Play Store: Enable sticky search bar on homescreen",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "SearchHome__enable_search_home",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.finsky.stable",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable Simplify your sign-in option in Google Password Manager",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "PasskeyWizard__enable_passkey_wizard",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.credential_manager#com.google.android.gms",
+    "isArchive": false
+  },
+  {
+    "name": "Play Services: Enable Pass and Smart Health QR Code Scan A13+",
+    "author": "GApps Flags & Leaks",
+    "flags": [
+      {
+        "tag": "PlatformQuickScannerFeature__enable_boarding_pass_qr_handling",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "tag": "PlatformQuickScannerFeature__enable_shc_qr_handling",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.vision#com.google.android.gms",
+    "isArchive": false
   }
 ]
