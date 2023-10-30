@@ -62,8 +62,8 @@
     <string name="suggestion_banner">Щоб примінити флаг, потрібно кілька разів натиснути \"Зупинити\" в налаштуваннях відповідного додатку.</string>
     <string name="close">Закрити</string>
     <string name="apps_dialog_choose_package">Оберіть пакет</string>
-    <string name="primary">Первинне</string>
-    <string name="secondary">Вторинне</string>
+    <string name="primary">Первинні</string>
+    <string name="secondary">Вторинні</string>
     <string name="settings_reset_flags_description">Відновлення налаштувань за замовчуванням і очищення всіх призначених для користувача (перевизначених) флагів і параметрів у застосунку</string>
     <string name="settings_reset_flags_opt_gms">Скинути флаги у GMS</string>
     <string name="settings_reset_flags_opt_vending">Скинути флаги у Play Store</string>
@@ -116,4 +116,5 @@
     <string name="flag_change_dialog_suggest_placeholder_description">Опишіть флаг</string>
     <string name="flag_change_dialog_suggest_name">Напишіть ваше ім\'я</string>
     <string name="flag_change_dialog_suggest_action_send">Надіслати</string>
+    <string name="apps_search_advice">Пошук за іменем додатків</string>
 </resources>

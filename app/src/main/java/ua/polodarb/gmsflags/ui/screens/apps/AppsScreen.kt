@@ -161,7 +161,7 @@ fun AppsScreen(
                         onQueryChange = { newQuery ->
                             viewModel.searchQuery.value = newQuery
                         },
-                        placeHolderText = stringResource(id = R.string.packages_search_advice),
+                        placeHolderText = stringResource(R.string.apps_search_advice),
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""

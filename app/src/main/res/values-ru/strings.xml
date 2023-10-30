@@ -62,8 +62,8 @@
     <string name="suggestion_banner">Чтобы применить флаг, нужно несколько раз нажать \"Остановить\" в настройках соответствующего приложения.</string>
     <string name="close">Закрыть</string>
     <string name="apps_dialog_choose_package">Выберите пакет</string>
-    <string name="primary">Первичное</string>
-    <string name="secondary">Вторичное</string>
+    <string name="primary">Первичные</string>
+    <string name="secondary">Вторичные</string>
     <string name="settings_reset_flags_description">Восстановление настроек по умолчанию и очистка всех пользовательских (переопределенных) флагов и параметров в приложении</string>
     <string name="settings_reset_flags_opt_gms">Сбросить флаги у GMS</string>
     <string name="settings_reset_flags_opt_vending">Сбросить флаги у Play Store</string>
@@ -116,4 +116,5 @@
     <string name="flag_change_dialog_suggest_placeholder_description">Опишите флаг</string>
     <string name="flag_change_dialog_suggest_name">Напишите Ваше имя</string>
     <string name="flag_change_dialog_suggest_action_send">Отправить</string>
+    <string name="apps_search_advice">Поиск по приложениям</string>
 </resources>
