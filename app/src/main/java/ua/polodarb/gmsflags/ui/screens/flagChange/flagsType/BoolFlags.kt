@@ -30,7 +30,6 @@ import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BooleanFlagsScreen(
-    listBool: Map<String, String>,
     uiState: FlagChangeUiStates,
     savedFlagsList: List<SavedFlags>,
     viewModel: FlagChangeScreenViewModel,
@@ -43,17 +42,17 @@ fun BooleanFlagsScreen(
 
     val lazyListState = rememberLazyListState()
 
-    when (uiState) {
+    when (val listBool = uiState) {
         is UiStates.Success -> {
 
-            if (listBool.isEmpty()) NotFoundContent()
+            if (listBool.data.isEmpty()) NotFoundContent()
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding()
             ) {
-                if (listBool.isNotEmpty()) {
+                if (listBool.data.isNotEmpty()) {
                     LazyColumnScrollbar(
                         listState = lazyListState,
                         thickness = 8.dp,
@@ -61,16 +60,16 @@ fun BooleanFlagsScreen(
                         thumbColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
                         thumbSelectedColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
                         thumbMinHeight = 0.075f,
-                        enabled = listBool.size >= 15
+                        enabled = listBool.data.size >= 15
                     ) {
                         LazyColumn(
                             state = lazyListState
                         ) {
-                            itemsIndexed(listBool.keys.toList()) { index, flagName ->
+                            itemsIndexed(listBool.data.keys.toList()) { index, flagName ->
 
                                 val isSelected = isSelectedList.contains(flagName)
 
-                                val checked = listBool.values.toList()[index] == "1"
+                                val checked = listBool.data.values.toList()[index] == "1"
                                 val targetFlag = SavedFlags(
                                     packageName.toString(),
                                     flagName,
@@ -114,7 +113,7 @@ fun BooleanFlagsScreen(
                                             )
                                         }
                                     },
-                                    lastItem = index == listBool.size - 1,
+                                    lastItem = index == listBool.data.size - 1,
                                     modifier = Modifier.combinedClickable(
                                         onClick = { selectedItemShortClick(isSelected, flagName) },
                                         onLongClick = {

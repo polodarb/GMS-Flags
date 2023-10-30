@@ -230,11 +230,14 @@ fun FlagChangeScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            text = if (isInSelectionMode) stringResource(
-                                R.string.flag_change_topbar_title_selected,
-                                viewModel.selectedItems.size
-                            ) else packageName
-                                ?: "Null package name",
+                            text = if (isInSelectionMode && viewModel.selectedItems.isNotEmpty()) {
+                                stringResource(
+                                    R.string.flag_change_topbar_title_selected,
+                                    viewModel.selectedItems.size
+                                )
+                            } else {
+                                packageName ?: "Null package name"
+                            },
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .combinedClickable(
@@ -525,63 +528,37 @@ fun FlagChangeScreen(
         ) { page ->
             when (page) {
                 0 -> {
-                    when (val result = uiStateBoolean.value) {
-                        is UiStates.Success -> {
-
-                            val listBool = result.data
-
-//                            if (listBool.isNotEmpty()) { // todo
-//                                val itemIndex = listBool.keys.indexOf(item)
-//                                if (itemIndex != -1) {
-//                                    LaunchedEffect(Unit) {
-//                                        delay(50)
-//                                        coroutineScope.launch {
-//                                            listState.scrollToItem(itemIndex)
-//                                        }
-//                                    }
-//                                } else {
-//                                    Toast.makeText(context, "Flag not found!", Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-
-                            BooleanFlagsScreen(
-                                listBool = listBool,
-                                uiState = uiStateBoolean.value,
-                                viewModel = viewModel,
-                                packageName = packageName.toString(),
-                                haptic = haptic,
-                                savedFlagsList = savedFlags.value,
-                                isSelectedList = viewModel.selectedItems,
-                                selectedItemLongClick = { isSelected, flagName ->
-                                    if (isInSelectionMode) {
-                                        if (isSelected) {
-                                            viewModel.selectedItems.remove(flagName)
-                                        } else {
-                                            viewModel.selectedItems.add(flagName)
-                                        }
-                                    } else {
-                                        isInSelectionMode = true
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        viewModel.selectedItems.add(flagName)
-                                    }
-                                },
-                                selectedItemShortClick = { isSelected, flagName ->
-                                    if (isInSelectionMode) {
-                                        if (isSelected) {
-                                            viewModel.selectedItems.remove(flagName)
-                                        } else {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.selectedItems.add(flagName)
-                                        }
-                                    }
+                    BooleanFlagsScreen(
+                        uiState = uiStateBoolean.value,
+                        viewModel = viewModel,
+                        packageName = packageName.toString(),
+                        haptic = haptic,
+                        savedFlagsList = savedFlags.value,
+                        isSelectedList = viewModel.selectedItems,
+                        selectedItemLongClick = { isSelected, flagName ->
+                            if (isInSelectionMode) {
+                                if (isSelected) {
+                                    viewModel.selectedItems.remove(flagName)
+                                } else {
+                                    viewModel.selectedItems.add(flagName)
                                 }
-                            )
+                            } else {
+                                isInSelectionMode = true
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.selectedItems.add(flagName)
+                            }
+                        },
+                        selectedItemShortClick = { isSelected, flagName ->
+                            if (isInSelectionMode) {
+                                if (isSelected) {
+                                    viewModel.selectedItems.remove(flagName)
+                                } else {
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    viewModel.selectedItems.add(flagName)
+                                }
+                            }
                         }
-
-                        is UiStates.Loading -> {}
-                        is UiStates.Error -> {}
-                    }
-
+                    )
                 }
 
                 1 -> OtherTypesFlagsScreen(
