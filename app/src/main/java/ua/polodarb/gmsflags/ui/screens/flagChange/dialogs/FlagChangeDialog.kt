@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun FlagChangeDialog(
@@ -35,17 +37,17 @@ fun FlagChangeDialog(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(text = "Changing flag's value") },
+            title = { Text(text = stringResource(R.string.flag_change_dialog_other_type_title)) },
             text = {
                 Column {
                     Text(
-                        text = "Name: $flagName",
+                        text = stringResource(R.string.flag_change_dialog_other_type_name, flagName),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Type: $flagType",
+                        text = stringResource(R.string.flag_change_dialog_other_type_type, flagType),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal
                     )
@@ -65,18 +67,18 @@ fun FlagChangeDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDefault) {
-                        Text(text = "Default")
+                        Text(text = stringResource(R.string.flag_change_dialog_other_action_default))
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Row(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text(text = "Close")
+                            Text(text = stringResource(id = R.string.close))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = onConfirm) {
-                            Text(text = "Save")
+                            Text(text = stringResource(R.string.flag_change_dialog_other_action_save))
                         }
                     }
                 }

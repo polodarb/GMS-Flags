@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun AddFlagDialog(
@@ -49,7 +51,7 @@ fun AddFlagDialog(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { onDismiss() },
-            title = { Text(text = "Add a flag manually") },
+            title = { Text(text = stringResource(R.string.flag_change_dialog_add_flag_title)) },
             text = {
                 Column {
                     FlagTypeChips(
@@ -77,12 +79,12 @@ fun AddFlagDialog(
             },
             confirmButton = {
                 Button(onClick = onAddFlag) {
-                    Text(text = "Add flag")
+                    Text(text = stringResource(R.string.flag_change_dialog_add_flag_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(text = "Exit")
+                    Text(text = stringResource(id = R.string.close))
                 }
             }
         )
@@ -99,7 +101,7 @@ fun FlagTypeChips(
 
     val haptic = LocalHapticFeedback.current
 
-    Text(text = "Choose a type of flag")
+    Text(text = stringResource(R.string.flag_change_dialog_add_flag_choose_type))
     FlowRow(
         maxItemsInEachRow = 2,
         modifier = Modifier
@@ -159,7 +161,7 @@ fun FlagBooleanChips(
     val haptic = LocalHapticFeedback.current
 
     Text(
-        text = "Select a value",
+        text = stringResource(R.string.flag_change_dialog_add_flag_select_value),
         color = if (enabled)
             MaterialTheme.colorScheme.onSurfaceVariant
         else
@@ -223,7 +225,7 @@ fun FlagNameInput(
     enabled: Boolean
 ) {
     Text(
-        text = "Enter a name",
+        text = stringResource(R.string.flag_change_dialog_add_flag_title_name),
         color = if (enabled)
             MaterialTheme.colorScheme.onSurfaceVariant
         else
@@ -235,7 +237,7 @@ fun FlagNameInput(
         onValueChange = onQueryChange,
         placeholder = {
             Text(
-                text = "Type a name of flag",
+                text = stringResource(R.string.flag_change_dialog_add_flag_enter_name),
                 color = if (enabled)
                     MaterialTheme.colorScheme.outline
                 else
@@ -255,7 +257,7 @@ fun FlagValueInput(
     enabled: Boolean
 ) {
     Text(
-        text = "Enter a value",
+        text = stringResource(R.string.flag_change_dialog_add_flag_title_value),
         color = if (enabled)
             MaterialTheme.colorScheme.onSurfaceVariant
         else
@@ -267,7 +269,7 @@ fun FlagValueInput(
         onValueChange = onQueryChange,
         placeholder = {
             Text(
-                text = "Type a value",
+                text = stringResource(R.string.flag_change_dialog_add_flag_type_value),
                 color = if (enabled)
                     MaterialTheme.colorScheme.outline
                 else

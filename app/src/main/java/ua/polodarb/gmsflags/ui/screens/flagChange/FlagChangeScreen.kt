@@ -60,6 +60,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,11 +68,9 @@ import androidx.core.content.ContextCompat.startActivity
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.immutableListOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.ui.components.chips.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
@@ -88,6 +87,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ReportFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.OtherTypesFlagsScreen
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -151,7 +151,12 @@ fun FlagChangeScreen(
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
-    val chipsList = persistentListOf("All", "Changed", "Disabled", "Enabled")
+    val chipsList = persistentListOf(
+        stringResource(R.string.filter_chip_all),
+        stringResource(R.string.filter_chip_changed),
+        stringResource(R.string.filter_chip_disabled),
+        stringResource(R.string.filter_chip_enabled)
+    )
 
     // Tab state for filter button
     var tabFilterState by rememberSaveable {
@@ -225,7 +230,10 @@ fun FlagChangeScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            text = if (isInSelectionMode) "Selected: ${viewModel.selectedItems.size}" else packageName
+                            text = if (isInSelectionMode) stringResource(
+                                R.string.flag_change_topbar_title_selected,
+                                viewModel.selectedItems.size
+                            ) else packageName
                                 ?: "Null package name",
                             modifier = Modifier
                                 .padding(end = 16.dp)
@@ -373,7 +381,7 @@ fun FlagChangeScreen(
                         onQueryChange = { newQuery ->
                             viewModel.searchQuery.value = newQuery
                         },
-                        placeHolderText = "Search a flags by name",
+                        placeHolderText = stringResource(R.string.search_flags_advice),
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""
@@ -467,6 +475,7 @@ fun FlagChangeScreen(
                                     }
                                     context.startActivity(intent)
                                 }
+
                                 else -> {}
                             }
                         }, enabled = true) {

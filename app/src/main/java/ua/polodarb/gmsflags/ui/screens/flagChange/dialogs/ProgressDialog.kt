@@ -8,8 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import ua.polodarb.gmsflags.R
 
 @Composable
 fun ProgressDialog(
@@ -21,7 +23,7 @@ fun ProgressDialog(
             onDismissRequest = { /*TODO*/ },
             confirmButton = {},
             dismissButton = {},
-            title = { Text(text = "Please wait", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
+            title = { Text(text = stringResource(R.string.flag_change_dialog_progress_title), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) },
             text = {
                 LinearProgressIndicator(
                     modifier = Modifier

@@ -149,7 +149,7 @@ fun PackagesScreen(
                         onQueryChange = { newQuery ->
                             viewModel.searchQuery.value = newQuery
                         },
-                        placeHolderText = "Search a package name",
+                        placeHolderText = stringResource(id = R.string.packages_search_advice),
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""

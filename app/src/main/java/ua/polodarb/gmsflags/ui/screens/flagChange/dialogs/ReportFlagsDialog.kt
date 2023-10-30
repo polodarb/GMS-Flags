@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ua.polodarb.gmsflags.R
@@ -42,20 +43,20 @@ fun ReportFlagsDialog(
             dismissButton = {},
             title = {
                 Text(
-                    text = "Problem report",
+                    text = stringResource(R.string.flag_change_dialog_report_title),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
             text = {
                 Column {
-                    Text(text = "If you notice that this flag causes any problems or breaks the application - please let us know about it.")
+                    Text(text = stringResource(R.string.flag_change_dialog_report_text))
                     OutlinedTextField(
                         value = flagDesc,
                         onValueChange = onFlagDescChange,
                         placeholder = {
                             Text(
-                                text = "Write flag`s description",
+                                text = stringResource(R.string.flag_change_dialog_report_placeholder),
                             )
                         },
                         modifier = Modifier.padding(top = 16.dp),
@@ -69,12 +70,12 @@ fun ReportFlagsDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = "Close")
+                        Text(text = stringResource(id = R.string.close))
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = onSend) {
-                        Text(text = "Send suggest")
+                        Text(text = stringResource(R.string.flag_change_dialog_report_action_send))
                     }
                 }
             }
