@@ -60,7 +60,7 @@ fun ResetFlagToDefaultDialog(
                     Button(
                         onClick = onConfirmClick
                     ) {
-                        Text(stringResource(id = R.string.update_dialog_confirm))
+                        Text(stringResource(id = R.string.settings_confirmation_dialog_confirm))
                     }
                 }
             },
