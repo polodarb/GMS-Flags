@@ -1,13 +1,19 @@
 package ua.polodarb.gmsflags.ui.screens.suggestions
 
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,42 +23,56 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -168,6 +188,7 @@ fun SuggestionsScreen(
                                                             boolVal = if (bool) flag.value else "0"
                                                         )
                                                     }
+
                                                     FlagType.INTEGER -> {
                                                         viewModel.overrideFlag(
                                                             packageName = item.flag.packageName,
@@ -175,6 +196,7 @@ fun SuggestionsScreen(
                                                             intVal = if (bool) flag.value else "0"
                                                         )
                                                     }
+
                                                     FlagType.FLOAT -> {
                                                         viewModel.overrideFlag(
                                                             packageName = item.flag.packageName,
@@ -182,6 +204,7 @@ fun SuggestionsScreen(
                                                             floatVal = if (bool) flag.value else "0"
                                                         )
                                                     }
+
                                                     FlagType.STRING -> {
                                                         viewModel.overrideFlag(
                                                             packageName = item.flag.packageName,
@@ -239,25 +262,289 @@ fun SuggestedFlagItem(
     flagOnCheckedChange: (Boolean) -> Unit,
     onFlagLongClick: () -> Unit
 ) {
-    ListItem(
-        headlineContent = { Text(flagName) },
-        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
-        trailingContent = {
-            Row {
-                Switch(
-                    checked = flagValue,
-                    onCheckedChange = {
-                        flagOnCheckedChange(it)
-                    }
+    NewSuggestedFlagItem(
+        titleText = flagName,
+        sourceText = senderName
+    )
+//    ListItem(
+//        headlineContent = { Text(flagName) },
+//        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
+//        trailingContent = {
+//            Row {
+//                Switch(
+//                    checked = flagValue,
+//                    onCheckedChange = {
+//                        flagOnCheckedChange(it)
+//                    }
+//                )
+//            }
+//        },
+//        modifier = Modifier
+//            .combinedClickable(
+//                onClick = {},
+//                onLongClick = onFlagLongClick
+//            )
+//    )
+}
+
+@Composable
+private fun NewSuggestedFlagItem(
+    titleText: String,
+    sourceText: String
+) {
+
+    val context = LocalContext.current
+
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            .clip(RoundedCornerShape(24.dp)) // todo: corner radius
+            .background(
+                if (!isSystemInDarkTheme())
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                else
+                    MaterialTheme.colorScheme.surfaceContainer
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column() {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = titleText,
+                    fontSize = 17.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                        .weight(1f)
                 )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SuggestedFlagItemArrow(
+                        expanded = expanded,
+                        onExpandedChange = {
+                            expanded = !expanded
+                        }
+                    )
+                    Switch(
+                        checked = false,
+                        onCheckedChange = { },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
-        },
-        modifier = Modifier.combinedClickable (
-            onClick = {},
-            onLongClick = onFlagLongClick
-        )
+            AnimatedVisibility(visible = expanded) {
+                Column {
+                    Text(
+                        text = "" + stringResource(R.string.finder) + " " + sourceText,
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 16.dp,
+                                    topEnd = 16.dp,
+                                    bottomEnd = 4.dp,
+                                    bottomStart = 4.dp
+                                )
+                            )
+                            .background(
+                                if (!isSystemInDarkTheme())
+                                    MaterialTheme.colorScheme.surfaceContainer
+                                else
+                                    MaterialTheme.colorScheme.surfaceContainerHigh
+                            )
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp, top = 6.dp)
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 4.dp,
+                                    topEnd = 4.dp,
+                                    bottomEnd = 16.dp,
+                                    bottomStart = 16.dp
+                                )
+                            )
+                            .background(
+                                if (!isSystemInDarkTheme())
+                                    MaterialTheme.colorScheme.surfaceContainer
+                                else
+                                    MaterialTheme.colorScheme.surfaceContainerHigh
+                            )
+                    ) {
+                        AppContent(
+                            appName = "AppName",
+                            pkg = "PackageName",
+                            appIcon = ContextCompat.getDrawable(context, R.mipmap.ic_launcher_round)
+                        )
+                        OutlinedButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            Text(text = "Open app details settings")
+                        }
+                        OutlinedButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            Text(text = "Open AppName")
+                        }
+                    }
+                    Button(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_telegram),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            text = "View more information",
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 16.dp
+                        ),
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                            ),
+                            modifier = Modifier.weight(0.5f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_flag_reset_new),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer
+                            )
+                            Text(
+                                text = "Reset",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Button(
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ),
+                            modifier = Modifier.weight(0.5f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_report_fill),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                            Text(
+                                text = "Report",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Stable
+@Composable
+fun AppContent(
+    appName: String,
+    pkg: String,
+    appIcon: Drawable? = null
+) {
+    ListItem(
+        colors = ListItemDefaults.colors(
+            containerColor = if (!isSystemInDarkTheme())
+                MaterialTheme.colorScheme.surfaceContainer
+            else
+                MaterialTheme.colorScheme.surfaceContainerHigh
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        headlineContent = { Text(text = appName, fontWeight = FontWeight.Medium) },
+        supportingContent = { Text(text = pkg, fontSize = 13.sp) },
+        leadingContent = {
+            AsyncImage(
+                model = appIcon,
+                contentDescription = null,
+                modifier = Modifier.size(52.dp)
+            )
+        }
     )
 }
+
+@Composable
+fun SuggestedFlagItemArrow(
+    expanded: Boolean,
+    onExpandedChange: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val rotationState by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
+        label = "Rotation"
+    )
+
+    Box(
+        modifier = Modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            Icons.Rounded.KeyboardArrowDown,
+            contentDescription = null,
+            modifier = Modifier
+                .graphicsLayer(
+                    rotationX = rotationState
+                )
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    onExpandedChange()
+                }
+        )
+    }
+}
+
 
 @Composable
 fun WarningBanner(
