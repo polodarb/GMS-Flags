@@ -1,7 +1,7 @@
 [
   {
     "name": "New \"Select text\" tool in Gboard",
-    "author": "Nail Sadykov",
+    "author": "Nail Sadykov (Requires latest beta version!)",
     "flags": [
       {
         "tag": "enable_ocr",
