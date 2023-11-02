@@ -1,5 +1,18 @@
 [
   {
+    "name": "New \"Select text\" tool in Gboard",
+    "author": "Nail Sadykov",
+    "flags": [
+      {
+        "tag": "enable_ocr",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "isArchive": false
+  },
+  {
     "name": "\"G\" on space in GBoard",
     "author": "RBoard Themes",
     "flags": [
