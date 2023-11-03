@@ -1,5 +1,18 @@
 [
   {
+    "name": "Password Manager with MD3 Navbar",
+    "author": "Nail Sadykov (Requires latest beta version!)",
+    "flags": [
+      {
+        "tag": "Guards__gm3_ui_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.gms.credential_manager",
+    "isArchive": false
+  },
+  {
     "name": "New \"Select text\" tool in Gboard",
     "author": "Nail Sadykov (Requires latest beta version!)",
     "flags": [
