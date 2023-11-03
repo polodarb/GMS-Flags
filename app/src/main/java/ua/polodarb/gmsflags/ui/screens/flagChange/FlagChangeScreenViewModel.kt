@@ -31,6 +31,12 @@ class FlagChangeScreenViewModel(
     private val gmsDBInteractor: GmsDBInteractor
 ) : ViewModel() {
 
+    init {
+        initUsers()
+        getAllSavedFlags()
+        initAllFlags()
+    }
+
     private val _stateBoolean =
         MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
     val stateBoolean: StateFlow<FlagChangeUiStates> = _stateBoolean.asStateFlow()
@@ -51,44 +57,219 @@ class FlagChangeScreenViewModel(
         MutableStateFlow<List<SavedFlags>>(emptyList())
     val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
 
-    // ProgressDialog
-    val showProgressDialog = mutableStateOf(false)
-    fun showFalseProgressDialog(customCount: Int? = null) {
+
+    // Filter
+    var filterMethod = mutableStateOf(FilterMethod.ALL)
+
+    // Search
+    var searchQuery = mutableStateOf("")
+
+    // Select
+    val selectedItems: MutableList<String> = Collections.synchronizedList(mutableListOf<String>())
+
+    private val changedFilterBoolList = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterIntList = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterFloatList = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterStringList = Collections.synchronizedMap(mutableMapOf<String, String>())
+
+    private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listFloatFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
+
+    private val usersList = Collections.synchronizedList(mutableListOf<String>())
+
+    // Initialization of flags of all types
+    fun initBoolValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (stateBoolean.value) {
-                    is UiStates.Success -> {
-                        val flagsCount = customCount
-                            ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
-                        delay(
-                            when {
-                                flagsCount <= 50 -> 0
-                                flagsCount in 51..150 -> 3000
-                                flagsCount in 151..500 -> 5000
-                                flagsCount in 501..1000 -> 7000
-                                flagsCount in 1001..1500 -> 9000
-                                flagsCount > 1501 -> 10000
-                                else -> 0
-                            }
-                        )
-                        showProgressDialog.value = false
-                    }
+                repository.getBoolFlags(pkgName, delay).collect { uiStates ->
+                    when (uiStates) {
+                        is UiStates.Success -> {
+                            listBoolFiltered.putAll(uiStates.data)
+                            getBoolFlags()
+                        }
 
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
+                        is UiStates.Loading -> {
+                            _stateBoolean.value = UiStates.Loading()
+                        }
 
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
+                        is UiStates.Error -> {
+                            _stateBoolean.value = UiStates.Error()
+                        }
                     }
                 }
             }
         }
     }
 
-    // Filter
-    var filterMethod = mutableStateOf(FilterMethod.ALL)
+    private fun initIntValues(delay: Boolean = true) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getIntFlags(pkgName, delay).collect { uiStates ->
+                    when (uiStates) {
+                        is UiStates.Success -> {
+                            listIntFiltered.putAll(uiStates.data)
+                            getIntFlags()
+                        }
 
+                        is UiStates.Loading -> {
+                            _stateInteger.value = UiStates.Loading()
+                        }
+
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initFloatValues(delay: Boolean = true) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getFloatFlags(pkgName, delay).collect { uiStates ->
+                    when (uiStates) {
+                        is UiStates.Success -> {
+                            listFloatFiltered.putAll(uiStates.data)
+                            getFloatFlags()
+                        }
+
+                        is UiStates.Loading -> {
+                            _stateFloat.value = UiStates.Loading()
+                        }
+
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initStringValues(delay: Boolean = true) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getStringFlags(pkgName, delay).collect { uiStates ->
+                    when (uiStates) {
+                        is UiStates.Success -> {
+                            listStringFiltered.putAll(uiStates.data)
+                            getStringFlags()
+                        }
+
+                        is UiStates.Loading -> {
+                            _stateString.value = UiStates.Loading()
+                        }
+
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun initAllFlags() {
+        initBoolValues()
+        initIntValues()
+        initFloatValues()
+        initStringValues()
+    }
+
+
+    // Getting initialized flags
+    fun getBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (filterMethod.value) {
+                    FilterMethod.ENABLED -> {
+                        _stateBoolean.value = UiStates.Success(
+                            (listBoolFiltered.toMap().filterByEnabled()).filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    FilterMethod.DISABLED -> {
+                        _stateBoolean.value = UiStates.Success(
+                            (listBoolFiltered.toMap().filterByDisabled()).filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    FilterMethod.CHANGED -> {
+                        _stateBoolean.value = UiStates.Success(
+                            changedFilterBoolList.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    else -> {
+                        _stateBoolean.value = UiStates.Success(
+                            listBoolFiltered.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getIntFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (filterMethod.value) {
+                    FilterMethod.CHANGED -> {
+                        _stateInteger.value = UiStates.Success(
+                            changedFilterIntList.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    else -> {
+                        _stateInteger.value = UiStates.Success(
+                            listIntFiltered.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getFloatFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _stateFloat.value = UiStates.Success(
+                    listFloatFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }.toSortMap()
+                )
+            }
+        }
+    }
+
+    fun getStringFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _stateString.value = UiStates.Success(
+                    listStringFiltered.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }.toSortMap()
+                )
+            }
+        }
+    }
+
+    // Updating flags values
     fun updateBoolFlagValues(flagNames: List<String>, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -102,33 +283,6 @@ class FlagChangeScreenViewModel(
                     }
 
                     _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-                }
-            }
-        }
-    }
-
-
-    private fun turnOnAllBoolFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val currentState = _stateBoolean.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
-                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-                    listBoolFiltered.replaceAll { _, _ -> "1" }
-                }
-            }
-        }
-    }
-
-    private fun turnOffAllBoolFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val currentState = _stateBoolean.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
-                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-                    listBoolFiltered.replaceAll { _, _ -> "0" }
                 }
             }
         }
@@ -177,36 +331,9 @@ class FlagChangeScreenViewModel(
 
     }
 
-    fun getAndroidPackage(pkgName: String): String {
-        return repository.androidPackage(pkgName)
-    }
 
-    private val changedFilterBoolList = mutableMapOf<String, String>()
-    private val usersList = mutableListOf<String>()
 
-    // Search
-    var searchQuery = mutableStateOf("")
-
-    private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val listFloatFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-
-    init {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getUsers().collect {
-                    usersList.addAll(it)
-                }
-            }
-        }
-        getAllSavedFlags()
-        initBoolValues()
-        initIntValues()
-        initFloatValues()
-        initStringValues()
-    }
-
+    // Get overridden flags
     fun initOverriddenBoolFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -229,290 +356,109 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    // Boolean
-    fun initBoolValues(delay: Boolean = true) {
+    fun initOverriddenIntFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repository.getBoolFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listBoolFiltered.putAll(uiStates.data)
-                            getBoolFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateBoolean.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateBoolean.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun getBoolFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.ENABLED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            (listBoolFiltered.toMap().filterByEnabled()).filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
-                    }
-
-                    FilterMethod.DISABLED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            (listBoolFiltered.toMap().filterByDisabled()).filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
-                    }
-
-                    FilterMethod.CHANGED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            changedFilterBoolList.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
-                    }
-
-                    else -> {
-                        _stateBoolean.value = UiStates.Success(
-                            listBoolFiltered.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    // Integer
-    private fun initIntValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getIntFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listIntFiltered.putAll(uiStates.data)
-                            getIntFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateInteger.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun getIntFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _stateInteger.value = UiStates.Success(
-                    listIntFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
-                )
-            }
-        }
-    }
-
-    // Float
-    private fun initFloatValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getFloatFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listFloatFiltered.putAll(uiStates.data)
-                            getFloatFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateFloat.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun getFloatFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _stateFloat.value = UiStates.Success(
-                    listFloatFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
-                )
-            }
-        }
-    }
-
-    // String
-    private fun initStringValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getStringFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listStringFiltered.putAll(uiStates.data)
-                            getStringFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateString.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun getStringFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _stateString.value = UiStates.Success(
-                    listStringFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
-                )
-            }
-        }
-    }
-
-    fun clearPhenotypeCache(pkgName: String) {
-        viewModelScope.launch {
-            gmsDBInteractor.clearPhenotypeCache(pkgName)
-        }
-    }
-
-    // Override Flag
-    fun overrideFlag(
-        packageName: String,
-        name: String,
-        flagType: Int = 0,
-        intVal: String? = null,
-        boolVal: String? = null,
-        floatVal: String? = null,
-        stringVal: String? = null,
-        extensionVal: String? = null,
-        committed: Int = 0,
-        clearData: Boolean = true
-    ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                gmsDBInteractor.overrideFlag(
-                    packageName = packageName,
-                    name = name,
-                    flagType = flagType,
-                    intVal = intVal,
-                    boolVal = boolVal,
-                    floatVal = floatVal,
-                    stringVal = stringVal,
-                    extensionVal = extensionVal,
-                    committed = committed,
-                    clearData = clearData,
-                    usersList = usersList
-                )
-            }
-        }
-    }
-
-    // Delete overridden flags
-    fun deleteOverriddenFlagByPackage(packageName: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteOverriddenFlagByPackage(packageName)
-            }
-        }
-    }
-
-    // Saved flags
-    private fun getAllSavedFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.getSavedFlags().collect {
-                    _stateSavedFlags.value = it
-                }
-            }
-        }
-    }
-
-    fun saveFlag(flagName: String, pkgName: String, flagType: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.saveFlag(flagName, pkgName, flagType)
-            }
-        }
-    }
-
-    fun deleteSavedFlag(flagName: String, pkgName: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.deleteSavedFlag(flagName, pkgName)
-            }
-        }
-    }
-
-    // Select
-    val selectedItems = mutableStateListOf<String>()
-
-    fun saveSelectedFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                selectedItems.forEach {
-                    saveFlag(
-                        it,
-                        pkgName,
-                        SelectFlagsType.BOOLEAN.name
-                    )
-                }
-            }
-        }
-    }
-
-    fun selectAllItems() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (val result = stateBoolean.value) {
+                when (val data = repository.getOverriddenIntFlagsByPackage(pkgName)) {
                     is UiStates.Success -> {
-                        selectedItems.clear()
-                        selectedItems.addAll(result.data.keys)
+                        changedFilterIntList.clear()
+                        changedFilterIntList.putAll(data.data)
+                        listIntFiltered.putAll(data.data)
                     }
 
                     is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
+                        _stateInteger.value = UiStates.Loading()
                     }
 
                     is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
+                        _stateInteger.value = UiStates.Error()
                     }
                 }
             }
         }
     }
 
+    fun initOverriddenFloatFlags(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (val data = repository.getOverriddenFloatFlagsByPackage(pkgName)) {
+                    is UiStates.Success -> {
+                        changedFilterFloatList.clear()
+                        changedFilterFloatList.putAll(data.data)
+                        listFloatFiltered.putAll(data.data)
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateFloat.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateFloat.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
+    fun initOverriddenStringFlags(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (val data = repository.getOverriddenStringFlagsByPackage(pkgName)) {
+                    is UiStates.Success -> {
+                        changedFilterStringList.clear()
+                        changedFilterStringList.putAll(data.data)
+                        listStringFiltered.putAll(data.data)
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateString.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateString.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
+    fun initAllOverriddenFlagsByPackage(pkgName: String) {
+        initOverriddenBoolFlags(pkgName)
+        initOverriddenIntFlags(pkgName)
+        initOverriddenFloatFlags(pkgName)
+        initOverriddenStringFlags(pkgName)
+    }
+
+
+    // Enable/disable all Bool flags
+    private fun turnOnAllBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateBoolean.value
+                if (currentState is UiStates.Success) {
+                    val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
+                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
+                    listBoolFiltered.replaceAll { _, _ -> "1" }
+                }
+            }
+        }
+    }
+
+    private fun turnOffAllBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val currentState = _stateBoolean.value
+                if (currentState is UiStates.Success) {
+                    val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
+                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
+                    listBoolFiltered.replaceAll { _, _ -> "0" }
+                }
+            }
+        }
+    }
+
+
+    // Enable/disable selected Bool flags
     fun enableSelectedFlag() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -554,6 +500,172 @@ class FlagChangeScreenViewModel(
                     turnOffAllBoolFlags()
                 } else {
                     updateBoolFlagValues(selectedItems, "0")
+                }
+            }
+        }
+    }
+
+    // Init users
+    private fun initUsers() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.getUsers().collect {
+                    usersList.addAll(it)
+                }
+            }
+        }
+    }
+
+
+    // Get original Android package
+    fun getAndroidPackage(pkgName: String): String {
+        return repository.androidPackage(pkgName)
+    }
+
+
+    // Override Flag
+    fun overrideFlag(
+        packageName: String,
+        name: String,
+        flagType: Int = 0,
+        intVal: String? = null,
+        boolVal: String? = null,
+        floatVal: String? = null,
+        stringVal: String? = null,
+        extensionVal: String? = null,
+        committed: Int = 0,
+        clearData: Boolean = true
+    ) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                gmsDBInteractor.overrideFlag(
+                    packageName = packageName,
+                    name = name,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed,
+                    clearData = clearData,
+                    usersList = usersList
+                )
+            }
+        }
+    }
+    fun clearPhenotypeCache(pkgName: String) {
+        viewModelScope.launch {
+            gmsDBInteractor.clearPhenotypeCache(pkgName)
+        }
+    }
+
+
+    // Delete overridden flags
+    fun deleteOverriddenFlagByPackage(packageName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteOverriddenFlagByPackage(packageName)
+            }
+        }
+    }
+
+
+    // Save flags to local DB
+    private fun getAllSavedFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.getSavedFlags().collect {
+                    _stateSavedFlags.value = it
+                }
+            }
+        }
+    }
+
+    fun saveFlag(flagName: String, pkgName: String, flagType: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.saveFlag(flagName, pkgName, flagType)
+            }
+        }
+    }
+
+    fun deleteSavedFlag(flagName: String, pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.deleteSavedFlag(flagName, pkgName)
+            }
+        }
+    }
+
+    fun saveSelectedFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                selectedItems.forEach {
+                    saveFlag(
+                        it,
+                        pkgName,
+                        SelectFlagsType.BOOLEAN.name
+                    )
+                }
+            }
+        }
+    }
+
+
+    // Select all items by one click
+    fun selectAllItems() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (val result = stateBoolean.value) {
+                    is UiStates.Success -> {
+                        selectedItems.clear()
+                        selectedItems.addAll(result.data.keys)
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
+                }
+            }
+        }
+    }
+
+
+    // ProgressDialog
+    val showProgressDialog = mutableStateOf(false)
+    fun showFalseProgressDialog(customCount: Int? = null) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                when (stateBoolean.value) {
+                    is UiStates.Success -> {
+                        val flagsCount = customCount
+                            ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
+                        delay(
+                            when {
+                                flagsCount <= 50 -> 0
+                                flagsCount in 51..150 -> 3000
+                                flagsCount in 151..500 -> 5000
+                                flagsCount in 501..1000 -> 7000
+                                flagsCount in 1001..1500 -> 9000
+                                flagsCount > 1501 -> 10000
+                                else -> 0
+                            }
+                        )
+                        showProgressDialog.value = false
+                    }
+
+                    is UiStates.Loading -> {
+                        _stateBoolean.value = UiStates.Loading()
+                    }
+
+                    is UiStates.Error -> {
+                        _stateBoolean.value = UiStates.Error()
+                    }
                 }
             }
         }
