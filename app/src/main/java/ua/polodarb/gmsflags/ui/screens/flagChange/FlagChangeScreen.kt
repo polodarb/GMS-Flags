@@ -200,17 +200,46 @@ fun FlagChangeScreen(
         mutableStateOf("")
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.getAllFlags()
+    }
+
+    LaunchedEffect(
+        pagerState.targetPage
+    ) {
+        when (pagerState.targetPage) {
+            0 -> {
+                viewModel.getBoolFlags()
+            }
+
+            1 -> {
+                viewModel.getIntFlags()
+            }
+
+            2 -> {
+                viewModel.getFloatFlags()
+            }
+
+            3 -> {
+                viewModel.getStringFlags()
+            }
+        }
+    }
+
     LaunchedEffect(
         viewModel.filterMethod.value,
         viewModel.searchQuery.value,
-        pagerState.targetPage,
         showAddFlagDialog.value
     ) {
-        viewModel.getBoolFlags()
-        viewModel.initOverriddenBoolFlags(packageName.toString())
-        viewModel.getIntFlags()
-        viewModel.getFloatFlags()
-        viewModel.getStringFlags()
+        viewModel.getAllFlags()
+        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+    }
+
+    LaunchedEffect(
+        viewModel.filterMethod.value,
+        showAddFlagDialog.value
+    ) {
+        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
     }
 
 
@@ -257,6 +286,7 @@ fun FlagChangeScreen(
                             onClick = {
                                 if (searchIconState) searchIconState = false
                                 viewModel.initOverriddenBoolFlags(packageName.toString()) //todo
+                                viewModel.initOverriddenIntFlags(packageName.toString()) //todo
                                 filterIconState = !filterIconState
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
@@ -304,7 +334,8 @@ fun FlagChangeScreen(
                                         viewModel.showProgressDialog.value = true
                                         viewModel.showFalseProgressDialog()
                                         viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                        viewModel.initBoolValues()
+                                        viewModel.getAllFlags()
+                                        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                                     }
                                 },
                                 onOpenAppDetailsSettings = {
@@ -388,8 +419,6 @@ fun FlagChangeScreen(
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""
-                            viewModel.getBoolFlags()
-                            viewModel.getIntFlags()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
@@ -800,6 +829,7 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             boolVal = if (flagBoolean == 0) "1" else "0"
                         )
+                        Toast.makeText(context, "bool", Toast.LENGTH_SHORT).show()
                     }
 
                     1 -> {
@@ -808,6 +838,7 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             intVal = flagAddValue
                         )
+                        Toast.makeText(context, "int", Toast.LENGTH_SHORT).show()
                     }
 
                     2 -> {
@@ -816,6 +847,7 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             floatVal = flagAddValue
                         )
+                        Toast.makeText(context, "float", Toast.LENGTH_SHORT).show()
                     }
 
                     3 -> {
@@ -824,9 +856,10 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             stringVal = flagAddValue
                         )
+                        Toast.makeText(context, "string", Toast.LENGTH_SHORT).show()
                     }
                 }
-                viewModel.initOverriddenBoolFlags(packageName.toString())
+                viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                 viewModel.clearPhenotypeCache(packageName.toString())
                 dropDownExpanded = false
                 showAddFlagDialog.value = false

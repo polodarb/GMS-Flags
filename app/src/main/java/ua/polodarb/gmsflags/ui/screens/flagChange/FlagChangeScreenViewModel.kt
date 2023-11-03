@@ -33,8 +33,8 @@ class FlagChangeScreenViewModel(
 
     init {
         initUsers()
-        getAllSavedFlags()
         initAllFlags()
+        getAllSavedFlags()
     }
 
     private val _stateBoolean =
@@ -267,6 +267,13 @@ class FlagChangeScreenViewModel(
                 )
             }
         }
+    }
+
+    fun getAllFlags() {
+        getBoolFlags()
+        getIntFlags()
+        getFloatFlags()
+        getStringFlags()
     }
 
     // Updating flags values
