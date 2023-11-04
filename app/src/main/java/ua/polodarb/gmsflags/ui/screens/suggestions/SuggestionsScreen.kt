@@ -12,6 +12,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -412,17 +413,18 @@ private fun NewSuggestedFlagItem(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
+                        ),
+                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_telegram),
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
                             tint = MaterialTheme.colorScheme.onSecondaryContainer
                         )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(
-                            text = "View more information",
-                            modifier = Modifier.padding(start = 8.dp)
+                            text = "View more information"
                         )
                     }
                     Row(
@@ -439,17 +441,18 @@ private fun NewSuggestedFlagItem(
                                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                             ),
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                             modifier = Modifier.weight(0.5f)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_flag_reset_new),
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
                                 tint = MaterialTheme.colorScheme.onTertiaryContainer
                             )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = "Reset",
-                                modifier = Modifier.padding(start = 8.dp)
+                                text = "Reset"
                             )
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -459,17 +462,18 @@ private fun NewSuggestedFlagItem(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer
                             ),
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                             modifier = Modifier.weight(0.5f)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_report_fill),
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
                                 tint = MaterialTheme.colorScheme.onErrorContainer
                             )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = "Report",
-                                modifier = Modifier.padding(start = 8.dp)
+                                text = "Report"
                             )
                         }
                     }
