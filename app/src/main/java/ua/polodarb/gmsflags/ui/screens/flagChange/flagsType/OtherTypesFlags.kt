@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -44,10 +45,10 @@ fun OtherTypesFlagsScreen(
     dialogOnQueryChange: (String) -> Unit,
     dialogOnConfirm: () -> Unit,
     dialogOnDismiss: () -> Unit,
+    dialogOnDefault: () -> Unit,
     haptic: HapticFeedback,
     context: Context
 ) {
-
     val lazyListState = rememberLazyListState()
 
     when (uiState) {
@@ -182,17 +183,13 @@ fun OtherTypesFlagsScreen(
                         flagType = textFlagType,
                         onConfirm = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            dialogOnConfirm()
                             setViewModelMethods()
+                            viewModel.initAllFlags()
+                            viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+                            dialogOnConfirm()
                         },
                         onDismiss = dialogOnDismiss,
-                        onDefault = {
-                            Toast.makeText(
-                                context,
-                                "Not implemented",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        onDefault = dialogOnDefault
                     )
                 } else {
                     LoadingProgressBar()

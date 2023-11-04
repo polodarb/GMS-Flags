@@ -117,4 +117,5 @@
     <string name="flag_change_dialog_suggest_name">Напишите Ваше имя</string>
     <string name="flag_change_dialog_suggest_action_send">Отправить</string>
     <string name="apps_search_advice">Поиск по приложениям</string>
+    <string name="toast_flag_value_is_reset">Значение флага сброшено!</string>
 </resources>

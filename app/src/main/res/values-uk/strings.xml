@@ -117,4 +117,7 @@
     <string name="flag_change_dialog_suggest_name">Напишіть ваше ім\'я</string>
     <string name="flag_change_dialog_suggest_action_send">Надіслати</string>
     <string name="apps_search_advice">Пошук за іменем додатків</string>
+    <string name="toast_flag_value_is_reset">Значення флагу скинуто!</string>
+    <string name="toast_flag_value_is_reset">Значення флагу скинуто!</string>
+    <string name="toast_flag_value_is_reset">Значення флагу скинуто!</string>
 </resources>

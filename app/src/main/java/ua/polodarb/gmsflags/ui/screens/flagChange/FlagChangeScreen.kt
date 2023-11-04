@@ -617,6 +617,13 @@ fun FlagChangeScreen(
                         showDialog.value = false
                         editTextValue.value = flagValue
                     },
+                    dialogOnDefault = {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        viewModel.resetOtherTypesFlagsToDefault(flagName)
+                        viewModel.initIntValues()
+                        viewModel.initOverriddenIntFlags(packageName.toString())
+                        showDialog.value = false
+                    },
                     haptic = haptic,
                     context = context,
                     savedFlagsList = savedFlags.value
@@ -648,6 +655,15 @@ fun FlagChangeScreen(
                         showDialog.value = false
                         editTextValue.value = flagValue
                     },
+                    dialogOnDefault = {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        viewModel.resetOtherTypesFlagsToDefault(flagName)
+                        viewModel.initFloatValues()
+                        viewModel.initOverriddenFloatFlags(packageName.toString())
+                        showDialog.value = false
+                        Toast.makeText(context,
+                            context.getString(R.string.toast_flag_value_is_reset), Toast.LENGTH_SHORT).show()
+                    },
                     haptic = haptic,
                     context = context,
                     savedFlagsList = savedFlags.value
@@ -678,6 +694,13 @@ fun FlagChangeScreen(
                     dialogOnDismiss = {
                         showDialog.value = false
                         editTextValue.value = flagValue
+                    },
+                    dialogOnDefault = {
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        viewModel.resetOtherTypesFlagsToDefault(flagName)
+                        viewModel.initStringValues()
+                        viewModel.initOverriddenStringFlags(packageName.toString())
+                        showDialog.value = false
                     },
                     haptic = haptic,
                     context = context,

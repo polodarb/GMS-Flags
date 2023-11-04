@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.flagChange
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
@@ -21,6 +19,7 @@ import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
 import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import java.util.Collections
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
@@ -66,12 +65,14 @@ class FlagChangeScreenViewModel(
     var searchQuery = mutableStateOf("")
 
     // Select
-    val selectedItems: MutableList<String> = Collections.synchronizedList(mutableStateListOf<String>())
+    val selectedItems: MutableList<String> =
+        Collections.synchronizedList(mutableStateListOf<String>())
 
     private val changedFilterBoolList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterIntList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterFloatList = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val changedFilterStringList = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterStringList =
+        Collections.synchronizedMap(mutableMapOf<String, String>())
 
     private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
@@ -104,7 +105,7 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    private fun initIntValues(delay: Boolean = true) {
+    fun initIntValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getIntFlags(pkgName, delay).collect { uiStates ->
@@ -127,7 +128,7 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    private fun initFloatValues(delay: Boolean = true) {
+    fun initFloatValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getFloatFlags(pkgName, delay).collect { uiStates ->
@@ -150,7 +151,7 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    private fun initStringValues(delay: Boolean = true) {
+    fun initStringValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getStringFlags(pkgName, delay).collect { uiStates ->
@@ -362,7 +363,6 @@ class FlagChangeScreenViewModel(
         }
 
     }
-
 
 
     // Get overridden flags
@@ -586,6 +586,7 @@ class FlagChangeScreenViewModel(
             }
         }
     }
+
     fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch {
             gmsDBInteractor.clearPhenotypeCache(pkgName)
@@ -602,6 +603,17 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    // Reset int/float/string flags to default value
+    fun resetOtherTypesFlagsToDefault(flag: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteRowByFlagName(
+                    packageName = pkgName,
+                    name = flag
+                )
+            }
+        }
+    }
 
     // Save flags to local DB
     private fun getAllSavedFlags() {
