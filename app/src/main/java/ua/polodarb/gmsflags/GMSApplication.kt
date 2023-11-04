@@ -94,4 +94,6 @@ class GMSApplication : Application() {
         check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }
+
+
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="toast_done">Готово!</string>
-    <string name="crash_title">Ошибка сервиса</string>
+    <string name="crash_title">Ошибка</string>
     <string name="crash_advice">Пожалуйста, перезапустите приложение</string>
     <string name="crash_msg">К сожалению, произошла ошибка и доступ к базе данных GMS невозможен</string>
     <string name="crash_report">Отправить отчет</string>

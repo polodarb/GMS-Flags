@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChange
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +66,7 @@ class FlagChangeScreenViewModel(
     var searchQuery = mutableStateOf("")
 
     // Select
-    val selectedItems: MutableList<String> = Collections.synchronizedList(mutableListOf<String>())
+    val selectedItems: MutableList<String> = Collections.synchronizedList(mutableStateListOf<String>())
 
     private val changedFilterBoolList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterIntList = Collections.synchronizedMap(mutableMapOf<String, String>())
@@ -248,11 +249,23 @@ class FlagChangeScreenViewModel(
     fun getFloatFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _stateFloat.value = UiStates.Success(
-                    listFloatFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
-                )
+                when (filterMethod.value) {
+                    FilterMethod.CHANGED -> {
+                        _stateFloat.value = UiStates.Success(
+                            changedFilterFloatList.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    else -> {
+                        _stateFloat.value = UiStates.Success(
+                            listFloatFiltered.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+                }
             }
         }
     }
@@ -260,11 +273,23 @@ class FlagChangeScreenViewModel(
     fun getStringFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _stateString.value = UiStates.Success(
-                    listStringFiltered.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
-                )
+                when (filterMethod.value) {
+                    FilterMethod.CHANGED -> {
+                        _stateString.value = UiStates.Success(
+                            changedFilterStringList.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+
+                    else -> {
+                        _stateString.value = UiStates.Success(
+                            listStringFiltered.filter {
+                                it.key.contains(searchQuery.value, ignoreCase = true)
+                            }.toSortMap()
+                        )
+                    }
+                }
             }
         }
     }

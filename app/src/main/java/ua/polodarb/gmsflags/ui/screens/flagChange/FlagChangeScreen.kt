@@ -224,6 +224,7 @@ fun FlagChangeScreen(
                 viewModel.getStringFlags()
             }
         }
+        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
     }
 
     LaunchedEffect(
