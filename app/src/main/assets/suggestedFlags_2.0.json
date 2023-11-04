@@ -20,6 +20,8 @@
         ],
         "flagPackage": "package",
         "appPackage": "package",
+        "minVersionCode": null,
+        "minAndroidSdkCode": null,
         "enabled": true
       }
     ],
@@ -42,6 +44,8 @@
         ],
         "flagPackage": "package",
         "appPackage": "package",
+        "minVersionCode": null,
+        "minAndroidSdkCode": null,
         "enabled": true
       }
     ]
