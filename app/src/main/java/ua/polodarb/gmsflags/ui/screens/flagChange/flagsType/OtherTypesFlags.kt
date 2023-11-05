@@ -66,39 +66,45 @@ fun OtherTypesFlagsScreen(
                 SelectFlagsType.BOOLEAN -> {}
 
                 SelectFlagsType.INTEGER -> {
+                    viewModel.updateIntFlagValue(
+                        flagName,
+                        editTextValue
+                    )
                     viewModel.overrideFlag(
                         packageName = packageName.toString(),
                         name = flagName,
                         intVal = editTextValue
                     )
-                    viewModel.updateIntFlagValue(
-                        flagName,
-                        editTextValue
-                    )
+                    viewModel.initIntValues()
+                    viewModel.initOverriddenIntFlags(packageName.toString())
                 }
 
                 SelectFlagsType.FLOAT -> {
+                    viewModel.updateFloatFlagValue(
+                        flagName,
+                        editTextValue
+                    )
                     viewModel.overrideFlag(
                         packageName = packageName.toString(),
                         name = flagName,
                         floatVal = editTextValue
                     )
-                    viewModel.updateFloatFlagValue(
-                        flagName,
-                        editTextValue
-                    )
+                    viewModel.initFloatValues()
+                    viewModel.initOverriddenFloatFlags(packageName.toString())
                 }
 
                 SelectFlagsType.STRING -> {
+                    viewModel.updateStringFlagValue(
+                        flagName,
+                        editTextValue
+                    )
                     viewModel.overrideFlag(
                         packageName = packageName.toString(),
                         name = flagName,
                         stringVal = editTextValue
                     )
-                    viewModel.updateStringFlagValue(
-                        flagName,
-                        editTextValue
-                    )
+                    viewModel.initStringValues()
+                    viewModel.initOverriddenStringFlags(packageName.toString())
                 }
             }
 
@@ -184,8 +190,8 @@ fun OtherTypesFlagsScreen(
                         onConfirm = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             setViewModelMethods()
-                            viewModel.initAllFlags()
-                            viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+//                            viewModel.initAllFlags()
+//                            viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                             dialogOnConfirm()
                         },
                         onDismiss = dialogOnDismiss,

@@ -200,6 +200,24 @@ fun FlagChangeScreen(
         mutableStateOf("")
     }
 
+    val selectedFlagsType: SelectFlagsType = when (pagerState.targetPage) {
+        0 -> {
+            SelectFlagsType.BOOLEAN
+        }
+
+        1 -> {
+            SelectFlagsType.INTEGER
+        }
+
+        2 -> {
+            SelectFlagsType.FLOAT
+        }
+
+        else -> {
+            SelectFlagsType.STRING
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.getAllFlags()
     }
@@ -335,7 +353,7 @@ fun FlagChangeScreen(
                                         viewModel.showProgressDialog.value = true
                                         viewModel.showFalseProgressDialog()
                                         viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                        viewModel.getAllFlags()
+                                        viewModel.initAllFlags()
                                         viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                                     }
                                 },
@@ -597,7 +615,7 @@ fun FlagChangeScreen(
                     packageName = packageName.toString(),
                     flagName = flagName,
                     flagValue = flagValue,
-                    flagsType = SelectFlagsType.INTEGER,
+                    flagsType = selectedFlagsType,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
                     onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->
@@ -635,7 +653,7 @@ fun FlagChangeScreen(
                     packageName = packageName.toString(),
                     flagName = flagName,
                     flagValue = flagValue,
-                    flagsType = SelectFlagsType.FLOAT,
+                    flagsType = selectedFlagsType,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
                     onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->
@@ -675,7 +693,7 @@ fun FlagChangeScreen(
                     packageName = packageName.toString(),
                     flagName = flagName,
                     flagValue = flagValue,
-                    flagsType = SelectFlagsType.STRING,
+                    flagsType = selectedFlagsType,
                     editTextValue = editTextValue.value,
                     showDialog = showDialog.value,
                     onFlagClick = { newFlagName, newFlagValue, newEditTextValue, _ ->

@@ -263,29 +263,29 @@ fun SuggestedFlagItem(
     flagOnCheckedChange: (Boolean) -> Unit,
     onFlagLongClick: () -> Unit
 ) {
-    NewSuggestedFlagItem(
-        titleText = flagName,
-        sourceText = senderName
-    )
-//    ListItem(
-//        headlineContent = { Text(flagName) },
-//        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
-//        trailingContent = {
-//            Row {
-//                Switch(
-//                    checked = flagValue,
-//                    onCheckedChange = {
-//                        flagOnCheckedChange(it)
-//                    }
-//                )
-//            }
-//        },
-//        modifier = Modifier
-//            .combinedClickable(
-//                onClick = {},
-//                onLongClick = onFlagLongClick
-//            )
+//    NewSuggestedFlagItem(
+//        titleText = flagName,
+//        sourceText = senderName
 //    )
+    ListItem(
+        headlineContent = { Text(flagName) },
+        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
+        trailingContent = {
+            Row {
+                Switch(
+                    checked = flagValue,
+                    onCheckedChange = {
+                        flagOnCheckedChange(it)
+                    }
+                )
+            }
+        },
+        modifier = Modifier
+            .combinedClickable(
+                onClick = {},
+                onLongClick = onFlagLongClick
+            )
+    )
 }
 
 @Composable
