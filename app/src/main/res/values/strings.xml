@@ -1,34 +1,81 @@
 <resources>
-    <string name="app_name">GMS Flags</string>
+    <!-- Common -->
+    <string name="app_name" translatable="false">GMS Flags</string>
+    <string name="toast_done">Done!</string>
+
+    <!-- Crash Screen -->
     <string name="crash_title">Service error</string>
     <string name="crash_advice">Please restart the application.</string>
     <string name="crash_msg">Unfortunately, a service error occurred and access to the GMS database is impossible.</string>
     <string name="crash_report">Send report</string>
-    <string name="crash_report_subject">"GMS Flags has crashed!"</string>
+    <string name="crash_report_subject" translatable="false">"GMS Flags has crashed!"</string>
     <string name="crash_report_failed">Restart app</string>
     <string name="crash_restart">Restart app</string>
+
+    <!-- Setup Screen -->
     <string name="welcome_title">Welcome!</string>
     <string name="welcome_msg">Explore Google Apps for hidden features, redesigns, abilities to turn off regional restrictions, and more…</string>
     <string name="welcome_advice">Become part of the community!</string>
     <string name="welcome_start">Start!</string>
     <string name="welcome_disclaimer">By continuing, you agree to our Terms of Service and Privacy Policy</string>
-    <string name="welcome_terms_chunk">Terms of Service</string>
-    <string name="welcome_terms_url">https://polodarb.github.io/gms-flags/terms-of-service</string>
-    <string name="welcome_policy_chunk">Privacy Policy</string>
-    <string name="welcome_policy_url">https://polodarb.github.io/gms-flags/privacy</string>
+    <string name="welcome_terms_chunk" translatable="false">Terms of Service</string>
+    <string name="welcome_terms_url" translatable="false">https://polodarb.github.io/gms-flags/terms-of-service</string>
+    <string name="welcome_policy_chunk" translatable="false">Privacy Policy</string>
+    <string name="welcome_policy_url" translatable="false">https://polodarb.github.io/gms-flags/privacy</string>
     <string name="root_title">Root required</string>
-    <string name="root_msg">Unfortunately, the application requires superuser rights to function. </string>
+    <string name="root_msg">"The application requires superuser rights to function. "</string>
     <string name="root_advice">To request click the "Request root"</string>
     <string name="root_exit">Exit</string>
     <string name="root_request">Request root</string>
     <string name="notification_title">Notifications</string>
-    <string name="notification_msg">Request permission to receive notifications to stay up to date with new flags and news stories. </string>
+    <string name="notification_msg">Allow notifications to stay up to date with new flags and news.</string>
     <string name="notification_advice">To request click the "Request" button</string>
     <string name="notification_request">Request</string>
     <string name="notification_skip">Skip</string>
     <string name="packages_title">Packages</string>
     <string name="packages_search_advice">Search a package name</string>
 
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_item_reset_flags_headline">Reset flags</string>
+    <string name="settings_item_reset_flags_description">Reset all overridden flags</string>
+    <string name="settings_item_reset_saved_headline">Reset saved</string>
+    <string name="settings_item_reset_saved_description">Reset all saved packages or flags</string>
+    <string name="settings_item_start_route_headline">Change the start screen</string>
+    <string name="settings_item_start_route_description">Select from which screen the app will start</string>
+    <string name="settings_item_about_headline">About &amp; support</string>
+    <string name="settings_item_about_description">Useful information and resources</string>
+    <!-- Settings About Screen -->
+    <string name="settings_about_developer_title">Developer</string>
+    <string name="settings_about_developer_content">Danyil Kobzar</string>
+    <string name="settings_about_developer_url" translatable="false">https://github.com/polodarb</string>
+    <string name="settings_about_project_title">Source code</string>
+    <string name="settings_about_project_url" translatable="false">https://github.com/polodarb/GMS-Flags</string>
+    <string name="settings_about_telegram_title">Telegram channel</string>
+    <string name="settings_about_telegram_content">Support &amp; updates</string>
+    <string name="settings_about_telegram_url" translatable="false">https://t.me/gmsflags</string>
+    <!-- Settings Reset Flags -->
+    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized (overridden) flags or preferences within the application</string>
+    <string name="settings_reset_flags_opt_gms">Reset flags in GMS Database</string>
+    <string name="settings_reset_flags_opt_vending">Reset flags in Play Store Database</string>
+    <string name="settings_reset_flags_opt_all">Reset all overridden flags</string>
+    <string name="settings_reset_flags_warning">All flags that you changed will be reset!</string>
+    <!-- Settings Reset Saved -->
+    <string name="settings_reset_saved_description">In this section you can reset all packages and flags on the Saved screen that you have saved before.</string>
+    <string name="settings_reset_saved_opt_packages">Reset saved packages</string>
+    <string name="settings_reset_saved_opt_flags">Reset saved flags</string>
+    <string name="settings_reset_saved_opt_all">Reset all saved flags and packages</string>
+    <string name="settings_reset_saved_warning">All flags that you saved will be reset!</string>
+    <!-- Settings Start Route -->
+    <string name="settings_start_route_title">Change the start screen</string>
+    <string name="settings_start_route_description">Select the screen that will be displayed when
+        the application is launched. Default screen - Suggestions.</string>
+    <!-- Settings Common -->
+    <string name="settings_confirmation_dialog_title">Confirm action</string>
+    <string name="settings_confirmation_dialog_confirm">Confirm</string>
+    <string name="settings_confirmation_dialog_close">Close</string>
+
+    <!-- Navigation Bar -->
     <string name="nav_bar_suggestions">Suggestions</string>
     <string name="nav_bar_apps">Apps</string>
     <string name="nav_bar_saved">Saved</string>
@@ -44,9 +91,54 @@
     <string name="update_dialog_title">Update app to v%1$s</string>
     <string name="update_dialog_close">Close</string>
     <string name="update_dialog_confirm">Update GMS Flags</string>
-    <string name="finder">"Finder: "</string>
+    <string name="finder">"Source: "</string>
     <string name="open_app_details_settings">Open app details settings</string>
     <string name="notifications_toast">You will not receive notifications</string>
     <string name="notification_finish">Finish!</string>
     <string name="notifications_open_settings">Open settings</string>
+    <string name="suggestion_banner">To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.</string>
+    <string name="close">Close</string>
+    <string name="apps_dialog_choose_package">Choose a package</string>
+    <string name="primary">Primary</string>
+    <string name="secondary">Secondary</string>
+    <string name="saved_packages">Saved packages</string>
+    <string name="saved_flags">Saved flags</string>
+    <string name="settings_about_project_source_code" translatable="false">GitHub</string>
+    <string name="component_no_packages">Packages not found</string>
+    <string name="suggestions_dialog_title">Reset flag value to default?</string>
+    <string name="suggestions_dialog_text">This action will reset the flag value to the default. Use this if simply turning off the flag doesn\'t work or causes any problems</string>
+    <string name="filter_chip_all">All</string>
+    <string name="filter_chip_changed">Changed</string>
+    <string name="filter_chip_disabled">Disabled</string>
+    <string name="filter_chip_enabled">Enabled</string>
+    <string name="search_flags_advice">Search a flags by name</string>
+    <string name="drop_down_enable_selected">Enable selected</string>
+    <string name="drop_down_disable_selected">Disable selected</string>
+    <string name="drop_down_select_all">Select all items</string>
+    <string name="flag_change_dialog_add_flag_title">Add a flag manually</string>
+    <string name="flag_change_dialog_add_flag_confirm">Add flag</string>
+    <string name="flag_change_dialog_add_flag_choose_type">Choose a type of flag</string>
+    <string name="flag_change_dialog_add_flag_select_value">Select a value</string>
+    <string name="flag_change_dialog_add_flag_enter_name">Type a name of flag</string>
+    <string name="flag_change_dialog_add_flag_title_name">Flag\'s name</string>
+    <string name="flag_change_dialog_add_flag_title_value">Flag\'s value</string>
+    <string name="flag_change_dialog_add_flag_type_value">Type a value</string>
+    <string name="flag_change_topbar_title_selected">Selected: %1$s</string>
+    <string name="flag_change_dialog_other_type_title">Changing flag\'s value</string>
+    <string name="flag_change_dialog_other_type_name">Name: %1$s</string>
+    <string name="flag_change_dialog_other_type_type">Type: %1$s</string>
+    <string name="flag_change_dialog_other_action_default">Default</string>
+    <string name="flag_change_dialog_other_action_save">Save</string>
+    <string name="flag_change_dialog_progress_title">Please wait</string>
+    <string name="flag_change_dialog_report_title">Problem report</string>
+    <string name="flag_change_dialog_report_text">If you notice that this flag causes any problems or breaks the application - please let us know about it.</string>
+    <string name="flag_change_dialog_report_placeholder">Write flag`s description</string>
+    <string name="flag_change_dialog_report_action_send">Send report</string>
+    <string name="flag_change_dialog_suggest_title">Suggest flags</string>
+    <string name="flag_change_dialog_suggest_text">If you notice that this flag gives an interesting result, you can submit it to us for consideration. If your proposal is approved - it will appear in the \"Offers\" screen.</string>
+    <string name="flag_change_dialog_suggest_placeholder_description">Write flag`s description</string>
+    <string name="flag_change_dialog_suggest_name">Write your name or nickname</string>
+    <string name="flag_change_dialog_suggest_action_send">Send suggest</string>
+    <string name="apps_search_advice">Search by apps name</string>
+    <string name="toast_flag_value_is_reset">The flag value is reset!</string>
 </resources>

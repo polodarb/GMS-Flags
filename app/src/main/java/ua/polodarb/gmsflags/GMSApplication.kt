@@ -14,10 +14,11 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import ua.polodarb.gmsflags.core.Constants
+import ua.polodarb.gmsflags.utils.Constants
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.databaseModule
+import ua.polodarb.gmsflags.di.interactorsModule
 import ua.polodarb.gmsflags.di.remoteModule
 import ua.polodarb.gmsflags.di.repositoryModule
 import ua.polodarb.gmsflags.di.viewModelsModule
@@ -56,7 +57,7 @@ class GMSApplication : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
             androidContext(this@GMSApplication)
-            modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule, remoteModule))
+            modules(listOf(appModule, viewModelsModule, databaseModule, repositoryModule, remoteModule, interactorsModule))
         }
     }
 
@@ -93,4 +94,6 @@ class GMSApplication : Application() {
         check (isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }
+
+
 }

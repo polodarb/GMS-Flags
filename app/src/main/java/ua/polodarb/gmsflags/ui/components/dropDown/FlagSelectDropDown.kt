@@ -2,11 +2,7 @@ package ua.polodarb.gmsflags.ui.components.dropDown
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -41,7 +37,7 @@ fun FlagSelectDropDown(
             )
             {
                 DropdownMenuItem(
-                    text = { Text(text = "Enable selected") },
+                    text = { Text(text = stringResource(R.string.drop_down_enable_selected)) },
                     onClick = onEnableSelected,
                     leadingIcon = {
                         Icon(
@@ -52,7 +48,7 @@ fun FlagSelectDropDown(
                     enabled = true
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Disable selected") },
+                    text = { Text(text = stringResource(R.string.drop_down_disable_selected)) },
                     onClick = onDisableSelected,
                     leadingIcon = {
                         Icon(
@@ -64,7 +60,7 @@ fun FlagSelectDropDown(
                 )
                 HorizontalDivider()
                 DropdownMenuItem(
-                    text = { Text(text = "Select all items") },
+                    text = { Text(text = stringResource(R.string.drop_down_select_all)) },
                     onClick = onSelectAllItems,
                     leadingIcon = {
                         Icon(

@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.data.databases.gms
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.os.IBinder
@@ -9,10 +8,9 @@ import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase
 import ua.polodarb.gmsflags.IRootDatabase
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_GMS
-import ua.polodarb.gmsflags.core.Constants.DB_PATH_VENDING
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_GMS
+import ua.polodarb.gmsflags.utils.Constants.DB_PATH_VENDING
 
-@SuppressLint("SdCardPath")
 class RootDatabase : RootService() {
 
     private lateinit var gmsDB: SQLiteDatabase
@@ -384,7 +382,7 @@ class RootDatabase : RootService() {
 
     private fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> {
         val cursor = gmsDB.rawQuery(
-            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
+            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName' AND boolVal IS NOT NULL;",
             null
         )
         val list = mutableMapOf<String?, String?>()
@@ -396,7 +394,7 @@ class RootDatabase : RootService() {
         cursor.close()
 
         val cursorVending = vendingDB.rawQuery(
-            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName';",
+            "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName' AND boolVal IS NOT NULL;",
             null
         )
         if (cursorVending.moveToFirst()) {
@@ -409,43 +407,82 @@ class RootDatabase : RootService() {
     }
 
 
-    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> {  // todo: not used
+    private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> {
         val cursor = gmsDB.rawQuery(
-            "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
+            "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = '$pkgName' AND intVal IS NOT NULL;",
             null
         )
         val list = mutableMapOf<String?, String?>()
-        while (cursor.moveToNext()) {
-            list[cursor.getString(0)] = cursor.getString(1)
+        if (cursor.moveToFirst()) {
+            do {
+                list[cursor.getString(0)] = cursor.getString(1)
+            } while (cursor.moveToNext())
         }
         cursor.close()
-        return list.toMap()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, intVal FROM FlagOverrides WHERE packageName = '$pkgName' AND intVal IS NOT NULL;",
+            null
+        )
+        if (cursorVending.moveToFirst()) {
+            do {
+                list[cursorVending.getString(0)] = cursorVending.getString(1)
+            } while (cursorVending.moveToNext())
+        }
+        cursorVending.close()
+        return list
     }
 
     private fun getOverriddenFloatFlagsByPackage(pkgName: String): Map<String?, String?> {  // todo: not used
         val cursor = gmsDB.rawQuery(
-            "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
+            "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = '$pkgName' AND floatVal IS NOT NULL;",
             null
         )
         val list = mutableMapOf<String?, String?>()
-        while (cursor.moveToNext()) {
-            list[cursor.getString(0)] = cursor.getString(1)
+        if (cursor.moveToFirst()) {
+            do {
+                list[cursor.getString(0)] = cursor.getString(1)
+            } while (cursor.moveToNext())
         }
         cursor.close()
-        return list.toMap()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, floatVal FROM FlagOverrides WHERE packageName = '$pkgName' AND floatVal IS NOT NULL;",
+            null
+        )
+        if (cursorVending.moveToFirst()) {
+            do {
+                list[cursorVending.getString(0)] = cursorVending.getString(1)
+            } while (cursorVending.moveToNext())
+        }
+        cursorVending.close()
+        return list
     }
 
     private fun getOverriddenStringFlagsByPackage(pkgName: String): Map<String?, String?> { // todo: not used
         val cursor = gmsDB.rawQuery(
-            "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = \"$pkgName\";",
+            "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = '$pkgName' AND stringVal IS NOT NULL;",
             null
         )
         val list = mutableMapOf<String?, String?>()
-        while (cursor.moveToNext()) {
-            list[cursor.getString(0)] = cursor.getString(1)
+        if (cursor.moveToFirst()) {
+            do {
+                list[cursor.getString(0)] = cursor.getString(1)
+            } while (cursor.moveToNext())
         }
         cursor.close()
-        return list.toMap()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT DISTINCT name, stringVal FROM FlagOverrides WHERE packageName = '$pkgName' AND stringVal IS NOT NULL;",
+            null
+        )
+        if (cursorVending.moveToFirst()) {
+            do {
+                list[cursorVending.getString(0)] = cursorVending.getString(1)
+            } while (cursorVending.moveToNext())
+        }
+        cursorVending.close()
+        return list
     }
 
     fun getAllOverriddenBoolFlags(): Map<String?, String?> {
@@ -553,7 +590,17 @@ class RootDatabase : RootService() {
     }
 
     private fun getGmsPackages(): Map<String, String> {
-        val cursor = gmsDB.rawQuery("SELECT packageName, COUNT(DISTINCT name) FROM Flags group by packageName", null)
+        val cursor = gmsDB.rawQuery("SELECT f.packageName, COUNT(DISTINCT f.name) AS unique_name_count\n" +
+                "FROM (\n" +
+                "    SELECT packageName, name\n" +
+                "    FROM Flags\n" +
+                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
+                "    UNION ALL\n" +
+                "    SELECT packageName, name\n" +
+                "    FROM FlagOverrides\n" +
+                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
+                ") AS f\n" +
+                "GROUP BY f.packageName;\n", null)
         val list = mutableMapOf<String, String>()
         while (cursor.moveToNext()) {
             list[cursor.getString(0)] = cursor.getString(1)

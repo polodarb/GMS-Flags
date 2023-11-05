@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,11 +14,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
-import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreen
-import ua.polodarb.gmsflags.ui.screens.historyScreen.HistoryScreen
-import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreen
-import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionsScreen
+import ua.polodarb.gmsflags.ui.screens.apps.AppsScreen
+import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
+import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
 
 sealed class NavBarItem(
     @StringRes val title: Int,
@@ -54,7 +55,7 @@ sealed class NavBarItem(
 //    )
 }
 
-val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved, /*NavBarItem.History*/)
+val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved /*, NavBarItem.History*/)
 
 internal sealed class ScreensDestination(var screenRoute: String) {
 
@@ -79,6 +80,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     data object NotificationRequest : ScreensDestination("notificationRequest")
 }
 
+@Stable
 @Composable
 internal fun BottomBarNavigation( // Navigation realization for BottomBar
     isFirstStart: Boolean,
@@ -86,13 +88,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
     parentNavController: NavController,
     navController: NavHostController
 ) {
-
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager(context) }
-    val data = remember {
+    val startScreen = remember {
         mutableStateOf(
             preferencesManager.getData(
-                "settings_navigation",
+                PreferenceConstants.START_SCREEN_KEY,
                 NavBarItem.Suggestions.screenRoute
             )
         )
@@ -100,7 +101,7 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
 
     NavHost(
         navController = navController,
-        startDestination = data.value,
+        startDestination = startScreen.value,
         modifier = modifier
     ) {
         composable(route = NavBarItem.Suggestions.screenRoute) {

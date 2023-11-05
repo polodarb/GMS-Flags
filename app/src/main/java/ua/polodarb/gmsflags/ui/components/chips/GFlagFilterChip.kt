@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import ua.polodarb.gmsflags.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +56,11 @@ fun GFlagFilterChip(
         },
         leadingIcon = null,
         modifier = modifier,
-        enabled = pagerCurrentState == 0
+        enabled = when (pagerCurrentState) {
+            0 -> true
+            else -> {
+                chipTitle == stringResource(R.string.filter_chip_all) || chipTitle == stringResource(R.string.filter_chip_changed)
+            }
+        }
     )
 }

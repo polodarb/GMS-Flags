@@ -1,5 +1,6 @@
 import java.io.FileInputStream
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,22 +10,27 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.detekt)
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val requiresSigning = keystorePropertiesFile.exists()
 
 android {
     namespace = "ua.polodarb.gmsflags"
     compileSdk = 34
 
     signingConfigs {
-        create("config") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
+        if (requiresSigning) {
+            val keystoreProperties = Properties().apply {
+                load(FileInputStream(keystorePropertiesFile))
+            }
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
         }
     }
 
@@ -32,8 +38,8 @@ android {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
-        versionCode = 9
-        versionName = "1.0.8"
+        versionCode = 10
+        versionName = "1.0.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -43,11 +49,14 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("config")
+            if (requiresSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         getByName("debug") {
             isMinifyEnabled = false
@@ -73,6 +82,7 @@ android {
 }
 
 dependencies {
+
     // Core
     implementation(libs.core.ktx)
 
@@ -103,6 +113,9 @@ dependencies {
     androidTestImplementation(libs.compose.test.juni4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
+
+    // Scrollbar library for Jetpack Compose
+    implementation(libs.lazyColumnScrollbar)
 
     // Material
     implementation(libs.google.material)
@@ -149,5 +162,32 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Kotlin immutable collections
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6")
+    implementation(libs.kotlin.collections.immutable)
+}
+
+tasks.withType<KotlinCompile> {
+    if (this.name.contains(other = "Release")) {
+        kotlinOptions {
+            val buildDir = project.layout.buildDirectory.asFile.get().absolutePath
+            freeCompilerArgs += listOf(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/compose_reports",
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/compose_metrics"
+            )
+        }
+    }
+}
+
+detekt {
+    source.setFrom("src/main/java", "src/main/kotlin")
+    config.setFrom("../config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    ignoreFailures = true
+}
+
+afterEvaluate {
+    tasks.names.filter { Regex("^compile.*Kotlin\$").matches(it) }.forEach { task ->
+        tasks.findByName(task)?.dependsOn(tasks.detekt)
+    }
 }

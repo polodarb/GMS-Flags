@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.components.searchBar
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,7 +48,7 @@ fun GFlagsSearchBar(
                         colorFraction
                     )
                 } else {
-                    MaterialTheme.colorScheme.background
+                    MaterialTheme.colorScheme.surface
                 }
             )
             .fillMaxWidth()

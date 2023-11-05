@@ -1,19 +1,14 @@
 package ua.polodarb.gmsflags.di
 
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.KoinApplication
 import org.koin.dsl.module
-import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.data.repo.AppsListRepository
-import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.interactors.MergeOverriddenFlagsInteractor
-import ua.polodarb.gmsflags.ui.screens.appsScreen.AppsScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.flagChangeScreen.FlagChangeScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.packagesScreen.PackagesScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.savedScreen.SavedScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.settingsScreen.SettingsViewModel
-import ua.polodarb.gmsflags.ui.screens.suggestionsScreen.SuggestionScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.apps.AppsScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
+import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
 
 val viewModelsModule = module {
 
@@ -28,7 +23,8 @@ val viewModelsModule = module {
         FlagChangeScreenViewModel(
             pkgName = get(),
             repository = get(),
-            roomRepository = get()
+            roomRepository = get(),
+            gmsDBInteractor = get()
         )
     }
 
@@ -44,7 +40,8 @@ val viewModelsModule = module {
             repository = get(),
             appsRepository = get(),
             flagsApiService = get<FlagsApiServiceImpl>(),
-            interactor = get<MergeOverriddenFlagsInteractor>(),
+            mapper = get(),
+            interactor = get()
         )
     }
 
@@ -59,5 +56,4 @@ val viewModelsModule = module {
             settingsRepository = get()
         )
     }
-
 }

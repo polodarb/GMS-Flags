@@ -9,6 +9,7 @@ composeMaterial3 = "1.2.0-alpha04"
 coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
+detekt = "1.23.1"
 espresso = "3.5.1"
 firebase = "32.3.1"
 firebaseCrashlyticsPlugin = "2.9.9"
@@ -17,8 +18,10 @@ gms = "4.4.0"
 junit = "4.13.2"
 koin = "3.5.0"
 kotlin = "1.9.10"
+kotlinCollectionsImmutable = "0.3.6"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.5"
+lazyColumnScrollbar = "1.8.0"
 libsu = "5.2.1"
 lifecycle = "2.6.2"
 material = "1.10.0"
@@ -51,12 +54,14 @@ google-material = { group = "com.google.android.material", name = "material", ve
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+kotlin-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinCollectionsImmutable"  }
 ktor-android = { group = "io.ktor", name = "ktor-client-android" }
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging" }
 ktor-negotation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
+lazyColumnScrollbar = { group = "com.github.nanihadesuka", name = "LazyColumnScrollbar", version.ref = "lazyColumnScrollbar" }
 libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
@@ -74,6 +79,7 @@ firebase-crashlytics-gradle = { group = "com.google.firebase", name = "firebase-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }

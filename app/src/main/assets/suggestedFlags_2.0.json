@@ -1,0 +1,53 @@
+[
+  {
+    "primary": [
+      {
+        "primaryTag": "tag",
+        "name": "name",
+        "source": "source",
+        "notes": null,
+        "flags": [
+          {
+            "tag": "flag_name",
+            "type": "type",
+            "value": "value"
+          },
+          {
+            "tag": "show_branding_on_space",
+            "type": "type",
+            "value": "val"
+          }
+        ],
+        "flagPackage": "package",
+        "appPackage": "package",
+        "minVersionCode": null,
+        "minAndroidSdkCode": null,
+        "enabled": true
+      }
+    ],
+    "secondary": [
+      {
+        "name": "name",
+        "source": "source",
+        "notes": null,
+        "flags": [
+          {
+            "tag": "flag_name",
+            "type": "type",
+            "value": "value"
+          },
+          {
+            "tag": "show_branding_on_space",
+            "type": "type",
+            "value": "val"
+          }
+        ],
+        "flagPackage": "package",
+        "appPackage": "package",
+        "minVersionCode": null,
+        "minAndroidSdkCode": null,
+        "enabled": true
+      }
+    ]
+  }
+]
