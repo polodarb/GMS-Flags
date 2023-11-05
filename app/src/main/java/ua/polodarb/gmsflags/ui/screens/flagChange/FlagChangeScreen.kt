@@ -355,6 +355,7 @@ fun FlagChangeScreen(
                                         viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
                                         viewModel.initAllFlags()
                                         viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+                                        viewModel.filterMethod = viewModel.filterMethod
                                     }
                                 },
                                 onOpenAppDetailsSettings = {
@@ -871,7 +872,8 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             boolVal = if (flagBoolean == 0) "1" else "0"
                         )
-                        Toast.makeText(context, "bool", Toast.LENGTH_SHORT).show()
+                        viewModel.initBoolValues()
+                        viewModel.initOverriddenBoolFlags(packageName.toString())
                     }
 
                     1 -> {
@@ -880,7 +882,8 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             intVal = flagAddValue
                         )
-                        Toast.makeText(context, "int", Toast.LENGTH_SHORT).show()
+                        viewModel.initIntValues()
+                        viewModel.initOverriddenIntFlags(packageName.toString())
                     }
 
                     2 -> {
@@ -889,7 +892,8 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             floatVal = flagAddValue
                         )
-                        Toast.makeText(context, "float", Toast.LENGTH_SHORT).show()
+                        viewModel.initFloatValues()
+                        viewModel.initOverriddenFloatFlags(packageName.toString())
                     }
 
                     3 -> {
@@ -898,10 +902,11 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             stringVal = flagAddValue
                         )
-                        Toast.makeText(context, "string", Toast.LENGTH_SHORT).show()
+                        viewModel.initStringValues()
+                        viewModel.initOverriddenStringFlags(packageName.toString())
                     }
                 }
-                viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+                viewModel.filterMethod = viewModel.filterMethod
                 viewModel.clearPhenotypeCache(packageName.toString())
                 dropDownExpanded = false
                 showAddFlagDialog.value = false
