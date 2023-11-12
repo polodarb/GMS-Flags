@@ -1,5 +1,18 @@
 [
   {
+    "name": "Date tips while creating task in Tasks",
+    "author": "Nail Sadykov",
+    "flags": [
+      {
+        "tag": "DateShortcuts__enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "package": "com.google.android.apps.tasks",
+    "isArchive": false
+  },
+  {
     "name": "Password Manager with MD3 Navbar",
     "author": "Nail Sadykov \n(Requires latest beta version of Google Play services!)",
     "flags": [
