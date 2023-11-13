@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.suggestions
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
-import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
+import ua.polodarb.gmsflags.data.remote.flags.dto.NewFlagInfo
+import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagTypes
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
@@ -26,7 +28,7 @@ import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 import java.util.Collections
 
-typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlag>>
+typealias SuggestionsScreenUiState = UiStates<NewSuggestedFlag>
 
 class SuggestionScreenViewModel(
     private val application: Application,
@@ -44,11 +46,15 @@ class SuggestionScreenViewModel(
 
     private val usersList  = Collections.synchronizedList(mutableListOf<String>())
 
-    private var rawSuggestedFlag = Collections.synchronizedList(emptyList<SuggestedFlagInfo>())
+    private var rawSuggestedFlag = SuggestedFlagTypes(
+        primary = emptyList(),
+        secondary = emptyList(),
+    )
 
     init {
         initUsers()
-        getAllOverriddenBoolFlags()
+        getPrimaryAllOverriddenBoolFlags()
+        getSecondaryAllOverriddenBoolFlags()
         initGmsPackages()
     }
 
@@ -61,14 +67,14 @@ class SuggestionScreenViewModel(
     }
 
     fun updateFlagValue(newValue: Boolean, index: Int) {
-        val currentState = _stateSuggestionsFlags.value
-        if (currentState is UiStates.Success) {
-            val updatedData = currentState.data.toMutableList()
-            if (index != -1) {
-                updatedData[index] = updatedData[index].copy(enabled = newValue)
-                _stateSuggestionsFlags.value = currentState.copy(data = updatedData)
-            }
-        }
+//        val currentState = _stateSuggestionsFlags.value
+//        if (currentState is UiStates.Success) {
+//            val updatedData = currentState.data.flag.secondary.toMutableList()
+//            if (index != -1) {
+//                updatedData[index] = updatedData[index].copy(enabled = newValue)
+//                _stateSuggestionsFlags.value = currentState.copy(data = updatedData)
+//            }
+//        }
     }
 
     private fun initUsers() {
@@ -84,40 +90,77 @@ class SuggestionScreenViewModel(
 
     private var overriddenFlags = mutableMapOf<String, MergedOverriddenFlag>()
 
-    fun getAllOverriddenBoolFlags() {
+    fun getPrimaryAllOverriddenBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                    if (rawSuggestedFlag.isEmpty())
+                    if (rawSuggestedFlag.primary.isEmpty() || rawSuggestedFlag.secondary.isEmpty())
                         rawSuggestedFlag = loadSuggestedFlags()
 
                     gmsApplication.databaseInitializationStateFlow.collect { status ->
                         if (status.isInitialized) {
                             overriddenFlags = mutableMapOf()
-                            rawSuggestedFlag.map { it.packageName }.forEach { pkg ->
+                            rawSuggestedFlag.primary.map { it.flagPackage }.forEach { pkg ->
                                 if (overriddenFlags[pkg] == null) {
                                     overriddenFlags[pkg] = mapper.getMergedOverriddenFlagsByPackage(pkg)
                                 }
                             }
-                            _stateSuggestionsFlags.value = UiStates.Success(rawSuggestedFlag.map { flag ->
-                                SuggestedFlag(
-                                    flag = flag,
-                                    enabled = flag.flags.firstOrNull {
-                                        overriddenFlags[flag.packageName]?.boolFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.packageName]?.intFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.packageName]?.floatFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.packageName]?.stringFlag?.get(it.tag) != it.value
-                                    } == null
+                            rawSuggestedFlag.secondary.map { it.flagPackage }.forEach { pkg ->
+                                if (overriddenFlags[pkg] == null) {
+                                    overriddenFlags[pkg] = mapper.getMergedOverriddenFlagsByPackage(pkg)
+                                }
+                            }
+                            _stateSuggestionsFlags.value = UiStates.Success(
+                                data = NewSuggestedFlag(
+                                    flag = rawSuggestedFlag,
+                                    enabled = false
                                 )
-                            })
+//                                rawSuggestedFlag.primary.map { flag ->
+//                                NewSuggestedFlag(
+//                                    flag = flag,
+//                                    enabled = flag.flags.firstOrNull {
+//                                        overriddenFlags[flag.packageName]?.boolFlag?.get(it.tag) != it.value &&
+//                                                overriddenFlags[flag.packageName]?.intFlag?.get(it.tag) != it.value &&
+//                                                overriddenFlags[flag.packageName]?.floatFlag?.get(it.tag) != it.value &&
+//                                                overriddenFlags[flag.packageName]?.stringFlag?.get(it.tag) != it.value
+//                                    } == null
+//                                )
+//                            }
+                            )
                         }
                     }
             }
         }
     }
 
-    private suspend fun loadSuggestedFlags(): List<SuggestedFlagInfo> {
+    fun getSecondaryAllOverriddenBoolFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (rawSuggestedFlag.secondary.isEmpty())
+                    rawSuggestedFlag = loadSuggestedFlags()
+
+                gmsApplication.databaseInitializationStateFlow.collect { status ->
+                    if (status.isInitialized) {
+                        overriddenFlags = mutableMapOf()
+                        rawSuggestedFlag.secondary.map { it.flagPackage }.forEach { pkg ->
+                            if (overriddenFlags[pkg] == null) {
+                                overriddenFlags[pkg] = mapper.getMergedOverriddenFlagsByPackage(pkg)
+                            }
+                        }
+                        _stateSuggestionsFlags.value = UiStates.Success(
+                            data = NewSuggestedFlag(
+                                flag = rawSuggestedFlag,
+                                enabled = false
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun loadSuggestedFlags(): SuggestedFlagTypes {
         try {
-            val localFlags = File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags.json")
+            val localFlags = File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags_2.0.json")
 
             val flags = flagsApiService.getSuggestedFlags()
             if (flags is Resource.Success && flags.data != null) {
@@ -130,13 +173,14 @@ class SuggestionScreenViewModel(
                     return Json.decodeFromString(localFlags.readText())
             } catch (_: Exception) { }
 
-            val pkgFlags = application.assets.open("suggestedFlags.json")
+            val pkgFlags = application.assets.open("suggestedFlags_2.0.json")
             val pkgContent = pkgFlags.bufferedReader().use { it.readText() }
             localFlags.writeText(pkgContent)
             return Json.decodeFromString(pkgContent)
         } catch (e: Exception) {
+            Log.e("TAG", e.toString())
             _stateSuggestionsFlags.value = UiStates.Error(e)
-            return emptyList()
+            return SuggestedFlagTypes(emptyList(), emptyList())
         }
 
     }
@@ -176,7 +220,7 @@ class SuggestionScreenViewModel(
         )
     }
 
-    fun resetSuggestedFlagValue(packageName: String, flags: List<FlagInfo>) {
+    fun resetSuggestedFlagValue(packageName: String, flags: List<NewFlagInfo>) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 flags.forEach {

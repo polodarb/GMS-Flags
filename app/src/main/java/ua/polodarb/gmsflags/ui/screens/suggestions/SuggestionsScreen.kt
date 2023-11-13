@@ -95,14 +95,14 @@ fun SuggestionsScreen(
 ) {
     val viewModel = koinViewModel<SuggestionScreenViewModel>()
 
-    val overriddenFlags = viewModel.stateSuggestionsFlags.collectAsState()
+    val networkFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.getAllOverriddenBoolFlags()
+        viewModel.getPrimaryAllOverriddenBoolFlags()
     }
 
     var showResetDialog by rememberSaveable {
@@ -162,7 +162,7 @@ fun SuggestionsScreen(
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
-            when (val result = overriddenFlags.value) {
+            when (val result = networkFlags.value) {
                 is UiStates.Success -> {
                     val data = result.data
                     LazyColumn(
@@ -171,56 +171,56 @@ fun SuggestionsScreen(
                         item {
                             WarningBanner(isFirstStart)
                         }
-                        itemsIndexed(data) { index, item ->
+                        itemsIndexed(data.flag.primary) { index, item ->
                             SuggestedFlagItem(
-                                flagName = item.flag.name,
-                                senderName = item.flag.author,
+                                flagName = item.name,
+                                senderName = item.source,
                                 flagValue = item.enabled,
                                 flagOnCheckedChange = { bool ->
-                                    coroutineScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            viewModel.updateFlagValue(bool, index)
-                                            item.flag.flags.forEach { flag ->
-                                                when (flag.type) {
-                                                    FlagType.BOOL -> {
-                                                        viewModel.overrideFlag(
-                                                            packageName = item.flag.packageName,
-                                                            name = flag.tag,
-                                                            boolVal = if (bool) flag.value else "0"
-                                                        )
-                                                    }
-
-                                                    FlagType.INTEGER -> {
-                                                        viewModel.overrideFlag(
-                                                            packageName = item.flag.packageName,
-                                                            name = flag.tag,
-                                                            intVal = if (bool) flag.value else "0"
-                                                        )
-                                                    }
-
-                                                    FlagType.FLOAT -> {
-                                                        viewModel.overrideFlag(
-                                                            packageName = item.flag.packageName,
-                                                            name = flag.tag,
-                                                            floatVal = if (bool) flag.value else "0"
-                                                        )
-                                                    }
-
-                                                    FlagType.STRING -> {
-                                                        viewModel.overrideFlag(
-                                                            packageName = item.flag.packageName,
-                                                            name = flag.tag,
-                                                            stringVal = if (bool) flag.value else ""
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+//                                    coroutineScope.launch {
+//                                        withContext(Dispatchers.IO) {
+//                                            viewModel.updateFlagValue(bool, index)
+//                                            item.flags.forEach { flag ->
+//                                                when (flag.type) {
+//                                                    FlagType.BOOL -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            boolVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.INTEGER -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            intVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.FLOAT -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            floatVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.STRING -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            stringVal = if (bool) flag.value else ""
+//                                                        )
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
                                 },
                                 onFlagLongClick = {
-                                    resetFlagPackage = item.flag.packageName
-                                    resetFlagsList.addAll(item.flag.flags)
+                                    resetFlagPackage = item.flagPackage
+//                                    resetFlagsList.addAll(item.flags)
                                     showResetDialog = true
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 }
@@ -231,8 +231,73 @@ fun SuggestionsScreen(
                             ) {
                                 showResetDialog = false
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                                viewModel.getAllOverriddenBoolFlags()
+//                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+                                viewModel.getPrimaryAllOverriddenBoolFlags()
+                            }
+
+                        }
+                        itemsIndexed(data.flag.secondary) { index, item ->
+                            SuggestedFlagItem(
+                                flagName = item.name,
+                                senderName = item.source,
+                                flagValue = item.enabled,
+                                flagOnCheckedChange = { bool ->
+//                                    coroutineScope.launch {
+//                                        withContext(Dispatchers.IO) {
+//                                            viewModel.updateFlagValue(bool, index)
+//                                            item.flags.forEach { flag ->
+//                                                when (flag.type) {
+//                                                    FlagType.BOOL -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            boolVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.INTEGER -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            intVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.FLOAT -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            floatVal = if (bool) flag.value else "0"
+//                                                        )
+//                                                    }
+//
+//                                                    FlagType.STRING -> {
+//                                                        viewModel.overrideFlag(
+//                                                            packageName = item.flagPackage,
+//                                                            name = flag.tag,
+//                                                            stringVal = if (bool) flag.value else ""
+//                                                        )
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+                                },
+                                onFlagLongClick = {
+                                    resetFlagPackage = item.flagPackage
+//                                    resetFlagsList.addAll(item.flags)
+                                    showResetDialog = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            )
+                            ResetFlagToDefaultDialog(
+                                showDialog = showResetDialog,
+                                onDismiss = { showResetDialog = false }
+                            ) {
+                                showResetDialog = false
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+                                viewModel.getPrimaryAllOverriddenBoolFlags()
                             }
 
                         }
@@ -263,29 +328,29 @@ fun SuggestedFlagItem(
     flagOnCheckedChange: (Boolean) -> Unit,
     onFlagLongClick: () -> Unit
 ) {
-//    NewSuggestedFlagItem(
-//        titleText = flagName,
-//        sourceText = senderName
-//    )
-    ListItem(
-        headlineContent = { Text(flagName) },
-        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
-        trailingContent = {
-            Row {
-                Switch(
-                    checked = flagValue,
-                    onCheckedChange = {
-                        flagOnCheckedChange(it)
-                    }
-                )
-            }
-        },
-        modifier = Modifier
-            .combinedClickable(
-                onClick = {},
-                onLongClick = onFlagLongClick
-            )
+    NewSuggestedFlagItem(
+        titleText = flagName,
+        sourceText = senderName
     )
+//    ListItem(
+//        headlineContent = { Text(flagName) },
+//        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
+//        trailingContent = {
+//            Row {
+//                Switch(
+//                    checked = flagValue,
+//                    onCheckedChange = {
+//                        flagOnCheckedChange(it)
+//                    }
+//                )
+//            }
+//        },
+//        modifier = Modifier
+//            .combinedClickable(
+//                onClick = {},
+//                onLongClick = onFlagLongClick
+//            )
+//    )
 }
 
 @Composable
