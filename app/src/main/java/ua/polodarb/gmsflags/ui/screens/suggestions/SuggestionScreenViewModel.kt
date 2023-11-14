@@ -53,8 +53,7 @@ class SuggestionScreenViewModel(
 
     init {
         initUsers()
-        getPrimaryAllOverriddenBoolFlags()
-        getSecondaryAllOverriddenBoolFlags()
+        getSuggestedFlags()
         initGmsPackages()
     }
 
@@ -90,7 +89,7 @@ class SuggestionScreenViewModel(
 
     private var overriddenFlags = mutableMapOf<String, MergedOverriddenFlag>()
 
-    fun getPrimaryAllOverriddenBoolFlags() {
+    fun getSuggestedFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                     if (rawSuggestedFlag.primary.isEmpty() || rawSuggestedFlag.secondary.isEmpty())
@@ -132,41 +131,15 @@ class SuggestionScreenViewModel(
         }
     }
 
-    fun getSecondaryAllOverriddenBoolFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                if (rawSuggestedFlag.secondary.isEmpty())
-                    rawSuggestedFlag = loadSuggestedFlags()
-
-                gmsApplication.databaseInitializationStateFlow.collect { status ->
-                    if (status.isInitialized) {
-                        overriddenFlags = mutableMapOf()
-                        rawSuggestedFlag.secondary.map { it.flagPackage }.forEach { pkg ->
-                            if (overriddenFlags[pkg] == null) {
-                                overriddenFlags[pkg] = mapper.getMergedOverriddenFlagsByPackage(pkg)
-                            }
-                        }
-                        _stateSuggestionsFlags.value = UiStates.Success(
-                            data = NewSuggestedFlag(
-                                flag = rawSuggestedFlag,
-                                enabled = false
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     private suspend fun loadSuggestedFlags(): SuggestedFlagTypes {
         try {
             val localFlags = File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags_2.0.json")
 
-            val flags = flagsApiService.getSuggestedFlags()
-            if (flags is Resource.Success && flags.data != null) {
-                localFlags.writeText(Json.encodeToString(flags.data))
-                return flags.data
-            }
+//            val flags = flagsApiService.getSuggestedFlags()
+//            if (flags is Resource.Success && flags.data != null) {
+//                localFlags.writeText(Json.encodeToString(flags.data))
+//                return flags.data
+//            }
 
             try {
                 if (localFlags.exists())

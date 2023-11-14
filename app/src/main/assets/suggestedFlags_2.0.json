@@ -1,52 +1,32 @@
 {
-  "primary": [
-    {
-      "primaryTag": "tag",
-      "name": "name",
-      "source": "source",
-      "note": null,
-      "flags": [
-        {
-          "tag": "flag_name",
-          "type": "bool",
-          "value": "value"
-        },
-        {
-          "tag": "flag_name",
-          "type": "bool",
-          "value": "val"
-        }
-      ],
-      "flagPackage": "package",
-      "appPackage": "package",
-      "minVersionCode": null,
-      "minAndroidSdkCode": null,
-      "details": null,
-      "enabled": true
-    }
-  ],
+  "primary": [],
   "secondary": [
     {
-      "name": "name",
-      "source": "source",
-      "note": null,
+      "name": "Proofreading mode in GBoard",
+      "source": "RBoard Manager",
+      "note": "Requires last version of GBoard!",
       "flags": [
         {
-          "tag": "flag_name",
+          "tag": "writing_helper_chip_shown_as_candidate",
           "type": "bool",
-          "value": "value"
+          "value": "1"
         },
         {
-          "tag": "flag_name",
+          "tag": "writing_helper_enable_free_chat",
           "type": "bool",
-          "value": "val"
+          "value": "1"
+        },
+        {
+          "tag": "writing_helper",
+          "type": "bool",
+          "value": "1"
         }
       ],
-      "flagPackage": "package",
-      "appPackage": "package",
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
       "minVersionCode": null,
       "minAndroidSdkCode": null,
-      "details": null,
+      "details": "https://t.me/gmsflags_content/8",
       "enabled": true
     }
   ]

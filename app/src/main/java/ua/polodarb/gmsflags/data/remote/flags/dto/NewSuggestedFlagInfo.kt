@@ -14,7 +14,7 @@ data class Primary(
     @SerialName("primaryTag") val primaryTag: String,
     @SerialName("name") val name: String,
     @SerialName("source") val source: String,
-    @SerialName("note") val notes: String?,
+    @SerialName("note") val note: String?,
     @SerialName("flags") val flags: List<NewFlagInfo>,
     @SerialName("flagPackage") val flagPackage: String,
     @SerialName("appPackage") val appPackage: String,
@@ -28,7 +28,7 @@ data class Primary(
 data class Secondary(
     @SerialName("name") val name: String,
     @SerialName("source") val source: String,
-    @SerialName("note") val notes: String?,
+    @SerialName("note") val note: String?,
     @SerialName("flags") val flags: List<NewFlagInfo>,
     @SerialName("flagPackage") val flagPackage: String,
     @SerialName("appPackage") val appPackage: String,

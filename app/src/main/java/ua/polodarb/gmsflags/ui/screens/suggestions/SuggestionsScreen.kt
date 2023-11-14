@@ -1,6 +1,12 @@
 package ua.polodarb.gmsflags.ui.screens.suggestions
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -8,11 +14,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -72,19 +76,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
-import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
+import ua.polodarb.gmsflags.ui.OSUtils
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ReportFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.suggestions.dialog.ResetFlagToDefaultDialog
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,16 +104,29 @@ fun SuggestionsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val packageManager = context.packageManager
 
     LaunchedEffect(Unit) {
-        viewModel.getPrimaryAllOverriddenBoolFlags()
+        viewModel.getSuggestedFlags()
     }
 
+    // Report dialog
+    var showReportDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var reportFlagDesc by rememberSaveable {
+        mutableStateOf("")
+    }
+    var reportFlagName by rememberSaveable {
+        mutableStateOf("")
+    }
+
+
+    // Reset dialog
     var showResetDialog by rememberSaveable {
         mutableStateOf(false)
     }
-
-    // Reset Flags list
     val resetFlagsList: MutableList<FlagInfo> = mutableListOf()
     var resetFlagPackage = ""
 
@@ -171,75 +188,78 @@ fun SuggestionsScreen(
                         item {
                             WarningBanner(isFirstStart)
                         }
-                        itemsIndexed(data.flag.primary) { index, item ->
-                            SuggestedFlagItem(
-                                flagName = item.name,
-                                senderName = item.source,
-                                flagValue = item.enabled,
-                                flagOnCheckedChange = { bool ->
-//                                    coroutineScope.launch {
-//                                        withContext(Dispatchers.IO) {
-//                                            viewModel.updateFlagValue(bool, index)
-//                                            item.flags.forEach { flag ->
-//                                                when (flag.type) {
-//                                                    FlagType.BOOL -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            boolVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
+//                        itemsIndexed(data.flag.primary) { index, item ->
+//                            SuggestedFlagItem(
+//                                flagTitle = item.name,
+//                                source = item.source,
+//                                appPackageName = item.appPackage,
+//                                flagValue = item.enabled,
+//                                flagOnCheckedChange = { bool ->
+////                                    coroutineScope.launch {
+////                                        withContext(Dispatchers.IO) {
+////                                            viewModel.updateFlagValue(bool, index)
+////                                            item.flags.forEach { flag ->
+////                                                when (flag.type) {
+////                                                    FlagType.BOOL -> {
+////                                                        viewModel.overrideFlag(
+////                                                            packageName = item.flagPackage,
+////                                                            name = flag.tag,
+////                                                            boolVal = if (bool) flag.value else "0"
+////                                                        )
+////                                                    }
+////
+////                                                    FlagType.INTEGER -> {
+////                                                        viewModel.overrideFlag(
+////                                                            packageName = item.flagPackage,
+////                                                            name = flag.tag,
+////                                                            intVal = if (bool) flag.value else "0"
+////                                                        )
+////                                                    }
+////
+////                                                    FlagType.FLOAT -> {
+////                                                        viewModel.overrideFlag(
+////                                                            packageName = item.flagPackage,
+////                                                            name = flag.tag,
+////                                                            floatVal = if (bool) flag.value else "0"
+////                                                        )
+////                                                    }
+////
+////                                                    FlagType.STRING -> {
+////                                                        viewModel.overrideFlag(
+////                                                            packageName = item.flagPackage,
+////                                                            name = flag.tag,
+////                                                            stringVal = if (bool) flag.value else ""
+////                                                        )
+////                                                    }
+////                                                }
+////                                            }
+////                                        }
+////                                    }
+//                                },
+//                                onFlagLongClick = {
+//                                    resetFlagPackage = item.flagPackage
+////                                    resetFlagsList.addAll(item.flags)
+//                                    showResetDialog = true
+//                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//                                }
+//                            )
+//                            ResetFlagToDefaultDialog(
+//                                showDialog = showResetDialog,
+//                                onDismiss = { showResetDialog = false }
+//                            ) {
+//                                showResetDialog = false
+//                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+////                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+//                                viewModel.getPrimaryAllOverriddenBoolFlags()
+//                            }
 //
-//                                                    FlagType.INTEGER -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            intVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
-//
-//                                                    FlagType.FLOAT -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            floatVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
-//
-//                                                    FlagType.STRING -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            stringVal = if (bool) flag.value else ""
-//                                                        )
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-                                },
-                                onFlagLongClick = {
-                                    resetFlagPackage = item.flagPackage
-//                                    resetFlagsList.addAll(item.flags)
-                                    showResetDialog = true
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
-                            )
-                            ResetFlagToDefaultDialog(
-                                showDialog = showResetDialog,
-                                onDismiss = { showResetDialog = false }
-                            ) {
-                                showResetDialog = false
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                                viewModel.getPrimaryAllOverriddenBoolFlags()
-                            }
-
-                        }
+//                        }
                         itemsIndexed(data.flag.secondary) { index, item ->
                             SuggestedFlagItem(
-                                flagName = item.name,
-                                senderName = item.source,
+                                flagTitle = item.name,
+                                noteText = item.note,
+                                source = item.source,
+                                appInfoPackageName = item.appPackage,
                                 flagValue = item.enabled,
                                 flagOnCheckedChange = { bool ->
 //                                    coroutineScope.launch {
@@ -283,12 +303,49 @@ fun SuggestionsScreen(
 //                                        }
 //                                    }
                                 },
-                                onFlagLongClick = {
+                                onOpenAppClick = {
+                                    val intent =
+                                        packageManager.getLaunchIntentForPackage(item.appPackage)
+                                    if (intent != null) {
+                                        context.startActivity(intent)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Couldn't open app",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onOpenSettingsClick = {
+                                    val intent = Intent(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", item.appPackage, null)
+                                    )
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    startActivity(context, intent, null)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onViewDetailsClick = {
+                                    val intent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(item.details)
+                                    )
+                                    startActivity(context, intent, null)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onReportClick = {
+                                    showReportDialog = true
+                                    reportFlagName = item.name
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onResetClick = {
                                     resetFlagPackage = item.flagPackage
 //                                    resetFlagsList.addAll(item.flags)
                                     showResetDialog = true
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                packageManager = packageManager
                             )
                             ResetFlagToDefaultDialog(
                                 showDialog = showResetDialog,
@@ -297,9 +354,44 @@ fun SuggestionsScreen(
                                 showResetDialog = false
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 //                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                                viewModel.getPrimaryAllOverriddenBoolFlags()
+                                viewModel.getSuggestedFlags()
                             }
+                            ReportFlagsDialog(
+                                showDialog = showReportDialog,
+                                flagDesc = reportFlagDesc,
+                                onFlagDescChange = { newValue ->
+                                    reportFlagDesc = newValue
+                                },
+                                onSend = {
+                                    showReportDialog = false
+                                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                        this.data = Uri.parse("mailto:")
+                                        putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                                        putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            "Report on suggested flag"
+                                        )
+                                        putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
+                                                    "Manufacturer: ${Build.MANUFACTURER}\n" +
+                                                    "Android: ${Build.VERSION.RELEASE}\n" +
+                                                    "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
+                                                    "GMS Flags: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
 
+                                                    "Flag name: $reportFlagName\n\n" +
+                                                    "Description: $reportFlagDesc"
+                                        )
+                                    }
+                                    startActivity(context, intent, null)
+                                    reportFlagDesc = ""
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onDismiss = {
+                                    showReportDialog = false
+                                    reportFlagDesc = ""
+                                }
+                            )
                         }
                         item {
                             Spacer(modifier = Modifier.padding(44.dp))
@@ -319,48 +411,65 @@ fun SuggestionsScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SuggestedFlagItem(
-    flagName: String,
-    senderName: String,
+    flagTitle: String,
     flagValue: Boolean,
+    noteText: String?,
+    source: String,
+    appInfoPackageName: String,
     flagOnCheckedChange: (Boolean) -> Unit,
-    onFlagLongClick: () -> Unit
+    onOpenSettingsClick: () -> Unit,
+    onOpenAppClick: () -> Unit,
+    onViewDetailsClick: () -> Unit,
+    onResetClick: () -> Unit,
+    onReportClick: () -> Unit,
+    packageManager: PackageManager,
 ) {
+
+    val appInfoName by remember {
+        mutableStateOf(
+            packageManager.getApplicationInfo(appInfoPackageName, 0).loadLabel(packageManager)
+                .toString()
+        )
+    }
+    val appIcon by remember {
+        mutableStateOf(packageManager.getApplicationIcon(appInfoPackageName))
+    }
+
     NewSuggestedFlagItem(
-        titleText = flagName,
-        sourceText = senderName
+        titleText = flagTitle,
+        switchValue = flagValue,
+        onSwitchChanged = flagOnCheckedChange,
+        noteText = noteText,
+        sourceText = source,
+        appInfoIcon = appIcon,
+        appInfoName = appInfoName,
+        appInfoPackage = appInfoPackageName,
+        onOpenSettingsClick = onOpenSettingsClick,
+        onOpenAppClick = onOpenAppClick,
+        onViewDetailsClick = onViewDetailsClick,
+        onResetClick = onResetClick,
+        onReportClick = onReportClick
     )
-//    ListItem(
-//        headlineContent = { Text(flagName) },
-//        supportingContent = { Text(stringResource(R.string.finder) + senderName) },
-//        trailingContent = {
-//            Row {
-//                Switch(
-//                    checked = flagValue,
-//                    onCheckedChange = {
-//                        flagOnCheckedChange(it)
-//                    }
-//                )
-//            }
-//        },
-//        modifier = Modifier
-//            .combinedClickable(
-//                onClick = {},
-//                onLongClick = onFlagLongClick
-//            )
-//    )
 }
 
 @Composable
 private fun NewSuggestedFlagItem(
     titleText: String,
-    sourceText: String
+    switchValue: Boolean,
+    onSwitchChanged: (Boolean) -> Unit,
+    noteText: String?,
+    sourceText: String,
+    appInfoIcon: Drawable,
+    appInfoName: String,
+    appInfoPackage: String,
+    onOpenSettingsClick: () -> Unit,
+    onOpenAppClick: () -> Unit,
+    onViewDetailsClick: () -> Unit,
+    onResetClick: () -> Unit,
+    onReportClick: () -> Unit
 ) {
-
-    val context = LocalContext.current
-
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Row(
@@ -377,7 +486,7 @@ private fun NewSuggestedFlagItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column() {
+        Column {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -385,7 +494,7 @@ private fun NewSuggestedFlagItem(
                     text = titleText,
                     fontSize = 17.sp,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                        .padding(start = 16.dp, end = 8.dp, top = 20.dp, bottom = 20.dp)
                         .weight(1f)
                 )
 
@@ -399,14 +508,27 @@ private fun NewSuggestedFlagItem(
                         }
                     )
                     Switch(
-                        checked = false,
-                        onCheckedChange = { },
+                        checked = switchValue,
+                        onCheckedChange = onSwitchChanged,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
             }
             AnimatedVisibility(visible = expanded) {
                 Column {
+                    if (noteText != null) {
+                        Text(
+                            text = stringResource(R.string.note) + noteText,
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.tertiaryContainer)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                     Text(
                         text = "" + stringResource(R.string.finder) + " " + sourceText,
                         fontSize = 13.sp,
@@ -449,29 +571,29 @@ private fun NewSuggestedFlagItem(
                             )
                     ) {
                         AppContent(
-                            appName = "AppName",
-                            pkg = "PackageName",
-                            appIcon = ContextCompat.getDrawable(context, R.mipmap.ic_launcher_round)
+                            appName = appInfoName,
+                            pkg = appInfoPackage,
+                            appIcon = appInfoIcon
                         )
                         OutlinedButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onOpenAppClick,
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 16.dp, top = 8.dp)
                                 .fillMaxWidth(),
                         ) {
-                            Text(text = "Open app details settings")
+                            Text(text = "Open $appInfoName")
                         }
                         OutlinedButton(
-                            onClick = { /*TODO*/ },
+                            onClick = onOpenSettingsClick,
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                                 .fillMaxWidth(),
                         ) {
-                            Text(text = "Open AppName")
+                            Text(text = "Open app details settings")
                         }
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = onViewDetailsClick,
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                             .fillMaxWidth(),
@@ -501,7 +623,7 @@ private fun NewSuggestedFlagItem(
                         ),
                     ) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = onResetClick,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -522,7 +644,7 @@ private fun NewSuggestedFlagItem(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = onReportClick,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -553,7 +675,7 @@ private fun NewSuggestedFlagItem(
 fun AppContent(
     appName: String,
     pkg: String,
-    appIcon: Drawable? = null
+    appIcon: Drawable
 ) {
     ListItem(
         colors = ListItemDefaults.colors(
