@@ -329,54 +329,52 @@ fun SuggestionsScreen(
                         item {
                             Spacer(modifier = Modifier.padding(44.dp))
                         }
-                        item {
-                            ResetFlagToDefaultDialog(
-                                showDialog = showResetDialog,
-                                onDismiss = { showResetDialog = false }
-                            ) {
-                                showResetDialog = false
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                                viewModel.getSuggestedFlags()
-                            }
-                            ReportFlagsDialog(
-                                showDialog = showReportDialog,
-                                flagDesc = reportFlagDesc,
-                                onFlagDescChange = { newValue ->
-                                    reportFlagDesc = newValue
-                                },
-                                onSend = {
-                                    showReportDialog = false
-                                    val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                        this.data = Uri.parse("mailto:")
-                                        putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                                        putExtra(
-                                            Intent.EXTRA_SUBJECT,
-                                            "Report on suggested flag"
-                                        )
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
-                                                    "Manufacturer: ${Build.MANUFACTURER}\n" +
-                                                    "Android: ${Build.VERSION.RELEASE}\n" +
-                                                    "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
-                                                    "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
-
-                                                    "Flag name: $reportFlagName\n\n" +
-                                                    "Description: $reportFlagDesc"
-                                        )
-                                    }
-                                    startActivity(context, intent, null)
-                                    reportFlagDesc = ""
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                onDismiss = {
-                                    showReportDialog = false
-                                    reportFlagDesc = ""
-                                }
-                            )
-                        }
                     }
+                    ResetFlagToDefaultDialog(
+                        showDialog = showResetDialog,
+                        onDismiss = { showResetDialog = false }
+                    ) {
+                        showResetDialog = false
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+                        viewModel.getSuggestedFlags()
+                    }
+                    ReportFlagsDialog(
+                        showDialog = showReportDialog,
+                        flagDesc = reportFlagDesc,
+                        onFlagDescChange = { newValue ->
+                            reportFlagDesc = newValue
+                        },
+                        onSend = {
+                            showReportDialog = false
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                this.data = Uri.parse("mailto:")
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                                putExtra(
+                                    Intent.EXTRA_SUBJECT,
+                                    "Report on suggested flag"
+                                )
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
+                                            "Manufacturer: ${Build.MANUFACTURER}\n" +
+                                            "Android: ${Build.VERSION.RELEASE}\n" +
+                                            "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
+                                            "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
+
+                                            "Flag name: $reportFlagName\n\n" +
+                                            "Description: $reportFlagDesc"
+                                )
+                            }
+                            startActivity(context, intent, null)
+                            reportFlagDesc = ""
+                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        },
+                        onDismiss = {
+                            showReportDialog = false
+                            reportFlagDesc = ""
+                        }
+                    )
                 }
 
                 is UiStates.Loading -> {
