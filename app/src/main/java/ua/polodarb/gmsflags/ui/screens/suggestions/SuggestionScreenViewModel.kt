@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
@@ -136,7 +138,7 @@ class SuggestionScreenViewModel(
                                 val minVersionCode = flag.minVersionCode
                                 val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
 
-                                if (appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                                if (flag.enabled && appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
                                     (minVersionCode == null || minVersionCode <= appVersionCode)
                                 ) {
                                     primaryList.add(
@@ -164,7 +166,7 @@ class SuggestionScreenViewModel(
                                 val minVersionCode = flag.minVersionCode
                                 val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
 
-                                if (appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                                if (flag.enabled &&  appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
                                     (minVersionCode == null || minVersionCode <= appVersionCode)
                                 ) {
                                     secondaryList.add(
@@ -202,12 +204,11 @@ class SuggestionScreenViewModel(
             val localFlags =
                 File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags_2.0.json")
 
-//            val flags = flagsApiService.getSuggestedFlags()
-//            if (flags is Resource.Success && flags.data != null) {
-//                localFlags.writeText(Json.encodeToString(flags.data))
-//                Log.e("DATA", flags.data.toString())
-//                return flags.data
-//            }
+            val flags = flagsApiService.getSuggestedFlags()
+            if (flags is Resource.Success && flags.data != null) {
+                localFlags.writeText(Json.encodeToString(flags.data))
+                return flags.data
+            }
 
             try {
                 if (localFlags.exists())

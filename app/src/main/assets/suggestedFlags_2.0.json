@@ -64,9 +64,144 @@
       ],
       "flagPackage": "com.google.android.apps.tasks",
       "appPackage": "com.google.android.apps.tasks",
-      "minAppVersionCode": 1588057,
+      "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/19",
+      "enabled": true
+    },
+    {
+      "name": "Password manager with MD3 navbar",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "Guards__gm3_ui_enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.gms.credential_manager",
+      "appPackage": "com.google.android.gms",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/18",
+      "enabled": true
+    },
+    {
+      "name": "New \"Select text\" tool in Gboard",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "enable_ocr",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/17",
+      "enabled": true
+    },
+    {
+      "name": "\"G\" on space in GBoard",
+      "source": "RBoard Themes",
+      "note": "If you want G not to disappear but to be displayed permanently, change this flag:\nInteger - branding_fadeout_delay_ms (Value: 999999999)",
+      "flags": [
+        {
+          "tag": "show_branding_interval_seconds",
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "tag": "show_branding_on_space",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/16",
+      "enabled": true
+    },
+    {
+      "name": "New memories tab in Google Photos",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45386363",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45366356",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45414358",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45411123",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45401668",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45401669",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45411122",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45417430",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45412949",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/13",
+      "enabled": true
+    },
+    {
+      "name": "Floating NavBar in Google Photos",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45415956",
+          "type": "int",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/12",
       "enabled": true
     },
     {
