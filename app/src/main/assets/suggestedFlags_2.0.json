@@ -72,7 +72,7 @@
     {
       "name": "Password manager with MD3 navbar",
       "source": "Nail Sadykov",
-      "note": null,
+      "note": "Requires last version of GBoard!",
       "flags": [
         {
           "tag": "Guards__gm3_ui_enabled",
@@ -90,7 +90,7 @@
     {
       "name": "New \"Select text\" tool in Gboard",
       "source": "Nail Sadykov",
-      "note": null,
+      "note": "Requires last version of GBoard!",
       "flags": [
         {
           "tag": "enable_ocr",
@@ -207,7 +207,7 @@
     {
       "name": "Proofreading mode in GBoard",
       "source": "RBoard Manager",
-      "note": "Requires last version of GBoard!",
+      "note": null,
       "flags": [
         {
           "tag": "writing_helper_chip_shown_as_candidate",
