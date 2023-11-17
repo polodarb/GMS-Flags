@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.suggestions
 
 import android.app.Application
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -130,42 +131,55 @@ class SuggestionScreenViewModel(
 
                         if (primaryList.isEmpty() || secondaryList.isEmpty()) {
                             rawSuggestedFlag.primary.mapIndexed { index, flag ->
-                                primaryList.add(
-                                    PrimarySuggestedFlag(
-                                        flag = flag,
-                                        enabled = flag.flags.firstOrNull {
-                                            overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.intFlag?.get(
-                                                        it.tag
-                                                    ) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.floatFlag?.get(
-                                                        it.tag
-                                                    ) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.stringFlag?.get(
-                                                        it.tag
-                                                    ) != it.value
-                                        } == null
+
+                                val minAndroidSdkCode = flag.minAndroidSdkCode
+                                val minVersionCode = flag.minVersionCode
+                                val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
+
+                                if (appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                                    (minVersionCode == null || minVersionCode <= appVersionCode)
+                                ) {
+                                    primaryList.add(
+                                        PrimarySuggestedFlag(
+                                            flag = flag,
+                                            enabled = flag.flags.firstOrNull {
+                                                overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.intFlag?.get(
+                                                            it.tag
+                                                        ) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.floatFlag?.get(
+                                                            it.tag
+                                                        ) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.stringFlag?.get(
+                                                            it.tag
+                                                        ) != it.value
+                                            } == null
+                                        )
                                     )
-                                )
+                                }
                             }
-                            rawSuggestedFlag.secondary.forEachIndexed { index, flag ->
-                                secondaryList.add(
-                                    SecondarySuggestedFlag(
-                                        flag = flag,
-                                        enabled = flag.flags.firstOrNull {
-                                            overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.intFlag?.get(
-                                                        it.tag
-                                                    ) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.floatFlag?.get(
-                                                        it.tag
-                                                    ) != it.value &&
-                                                    overriddenFlags[flag.flagPackage]?.stringFlag?.get(
-                                                        it.tag
-                                                    ) != it.value
-                                        } == null
+                            rawSuggestedFlag.secondary.mapIndexed { index, flag ->
+
+                                val minAndroidSdkCode = flag.minAndroidSdkCode
+                                val minVersionCode = flag.minVersionCode
+                                val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
+
+                                if (appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                                    (minVersionCode == null || minVersionCode <= appVersionCode)
+                                ) {
+                                    secondaryList.add(
+                                        SecondarySuggestedFlag(
+                                            flag = flag,
+                                            enabled = flag.flags.firstOrNull {
+                                                overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.intFlag?.get(it.tag) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.floatFlag?.get(it.tag) != it.value &&
+                                                        overriddenFlags[flag.flagPackage]?.stringFlag?.get(it.tag) != it.value
+                                            } == null
+                                        )
                                     )
-                                )
+                                }
+
                             }
                         }
 

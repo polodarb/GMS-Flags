@@ -18,7 +18,7 @@ data class Primary(
     @SerialName("flags") val flags: List<FlagInfo>,
     @SerialName("flagPackage") val flagPackage: String,
     @SerialName("appPackage") val appPackage: String,
-    @SerialName("minVersionCode") val minVersionCode: Int?,
+    @SerialName("minAppVersionCode") val minVersionCode: Int?,
     @SerialName("minAndroidSdkCode") val minAndroidSdkCode: Int?,
     @SerialName("details") val details: String?,
     @SerialName("enabled") val enabled: Boolean
@@ -32,7 +32,7 @@ data class Secondary(
     @SerialName("flags") val flags: List<FlagInfo>,
     @SerialName("flagPackage") val flagPackage: String,
     @SerialName("appPackage") val appPackage: String,
-    @SerialName("minVersionCode") val minVersionCode: Int?,
+    @SerialName("minAppVersionCode") val minVersionCode: Int?,
     @SerialName("minAndroidSdkCode") val minAndroidSdkCode: Int?,
     @SerialName("details") val details: String?,
     @SerialName("enabled") val enabled: Boolean

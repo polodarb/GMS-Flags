@@ -44,13 +44,31 @@
       ],
       "flagPackage": "com.google.android.dialer",
       "appPackage": "com.google.android.dialer",
-      "minVersionCode": null,
+      "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": null,
       "enabled": true
     }
   ],
   "secondary": [
+    {
+      "name": "Date tips while creating task in Tasks",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "DateShortcuts__enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.tasks",
+      "appPackage": "com.google.android.apps.tasks",
+      "minAppVersionCode": 1588057,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/19",
+      "enabled": true
+    },
     {
       "name": "Proofreading mode in GBoard",
       "source": "RBoard Manager",
@@ -74,7 +92,7 @@
       ],
       "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
       "appPackage": "com.google.android.inputmethod.latin",
-      "minVersionCode": null,
+      "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/8",
       "enabled": true
@@ -92,7 +110,7 @@
       ],
       "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
       "appPackage": "com.google.android.inputmethod.latin",
-      "minVersionCode": null,
+      "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": null,
       "enabled": true
