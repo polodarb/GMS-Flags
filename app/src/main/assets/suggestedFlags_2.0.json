@@ -108,7 +108,7 @@
     {
       "name": "\"G\" on space in GBoard",
       "source": "RBoard Themes",
-      "note": "If you want G not to disappear but to be displayed permanently, change this flag:\nInteger - branding_fadeout_delay_ms (Value: 999999999)",
+      "note": null,
       "flags": [
         {
           "tag": "show_branding_interval_seconds",
