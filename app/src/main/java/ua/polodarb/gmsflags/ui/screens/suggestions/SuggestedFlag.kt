@@ -1,14 +1,19 @@
 package ua.polodarb.gmsflags.ui.screens.suggestions
 
-import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagInfo
-import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagTypes
+import ua.polodarb.gmsflags.data.remote.flags.dto.Primary
+import ua.polodarb.gmsflags.data.remote.flags.dto.Secondary
 
 data class SuggestedFlag(
-    val flag: SuggestedFlagInfo,
-    val enabled: Boolean
+    val primary: List<PrimarySuggestedFlag>,
+    val secondary: List<SecondarySuggestedFlag>
 )
 
-data class NewSuggestedFlag(
-    val flag: SuggestedFlagTypes,
-    val enabled: Boolean
+data class PrimarySuggestedFlag(
+    val flag: Primary,
+    val enabled: Boolean = false
+)
+
+data class SecondarySuggestedFlag(
+    val flag: Secondary,
+    val enabled: Boolean = false
 )

@@ -1,5 +1,55 @@
 {
-  "primary": [],
+  "primary": [
+    {
+      "primaryTag": "call_recording",
+      "name": "Enable call recording",
+      "source": null,
+      "note": null,
+      "flags": [
+        {
+          "tag": "G__enable_call_recording",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_system_feature",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "CallRecording__enable_call_recording_for_fi",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_call_recording_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_crosby_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__use_call_recording_geofence_overrides",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_indicator",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.dialer",
+      "appPackage": "com.google.android.dialer",
+      "minVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": true
+    }
+  ],
   "secondary": [
     {
       "name": "Proofreading mode in GBoard",
@@ -27,6 +77,24 @@
       "minVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/8",
+      "enabled": true
+    },
+    {
+      "name": "\"Undo\" button in GBoard",
+      "source": "RBoard Manager",
+      "note": null,
+      "flags": [
+        {
+          "tag": "undo_access_point",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
       "enabled": true
     }
   ]

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -78,10 +80,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
+import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
 import ua.polodarb.gmsflags.ui.OSUtils
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
@@ -100,6 +104,8 @@ fun SuggestionsScreen(
     val viewModel = koinViewModel<SuggestionScreenViewModel>()
 
     val networkFlags = viewModel.stateSuggestionsFlags.collectAsState()
+
+    Log.e("TAG", "SuggestionsScreen: ${networkFlags.value}")
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
@@ -182,130 +188,35 @@ fun SuggestionsScreen(
             when (val result = networkFlags.value) {
                 is UiStates.Success -> {
                     val data = result.data
+                    Log.e("compose", "data: $data")
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
                             WarningBanner(isFirstStart)
                         }
-//                        itemsIndexed(data.flag.primary) { index, item ->
-//                            SuggestedFlagItem(
-//                                flagTitle = item.name,
-//                                source = item.source,
-//                                appPackageName = item.appPackage,
-//                                flagValue = item.enabled,
-//                                flagOnCheckedChange = { bool ->
-////                                    coroutineScope.launch {
-////                                        withContext(Dispatchers.IO) {
-////                                            viewModel.updateFlagValue(bool, index)
-////                                            item.flags.forEach { flag ->
-////                                                when (flag.type) {
-////                                                    FlagType.BOOL -> {
-////                                                        viewModel.overrideFlag(
-////                                                            packageName = item.flagPackage,
-////                                                            name = flag.tag,
-////                                                            boolVal = if (bool) flag.value else "0"
-////                                                        )
-////                                                    }
-////
-////                                                    FlagType.INTEGER -> {
-////                                                        viewModel.overrideFlag(
-////                                                            packageName = item.flagPackage,
-////                                                            name = flag.tag,
-////                                                            intVal = if (bool) flag.value else "0"
-////                                                        )
-////                                                    }
-////
-////                                                    FlagType.FLOAT -> {
-////                                                        viewModel.overrideFlag(
-////                                                            packageName = item.flagPackage,
-////                                                            name = flag.tag,
-////                                                            floatVal = if (bool) flag.value else "0"
-////                                                        )
-////                                                    }
-////
-////                                                    FlagType.STRING -> {
-////                                                        viewModel.overrideFlag(
-////                                                            packageName = item.flagPackage,
-////                                                            name = flag.tag,
-////                                                            stringVal = if (bool) flag.value else ""
-////                                                        )
-////                                                    }
-////                                                }
-////                                            }
-////                                        }
-////                                    }
-//                                },
-//                                onFlagLongClick = {
-//                                    resetFlagPackage = item.flagPackage
-////                                    resetFlagsList.addAll(item.flags)
-//                                    showResetDialog = true
-//                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                                }
-//                            )
-//                            ResetFlagToDefaultDialog(
-//                                showDialog = showResetDialog,
-//                                onDismiss = { showResetDialog = false }
-//                            ) {
-//                                showResetDialog = false
-//                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-////                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-//                                viewModel.getPrimaryAllOverriddenBoolFlags()
-//                            }
-//
-//                        }
-                        itemsIndexed(data.flag.secondary) { index, item ->
+                        itemsIndexed(data.primary) { index, item ->
                             SuggestedFlagItem(
-                                flagTitle = item.name,
-                                noteText = item.note,
-                                source = item.source,
-                                appInfoPackageName = item.appPackage,
+                                flagTitle = item.flag.name,
+                                noteText = item.flag.note,
+                                source = item.flag.source ?: null,
+                                appInfoPackageName = item.flag.appPackage,
                                 flagValue = item.enabled,
+                                flagDetails = item.flag.details,
+                                listStart = index == 0,
+                                listEnd = index == data.primary.size - 1,
                                 flagOnCheckedChange = { bool ->
-//                                    coroutineScope.launch {
-//                                        withContext(Dispatchers.IO) {
-//                                            viewModel.updateFlagValue(bool, index)
-//                                            item.flags.forEach { flag ->
-//                                                when (flag.type) {
-//                                                    FlagType.BOOL -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            boolVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
-//
-//                                                    FlagType.INTEGER -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            intVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
-//
-//                                                    FlagType.FLOAT -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            floatVal = if (bool) flag.value else "0"
-//                                                        )
-//                                                    }
-//
-//                                                    FlagType.STRING -> {
-//                                                        viewModel.overrideFlag(
-//                                                            packageName = item.flagPackage,
-//                                                            name = flag.tag,
-//                                                            stringVal = if (bool) flag.value else ""
-//                                                        )
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                    }
+                                    viewModel.overrideSuggestedFlags(
+                                        flags = item.flag.flags,
+                                        packageName = item.flag.flagPackage,
+                                        newBoolValue = bool,
+                                        index = index,
+                                        flagType = SuggestedUIFlagTypes.PRIMARY
+                                    )
                                 },
                                 onOpenAppClick = {
                                     val intent =
-                                        packageManager.getLaunchIntentForPackage(item.appPackage)
+                                        packageManager.getLaunchIntentForPackage(item.flag.appPackage)
                                     if (intent != null) {
                                         context.startActivity(intent)
                                     } else {
@@ -320,7 +231,7 @@ fun SuggestionsScreen(
                                 onOpenSettingsClick = {
                                     val intent = Intent(
                                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.fromParts("package", item.appPackage, null)
+                                        Uri.fromParts("package", item.flag.appPackage, null)
                                     )
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     startActivity(context, intent, null)
@@ -329,31 +240,103 @@ fun SuggestionsScreen(
                                 onViewDetailsClick = {
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
-                                        Uri.parse(item.details)
+                                        Uri.parse(item.flag.details)
                                     )
                                     startActivity(context, intent, null)
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 },
                                 onReportClick = {
                                     showReportDialog = true
-                                    reportFlagName = item.name
+                                    reportFlagName = item.flag.name
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 },
                                 onResetClick = {
-                                    resetFlagPackage = item.flagPackage
-//                                    resetFlagsList.addAll(item.flags)
+                                    resetFlagPackage = item.flag.flagPackage
+//                                    resetFlagsList.addAll(item.flag)
                                     showResetDialog = true
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 },
                                 packageManager = packageManager
                             )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        itemsIndexed(data.secondary) { index, item ->
+                            SuggestedFlagItem(
+                                flagTitle = item.flag.name,
+                                noteText = item.flag.note,
+                                source = item.flag.source,
+                                appInfoPackageName = item.flag.appPackage,
+                                flagValue = item.enabled,
+                                flagDetails = item.flag.details,
+                                listStart = index == 0,
+                                listEnd = index == data.secondary.size - 1,
+                                flagOnCheckedChange = { bool ->
+                                    viewModel.overrideSuggestedFlags(
+                                        flags = item.flag.flags,
+                                        packageName = item.flag.flagPackage,
+                                        newBoolValue = bool,
+                                        index = index,
+                                        flagType = SuggestedUIFlagTypes.SECONDARY
+                                    )
+                                },
+                                onOpenAppClick = {
+                                    val intent =
+                                        packageManager.getLaunchIntentForPackage(item.flag.appPackage)
+                                    if (intent != null) {
+                                        context.startActivity(intent)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Couldn't open app",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onOpenSettingsClick = {
+                                    val intent = Intent(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", item.flag.appPackage, null)
+                                    )
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    startActivity(context, intent, null)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onViewDetailsClick = {
+                                    val intent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(item.flag.details)
+                                    )
+                                    startActivity(context, intent, null)
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onReportClick = {
+                                    showReportDialog = true
+                                    reportFlagName = item.flag.name
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                onResetClick = {
+                                    resetFlagPackage = item.flag.flagPackage
+                                    resetFlagsList.addAll(item.flag.flags)
+                                    showResetDialog = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                },
+                                packageManager = packageManager
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(44.dp))
+                        }
+                        item {
                             ResetFlagToDefaultDialog(
                                 showDialog = showResetDialog,
                                 onDismiss = { showResetDialog = false }
                             ) {
                                 showResetDialog = false
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-//                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+                                viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
                                 viewModel.getSuggestedFlags()
                             }
                             ReportFlagsDialog(
@@ -377,7 +360,7 @@ fun SuggestionsScreen(
                                                     "Manufacturer: ${Build.MANUFACTURER}\n" +
                                                     "Android: ${Build.VERSION.RELEASE}\n" +
                                                     "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
-                                                    "GMS Flags: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
+                                                    "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
 
                                                     "Flag name: $reportFlagName\n\n" +
                                                     "Description: $reportFlagDesc"
@@ -392,9 +375,6 @@ fun SuggestionsScreen(
                                     reportFlagDesc = ""
                                 }
                             )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(44.dp))
                         }
                     }
                 }
@@ -416,8 +396,11 @@ fun SuggestedFlagItem(
     flagTitle: String,
     flagValue: Boolean,
     noteText: String?,
-    source: String,
+    source: String?,
     appInfoPackageName: String,
+    flagDetails: String?,
+    listStart: Boolean,
+    listEnd: Boolean,
     flagOnCheckedChange: (Boolean) -> Unit,
     onOpenSettingsClick: () -> Unit,
     onOpenAppClick: () -> Unit,
@@ -448,6 +431,9 @@ fun SuggestedFlagItem(
         appInfoPackage = appInfoPackageName,
         onOpenSettingsClick = onOpenSettingsClick,
         onOpenAppClick = onOpenAppClick,
+        flagDetails = flagDetails,
+        listStart = listStart,
+        listEnd = listEnd,
         onViewDetailsClick = onViewDetailsClick,
         onResetClick = onResetClick,
         onReportClick = onReportClick
@@ -460,10 +446,13 @@ private fun NewSuggestedFlagItem(
     switchValue: Boolean,
     onSwitchChanged: (Boolean) -> Unit,
     noteText: String?,
-    sourceText: String,
+    sourceText: String?,
     appInfoIcon: Drawable,
     appInfoName: String,
     appInfoPackage: String,
+    flagDetails: String?,
+    listStart: Boolean,
+    listEnd: Boolean,
     onOpenSettingsClick: () -> Unit,
     onOpenAppClick: () -> Unit,
     onViewDetailsClick: () -> Unit,
@@ -475,8 +464,28 @@ private fun NewSuggestedFlagItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-            .clip(RoundedCornerShape(24.dp)) // todo: corner radius
+            .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
+            .clip(
+                if (listStart && !listEnd) {
+                    RoundedCornerShape(
+                        topStart = 24.dp,
+                        topEnd = 24.dp,
+                        bottomStart = 6.dp,
+                        bottomEnd = 6.dp
+                    )
+                } else if (listEnd && !listStart) {
+                    RoundedCornerShape(
+                        bottomStart = 24.dp,
+                        bottomEnd = 24.dp,
+                        topStart = 6.dp,
+                        topEnd = 6.dp
+                    )
+                } else if (listEnd) {
+                    RoundedCornerShape(24.dp)
+                } else {
+                    RoundedCornerShape(6.dp)
+                }
+            )
             .background(
                 if (!isSystemInDarkTheme())
                     MaterialTheme.colorScheme.surfaceContainerLow
@@ -529,39 +538,45 @@ private fun NewSuggestedFlagItem(
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
-                    Text(
-                        text = "" + stringResource(R.string.finder) + " " + sourceText,
-                        fontSize = 13.sp,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = 16.dp,
-                                    topEnd = 16.dp,
-                                    bottomEnd = 4.dp,
-                                    bottomStart = 4.dp
+                    if (sourceText != null) {
+                        Text(
+                            text = "" + stringResource(R.string.finder) + " " + sourceText,
+                            fontSize = 13.sp,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth()
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 16.dp,
+                                        topEnd = 16.dp,
+                                        bottomEnd = 4.dp,
+                                        bottomStart = 4.dp
+                                    )
                                 )
-                            )
-                            .background(
-                                if (!isSystemInDarkTheme())
-                                    MaterialTheme.colorScheme.surfaceContainer
-                                else
-                                    MaterialTheme.colorScheme.surfaceContainerHigh
-                            )
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                                .background(
+                                    if (!isSystemInDarkTheme())
+                                        MaterialTheme.colorScheme.surfaceContainer
+                                    else
+                                        MaterialTheme.colorScheme.surfaceContainerHigh
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp, top = 6.dp)
                             .fillMaxWidth()
                             .clip(
-                                RoundedCornerShape(
-                                    topStart = 4.dp,
-                                    topEnd = 4.dp,
-                                    bottomEnd = 16.dp,
-                                    bottomStart = 16.dp
-                                )
+                                if (sourceText != null) {
+                                    RoundedCornerShape(
+                                        topStart = 4.dp,
+                                        topEnd = 4.dp,
+                                        bottomEnd = 16.dp,
+                                        bottomStart = 16.dp
+                                    )
+                                } else {
+                                    RoundedCornerShape(16.dp)
+                                }
                             )
                             .background(
                                 if (!isSystemInDarkTheme())
@@ -592,33 +607,35 @@ private fun NewSuggestedFlagItem(
                             Text(text = "Open app details settings")
                         }
                     }
-                    Button(
-                        onClick = onViewDetailsClick,
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_telegram),
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(
-                            text = "View more information"
-                        )
+                    if (flagDetails != null) {
+                        Button(
+                            onClick = onViewDetailsClick,
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_telegram),
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                text = "View more information"
+                            )
+                        }
                     }
                     Row(
                         modifier = Modifier.padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = 8.dp,
+                            top = if (flagDetails != null) 8.dp else 16.dp,
                             bottom = 16.dp
                         ),
                     ) {
