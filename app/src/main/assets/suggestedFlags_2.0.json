@@ -47,7 +47,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": null,
-      "enabled": false
+      "enabled": true
     },
     {
       "primaryTag": "enable_magic_compose",
