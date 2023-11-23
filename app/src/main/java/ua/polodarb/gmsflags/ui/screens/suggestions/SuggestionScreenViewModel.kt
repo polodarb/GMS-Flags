@@ -326,6 +326,7 @@ class SuggestionScreenViewModel(
                     repository.deleteRowByFlagName(packageName, it.tag)
                 }
             }
+            getSuggestedFlags()
         }
     }
 

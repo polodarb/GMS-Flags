@@ -252,7 +252,7 @@ fun SuggestionsScreen(
                                 },
                                 onResetClick = {
                                     resetFlagPackage = item.flag.flagPackage
-//                                    resetFlagsList.addAll(item.flag)
+                                    resetFlagsList.addAll(item.flag.flags)
                                     showResetDialog = true
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                 },

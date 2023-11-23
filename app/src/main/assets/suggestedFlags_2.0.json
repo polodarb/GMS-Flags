@@ -2,7 +2,7 @@
   "primary": [
     {
       "primaryTag": "call_recording",
-      "name": "Enable call recording",
+      "name": "Enable call recording for unsupported countries",
       "source": null,
       "note": null,
       "flags": [
@@ -44,6 +44,45 @@
       ],
       "flagPackage": "com.google.android.dialer",
       "appPackage": "com.google.android.dialer",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": false
+    },
+    {
+      "primaryTag": "enable_magic_compose",
+      "name": "Enable Magic Compose in Messages",
+      "source": null,
+      "note": "There is a daily limit on the number of requests!",
+      "flags": [
+        {
+          "tag": "bugle_phenotype__always_use_magic_compose_transitions",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_magic_compose_view",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_combined_magic_compose",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_additional_functionalities_for_magic_compose",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__debug_menu_default_available",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.messaging#com.google.android.apps.messaging",
+      "appPackage": "com.google.android.apps.messaging",
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": null,
