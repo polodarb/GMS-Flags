@@ -1,53 +1,254 @@
-[
-  {
-    "primary": [
-      {
-        "primaryTag": "tag",
-        "name": "name",
-        "source": "source",
-        "notes": null,
-        "flags": [
-          {
-            "tag": "flag_name",
-            "type": "type",
-            "value": "value"
-          },
-          {
-            "tag": "show_branding_on_space",
-            "type": "type",
-            "value": "val"
-          }
-        ],
-        "flagPackage": "package",
-        "appPackage": "package",
-        "minVersionCode": null,
-        "minAndroidSdkCode": null,
-        "enabled": true
-      }
-    ],
-    "secondary": [
-      {
-        "name": "name",
-        "source": "source",
-        "notes": null,
-        "flags": [
-          {
-            "tag": "flag_name",
-            "type": "type",
-            "value": "value"
-          },
-          {
-            "tag": "show_branding_on_space",
-            "type": "type",
-            "value": "val"
-          }
-        ],
-        "flagPackage": "package",
-        "appPackage": "package",
-        "minVersionCode": null,
-        "minAndroidSdkCode": null,
-        "enabled": true
-      }
-    ]
-  }
-]
+{
+  "primary": [
+    {
+      "primaryTag": "call_recording",
+      "name": "Enable call recording",
+      "source": null,
+      "note": null,
+      "flags": [
+        {
+          "tag": "G__enable_call_recording",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_system_feature",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "CallRecording__enable_call_recording_for_fi",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_call_recording_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_crosby_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__use_call_recording_geofence_overrides",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_indicator",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.dialer",
+      "appPackage": "com.google.android.dialer",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": true
+    }
+  ],
+  "secondary": [
+    {
+      "name": "Date tips while creating task in Tasks",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "DateShortcuts__enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.tasks",
+      "appPackage": "com.google.android.apps.tasks",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/19",
+      "enabled": true
+    },
+    {
+      "name": "Password manager with MD3 navbar",
+      "source": "Nail Sadykov",
+      "note": "Requires last version of GBoard!",
+      "flags": [
+        {
+          "tag": "Guards__gm3_ui_enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.gms.credential_manager",
+      "appPackage": "com.google.android.gms",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/18",
+      "enabled": true
+    },
+    {
+      "name": "New \"Select text\" tool in Gboard",
+      "source": "Nail Sadykov",
+      "note": "Requires last version of GBoard!",
+      "flags": [
+        {
+          "tag": "enable_ocr",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/17",
+      "enabled": true
+    },
+    {
+      "name": "\"G\" on space in GBoard",
+      "source": "RBoard Themes",
+      "note": null,
+      "flags": [
+        {
+          "tag": "show_branding_interval_seconds",
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "tag": "show_branding_on_space",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/16",
+      "enabled": true
+    },
+    {
+      "name": "New memories tab in Google Photos",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45386363",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45366356",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45414358",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45411123",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45401668",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45401669",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45411122",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45417430",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45412949",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/13",
+      "enabled": true
+    },
+    {
+      "name": "Floating NavBar in Google Photos",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45415956",
+          "type": "int",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/12",
+      "enabled": true
+    },
+    {
+      "name": "Proofreading mode in GBoard",
+      "source": "RBoard Manager",
+      "note": null,
+      "flags": [
+        {
+          "tag": "writing_helper_chip_shown_as_candidate",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "writing_helper_enable_free_chat",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "writing_helper",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/8",
+      "enabled": true
+    },
+    {
+      "name": "\"Undo\" button in GBoard",
+      "source": "RBoard Manager",
+      "note": null,
+      "flags": [
+        {
+          "tag": "undo_access_point",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+      "appPackage": "com.google.android.inputmethod.latin",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": true
+    }
+  ]
+}

@@ -49,6 +49,17 @@ class AppsListRepository(
         }
     }
 
+    fun getAppVersionCode(packageName: String): Long {
+            val packageManager: PackageManager = context.packageManager
+            try {
+                val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                return packageInfo.longVersionCode
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+            return -1
+    }
+
     fun getListByPackages(pkgName: String) = flow<UiStates<List<String>>> {
         val context = context as GMSApplication
         val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {

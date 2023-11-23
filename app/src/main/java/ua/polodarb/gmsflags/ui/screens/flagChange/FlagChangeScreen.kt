@@ -349,14 +349,14 @@ fun FlagChangeScreen(
                                 onDeleteOverriddenFlags = {
                                     dropDownExpanded = false
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    coroutineScope.launch {
+//                                    coroutineScope.launch {
                                         viewModel.showProgressDialog.value = true
                                         viewModel.showFalseProgressDialog()
                                         viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
                                         viewModel.initAllFlags()
                                         viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                                         viewModel.filterMethod = viewModel.filterMethod
-                                    }
+//                                    }
                                 },
                                 onOpenAppDetailsSettings = {
                                     val intent =
