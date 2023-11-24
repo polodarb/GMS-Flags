@@ -126,10 +126,10 @@ private fun NavGraphBuilder.rootRequestComposable(navController: NavHostControll
             onRootRequest = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 isButtonLoading = true
+
                 try {
                     gmsApplication.initShell()
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) { }
 
                 if (Shell.getShell().isRoot) {
                     gmsApplication.initDB()

@@ -69,7 +69,7 @@ object Extensions {
     fun Map<String, String>.toSortMap(): SortedMap<String, String> {
         return this.toSortedMap(
             compareByDescending<String> {
-                it.toIntOrNull() ?: 0
+                it.toLongOrNull() ?: 0
             }.thenBy { it })
     }
 

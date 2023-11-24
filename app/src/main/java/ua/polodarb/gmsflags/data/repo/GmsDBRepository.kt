@@ -51,38 +51,38 @@ class GmsDBRepository(
 
     }
 
-    suspend fun getBoolFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getBoolFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
-        if (boolFlags.isNotEmpty())
+            val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
             emit(UiStates.Success(boolFlags))
-    }
+        }
 
-    suspend fun getIntFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getIntFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
-        if (intFlags.isNotEmpty())
+            val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
             emit(UiStates.Success(intFlags))
-    }
+        }
 
-    suspend fun getFloatFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getFloatFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
-        if (floatFlags.isNotEmpty())
+            val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
             emit(UiStates.Success(floatFlags))
-    }
+        }
 
-    suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
-        if (delay) delay(200)
+    suspend fun getStringFlags(packageName: String, delay: Boolean) =
+        flow<UiStates<Map<String, String>>> {
+            if (delay) delay(200)
 
-        val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-        if (stringFlags.isNotEmpty())
+            val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
             emit(UiStates.Success(stringFlags))
 
-    }
+        }
 
     fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
         val boolOverriddenFlags =

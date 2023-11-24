@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
@@ -23,6 +24,7 @@ import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import java.util.Collections
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
+typealias SavedFlagsFlow = List<SavedFlags>
 
 class FlagChangeScreenViewModel(
     private val pkgName: String,
@@ -54,8 +56,8 @@ class FlagChangeScreenViewModel(
     val stateString: StateFlow<FlagChangeUiStates> = _stateString.asStateFlow()
 
     private val _stateSavedFlags =
-        MutableStateFlow<List<SavedFlags>>(emptyList())
-    val stateSavedFlags: StateFlow<List<SavedFlags>> = _stateSavedFlags.asStateFlow()
+        MutableStateFlow<SavedFlagsFlow>(emptyList())
+    val stateSavedFlags: StateFlow<SavedFlagsFlow> = _stateSavedFlags.asStateFlow()
 
 
     // Filter
@@ -82,7 +84,7 @@ class FlagChangeScreenViewModel(
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
     // Initialization of flags of all types
-    fun initBoolValues(delay: Boolean = true) {
+    private fun initBoolValues(delay: Boolean = true) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getBoolFlags(pkgName, delay).collect { uiStates ->
@@ -188,35 +190,51 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (filterMethod.value) {
                     FilterMethod.ENABLED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            (listBoolFiltered.toMap().filterByEnabled()).filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateBoolean.update {
+                            UiStates.Success(
+                                synchronized(listBoolFiltered) {
+                                    (listBoolFiltered.toMap().filterByEnabled()).filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     FilterMethod.DISABLED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            (listBoolFiltered.toMap().filterByDisabled()).filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateBoolean.update {
+                            UiStates.Success(
+                                synchronized(listBoolFiltered) {
+                                    (listBoolFiltered.toMap().filterByDisabled()).filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     FilterMethod.CHANGED -> {
-                        _stateBoolean.value = UiStates.Success(
-                            changedFilterBoolList.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateBoolean.update {
+                            UiStates.Success(
+                                synchronized(changedFilterBoolList) {
+                                    changedFilterBoolList.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     else -> {
-                        _stateBoolean.value = UiStates.Success(
-                            listBoolFiltered.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateBoolean.update {
+                            UiStates.Success(
+                                synchronized(listBoolFiltered) {
+                                    listBoolFiltered.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -228,19 +246,27 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (filterMethod.value) {
                     FilterMethod.CHANGED -> {
-                        _stateInteger.value = UiStates.Success(
-                            changedFilterIntList.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateInteger.update {
+                            UiStates.Success(
+                                synchronized(changedFilterIntList) {
+                                    changedFilterIntList.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     else -> {
-                        _stateInteger.value = UiStates.Success(
-                            listIntFiltered.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateInteger.update {
+                            UiStates.Success(
+                                synchronized(listIntFiltered) {
+                                    listIntFiltered.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -252,19 +278,27 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (filterMethod.value) {
                     FilterMethod.CHANGED -> {
-                        _stateFloat.value = UiStates.Success(
-                            changedFilterFloatList.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateFloat.update {
+                            UiStates.Success(
+                                synchronized(changedFilterFloatList) {
+                                    changedFilterFloatList.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     else -> {
-                        _stateFloat.value = UiStates.Success(
-                            listFloatFiltered.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateFloat.update {
+                            UiStates.Success(
+                                synchronized(listFloatFiltered) {
+                                    listFloatFiltered.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -276,19 +310,27 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (filterMethod.value) {
                     FilterMethod.CHANGED -> {
-                        _stateString.value = UiStates.Success(
-                            changedFilterStringList.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateString.update {
+                            UiStates.Success(
+                                synchronized(changedFilterStringList) {
+                                    changedFilterStringList.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
 
                     else -> {
-                        _stateString.value = UiStates.Success(
-                            listStringFiltered.filter {
-                                it.key.contains(searchQuery.value, ignoreCase = true)
-                            }.toSortMap()
-                        )
+                        _stateString.update {
+                            UiStates.Success(
+                                synchronized(listStringFiltered) {
+                                    listStringFiltered.filter {
+                                        it.key.contains(searchQuery.value, ignoreCase = true)
+                                    }.toSortMap()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -306,16 +348,20 @@ class FlagChangeScreenViewModel(
     fun updateBoolFlagValues(flagNames: List<String>, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateBoolean.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.toMutableMap()
+                _stateBoolean.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.toMutableMap()
 
-                    for (flagName in flagNames) {
-                        updatedData[flagName] = newValue
-                        listBoolFiltered[flagName] = newValue
+                        for (flagName in flagNames) {
+                            updatedData[flagName] = newValue
+                            listBoolFiltered[flagName] = newValue
+                        }
+
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
                     }
-
-                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
                 }
             }
         }
@@ -324,13 +370,18 @@ class FlagChangeScreenViewModel(
     fun updateIntFlagValue(flagName: String, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateInteger.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.toMutableMap()
-                    updatedData[flagName] = newValue
-                    _stateInteger.value = currentState.copy(data = updatedData.toSortMap())
-                    listIntFiltered.replace(flagName, newValue)
+                _stateInteger.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.toMutableMap()
+                        updatedData[flagName] = newValue
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
+                    }
                 }
+
+                listIntFiltered.replace(flagName, newValue)
             }
         }
     }
@@ -338,13 +389,18 @@ class FlagChangeScreenViewModel(
     fun updateFloatFlagValue(flagName: String, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateFloat.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.toMutableMap()
-                    updatedData[flagName] = newValue
-                    _stateFloat.value = currentState.copy(data = updatedData.toSortMap())
-                    listFloatFiltered.replace(flagName, newValue)
+                _stateFloat.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.toMutableMap()
+                        updatedData[flagName] = newValue
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
+                    }
                 }
+
+                listFloatFiltered.replace(flagName, newValue)
             }
         }
     }
@@ -352,16 +408,20 @@ class FlagChangeScreenViewModel(
     fun updateStringFlagValue(flagName: String, newValue: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateString.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.toMutableMap()
-                    updatedData[flagName] = newValue
-                    _stateString.value = currentState.copy(data = updatedData.toSortMap())
-                    listStringFiltered.replace(flagName, newValue)
+                _stateString.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.toMutableMap()
+                        updatedData[flagName] = newValue
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
+                    }
                 }
+
+                listStringFiltered.replace(flagName, newValue)
             }
         }
-
     }
 
 
@@ -461,17 +521,66 @@ class FlagChangeScreenViewModel(
         initOverriddenStringFlags(pkgName)
     }
 
+    // Manually add bool flag
+    fun addManuallyBoolFlag(flagName: String, flagValue: String) {
+        viewModelScope.launch {
+            val currentState = _stateBoolean.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = flagValue
+                _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
+            }
+        }
+    }
+
+    fun addManuallyIntFlag(flagName: String, flagValue: String) {
+        viewModelScope.launch {
+            val currentState = _stateInteger.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = flagValue
+                _stateInteger.value = currentState.copy(data = updatedData.toSortMap())
+            }
+        }
+    }
+
+    fun addManuallyFloatFlag(flagName: String, flagValue: String) {
+        viewModelScope.launch {
+            val currentState = _stateFloat.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = flagValue
+                _stateFloat.value = currentState.copy(data = updatedData.toSortMap())
+            }
+        }
+    }
+
+    fun addManuallyStringFlag(flagName: String, flagValue: String) {
+        viewModelScope.launch {
+            val currentState = _stateString.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = flagValue
+                _stateString.value = currentState.copy(data = updatedData.toSortMap())
+            }
+        }
+    }
 
     // Enable/disable all Bool flags
     private fun turnOnAllBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateBoolean.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
-                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-                    listBoolFiltered.replaceAll { _, _ -> "1" }
+                _stateBoolean.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
+                    }
                 }
+
+                listBoolFiltered.replaceAll { _, _ -> "1" }
             }
         }
     }
@@ -479,12 +588,17 @@ class FlagChangeScreenViewModel(
     private fun turnOffAllBoolFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val currentState = _stateBoolean.value
-                if (currentState is UiStates.Success) {
-                    val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
-                    _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-                    listBoolFiltered.replaceAll { _, _ -> "0" }
+                _stateBoolean.update {
+                    val currentState = it
+                    if (currentState is UiStates.Success) {
+                        val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
+                        currentState.copy(data = updatedData.toSortMap())
+                    } else {
+                        currentState
+                    }
                 }
+
+                listBoolFiltered.replaceAll { _, _ -> "0" }
             }
         }
     }
@@ -584,6 +698,10 @@ class FlagChangeScreenViewModel(
                     usersList = usersList
                 )
             }
+            changedFilterBoolList[name] = boolVal
+            changedFilterIntList[name] = intVal
+            changedFilterFloatList[name] = floatVal
+            changedFilterStringList[name] = stringVal
         }
     }
 
@@ -615,7 +733,7 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    // Save flags to local DB
+    // Saved flags in local DB
     private fun getAllSavedFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -687,6 +805,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 when (stateBoolean.value) {
                     is UiStates.Success -> {
+                        showProgressDialog.value = true
                         val flagsCount = customCount
                             ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
                         delay(
@@ -711,6 +830,21 @@ class FlagChangeScreenViewModel(
                         _stateBoolean.value = UiStates.Error()
                     }
                 }
+            }
+        }
+    }
+
+    fun resetFilterLists() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                listBoolFiltered.clear()
+                listIntFiltered.clear()
+                listFloatFiltered.clear()
+                listStringFiltered.clear()
+                changedFilterBoolList.clear()
+                changedFilterIntList.clear()
+                changedFilterFloatList.clear()
+                changedFilterStringList.clear()
             }
         }
     }
