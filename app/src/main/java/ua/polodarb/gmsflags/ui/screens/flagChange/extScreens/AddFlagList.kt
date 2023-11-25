@@ -1,19 +1,24 @@
 package ua.polodarb.gmsflags.ui.screens.flagChange.extScreens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,11 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
+import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -77,6 +85,40 @@ fun AddFlagList() {
                     }
                 )
             }
+        },
+        bottomBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 32.dp, top = 20.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Cancel",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Spacer(modifier = Modifier.weight(0.1f))
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Save",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     ) {
         LaunchedEffect(pagerState) {
@@ -95,10 +137,10 @@ fun AddFlagList() {
             contentPadding = PaddingValues(top = it.calculateTopPadding())
         ) { page ->
             when (page) { // todo
-                0 -> AddFlagListContent()
-                1 -> AddFlagListContent()
-                2 -> AddFlagListContent()
-                3 -> AddFlagListContent()
+                0 -> AddFlagListContent(SelectFlagsType.BOOLEAN)
+                1 -> AddFlagListContent(SelectFlagsType.INTEGER)
+                2 -> AddFlagListContent(SelectFlagsType.FLOAT)
+                3 -> AddFlagListContent(SelectFlagsType.STRING)
             }
         }
     }
