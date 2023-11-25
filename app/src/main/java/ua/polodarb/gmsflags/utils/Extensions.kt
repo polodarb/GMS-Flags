@@ -69,8 +69,9 @@ object Extensions {
     fun Map<String, String>.toSortMap(): SortedMap<String, String> {
         return this.toSortedMap(
             compareByDescending<String> {
-                it.toLongOrNull() ?: 0
-            }.thenBy { it })
+                it.toLongOrNull()
+            }.thenBy { it }
+        )
     }
 
     fun Map<String, String>.filterByEnabled(): Map<String, String> {
