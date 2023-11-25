@@ -16,13 +16,14 @@ import ua.polodarb.gmsflags.R
 
 @Composable
 fun NotFoundContent(
-    type: NoFlagsOrPackages = NoFlagsOrPackages.FLAGS
+    type: NoFlagsOrPackages = NoFlagsOrPackages.FLAGS,
+    customText: String? = null
 ) {
-    val text = "¯\\_(ツ)_/¯\n\n" + when (type) {
-        NoFlagsOrPackages.FLAGS -> stringResource(id = R.string.component_no_flags)
-        NoFlagsOrPackages.APPS -> stringResource(id = R.string.component_no_apps)
-        NoFlagsOrPackages.PACKAGES -> stringResource(R.string.component_no_packages)
-    }
+    val text = "¯\\_(ツ)_/¯\n\n" + (customText ?: when (type) {
+            NoFlagsOrPackages.FLAGS -> stringResource(id = R.string.component_no_flags)
+            NoFlagsOrPackages.APPS -> stringResource(id = R.string.component_no_apps)
+            NoFlagsOrPackages.PACKAGES -> stringResource(R.string.component_no_packages)
+        })
 
     Box(
         modifier = Modifier

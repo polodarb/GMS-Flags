@@ -37,6 +37,7 @@ import ua.polodarb.gmsflags.ui.screens.firstStart.RequestNotificationPermissionS
 import ua.polodarb.gmsflags.ui.screens.firstStart.RootRequestScreen
 import ua.polodarb.gmsflags.ui.screens.firstStart.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreen
+import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddFlagList
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.about.AboutScreen
@@ -73,6 +74,7 @@ internal fun RootAppNavigation(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.rootComposable(
     navController: NavHostController,
     isFirstStart: Boolean
@@ -84,7 +86,8 @@ private fun NavGraphBuilder.rootComposable(
         popEnterTransition = { enterAnim(toLeft = false) },
         popExitTransition = { exitAnim(toLeft = false) }
     ) {
-        RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
+//        RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
+        AddFlagList()
     }
 }
 
