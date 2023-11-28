@@ -22,6 +22,7 @@ fun FlagChangeDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onAddFlag: () -> Unit,
+    onAddMultipleFlags: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     onOpenAppDetailsSettings: () -> Unit,
     modifier: Modifier = Modifier
@@ -44,6 +45,17 @@ fun FlagChangeDropDown(
                     leadingIcon = {
                         Icon(
                             Icons.Outlined.Add,
+                            contentDescription = null
+                        )
+                    },
+                    enabled = true
+                )
+                DropdownMenuItem(
+                    text = { Text(text = "Add a multiple flags") },
+                    onClick = onAddMultipleFlags,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_add_flag_list),
                             contentDescription = null
                         )
                     },

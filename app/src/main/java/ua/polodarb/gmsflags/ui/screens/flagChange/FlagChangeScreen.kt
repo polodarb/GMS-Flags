@@ -94,7 +94,8 @@ import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 @Composable
 fun FlagChangeScreen(
     onBackPressed: () -> Unit,
-    packageName: String?
+    packageName: String?,
+    onAddMultipleFlags: (packageName: String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -107,6 +108,11 @@ fun FlagChangeScreen(
     val uiStateString = viewModel.stateString.collectAsState()
 
     val savedFlags = viewModel.stateSavedFlags.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.initAllFlags()
+        viewModel.getAllSavedFlags()
+    }
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -217,10 +223,6 @@ fun FlagChangeScreen(
         else -> {
             SelectFlagsType.STRING
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.getAllFlags()
     }
 
     LaunchedEffect(
@@ -337,6 +339,10 @@ fun FlagChangeScreen(
                                 onDismissRequest = { dropDownExpanded = false },
                                 onAddFlag = {
                                     showAddFlagDialog.value = true
+                                },
+                                onAddMultipleFlags = {
+                                    dropDownExpanded = false
+                                    onAddMultipleFlags(packageName.toString())
                                 },
                                 onDeleteOverriddenFlags = {
                                     dropDownExpanded = false

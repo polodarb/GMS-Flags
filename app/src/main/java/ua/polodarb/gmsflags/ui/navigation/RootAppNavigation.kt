@@ -65,6 +65,7 @@ internal fun RootAppNavigation(
         rootRequestComposable(navController = navController)
         notificationRequestComposable(navController = navController)
         flagChangeComposable(navController = navController)
+        addFlagListComposable(navController = navController)
         settingsComposable(navController = navController)
         settingsResetFlagsComposable(navController = navController)
         settingsResetSavedComposable(navController = navController)
@@ -86,8 +87,7 @@ private fun NavGraphBuilder.rootComposable(
         popEnterTransition = { enterAnim(toLeft = false) },
         popExitTransition = { exitAnim(toLeft = false) }
     ) {
-//        RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
-        AddFlagList()
+        RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
     }
 }
 
@@ -188,11 +188,34 @@ private fun NavGraphBuilder.flagChangeComposable(navController: NavHostControlle
         route = ScreensDestination.FlagChange.createStringRoute(ScreensDestination.Packages.screenRoute),
         arguments = listOf(navArgument("flagChange") { type = NavType.StringType }),
         enterTransition = { enterAnim(toLeft = true) },
-        exitTransition = { exitAnim(toLeft = false) }
+        exitTransition = { exitAnim(toLeft = true) },
+        popEnterTransition = { enterAnim(toLeft = false) },
+        popExitTransition = { exitAnim(toLeft = false) }
     ) { backStackEntry ->
         FlagChangeScreen(
             onBackPressed = navController::navigateUp,
-            packageName = Uri.decode(backStackEntry.arguments?.getString("flagChange"))
+            packageName = Uri.decode(backStackEntry.arguments?.getString("flagChange")),
+            onAddMultipleFlags = {
+                navController.navigate(
+                    ScreensDestination.AddFlagList.createRoute(Uri.encode(it))
+                )
+            },
+        )
+    }
+}
+
+private fun NavGraphBuilder.addFlagListComposable(navController: NavHostController) {
+    composable(
+        route = ScreensDestination.AddFlagList.createStringRoute(ScreensDestination.FlagChange.screenRoute),
+        arguments = listOf(navArgument("addFlagList") { type = NavType.StringType }),
+        enterTransition = { enterAnim(toLeft = true) },
+        exitTransition = { exitAnim(toLeft = true) },
+        popEnterTransition = { enterAnim(toLeft = false) },
+        popExitTransition = { exitAnim(toLeft = false) }
+    ) { backStackEntry ->
+        AddFlagList(
+            onBackPressed = navController::navigateUp,
+            packageName = Uri.decode(backStackEntry.arguments?.getString("addFlagList"))
         )
     }
 }

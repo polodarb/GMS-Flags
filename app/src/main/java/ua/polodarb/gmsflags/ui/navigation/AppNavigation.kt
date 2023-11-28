@@ -68,6 +68,12 @@ internal sealed class ScreensDestination(var screenRoute: String) {
         }
     }
 
+    data object AddFlagList : ScreensDestination("{addFlagList}") {
+        fun createRoute(pkgName: String): String {
+            return "flagChange/$pkgName"
+        }
+    }
+
     data object Settings : ScreensDestination("settings")
     data object SettingsAbout : ScreensDestination("settingsAbout")
     data object SettingsResetFlags : ScreensDestination("settingsResetFlags")

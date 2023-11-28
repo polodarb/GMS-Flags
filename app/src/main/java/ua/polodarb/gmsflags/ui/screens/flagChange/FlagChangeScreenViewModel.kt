@@ -22,6 +22,7 @@ import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
 import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import java.util.Collections
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
 typealias SavedFlagsFlow = List<SavedFlags>
@@ -35,8 +36,6 @@ class FlagChangeScreenViewModel(
 
     init {
         initUsers()
-        initAllFlags()
-        getAllSavedFlags()
     }
 
     private val _stateBoolean =
@@ -73,8 +72,7 @@ class FlagChangeScreenViewModel(
     private val changedFilterBoolList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterIntList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterFloatList = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val changedFilterStringList =
-        Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterStringList = Collections.synchronizedMap(mutableMapOf<String, String>())
 
     private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
@@ -734,7 +732,7 @@ class FlagChangeScreenViewModel(
     }
 
     // Saved flags in local DB
-    private fun getAllSavedFlags() {
+    fun getAllSavedFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 roomRepository.getSavedFlags().collect {
