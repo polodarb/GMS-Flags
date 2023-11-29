@@ -92,7 +92,7 @@
       "primaryTag": "enable_magic_compose",
       "name": "Enable Magic Compose in Messages",
       "source": null,
-      "note": "There is a daily limit on the number of requests!",
+      "note": "Note: There is a daily limit on the number of requests!",
       "flags": [
         {
           "tag": "bugle_phenotype__always_use_magic_compose_transitions",
@@ -132,7 +132,7 @@
       {
       "name": "Bottom search bar in Google App",
       "source": "Nail Sadykov",
-      "note": "Requires Google app data reset!",
+      "note": "Note: Requires Google app data reset!",
       "flags": [
         {
           "tag": "45531391",
@@ -173,7 +173,7 @@
     {
       "name": "Password manager with MD3 navbar",
       "source": "Nail Sadykov",
-      "note": "Requires last version of GBoard!",
+      "note": null,
       "flags": [
         {
           "tag": "Guards__gm3_ui_enabled",
@@ -191,7 +191,7 @@
     {
       "name": "New \"Select text\" tool in Gboard",
       "source": "Nail Sadykov",
-      "note": "Requires last version of GBoard!",
+      "note": null,
       "flags": [
         {
           "tag": "enable_ocr",
