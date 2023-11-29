@@ -92,7 +92,7 @@
       "primaryTag": "enable_magic_compose",
       "name": "Enable Magic Compose in Messages",
       "source": null,
-      "note": "Note: There is a daily limit on the number of requests!",
+      "note": "There is a daily limit on the number of requests!",
       "flags": [
         {
           "tag": "bugle_phenotype__always_use_magic_compose_transitions",
@@ -132,7 +132,7 @@
       {
       "name": "Bottom search bar in Google App",
       "source": "Nail Sadykov",
-      "note": "Note: Requires Google app data reset!",
+      "note": "Requires Google app data reset!",
       "flags": [
         {
           "tag": "45531391",
