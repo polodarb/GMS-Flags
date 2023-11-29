@@ -2,6 +2,7 @@
 
 package ua.polodarb.gmsflags.ui.navigation
 
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -38,29 +39,37 @@ import ua.polodarb.gmsflags.ui.screens.firstStart.RootRequestScreen
 import ua.polodarb.gmsflags.ui.screens.firstStart.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddFlagList
+import ua.polodarb.gmsflags.ui.screens.loadFile.LoadFileScreen
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.about.AboutScreen
-import ua.polodarb.gmsflags.ui.screens.settings.screens.startRoute.ChangeNavigationScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.resetFlags.ResetFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.resetSaved.ResetSavedScreen
+import ua.polodarb.gmsflags.ui.screens.settings.screens.startRoute.ChangeNavigationScreen
 
 @Composable
 internal fun RootAppNavigation(
     modifier: Modifier = Modifier,
     isFirstStart: Boolean,
+    loadFlagIntent: Intent?,
     navController: NavHostController
 ) {
     NavHost(
         navController = navController,
         startDestination = if (isFirstStart) {
             ScreensDestination.Welcome.screenRoute
+        } else if (isLoadFileIntent(loadFlagIntent)) {
+            ScreensDestination.LoadFile.screenRoute
         } else {
             ScreensDestination.Root.screenRoute
         },
         modifier = modifier
     ) {
-        rootComposable(navController = navController, isFirstStart = isFirstStart)
+        rootComposable(
+            navController = navController,
+            isFirstStart = isFirstStart,
+            loadFlagIntent = loadFlagIntent
+        )
         welcomeComposable(navController = navController)
         rootRequestComposable(navController = navController)
         notificationRequestComposable(navController = navController)
@@ -78,16 +87,29 @@ internal fun RootAppNavigation(
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.rootComposable(
     navController: NavHostController,
-    isFirstStart: Boolean
+    isFirstStart: Boolean,
+    loadFlagIntent: Intent?
 ) {
-    composable(
-        route = ScreensDestination.Root.screenRoute,
-        enterTransition = { enterAnim(toLeft = true) },
-        exitTransition = { exitAnim(toLeft = true) },
-        popEnterTransition = { enterAnim(toLeft = false) },
-        popExitTransition = { exitAnim(toLeft = false) }
-    ) {
-        RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
+    if (!isFirstStart && isLoadFileIntent(loadFlagIntent)) {
+        composable(
+            route = ScreensDestination.LoadFile.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
+        ) {
+            LoadFileScreen(loadFlagIntent?.data)
+        }
+    } else {
+        composable(
+            route = ScreensDestination.Root.screenRoute,
+            enterTransition = { enterAnim(toLeft = true) },
+            exitTransition = { exitAnim(toLeft = true) },
+            popEnterTransition = { enterAnim(toLeft = false) },
+            popExitTransition = { exitAnim(toLeft = false) }
+        ) {
+            RootScreen(isFirstStart = isFirstStart, parentNavController = navController)
+        }
     }
 }
 
@@ -99,7 +121,6 @@ private fun NavGraphBuilder.welcomeComposable(navController: NavHostController) 
         exitTransition = { exitAnim(toLeft = true) },
     ) {
         val uriHandler = LocalUriHandler.current
-
         WelcomeScreen(
             onStart = {
                 navController.navigate(ScreensDestination.RootRequest.screenRoute)
@@ -147,8 +168,7 @@ private fun NavGraphBuilder.rootRequestComposable(navController: NavHostControll
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     }
                     isButtonLoading = false
-                    Toast.makeText(gmsApplication, "ROOT IS DENIED!", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(gmsApplication, "ROOT IS DENIED!", Toast.LENGTH_SHORT).show()
                 }
             },
             isButtonLoading = isButtonLoading
@@ -311,4 +331,8 @@ private fun NavGraphBuilder.packagesComposable(navController: NavHostController)
             onBackPressed = navController::navigateUp
         )
     }
+}
+
+fun isLoadFileIntent(intent: Intent?): Boolean {
+    return intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "application/xml"
 }

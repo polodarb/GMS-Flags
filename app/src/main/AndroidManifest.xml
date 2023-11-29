@@ -38,21 +38,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.LoadFlagsActivity"
-            android:enableOnBackInvokedCallback="false"
-            android:exported="true"
-            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.OPENABLE" />
 
                 <data android:host="*" />
-                <data android:mimeType="*/*" />
+                <data android:mimeType="application/xml" />
                 <data android:pathPattern=".*\\.gmsflags" />
                 <data android:pathPattern=".*\\..*\\.gmsflags" />
                 <data android:pathPattern=".*\\..*\\..*\\.gmsflags" />

@@ -1,7 +1,10 @@
 package ua.polodarb.gmsflags.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.google.android.material.color.DynamicColors
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -54,6 +56,22 @@ class MainActivity : ComponentActivity() {
             if (!isFirstStart) setKeepOnScreenCondition { !appContext.isRootDatabaseInitialized }
         }
 
+        Log.d("intent", intent.toString())
+
+        if (intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "text/plain") {
+            Toast.makeText(this, "Load from file", Toast.LENGTH_SHORT).show()
+            val uri = intent.data
+            Log.d("intent", "data - ${intent.data}")
+            Log.d("intent", "data-encodedQuery - ${intent.data?.encodedQuery}")
+            Log.d("intent", "extras - ${intent.extras}")
+            Log.d("intent", "action - ${intent.action}")
+            Log.d("intent", "categories - ${intent.categories}")
+            Log.d("intent", "flags - ${intent.flags}")
+            Log.d("intent", "identifier - ${intent.identifier}")
+            Log.d("intent", "identifier - ${intent.`package`}")
+            Log.d("intent", "type - ${intent.type}")
+        }
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
@@ -69,6 +87,7 @@ class MainActivity : ComponentActivity() {
                     RootAppNavigation(
                         navController = rememberNavController(),
                         isFirstStart = isFirstStart,
+                        loadFlagIntent = intent,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
