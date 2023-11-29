@@ -81,8 +81,8 @@
           "value": "1"
         }
       ],
-      "flagPackage": "com.google.android.dialer",
-      "appPackage": "com.google.android.dialer",
+      "flagPackage": "com.google.android.apps.messaging.auto#com.google.android.apps.messaging",
+      "appPackage": "com.google.android.apps.messaging",
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/22",
