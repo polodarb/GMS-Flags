@@ -51,7 +51,7 @@
     },
     {
       "primaryTag": "rcs_new_features",
-      "name": "Activate new UI ща RCS chats in Messages",
+      "name": "Activate new UI of RCS chats in Messages",
       "source": "Danyil Kobzar",
       "note": "1. New background in chats\n2. Animated reactions\n3. New message input field UI\n4. Noise reduction in voice",
       "flags": [
