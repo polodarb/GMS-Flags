@@ -435,45 +435,32 @@ class FlagChangeScreenViewModel(
 
     // Manually add bool flag
     fun addManuallyBoolFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateBoolean.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateBoolean, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyIntFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateInteger.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateInteger.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateInteger, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyFloatFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateFloat.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateFloat.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateFloat, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyStringFlag(flagName: String, flagValue: String) {
+        addManuallyFlag(state = _stateString, flagName = flagName, flagValue = flagValue)
+    }
+
+    private fun addManuallyFlag(
+        state: MutableStateFlow<UiStates<Map<String, String>>>,
+        flagName: String,
+        flagValue: String
+    ) {
         viewModelScope.launch {
-            val currentState = _stateString.value
+            val currentState = state.value
             if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
+                val updatedData = currentState.data.toSortMap()
                 updatedData[flagName] = flagValue
-                _stateString.value = currentState.copy(data = updatedData.toSortMap())
+                state.value = currentState.copy(data = updatedData)
             }
         }
     }
