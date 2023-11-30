@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,22 +63,23 @@ fun FlagChangeDropDown(
                     enabled = true
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(id = R.string.component_reset_flags)) },
-                    onClick = onDeleteOverriddenFlags,
-                    leadingIcon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_reset_flags),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = true
-                )
-                DropdownMenuItem(
                     text = { Text(text = stringResource(R.string.open_app_details_settings)) },
                     onClick = onOpenAppDetailsSettings,
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_open_app_settings),
+                            contentDescription = null
+                        )
+                    },
+                    enabled = true
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.component_reset_flags)) },
+                    onClick = onDeleteOverriddenFlags,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_reset_flags),
                             contentDescription = null
                         )
                     },
