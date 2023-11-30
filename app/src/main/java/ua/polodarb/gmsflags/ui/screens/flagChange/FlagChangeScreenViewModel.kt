@@ -737,20 +737,17 @@ class FlagChangeScreenViewModel(
     }
 
     fun resetFilterLists() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                listBoolFiltered.clear()
-                listIntFiltered.clear()
-                listFloatFiltered.clear()
-                listStringFiltered.clear()
-                changedFilterBoolList.clear()
-                changedFilterIntList.clear()
-                changedFilterFloatList.clear()
-                changedFilterStringList.clear()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            listBoolFiltered.clear()
+            listIntFiltered.clear()
+            listFloatFiltered.clear()
+            listStringFiltered.clear()
+            changedFilterBoolList.clear()
+            changedFilterIntList.clear()
+            changedFilterFloatList.clear()
+            changedFilterStringList.clear()
         }
     }
-
 }
 
 enum class FilterMethod : MutableState<FilterMethod> {
