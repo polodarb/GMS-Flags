@@ -9,7 +9,7 @@ class GmsDBInteractor(
     private val repository: GmsDBRepository
 ) {
 
-    fun overrideFlag(
+    suspend fun overrideFlag(
         packageName: String,
         name: String,
         flagType: Int = 0,
@@ -52,7 +52,7 @@ class GmsDBInteractor(
         if (clearData) clearPhenotypeCache(packageName)
     }
 
-    fun clearPhenotypeCache(pkgName: String) {
+    suspend fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.androidPackage(pkgName)
         Shell.cmd("am force-stop $androidPkgName").exec()
         Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()

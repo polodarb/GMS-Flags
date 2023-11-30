@@ -525,7 +525,7 @@ private fun NewSuggestedFlagItem(
                 Column {
                     if (noteText != null) {
                         Text(
-                            text = stringResource(R.string.note) + noteText,
+                            text = noteText,
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier

@@ -22,7 +22,6 @@ import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
 import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import java.util.Collections
-import java.util.concurrent.locks.ReentrantReadWriteLock
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
 typealias SavedFlagsFlow = List<SavedFlags>
@@ -36,6 +35,7 @@ class FlagChangeScreenViewModel(
 
     init {
         initUsers()
+        getAndroidPackage(pkgName)
     }
 
     private val _stateBoolean =
@@ -57,6 +57,8 @@ class FlagChangeScreenViewModel(
     private val _stateSavedFlags =
         MutableStateFlow<SavedFlagsFlow>(emptyList())
     val stateSavedFlags: StateFlow<SavedFlagsFlow> = _stateSavedFlags.asStateFlow()
+
+    val androidPackage: MutableStateFlow<String> = MutableStateFlow(pkgName)
 
 
     // Filter
@@ -427,19 +429,21 @@ class FlagChangeScreenViewModel(
     fun initOverriddenBoolFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (val data = repository.getOverriddenBoolFlagsByPackage(pkgName)) {
-                    is UiStates.Success -> {
-                        changedFilterBoolList.clear()
-                        changedFilterBoolList.putAll(data.data)
-                        listBoolFiltered.putAll(data.data)
-                    }
+                repository.getOverriddenBoolFlagsByPackage(pkgName).collect {
+                    when (val data = it) {
+                        is UiStates.Success -> {
+                            changedFilterBoolList.clear()
+                            changedFilterBoolList.putAll(data.data)
+                            listBoolFiltered.putAll(data.data)
+                        }
 
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
+                        is UiStates.Loading -> {
+                            _stateBoolean.value = UiStates.Loading()
+                        }
 
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
+                        is UiStates.Error -> {
+                            _stateBoolean.value = UiStates.Error()
+                        }
                     }
                 }
             }
@@ -449,19 +453,21 @@ class FlagChangeScreenViewModel(
     fun initOverriddenIntFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (val data = repository.getOverriddenIntFlagsByPackage(pkgName)) {
-                    is UiStates.Success -> {
-                        changedFilterIntList.clear()
-                        changedFilterIntList.putAll(data.data)
-                        listIntFiltered.putAll(data.data)
-                    }
+                repository.getOverriddenIntFlagsByPackage(pkgName).collect {
+                    when (val data = it) {
+                        is UiStates.Success -> {
+                            changedFilterIntList.clear()
+                            changedFilterIntList.putAll(data.data)
+                            listIntFiltered.putAll(data.data)
+                        }
 
-                    is UiStates.Loading -> {
-                        _stateInteger.value = UiStates.Loading()
-                    }
+                        is UiStates.Loading -> {
+                            _stateInteger.value = UiStates.Loading()
+                        }
 
-                    is UiStates.Error -> {
-                        _stateInteger.value = UiStates.Error()
+                        is UiStates.Error -> {
+                            _stateInteger.value = UiStates.Error()
+                        }
                     }
                 }
             }
@@ -471,19 +477,21 @@ class FlagChangeScreenViewModel(
     fun initOverriddenFloatFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (val data = repository.getOverriddenFloatFlagsByPackage(pkgName)) {
-                    is UiStates.Success -> {
-                        changedFilterFloatList.clear()
-                        changedFilterFloatList.putAll(data.data)
-                        listFloatFiltered.putAll(data.data)
-                    }
+                repository.getOverriddenFloatFlagsByPackage(pkgName).collect {
+                    when (val data = it) {
+                        is UiStates.Success -> {
+                            changedFilterFloatList.clear()
+                            changedFilterFloatList.putAll(data.data)
+                            listFloatFiltered.putAll(data.data)
+                        }
 
-                    is UiStates.Loading -> {
-                        _stateFloat.value = UiStates.Loading()
-                    }
+                        is UiStates.Loading -> {
+                            _stateFloat.value = UiStates.Loading()
+                        }
 
-                    is UiStates.Error -> {
-                        _stateFloat.value = UiStates.Error()
+                        is UiStates.Error -> {
+                            _stateFloat.value = UiStates.Error()
+                        }
                     }
                 }
             }
@@ -493,19 +501,21 @@ class FlagChangeScreenViewModel(
     fun initOverriddenStringFlags(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                when (val data = repository.getOverriddenStringFlagsByPackage(pkgName)) {
-                    is UiStates.Success -> {
-                        changedFilterStringList.clear()
-                        changedFilterStringList.putAll(data.data)
-                        listStringFiltered.putAll(data.data)
-                    }
+                repository.getOverriddenStringFlagsByPackage(pkgName).collect {
+                    when (val data = it) {
+                        is UiStates.Success -> {
+                            changedFilterStringList.clear()
+                            changedFilterStringList.putAll(data.data)
+                            listStringFiltered.putAll(data.data)
+                        }
 
-                    is UiStates.Loading -> {
-                        _stateString.value = UiStates.Loading()
-                    }
+                        is UiStates.Loading -> {
+                            _stateString.value = UiStates.Loading()
+                        }
 
-                    is UiStates.Error -> {
-                        _stateString.value = UiStates.Error()
+                        is UiStates.Error -> {
+                            _stateString.value = UiStates.Error()
+                        }
                     }
                 }
             }
@@ -662,8 +672,14 @@ class FlagChangeScreenViewModel(
 
 
     // Get original Android package
-    fun getAndroidPackage(pkgName: String): String {
-        return repository.androidPackage(pkgName)
+    fun getAndroidPackage(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.androidPackage(pkgName).collect {
+                    androidPackage.value = it
+                }
+            }
+        }
     }
 
 

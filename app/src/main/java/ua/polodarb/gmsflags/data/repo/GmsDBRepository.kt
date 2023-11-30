@@ -79,39 +79,63 @@ class GmsDBRepository(
         flow<UiStates<Map<String, String>>> {
             if (delay) delay(200)
 
-            val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-            emit(UiStates.Success(stringFlags))
-
+            gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+                if (isInitialized.isInitialized) {
+                    val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
+                    emit(UiStates.Success(stringFlags))
+                }
+            }
         }
 
-    fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenBoolFlagsByPackage(packageName: String) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags =
+                    gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
-    fun getOverriddenIntFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenIntFlagsByPackage(packageName: String) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags =
+                    gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(packageName)
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
-    fun getOverriddenFloatFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
-    }
+    fun getOverriddenFloatFlagsByPackage(packageName: String) =
+        flow<UiStates<Map<String, String>>> {
+            gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+                if (isInitialized.isInitialized) {
+                    val boolOverriddenFlags =
+                        gmsApplication.getRootDatabase()
+                            .getOverriddenFloatFlagsByPackage(packageName)
+                    emit(UiStates.Success(boolOverriddenFlags))
+                }
+            }
+        }
 
-    fun getOverriddenStringFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
-    }
+    fun getOverriddenStringFlagsByPackage(packageName: String) =
+        flow<UiStates<Map<String, String>>> {
+            gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+                if (isInitialized.isInitialized) {
+                    val boolOverriddenFlags =
+                        gmsApplication.getRootDatabase()
+                            .getOverriddenStringFlagsByPackage(packageName)
+                    emit(UiStates.Success(boolOverriddenFlags))
+                }
+            }
+        }
 
     fun getAllOverriddenBoolFlags() = flow<UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                val boolOverriddenFlags = gmsApplication.getRootDatabase().allOverriddenBoolFlags
+                val boolOverriddenFlags =
+                    gmsApplication.getRootDatabase().allOverriddenBoolFlags
                 emit(UiStates.Success(boolOverriddenFlags))
             }
         }
@@ -125,8 +149,12 @@ class GmsDBRepository(
         }
     }
 
-    fun androidPackage(pkgName: String): String {
-        return gmsApplication.getRootDatabase().androidPackage(pkgName)
+    suspend fun androidPackage(pkgName: String) = flow<String> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                emit(gmsApplication.getRootDatabase().androidPackage(pkgName))
+            }
+        }
     }
 
     fun deleteRowByFlagName(packageName: String, name: String) {

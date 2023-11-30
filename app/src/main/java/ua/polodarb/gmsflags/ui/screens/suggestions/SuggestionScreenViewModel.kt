@@ -236,7 +236,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    fun overrideFlag(
+    suspend fun overrideFlag(
         packageName: String,
         name: String,
         flagType: Int = 0,

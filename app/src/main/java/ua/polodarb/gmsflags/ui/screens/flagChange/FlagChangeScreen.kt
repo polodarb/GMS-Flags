@@ -196,7 +196,7 @@ fun FlagChangeScreen(
             focusRequester.requestFocus()
     }
 
-    val androidPackage = viewModel.getAndroidPackage(packageName.toString())
+    val androidPackage = viewModel.androidPackage.collectAsState().value
 
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
