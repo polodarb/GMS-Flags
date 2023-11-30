@@ -5,6 +5,7 @@ import android.util.Log
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.invoke
+import kotlinx.coroutines.flow.first
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 
 class GmsDBInteractor(
@@ -56,7 +57,7 @@ class GmsDBInteractor(
     }
 
     suspend fun clearPhenotypeCache(pkgName: String) {
-        repository.androidPackage(pkgName).collect { androidPkgName ->
+        val androidPkgName = repository.androidPackage(pkgName).first()
             Shell.cmd("am force-stop $androidPkgName").exec()
             Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
             if (pkgName.contains("finsky") || pkgName.contains("vending")) {
@@ -74,7 +75,6 @@ class GmsDBInteractor(
                 Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
                 Shell.cmd("am force-stop $androidPkgName").exec()
             }
-        }
     }
 
 }
