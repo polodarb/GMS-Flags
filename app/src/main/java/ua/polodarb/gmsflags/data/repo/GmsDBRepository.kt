@@ -46,9 +46,7 @@ class GmsDBRepository(
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                val list = Dispatchers.IO {
-                    (context as GMSApplication).getRootDatabase().gmsPackages
-                }
+                val list = Dispatchers.IO { rootDatabase.gmsPackages }
                 if (list.isNotEmpty()) emit(UiStates.Success(list))
                 else emit(UiStates.Error())
             }
@@ -59,38 +57,56 @@ class GmsDBRepository(
         packageName: String, delay: Boolean
     ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val boolFlags = Dispatchers.IO { rootDatabase.getBoolFlags(packageName) }
-        emit(UiStates.Success(boolFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolFlags = Dispatchers.IO { rootDatabase.getBoolFlags(packageName) }
+                emit(UiStates.Success(boolFlags))
+            }
+        }
     }
 
     fun getIntFlags(
         packageName: String, delay: Boolean
     ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val intFlags = Dispatchers.IO { rootDatabase.getIntFlags(packageName) }
-        emit(UiStates.Success(intFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val intFlags = Dispatchers.IO { rootDatabase.getIntFlags(packageName) }
+                emit(UiStates.Success(intFlags))
+            }
+        }
     }
 
     fun getFloatFlags(
         packageName: String, delay: Boolean
     ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val floatFlags = Dispatchers.IO { rootDatabase.getFloatFlags(packageName) }
-        emit(UiStates.Success(floatFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val floatFlags = Dispatchers.IO { rootDatabase.getFloatFlags(packageName) }
+                emit(UiStates.Success(floatFlags))
+            }
+        }
     }
 
     fun getStringFlags(
         packageName: String, delay: Boolean
     ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val stringFlags = Dispatchers.IO {
-            gmsApplication.getRootDatabase().getStringFlags(packageName)
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val stringFlags = Dispatchers.IO { rootDatabase.getStringFlags(packageName) }
+                emit(UiStates.Success(stringFlags))
+            }
         }
-        emit(UiStates.Success(stringFlags))
     }
 
     fun getOverriddenBoolFlagsByPackage(
@@ -99,7 +115,7 @@ class GmsDBRepository(
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
-                    gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
+                    rootDatabase.getOverriddenBoolFlagsByPackage(packageName)
                 }
                 emit(UiStates.Success(boolOverriddenFlags))
             }
@@ -112,7 +128,7 @@ class GmsDBRepository(
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
-                    gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(packageName)
+                    rootDatabase.getOverriddenIntFlagsByPackage(packageName)
                 }
                 emit(UiStates.Success(boolOverriddenFlags))
             }
@@ -125,8 +141,7 @@ class GmsDBRepository(
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
-                    gmsApplication.getRootDatabase()
-                        .getOverriddenFloatFlagsByPackage(packageName)
+                    rootDatabase.getOverriddenFloatFlagsByPackage(packageName)
                 }
                 emit(UiStates.Success(boolOverriddenFlags))
             }
@@ -139,8 +154,7 @@ class GmsDBRepository(
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags =
-                    gmsApplication.getRootDatabase()
-                        .getOverriddenStringFlagsByPackage(packageName)
+                    rootDatabase.getOverriddenStringFlagsByPackage(packageName)
                 emit(UiStates.Success(boolOverriddenFlags))
             }
         }
@@ -149,8 +163,7 @@ class GmsDBRepository(
     fun getAllOverriddenBoolFlags() = flow<UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                val boolOverriddenFlags =
-                    gmsApplication.getRootDatabase().allOverriddenBoolFlags
+                val boolOverriddenFlags = rootDatabase.allOverriddenBoolFlags
                 emit(UiStates.Success(boolOverriddenFlags))
             }
         }
@@ -159,7 +172,7 @@ class GmsDBRepository(
     fun getUsers() = flow<MutableList<String>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                emit(Dispatchers.IO { gmsApplication.getRootDatabase().users } )
+                emit(Dispatchers.IO { rootDatabase.users })
             }
         }
     }
@@ -168,7 +181,7 @@ class GmsDBRepository(
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 emit(Dispatchers.IO {
-                    gmsApplication.getRootDatabase().androidPackage(pkgName)
+                    rootDatabase.androidPackage(pkgName)
                 })
             }
         }

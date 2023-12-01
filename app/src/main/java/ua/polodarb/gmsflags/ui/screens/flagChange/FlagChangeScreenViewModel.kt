@@ -78,7 +78,8 @@ class FlagChangeScreenViewModel(
     private val changedFilterBoolList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterIntList = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val changedFilterFloatList = Collections.synchronizedMap(mutableMapOf<String, String>())
-    private val changedFilterStringList = Collections.synchronizedMap(mutableMapOf<String, String>())
+    private val changedFilterStringList =
+        Collections.synchronizedMap(mutableMapOf<String, String>())
 
     private val listBoolFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
@@ -102,6 +103,7 @@ class FlagChangeScreenViewModel(
     fun initIntValues(delay: Boolean = true) {
         collectFlagsFlow(
             loadingState = _stateInteger,
+            errorState = _stateInteger,
             dataFlow = repository.getIntFlags(pkgName, delay)
         ) { uiStates ->
             listIntFiltered.putAll(uiStates.data)
@@ -112,6 +114,7 @@ class FlagChangeScreenViewModel(
     fun initFloatValues(delay: Boolean = true) {
         collectFlagsFlow(
             loadingState = _stateFloat,
+            errorState = _stateFloat,
             dataFlow = repository.getFloatFlags(pkgName, delay)
         ) { uiStates ->
             listFloatFiltered.putAll(uiStates.data)
@@ -122,6 +125,7 @@ class FlagChangeScreenViewModel(
     fun initStringValues(delay: Boolean = true) {
         collectFlagsFlow(
             loadingState = _stateString,
+            errorState = _stateString,
             dataFlow = repository.getStringFlags(pkgName, delay)
         ) { uiStates ->
             listStringFiltered.putAll(uiStates.data)
@@ -144,11 +148,8 @@ class FlagChangeScreenViewModel(
                 UiStates.Success(
                     when (filterMethod.value) {
                         FilterMethod.ENABLED -> listBoolFiltered.toMap().filterByEnabled()
-
                         FilterMethod.DISABLED -> listBoolFiltered.toMap().filterByDisabled()
-
                         FilterMethod.CHANGED -> changedFilterBoolList
-
                         else -> listBoolFiltered
                     }.filterBySearchQuery()
                 )
@@ -156,103 +157,41 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    /**
-     * TODO зарефачить как [getBoolFlags]
-     */
     fun getIntFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.CHANGED -> {
-                        _stateInteger.update {
-                            UiStates.Success(
-                                synchronized(changedFilterIntList) {
-                                    changedFilterIntList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
+            _stateInteger.value = Dispatchers.Default {
+                UiStates.Success(
+                    when (filterMethod.value) {
+                        FilterMethod.CHANGED -> changedFilterIntList.filterBySearchQuery()
+                        else -> listIntFiltered.filterBySearchQuery()
                     }
-
-                    else -> {
-                        _stateInteger.update {
-                            UiStates.Success(
-                                synchronized(listIntFiltered) {
-                                    listIntFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
 
-    /**
-     * TODO зарефачить как [getBoolFlags]
-     */
     fun getFloatFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.CHANGED -> {
-                        _stateFloat.update {
-                            UiStates.Success(
-                                synchronized(changedFilterFloatList) {
-                                    changedFilterFloatList.filterBySearchQuery()
-                                }
-                            )
-                        }
+            _stateFloat.value = Dispatchers.Default {
+                UiStates.Success(
+                    when (filterMethod.value) {
+                        FilterMethod.CHANGED -> changedFilterFloatList.filterBySearchQuery()
+                        else -> listFloatFiltered.filterBySearchQuery()
                     }
-
-                    else -> {
-                        _stateFloat.update {
-                            UiStates.Success(
-                                synchronized(listFloatFiltered) {
-                                    listFloatFiltered.filterBySearchQuery()
-                                }
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
 
-    /**
-     * TODO зарефачить как [getBoolFlags]
-     */
     fun getStringFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.CHANGED -> {
-                        _stateString.update {
-                            UiStates.Success(
-                                synchronized(changedFilterStringList) {
-                                    changedFilterStringList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
+            _stateString.value = Dispatchers.Default {
+                UiStates.Success(
+                    when (filterMethod.value) {
+                        FilterMethod.CHANGED -> changedFilterStringList.filterBySearchQuery()
+                        else -> listStringFiltered.filterBySearchQuery()
                     }
-
-                    else -> {
-                        _stateString.update {
-                            UiStates.Success(
-                                synchronized(listStringFiltered) {
-                                    listStringFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
-                }
+                )
             }
         }
     }
@@ -338,15 +277,15 @@ class FlagChangeScreenViewModel(
 
     // Get overridden flags
     fun initOverriddenBoolFlags(pkgName: String) {
-            collectFlagsFlow(
-                repository.getOverriddenBoolFlagsByPackage(pkgName),
-                loadingState = _stateBoolean,
-                errorState = _stateBoolean
-            ) { data ->
-                changedFilterBoolList.clear()
-                changedFilterBoolList.putAll(data.data)
-                listBoolFiltered.putAll(data.data)
-            }
+        collectFlagsFlow(
+            dataFlow = repository.getOverriddenBoolFlagsByPackage(pkgName),
+            loadingState = _stateBoolean,
+            errorState = _stateBoolean
+        ) { data ->
+            changedFilterBoolList.clear()
+            changedFilterBoolList.putAll(data.data)
+            listBoolFiltered.putAll(data.data)
+        }
     }
 
     fun initOverriddenIntFlags(pkgName: String) {
@@ -676,7 +615,7 @@ class FlagChangeScreenViewModel(
     private fun <T> collectFlagsFlow(
         dataFlow: Flow<UiStates<T>>,
         loadingState: MutableStateFlow<FlagChangeUiStates>,
-        errorState: MutableStateFlow<FlagChangeUiStates> = _stateInteger,
+        errorState: MutableStateFlow<FlagChangeUiStates>,
         coroutineContext: CoroutineContext = EmptyCoroutineContext,
         onSuccess: suspend (UiStates.Success<T>) -> Unit
     ) {

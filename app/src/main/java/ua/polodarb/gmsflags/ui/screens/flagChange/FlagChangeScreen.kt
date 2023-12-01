@@ -904,9 +904,9 @@ fun FlagChangeScreen(
                         viewModel.addManuallyStringFlag(flagAddName, flagAddValue)
                     }
                 }
+                dropDownExpanded = false
                 viewModel.filterMethod = viewModel.filterMethod
                 viewModel.clearPhenotypeCache(packageName.toString())
-                dropDownExpanded = false
                 showAddFlagDialog.value = false
                 flagAddName = ""
                 flagAddValue = ""
