@@ -151,9 +151,7 @@ class FlagChangeScreenViewModel(
                         FilterMethod.CHANGED -> changedFilterBoolList
 
                         else -> listBoolFiltered
-                    }.filter {
-                        it.key.contains(searchQuery.value, ignoreCase = true)
-                    }.toSortMap()
+                    }.filterBySearchQuery()
                 )
             }
         }
@@ -199,9 +197,7 @@ class FlagChangeScreenViewModel(
                         _stateFloat.update {
                             UiStates.Success(
                                 synchronized(changedFilterFloatList) {
-                                    changedFilterFloatList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
+                                    changedFilterFloatList.filterBySearchQuery()
                                 }
                             )
                         }
@@ -211,9 +207,7 @@ class FlagChangeScreenViewModel(
                         _stateFloat.update {
                             UiStates.Success(
                                 synchronized(listFloatFiltered) {
-                                    listFloatFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
+                                    listFloatFiltered.filterBySearchQuery()
                                 }
                             )
                         }
@@ -254,6 +248,10 @@ class FlagChangeScreenViewModel(
             }
         }
     }
+
+    private fun Map<String, String>.filterBySearchQuery() = filter {
+        it.key.contains(searchQuery.value, ignoreCase = true)
+    }.toSortMap()
 
     fun getAllFlags() {
         getBoolFlags()
