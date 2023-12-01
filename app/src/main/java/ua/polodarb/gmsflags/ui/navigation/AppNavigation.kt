@@ -62,9 +62,16 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     fun createStringRoute(rootRoute: String) = "${rootRoute}/$screenRoute"
 
     data object Root : ScreensDestination("root")
+    data object LoadFile : ScreensDestination("loadFile")
     data object FlagChange : ScreensDestination("{flagChange}") {
         fun createRoute(flagChange: String): String {
             return "packages/$flagChange"
+        }
+    }
+
+    data object AddFlagList : ScreensDestination("{addFlagList}") {
+        fun createRoute(pkgName: String): String {
+            return "flagChange/$pkgName"
         }
     }
 

@@ -1,8 +1,10 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.invoke
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
@@ -11,6 +13,7 @@ class GmsDBRepository(
 ) {
 
     private val gmsApplication = context as GMSApplication
+    private val rootDatabase get() = gmsApplication.getRootDatabase()
 
     fun overrideFlag(
         packageName: String?,
@@ -43,75 +46,124 @@ class GmsDBRepository(
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                val list = (context as GMSApplication).getRootDatabase().gmsPackages
+                val list = Dispatchers.IO { rootDatabase.gmsPackages }
                 if (list.isNotEmpty()) emit(UiStates.Success(list))
                 else emit(UiStates.Error())
             }
         }
-
     }
 
-    suspend fun getBoolFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
+    fun getBoolFlags(
+        packageName: String, delay: Boolean
+    ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val boolFlags = gmsApplication.getRootDatabase().getBoolFlags(packageName)
-        if (boolFlags.isNotEmpty())
-            emit(UiStates.Success(boolFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolFlags = Dispatchers.IO { rootDatabase.getBoolFlags(packageName) }
+                emit(UiStates.Success(boolFlags))
+            }
+        }
     }
 
-    suspend fun getIntFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
+    fun getIntFlags(
+        packageName: String, delay: Boolean
+    ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val intFlags = gmsApplication.getRootDatabase().getIntFlags(packageName)
-        if (intFlags.isNotEmpty())
-            emit(UiStates.Success(intFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val intFlags = Dispatchers.IO { rootDatabase.getIntFlags(packageName) }
+                emit(UiStates.Success(intFlags))
+            }
+        }
     }
 
-    suspend fun getFloatFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
+    fun getFloatFlags(
+        packageName: String, delay: Boolean
+    ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val floatFlags = gmsApplication.getRootDatabase().getFloatFlags(packageName)
-        if (floatFlags.isNotEmpty())
-            emit(UiStates.Success(floatFlags))
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val floatFlags = Dispatchers.IO { rootDatabase.getFloatFlags(packageName) }
+                emit(UiStates.Success(floatFlags))
+            }
+        }
     }
 
-    suspend fun getStringFlags(packageName: String, delay: Boolean) = flow<UiStates<Map<String, String>>> {
+    fun getStringFlags(
+        packageName: String, delay: Boolean
+    ) = flow<UiStates<Map<String, String>>> {
         if (delay) delay(200)
+        emit(UiStates.Loading())
 
-        val stringFlags = gmsApplication.getRootDatabase().getStringFlags(packageName)
-        if (stringFlags.isNotEmpty())
-            emit(UiStates.Success(stringFlags))
-
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val stringFlags = Dispatchers.IO { rootDatabase.getStringFlags(packageName) }
+                emit(UiStates.Success(stringFlags))
+            }
+        }
     }
 
-    fun getOverriddenBoolFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenBoolFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenBoolFlagsByPackage(
+        packageName: String
+    ) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags = Dispatchers.IO {
+                    rootDatabase.getOverriddenBoolFlagsByPackage(packageName)
+                }
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
-    fun getOverriddenIntFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenIntFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenIntFlagsByPackage(
+        packageName: String
+    ) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags = Dispatchers.IO {
+                    rootDatabase.getOverriddenIntFlagsByPackage(packageName)
+                }
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
-    fun getOverriddenFloatFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenFloatFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenFloatFlagsByPackage(
+        packageName: String
+    ) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags = Dispatchers.IO {
+                    rootDatabase.getOverriddenFloatFlagsByPackage(packageName)
+                }
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
-    fun getOverriddenStringFlagsByPackage(packageName: String): UiStates<Map<String, String>> {
-        val boolOverriddenFlags =
-            gmsApplication.getRootDatabase().getOverriddenStringFlagsByPackage(packageName)
-        return (UiStates.Success(boolOverriddenFlags))
+    fun getOverriddenStringFlagsByPackage(
+        packageName: String
+    ) = flow<UiStates<Map<String, String>>> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolOverriddenFlags =
+                    rootDatabase.getOverriddenStringFlagsByPackage(packageName)
+                emit(UiStates.Success(boolOverriddenFlags))
+            }
+        }
     }
 
     fun getAllOverriddenBoolFlags() = flow<UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                val boolOverriddenFlags = gmsApplication.getRootDatabase().allOverriddenBoolFlags
+                val boolOverriddenFlags = rootDatabase.allOverriddenBoolFlags
                 emit(UiStates.Success(boolOverriddenFlags))
             }
         }
@@ -120,20 +172,26 @@ class GmsDBRepository(
     fun getUsers() = flow<MutableList<String>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
-                emit(gmsApplication.getRootDatabase().users)
+                emit(Dispatchers.IO { rootDatabase.users })
             }
         }
     }
 
-    fun androidPackage(pkgName: String): String {
-        return gmsApplication.getRootDatabase().androidPackage(pkgName)
+    suspend fun androidPackage(pkgName: String) = flow<String> {
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                emit(Dispatchers.IO {
+                    rootDatabase.androidPackage(pkgName)
+                })
+            }
+        }
     }
 
-    fun deleteRowByFlagName(packageName: String, name: String) {
+    suspend fun deleteRowByFlagName(packageName: String, name: String) = Dispatchers.IO {
         gmsApplication.getRootDatabase().deleteRowByFlagName(packageName, name)
     }
 
-    fun deleteOverriddenFlagByPackage(packageName: String) {
+    suspend fun deleteOverriddenFlagByPackage(packageName: String) = Dispatchers.IO {
         gmsApplication.getRootDatabase().deleteOverriddenFlagByPackage(packageName)
     }
 }

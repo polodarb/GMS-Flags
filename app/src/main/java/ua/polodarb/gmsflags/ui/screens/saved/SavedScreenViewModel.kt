@@ -31,39 +31,30 @@ class SavedScreenViewModel(
     // Packages
     private fun getAllSavedPackages() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.getSavedPackages().collect {
-                    _stateSavedPackages.value = it
-                }
+            roomRepository.getSavedPackages().collect {
+                _stateSavedPackages.value = it
             }
         }
     }
 
     fun deleteSavedPackage(pkgName: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.deleteSavedPackage(pkgName)
-            }
+            roomRepository.deleteSavedPackage(pkgName)
         }
     }
 
     // Flags
     private fun getAllSavedFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.getSavedFlags().collect {
-                    _stateSavedFlags.value = it
-                }
+            roomRepository.getSavedFlags().collect {
+                _stateSavedFlags.value = it
             }
         }
     }
 
     fun deleteSavedFlag(flagName: String, pkgName: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.deleteSavedFlag(flagName, pkgName)
-            }
+            roomRepository.deleteSavedFlag(flagName, pkgName)
         }
     }
-
 }

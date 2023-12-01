@@ -142,4 +142,17 @@
     <string name="apps_search_advice">Search by apps name</string>
     <string name="toast_flag_value_is_reset">The flag value is reset!</string>
     <string name="note">"Note: "</string>
+    <string name="open">Open %1$s</string>
+    <string name="view_more_information">View more information</string>
+    <string name="reset">Reset</string>
+    <string name="report">Report</string>
+    <string name="add_a_multiple_flags">Add a multiple flags</string>
+    <string name="save">Save</string>
+    <string name="enter_the_flags">Enter the flags</string>
+    <string name="formed_flags">Formed flags</string>
+    <string name="no_flags_added">No flags added</string>
+    <string name="activate_added_flags">Activate added flags</string>
+    <string name="example">"Example: "</string>
+    <string name="enter_flags_using_a_space">Enter flags using a space</string>
+    <string name="enter_flags_using_the_equal_symbol">Enter flags using the equal symbol</string>
 </resources>

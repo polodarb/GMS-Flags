@@ -75,8 +75,6 @@ fun OtherTypesFlagsScreen(
                         name = flagName,
                         intVal = editTextValue
                     )
-                    viewModel.initIntValues()
-                    viewModel.initOverriddenIntFlags(packageName.toString())
                 }
 
                 SelectFlagsType.FLOAT -> {
@@ -89,8 +87,6 @@ fun OtherTypesFlagsScreen(
                         name = flagName,
                         floatVal = editTextValue
                     )
-                    viewModel.initFloatValues()
-                    viewModel.initOverriddenFloatFlags(packageName.toString())
                 }
 
                 SelectFlagsType.STRING -> {
@@ -103,8 +99,6 @@ fun OtherTypesFlagsScreen(
                         name = flagName,
                         stringVal = editTextValue
                     )
-                    viewModel.initStringValues()
-                    viewModel.initOverriddenStringFlags(packageName.toString())
                 }
             }
 
@@ -190,8 +184,6 @@ fun OtherTypesFlagsScreen(
                         onConfirm = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             setViewModelMethods()
-//                            viewModel.initAllFlags()
-//                            viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
                             dialogOnConfirm()
                         },
                         onDismiss = dialogOnDismiss,

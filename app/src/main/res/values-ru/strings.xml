@@ -119,4 +119,17 @@
     <string name="apps_search_advice">Поиск по приложениям</string>
     <string name="toast_flag_value_is_reset">Значение флага сброшено!</string>
     <string name="note">Примечание:</string>
+    <string name="open">Открыть %1$s</string>
+    <string name="view_more_information">Узнать подробности</string>
+    <string name="reset">Сбросить</string>
+    <string name="report">Сообщить</string>
+    <string name="add_a_multiple_flags">Добавить несколько флагов</string>
+    <string name="save">Сохранить</string>
+    <string name="enter_the_flags">Введённые флаги</string>
+    <string name="formed_flags">Сформированные флаги</string>
+    <string name="no_flags_added">Нет добавленных флагов</string>
+    <string name="activate_added_flags">Активировать флаги</string>
+    <string name="example">"Например: "</string>
+    <string name="enter_flags_using_a_space">Используйте пробел для ввода</string>
+    <string name="enter_flags_using_the_equal_symbol">Используйте знак равенства для ввода</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ fun FlagChangeDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onAddFlag: () -> Unit,
+    onAddMultipleFlags: () -> Unit,
     onDeleteOverriddenFlags: () -> Unit,
     onOpenAppDetailsSettings: () -> Unit,
     modifier: Modifier = Modifier
@@ -50,11 +52,11 @@ fun FlagChangeDropDown(
                     enabled = true
                 )
                 DropdownMenuItem(
-                    text = { Text(text = stringResource(id = R.string.component_reset_flags)) },
-                    onClick = onDeleteOverriddenFlags,
+                    text = { Text(text = stringResource(R.string.add_a_multiple_flags)) },
+                    onClick = onAddMultipleFlags,
                     leadingIcon = {
                         Icon(
-                            painterResource(id = R.drawable.ic_reset_flags),
+                            painterResource(id = R.drawable.ic_add_flag_list),
                             contentDescription = null
                         )
                     },
@@ -66,6 +68,18 @@ fun FlagChangeDropDown(
                     leadingIcon = {
                         Icon(
                             painterResource(id = R.drawable.ic_open_app_settings),
+                            contentDescription = null
+                        )
+                    },
+                    enabled = true
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.component_reset_flags)) },
+                    onClick = onDeleteOverriddenFlags,
+                    leadingIcon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_reset_flags),
                             contentDescription = null
                         )
                     },

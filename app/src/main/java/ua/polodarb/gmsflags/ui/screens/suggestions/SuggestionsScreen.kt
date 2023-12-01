@@ -525,7 +525,7 @@ private fun NewSuggestedFlagItem(
                 Column {
                     if (noteText != null) {
                         Text(
-                            text = stringResource(R.string.note) + noteText,
+                            text = noteText,
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier
@@ -594,7 +594,7 @@ private fun NewSuggestedFlagItem(
                                 .padding(start = 16.dp, end = 16.dp, top = 8.dp)
                                 .fillMaxWidth(),
                         ) {
-                            Text(text = "Open $appInfoName")
+                            Text(text = stringResource(R.string.open, appInfoName))
                         }
                         OutlinedButton(
                             onClick = onOpenSettingsClick,
@@ -602,7 +602,7 @@ private fun NewSuggestedFlagItem(
                                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                                 .fillMaxWidth(),
                         ) {
-                            Text(text = "Open app details settings")
+                            Text(text = stringResource(id = R.string.open_app_details_settings))
                         }
                     }
                     if (flagDetails != null) {
@@ -625,7 +625,7 @@ private fun NewSuggestedFlagItem(
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = "View more information"
+                                text = stringResource(R.string.view_more_information)
                             )
                         }
                     }
@@ -654,7 +654,7 @@ private fun NewSuggestedFlagItem(
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = "Reset"
+                                text = stringResource(R.string.reset)
                             )
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -675,7 +675,7 @@ private fun NewSuggestedFlagItem(
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = "Report"
+                                text = stringResource(R.string.report)
                             )
                         }
                     }

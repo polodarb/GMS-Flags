@@ -3,6 +3,7 @@ package ua.polodarb.gmsflags.ui.screens.flagChange
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -93,7 +94,8 @@ import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 @Composable
 fun FlagChangeScreen(
     onBackPressed: () -> Unit,
-    packageName: String?
+    packageName: String?,
+    onAddMultipleFlags: (packageName: String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -106,6 +108,11 @@ fun FlagChangeScreen(
     val uiStateString = viewModel.stateString.collectAsState()
 
     val savedFlags = viewModel.stateSavedFlags.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.initAllFlags()
+        viewModel.getAllSavedFlags()
+    }
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -189,7 +196,7 @@ fun FlagChangeScreen(
             focusRequester.requestFocus()
     }
 
-    val androidPackage = viewModel.getAndroidPackage(packageName.toString())
+    val androidPackage = viewModel.androidPackage.collectAsState().value
 
     // DropDown menu
     var dropDownExpanded by remember { mutableStateOf(false) }
@@ -218,10 +225,6 @@ fun FlagChangeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getAllFlags()
-    }
-
     LaunchedEffect(
         pagerState.targetPage
     ) {
@@ -247,20 +250,11 @@ fun FlagChangeScreen(
 
     LaunchedEffect(
         viewModel.filterMethod.value,
-        viewModel.searchQuery.value,
-        showAddFlagDialog.value
+        viewModel.searchQuery.value
     ) {
         viewModel.getAllFlags()
         viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
     }
-
-    LaunchedEffect(
-        viewModel.filterMethod.value,
-        showAddFlagDialog.value
-    ) {
-        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
-    }
-
 
     // SuggestFlagsDialog
     val showSendSuggestDialog = remember { mutableStateOf(false) }
@@ -346,17 +340,19 @@ fun FlagChangeScreen(
                                 onAddFlag = {
                                     showAddFlagDialog.value = true
                                 },
+                                onAddMultipleFlags = {
+                                    dropDownExpanded = false
+                                    onAddMultipleFlags(packageName.toString())
+                                },
                                 onDeleteOverriddenFlags = {
                                     dropDownExpanded = false
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-//                                    coroutineScope.launch {
-                                        viewModel.showProgressDialog.value = true
-                                        viewModel.showFalseProgressDialog()
-                                        viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                        viewModel.initAllFlags()
-                                        viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
-                                        viewModel.filterMethod = viewModel.filterMethod
-//                                    }
+                                    viewModel.showFalseProgressDialog()
+                                    viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
+                                    viewModel.resetFilterLists()
+                                    viewModel.initAllFlags()
+                                    viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+                                    Log.e("intState", uiStateInteger.value.toString())
                                 },
                                 onOpenAppDetailsSettings = {
                                     val intent =
@@ -680,8 +676,11 @@ fun FlagChangeScreen(
                         viewModel.initFloatValues()
                         viewModel.initOverriddenFloatFlags(packageName.toString())
                         showDialog.value = false
-                        Toast.makeText(context,
-                            context.getString(R.string.toast_flag_value_is_reset), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_flag_value_is_reset),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                     haptic = haptic,
                     context = context,
@@ -872,8 +871,10 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             boolVal = if (flagBoolean == 0) "1" else "0"
                         )
-                        viewModel.initBoolValues()
-                        viewModel.initOverriddenBoolFlags(packageName.toString())
+                        viewModel.addManuallyBoolFlag(
+                            flagAddName,
+                            if (flagBoolean == 0) "1" else "0"
+                        )
                     }
 
                     1 -> {
@@ -882,8 +883,7 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             intVal = flagAddValue
                         )
-                        viewModel.initIntValues()
-                        viewModel.initOverriddenIntFlags(packageName.toString())
+                        viewModel.addManuallyIntFlag(flagAddName, flagAddValue)
                     }
 
                     2 -> {
@@ -892,8 +892,7 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             floatVal = flagAddValue
                         )
-                        viewModel.initFloatValues()
-                        viewModel.initOverriddenFloatFlags(packageName.toString())
+                        viewModel.addManuallyFloatFlag(flagAddName, flagAddValue)
                     }
 
                     3 -> {
@@ -902,13 +901,12 @@ fun FlagChangeScreen(
                             name = flagAddName,
                             stringVal = flagAddValue
                         )
-                        viewModel.initStringValues()
-                        viewModel.initOverriddenStringFlags(packageName.toString())
+                        viewModel.addManuallyStringFlag(flagAddName, flagAddValue)
                     }
                 }
+                dropDownExpanded = false
                 viewModel.filterMethod = viewModel.filterMethod
                 viewModel.clearPhenotypeCache(packageName.toString())
-                dropDownExpanded = false
                 showAddFlagDialog.value = false
                 flagAddName = ""
                 flagAddValue = ""

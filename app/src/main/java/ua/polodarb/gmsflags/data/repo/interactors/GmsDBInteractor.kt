@@ -2,6 +2,9 @@ package ua.polodarb.gmsflags.data.repo.interactors
 
 import android.content.Context
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
+import kotlinx.coroutines.flow.first
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 
 class GmsDBInteractor(
@@ -9,7 +12,7 @@ class GmsDBInteractor(
     private val repository: GmsDBRepository
 ) {
 
-    fun overrideFlag(
+    suspend fun overrideFlag(
         packageName: String,
         name: String,
         flagType: Int = 0,
@@ -21,7 +24,7 @@ class GmsDBInteractor(
         committed: Int = 0,
         clearData: Boolean = true,
         usersList: List<String>
-    ) {
+    ) = Dispatchers.IO {
         repository.deleteRowByFlagName(packageName, name)
         repository.overrideFlag(
             packageName = packageName,
@@ -52,8 +55,8 @@ class GmsDBInteractor(
         if (clearData) clearPhenotypeCache(packageName)
     }
 
-    fun clearPhenotypeCache(pkgName: String) {
-        val androidPkgName = repository.androidPackage(pkgName)
+    suspend fun clearPhenotypeCache(pkgName: String) {
+        val androidPkgName = repository.androidPackage(pkgName).first()
         Shell.cmd("am force-stop $androidPkgName").exec()
         Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
         if (pkgName.contains("finsky") || pkgName.contains("vending")) {
@@ -71,7 +74,6 @@ class GmsDBInteractor(
             Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
             Shell.cmd("am force-stop $androidPkgName").exec()
         }
-
     }
 
 }
