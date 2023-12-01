@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentListOf
@@ -45,6 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ProgressDialog
@@ -84,13 +86,13 @@ fun AddFlagList(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Adding multiple flags",
+                            text = stringResource(R.string.add_a_multiple_flags),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = onBackPressed) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = null
@@ -128,7 +130,7 @@ fun AddFlagList(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.close),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -155,7 +157,7 @@ fun AddFlagList(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Save",
+                        text = stringResource(R.string.save),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

@@ -25,9 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 
@@ -71,7 +73,7 @@ fun EnteredFlags(
     onStateChange: (Boolean) -> Unit,
     onFlagListChange: (List<String>) -> Unit
 ) {
-    AddFlagContentLabel(text = "Enter the flags")
+    AddFlagContentLabel(text = stringResource(R.string.enter_the_flags))
     AddFlagContentTextField(flagList, flagType, onFlagListChange)
     if (flagType == SelectFlagsType.BOOLEAN) {
         AddFlagContentBooleanActivate(
@@ -86,11 +88,13 @@ fun FormedFlags(
     flagList: List<String>,
     flagType: SelectFlagsType
 ) {
-    AddFlagContentLabel(text = "Formed flags")
+    AddFlagContentLabel(text = stringResource(R.string.formed_flags))
     AddFlagContentGeneratedChips(flagList, flagType)
     Box(modifier = Modifier.padding(48.dp)) {
         if (flagType == SelectFlagsType.BOOLEAN) {
-            if (flagList.isEmpty() || flagList.first().isEmpty()) NotFoundContent(customText = "No flags added")
+            if (flagList.isEmpty() || flagList.first()
+                    .isEmpty()
+            ) NotFoundContent(customText = stringResource(R.string.no_flags_added))
         } else {
             if (
                 flagList.isEmpty() ||
@@ -98,7 +102,7 @@ fun FormedFlags(
                 flagList.first().split("=").size < 2 ||
                 flagList.first().split("=")[0].isEmpty() ||
                 flagList.first().split("=")[1].isEmpty()
-            ) NotFoundContent(customText = "No flags added")
+            ) NotFoundContent(customText = stringResource(R.string.no_flags_added))
         }
     }
     Spacer(modifier = Modifier.height(16.dp))
@@ -127,7 +131,7 @@ fun AddFlagContentBooleanActivate(
             onCheckedChange = null
         )
         Text(
-            text = "Activate added flags",
+            text = stringResource(R.string.activate_added_flags),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp)
         )
@@ -160,19 +164,10 @@ fun AddFlagContentTextField(
     val supportingText = remember {
         mutableStateOf(
             when (flagType) {
-                SelectFlagsType.BOOLEAN -> "Example: 151 98352"
-                SelectFlagsType.INTEGER -> "Example: 151=1 98352=12"
-                SelectFlagsType.FLOAT -> "Example: 151=1.5 98352=0.8"
-                SelectFlagsType.STRING -> "Example: 151=abc 98352=x0x"
-            }
-        )
-    }
-
-    val placeholderText = remember {
-        mutableStateOf(
-            when (flagType) {
-                SelectFlagsType.BOOLEAN -> "Enter flags using a space"
-                else -> "Enter flags using the equal symbol"
+                SelectFlagsType.BOOLEAN -> "151=1 98352"
+                SelectFlagsType.INTEGER -> "151=1 98352=12"
+                SelectFlagsType.FLOAT -> "151=1.5 98352=0.8"
+                SelectFlagsType.STRING -> "151=abc 98352=x0x"
             }
         )
     }
@@ -184,10 +179,15 @@ fun AddFlagContentTextField(
             onFlagListChange(values)
         },
         placeholder = {
-            Text(text = placeholderText.value)
+            Text(
+                text = when (flagType) {
+                    SelectFlagsType.BOOLEAN -> stringResource(R.string.enter_flags_using_a_space)
+                    else -> stringResource(R.string.enter_flags_using_the_equal_symbol)
+                }
+            )
         },
         supportingText = {
-            Text(text = supportingText.value)
+            Text(text = stringResource(R.string.example) + supportingText.value)
         },
         modifier = Modifier
             .padding(horizontal = 24.dp)

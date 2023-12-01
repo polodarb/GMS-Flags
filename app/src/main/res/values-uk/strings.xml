@@ -119,4 +119,17 @@
     <string name="apps_search_advice">Пошук за іменем додатків</string>
     <string name="toast_flag_value_is_reset">Значення флагу скинуто!</string>
     <string name="note">Примітка: </string>
+    <string name="open">Відкрити %1$s</string>
+    <string name="view_more_information">Детальна інформація</string>
+    <string name="reset">Скинути</string>
+    <string name="report">Повідомити</string>
+    <string name="add_a_multiple_flags">Додати декілька прапорів</string>
+    <string name="save">Зберегти</string>
+    <string name="enter_the_flags">Введені прапори</string>
+    <string name="formed_flags">Сформовані прапори</string>
+    <string name="no_flags_added">Додані прапори відсутні</string>
+    <string name="activate_added_flags">Активувати прапори</string>
+    <string name="example">"Наприклад: "</string>
+    <string name="enter_flags_using_a_space">Використовуйте пробіл для введення</string>
+    <string name="enter_flags_using_the_equal_symbol">Використовуйте знак рівності для введення</string>
 </resources>

@@ -52,7 +52,7 @@ fun FlagChangeDropDown(
                     enabled = true
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Add a multiple flags") },
+                    text = { Text(text = stringResource(R.string.add_a_multiple_flags)) },
                     onClick = onAddMultipleFlags,
                     leadingIcon = {
                         Icon(
