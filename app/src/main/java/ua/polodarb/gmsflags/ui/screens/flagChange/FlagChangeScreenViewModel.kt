@@ -145,7 +145,6 @@ class FlagChangeScreenViewModel(
                     when (filterMethod.value) {
                         FilterMethod.ENABLED -> listBoolFiltered.toMap().filterByEnabled()
 
-
                         FilterMethod.DISABLED -> listBoolFiltered.toMap().filterByDisabled()
 
                         FilterMethod.CHANGED -> changedFilterBoolList
@@ -157,6 +156,9 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getIntFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -189,6 +191,9 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getFloatFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -217,6 +222,9 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getStringFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
