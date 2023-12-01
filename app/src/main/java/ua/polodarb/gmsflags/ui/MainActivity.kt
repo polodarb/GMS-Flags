@@ -55,22 +55,6 @@ class MainActivity : ComponentActivity() {
             if (!isFirstStart) setKeepOnScreenCondition { !appContext.isRootDatabaseInitialized }
         }
 
-        Log.d("intent", intent.toString())
-
-        if (intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "text/plain") {
-            Toast.makeText(this, "Load from file", Toast.LENGTH_SHORT).show()
-            val uri = intent.data
-            Log.d("intent", "data - ${intent.data}")
-            Log.d("intent", "data-encodedQuery - ${intent.data?.encodedQuery}")
-            Log.d("intent", "extras - ${intent.extras}")
-            Log.d("intent", "action - ${intent.action}")
-            Log.d("intent", "categories - ${intent.categories}")
-            Log.d("intent", "flags - ${intent.flags}")
-            Log.d("intent", "identifier - ${intent.identifier}")
-            Log.d("intent", "identifier - ${intent.`package`}")
-            Log.d("intent", "type - ${intent.type}")
-        }
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {

@@ -85,7 +85,7 @@
       "appPackage": "com.google.android.apps.messaging",
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/22",
+      "details": "https://t.me/gmsflags_content/23",
       "enabled": true
     },
     {
@@ -129,7 +129,25 @@
     }
   ],
   "secondary": [
-      {
+    {
+      "name": "Note creation AI tool in Keep",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45427377",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.keep#com.google.android.keep",
+      "appPackage": "com.google.android.keep",
+      "minAppVersionCode": 220542111,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/24",
+      "enabled": true
+    },
+    {
       "name": "Bottom search bar in Google App",
       "source": "Nail Sadykov",
       "note": "Requires Google app data reset!",
