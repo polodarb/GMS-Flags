@@ -140,56 +140,21 @@ class FlagChangeScreenViewModel(
     // Getting initialized flags
     fun getBoolFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.ENABLED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    (listBoolFiltered.toMap().filterByEnabled()).filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
+            _stateBoolean.value = Dispatchers.Default {
+                UiStates.Success(
+                    when (filterMethod.value) {
+                        FilterMethod.ENABLED -> listBoolFiltered.toMap().filterByEnabled()
 
-                    FilterMethod.DISABLED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    (listBoolFiltered.toMap().filterByDisabled()).filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
 
-                    FilterMethod.CHANGED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(changedFilterBoolList) {
-                                    changedFilterBoolList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
+                        FilterMethod.DISABLED -> listBoolFiltered.toMap().filterByDisabled()
 
-                    else -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    listBoolFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
-                }
+                        FilterMethod.CHANGED -> changedFilterBoolList
+
+                        else -> listBoolFiltered
+                    }.filter {
+                        it.key.contains(searchQuery.value, ignoreCase = true)
+                    }.toSortMap()
+                )
             }
         }
     }
