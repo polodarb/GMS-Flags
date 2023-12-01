@@ -33,10 +33,9 @@ class MainActivity : ComponentActivity() {
 
     private val githubApiService by inject<GithubApiServiceImpl>()
 
-    private val configuredFilePath =
-        "${appContext.filesDir.absolutePath}${File.separator}configured"
+    private val configuredFile = File(appContext.filesDir, "configured")
 
-    private var isFirstStart = !File(configuredFilePath).exists()
+    private var isFirstStart = !configuredFile.exists()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,5 +95,5 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    fun setFirstLaunch() = File(configuredFilePath).createNewFile()
+    fun setFirstLaunch() = configuredFile.createNewFile()
 }

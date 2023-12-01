@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
@@ -22,6 +24,8 @@ import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
 import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 import java.util.Collections
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 typealias FlagChangeUiStates = UiStates<Map<String, String>>
 typealias SavedFlagsFlow = List<SavedFlags>
@@ -85,94 +89,43 @@ class FlagChangeScreenViewModel(
 
     // Initialization of flags of all types
     private fun initBoolValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getBoolFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listBoolFiltered.putAll(uiStates.data)
-                            getBoolFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateBoolean.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateBoolean.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            loadingState = _stateBoolean,
+            errorState = _stateBoolean,
+            dataFlow = repository.getBoolFlags(pkgName, delay)
+        ) { uiStates ->
+            listBoolFiltered.putAll(uiStates.data)
+            getBoolFlags()
         }
     }
 
     fun initIntValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getIntFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listIntFiltered.putAll(uiStates.data)
-                            getIntFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateInteger.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            loadingState = _stateInteger,
+            dataFlow = repository.getIntFlags(pkgName, delay)
+        ) { uiStates ->
+            listIntFiltered.putAll(uiStates.data)
+            getIntFlags()
         }
     }
 
     fun initFloatValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getFloatFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listFloatFiltered.putAll(uiStates.data)
-                            getFloatFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateFloat.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            loadingState = _stateFloat,
+            dataFlow = repository.getFloatFlags(pkgName, delay)
+        ) { uiStates ->
+            listFloatFiltered.putAll(uiStates.data)
+            getFloatFlags()
         }
     }
 
     fun initStringValues(delay: Boolean = true) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getStringFlags(pkgName, delay).collect { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            listStringFiltered.putAll(uiStates.data)
-                            getStringFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateString.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            loadingState = _stateString,
+            dataFlow = repository.getStringFlags(pkgName, delay)
+        ) { uiStates ->
+            listStringFiltered.putAll(uiStates.data)
+            getStringFlags()
         }
     }
 
@@ -187,60 +140,25 @@ class FlagChangeScreenViewModel(
     // Getting initialized flags
     fun getBoolFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (filterMethod.value) {
-                    FilterMethod.ENABLED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    (listBoolFiltered.toMap().filterByEnabled()).filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
+            _stateBoolean.value = Dispatchers.Default {
+                UiStates.Success(
+                    when (filterMethod.value) {
+                        FilterMethod.ENABLED -> listBoolFiltered.toMap().filterByEnabled()
 
-                    FilterMethod.DISABLED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    (listBoolFiltered.toMap().filterByDisabled()).filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
+                        FilterMethod.DISABLED -> listBoolFiltered.toMap().filterByDisabled()
 
-                    FilterMethod.CHANGED -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(changedFilterBoolList) {
-                                    changedFilterBoolList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
+                        FilterMethod.CHANGED -> changedFilterBoolList
 
-                    else -> {
-                        _stateBoolean.update {
-                            UiStates.Success(
-                                synchronized(listBoolFiltered) {
-                                    listBoolFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
-                                }
-                            )
-                        }
-                    }
-                }
+                        else -> listBoolFiltered
+                    }.filterBySearchQuery()
+                )
             }
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getIntFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -273,6 +191,9 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getFloatFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -281,9 +202,7 @@ class FlagChangeScreenViewModel(
                         _stateFloat.update {
                             UiStates.Success(
                                 synchronized(changedFilterFloatList) {
-                                    changedFilterFloatList.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
+                                    changedFilterFloatList.filterBySearchQuery()
                                 }
                             )
                         }
@@ -293,9 +212,7 @@ class FlagChangeScreenViewModel(
                         _stateFloat.update {
                             UiStates.Success(
                                 synchronized(listFloatFiltered) {
-                                    listFloatFiltered.filter {
-                                        it.key.contains(searchQuery.value, ignoreCase = true)
-                                    }.toSortMap()
+                                    listFloatFiltered.filterBySearchQuery()
                                 }
                             )
                         }
@@ -305,6 +222,9 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    /**
+     * TODO зарефачить как [getBoolFlags]
+     */
     fun getStringFlags() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -336,6 +256,10 @@ class FlagChangeScreenViewModel(
             }
         }
     }
+
+    private fun Map<String, String>.filterBySearchQuery() = filter {
+        it.key.contains(searchQuery.value, ignoreCase = true)
+    }.toSortMap()
 
     fun getAllFlags() {
         getBoolFlags()
@@ -387,114 +311,65 @@ class FlagChangeScreenViewModel(
     }
 
     fun updateFloatFlagValue(flagName: String, newValue: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _stateFloat.update {
-                    val currentState = it
-                    if (currentState is UiStates.Success) {
-                        val updatedData = currentState.data.toMutableMap()
-                        updatedData[flagName] = newValue
-                        currentState.copy(data = updatedData.toSortMap())
-                    } else {
-                        currentState
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _stateFloat.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = newValue
+                Dispatchers.Main {
+                    _stateFloat.value = currentState.copy(data = updatedData.toSortMap())
                 }
-
                 listFloatFiltered.replace(flagName, newValue)
             }
         }
     }
 
     fun updateStringFlagValue(flagName: String, newValue: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _stateString.update {
-                    val currentState = it
-                    if (currentState is UiStates.Success) {
-                        val updatedData = currentState.data.toMutableMap()
-                        updatedData[flagName] = newValue
-                        currentState.copy(data = updatedData.toSortMap())
-                    } else {
-                        currentState
-                    }
-                }
-
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _stateString.value
+            if (currentState is UiStates.Success) {
+                val updatedData = currentState.data.toMutableMap()
+                updatedData[flagName] = newValue
+                _stateString.value = currentState.copy(data = updatedData.toSortMap())
                 listStringFiltered.replace(flagName, newValue)
             }
         }
     }
 
-
     // Get overridden flags
     fun initOverriddenBoolFlags(pkgName: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getOverriddenBoolFlagsByPackage(pkgName).collect {
-                    when (val data = it) {
-                        is UiStates.Success -> {
-                            changedFilterBoolList.clear()
-                            changedFilterBoolList.putAll(data.data)
-                            listBoolFiltered.putAll(data.data)
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateBoolean.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateBoolean.value = UiStates.Error()
-                        }
-                    }
-                }
+            collectFlagsFlow(
+                repository.getOverriddenBoolFlagsByPackage(pkgName),
+                loadingState = _stateBoolean,
+                errorState = _stateBoolean
+            ) { data ->
+                changedFilterBoolList.clear()
+                changedFilterBoolList.putAll(data.data)
+                listBoolFiltered.putAll(data.data)
             }
-        }
     }
 
     fun initOverriddenIntFlags(pkgName: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getOverriddenIntFlagsByPackage(pkgName).collect {
-                    when (val data = it) {
-                        is UiStates.Success -> {
-                            changedFilterIntList.clear()
-                            changedFilterIntList.putAll(data.data)
-                            listIntFiltered.putAll(data.data)
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateInteger.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateInteger.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            dataFlow = repository.getOverriddenIntFlagsByPackage(pkgName),
+            loadingState = _stateInteger,
+            errorState = _stateInteger
+        ) { data ->
+            changedFilterIntList.clear()
+            changedFilterIntList.putAll(data.data)
+            listIntFiltered.putAll(data.data)
         }
     }
 
     fun initOverriddenFloatFlags(pkgName: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getOverriddenFloatFlagsByPackage(pkgName).collect {
-                    when (val data = it) {
-                        is UiStates.Success -> {
-                            changedFilterFloatList.clear()
-                            changedFilterFloatList.putAll(data.data)
-                            listFloatFiltered.putAll(data.data)
-                        }
-
-                        is UiStates.Loading -> {
-                            _stateFloat.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _stateFloat.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
+        collectFlagsFlow(
+            dataFlow = repository.getOverriddenFloatFlagsByPackage(pkgName),
+            loadingState = _stateFloat,
+            errorState = _stateFloat
+        ) { data ->
+            changedFilterFloatList.clear()
+            changedFilterFloatList.putAll(data.data)
+            listFloatFiltered.putAll(data.data)
         }
     }
 
@@ -531,45 +406,32 @@ class FlagChangeScreenViewModel(
 
     // Manually add bool flag
     fun addManuallyBoolFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateBoolean.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateBoolean.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateBoolean, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyIntFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateInteger.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateInteger.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateInteger, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyFloatFlag(flagName: String, flagValue: String) {
-        viewModelScope.launch {
-            val currentState = _stateFloat.value
-            if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
-                updatedData[flagName] = flagValue
-                _stateFloat.value = currentState.copy(data = updatedData.toSortMap())
-            }
-        }
+        addManuallyFlag(state = _stateFloat, flagName = flagName, flagValue = flagValue)
     }
 
     fun addManuallyStringFlag(flagName: String, flagValue: String) {
+        addManuallyFlag(state = _stateString, flagName = flagName, flagValue = flagValue)
+    }
+
+    private fun addManuallyFlag(
+        state: MutableStateFlow<UiStates<Map<String, String>>>,
+        flagName: String,
+        flagValue: String
+    ) {
         viewModelScope.launch {
-            val currentState = _stateString.value
+            val currentState = state.value
             if (currentState is UiStates.Success) {
-                val updatedData = currentState.data.toMutableMap()
+                val updatedData = currentState.data.toSortMap()
                 updatedData[flagName] = flagValue
-                _stateString.value = currentState.copy(data = updatedData.toSortMap())
+                state.value = currentState.copy(data = updatedData)
             }
         }
     }
@@ -637,24 +499,22 @@ class FlagChangeScreenViewModel(
     }
 
     fun disableSelectedFlag() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                listBoolFiltered.forEach { (key, value) ->
-                    if (selectedItems.contains(key) && value == "1") {
-                        overrideFlag(
-                            packageName = pkgName,
-                            key,
-                            boolVal = "0",
-                            clearData = false
-                        )
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            listBoolFiltered.forEach { (key, value) ->
+                if (selectedItems.contains(key) && value == "1") {
+                    overrideFlag(
+                        packageName = pkgName,
+                        key,
+                        boolVal = "0",
+                        clearData = false
+                    )
                 }
-                clearPhenotypeCache(pkgName)
-                if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
-                    turnOffAllBoolFlags()
-                } else {
-                    updateBoolFlagValues(selectedItems, "0")
-                }
+            }
+            clearPhenotypeCache(pkgName)
+            if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+                turnOffAllBoolFlags()
+            } else {
+                updateBoolFlagValues(selectedItems, "0")
             }
         }
     }
@@ -662,10 +522,8 @@ class FlagChangeScreenViewModel(
     // Init users
     private fun initUsers() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.getUsers().collect {
-                    usersList.addAll(it)
-                }
+            repository.getUsers().collect {
+                usersList.addAll(it)
             }
         }
     }
@@ -697,26 +555,24 @@ class FlagChangeScreenViewModel(
         clearData: Boolean = true
     ) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                gmsDBInteractor.overrideFlag(
-                    packageName = packageName,
-                    name = name,
-                    flagType = flagType,
-                    intVal = intVal,
-                    boolVal = boolVal,
-                    floatVal = floatVal,
-                    stringVal = stringVal,
-                    extensionVal = extensionVal,
-                    committed = committed,
-                    clearData = clearData,
-                    usersList = usersList
-                )
-            }
-            changedFilterBoolList[name] = boolVal
-            changedFilterIntList[name] = intVal
-            changedFilterFloatList[name] = floatVal
-            changedFilterStringList[name] = stringVal
+            gmsDBInteractor.overrideFlag(
+                packageName = packageName,
+                name = name,
+                flagType = flagType,
+                intVal = intVal,
+                boolVal = boolVal,
+                floatVal = floatVal,
+                stringVal = stringVal,
+                extensionVal = extensionVal,
+                committed = committed,
+                clearData = clearData,
+                usersList = usersList
+            )
         }
+        changedFilterBoolList[name] = boolVal
+        changedFilterIntList[name] = intVal
+        changedFilterFloatList[name] = floatVal
+        changedFilterStringList[name] = stringVal
     }
 
     fun clearPhenotypeCache(pkgName: String) {
@@ -729,140 +585,140 @@ class FlagChangeScreenViewModel(
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteOverriddenFlagByPackage(packageName)
-            }
+            repository.deleteOverriddenFlagByPackage(packageName)
         }
     }
 
     // Reset int/float/string flags to default value
     fun resetOtherTypesFlagsToDefault(flag: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.deleteRowByFlagName(
-                    packageName = pkgName,
-                    name = flag
-                )
-            }
+            repository.deleteRowByFlagName(
+                packageName = pkgName,
+                name = flag
+            )
         }
     }
 
     // Saved flags in local DB
     fun getAllSavedFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.getSavedFlags().collect {
-                    _stateSavedFlags.value = it
-                }
+            roomRepository.getSavedFlags().collect {
+                _stateSavedFlags.value = it
             }
         }
     }
 
     fun saveFlag(flagName: String, pkgName: String, flagType: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.saveFlag(flagName, pkgName, flagType)
-            }
+            roomRepository.saveFlag(flagName, pkgName, flagType)
         }
     }
 
     fun deleteSavedFlag(flagName: String, pkgName: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                roomRepository.deleteSavedFlag(flagName, pkgName)
-            }
+            roomRepository.deleteSavedFlag(flagName, pkgName)
         }
     }
 
     fun saveSelectedFlags() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                selectedItems.forEach {
-                    saveFlag(
-                        it,
-                        pkgName,
-                        SelectFlagsType.BOOLEAN.name
-                    )
-                }
+            selectedItems.forEach {
+                saveFlag(
+                    it,
+                    pkgName,
+                    SelectFlagsType.BOOLEAN.name
+                )
             }
         }
     }
-
 
     // Select all items by one click
     fun selectAllItems() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (val result = stateBoolean.value) {
-                    is UiStates.Success -> {
-                        selectedItems.clear()
-                        selectedItems.addAll(result.data.keys)
-                    }
-
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
-
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
-                    }
-                }
+            handleUiStates(
+                stateBoolean.value,
+                loadingState = _stateBoolean,
+                errorState = _stateBoolean
+            ) { result ->
+                selectedItems.clear()
+                selectedItems.addAll(result.data.keys)
             }
         }
     }
-
 
     // ProgressDialog
     val showProgressDialog = mutableStateOf(false)
     fun showFalseProgressDialog(customCount: Int? = null) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (stateBoolean.value) {
-                    is UiStates.Success -> {
-                        showProgressDialog.value = true
-                        val flagsCount = customCount
-                            ?: (stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size
-                        delay(
-                            when {
-                                flagsCount <= 50 -> 0
-                                flagsCount in 51..150 -> 3000
-                                flagsCount in 151..500 -> 5000
-                                flagsCount in 501..1000 -> 7000
-                                flagsCount in 1001..1500 -> 9000
-                                flagsCount > 1501 -> 10000
-                                else -> 0
-                            }
-                        )
-                        showProgressDialog.value = false
+            handleUiStates(
+                stateBoolean.value,
+                loadingState = _stateBoolean,
+                errorState = _stateBoolean
+            ) { result ->
+                showProgressDialog.value = true
+                val flagsCount = customCount ?: result.data.keys.size
+                delay(
+                    when {
+                        flagsCount <= 50 -> 0
+                        flagsCount in 51..150 -> 3000
+                        flagsCount in 151..500 -> 5000
+                        flagsCount in 501..1000 -> 7000
+                        flagsCount in 1001..1500 -> 9000
+                        flagsCount > 1501 -> 10000
+                        else -> 0
                     }
-
-                    is UiStates.Loading -> {
-                        _stateBoolean.value = UiStates.Loading()
-                    }
-
-                    is UiStates.Error -> {
-                        _stateBoolean.value = UiStates.Error()
-                    }
-                }
+                )
+                showProgressDialog.value = false
             }
+        }
+    }
+
+    private fun <T> collectFlagsFlow(
+        dataFlow: Flow<UiStates<T>>,
+        loadingState: MutableStateFlow<FlagChangeUiStates>,
+        errorState: MutableStateFlow<FlagChangeUiStates> = _stateInteger,
+        coroutineContext: CoroutineContext = EmptyCoroutineContext,
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
+    ) {
+        viewModelScope.launch(coroutineContext) {
+            dataFlow.collect { uiStates ->
+                handleUiStates(
+                    uiStates = uiStates,
+                    loadingState = loadingState,
+                    errorState = errorState,
+                    onSuccess = onSuccess
+                )
+            }
+        }
+    }
+
+    private suspend fun <T> handleUiStates(
+        uiStates: UiStates<T>,
+        loadingState: MutableStateFlow<FlagChangeUiStates>,
+        errorState: MutableStateFlow<FlagChangeUiStates> = _stateInteger,
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
+    ) {
+        when (uiStates) {
+            is UiStates.Success -> onSuccess(uiStates)
+
+            is UiStates.Loading -> loadingState.value = UiStates.Loading()
+
+            is UiStates.Error -> errorState.value = UiStates.Error()
         }
     }
 
     fun resetFilterLists() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                listBoolFiltered.clear()
-                listIntFiltered.clear()
-                listFloatFiltered.clear()
-                listStringFiltered.clear()
-                changedFilterBoolList.clear()
-                changedFilterIntList.clear()
-                changedFilterFloatList.clear()
-                changedFilterStringList.clear()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            listBoolFiltered.clear()
+            listIntFiltered.clear()
+            listFloatFiltered.clear()
+            listStringFiltered.clear()
+            changedFilterBoolList.clear()
+            changedFilterIntList.clear()
+            changedFilterFloatList.clear()
+            changedFilterStringList.clear()
         }
     }
-
 }
 
 enum class FilterMethod : MutableState<FilterMethod> {

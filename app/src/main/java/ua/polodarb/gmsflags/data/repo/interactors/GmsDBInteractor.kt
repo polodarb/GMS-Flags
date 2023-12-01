@@ -2,6 +2,8 @@ package ua.polodarb.gmsflags.data.repo.interactors
 
 import android.content.Context
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.flow.first
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 
@@ -22,7 +24,7 @@ class GmsDBInteractor(
         committed: Int = 0,
         clearData: Boolean = true,
         usersList: List<String>
-    ) {
+    ) = Dispatchers.IO {
         repository.deleteRowByFlagName(packageName, name)
         repository.overrideFlag(
             packageName = packageName,
