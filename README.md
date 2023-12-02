@@ -6,8 +6,7 @@
 
 ![Banner](gf_banner.png)
 ![Root](gf_root.png)
-# Description
-GMS Flags is a tool for changing parameters in Google services to activate or deactivate certain functionality in Google applications.
+
 ## Features:
 - **Suggestions screen** - This is a screen that prompts the user to activate some interesting flags. The suggested flags allow the user to read some notes, open the application itself and its settings. It is possible to reset the flag value, see more detailed information or report some problem to the developer.
 - **Apps screen** - This screen generates a list of applications and their associated list of packages with flags within them. This allows you to quickly and conveniently find the appropriate flag.
@@ -24,6 +23,10 @@ GMS Flags is a tool for changing parameters in Google services to activate or de
      - Ability to delete all flags changes, e.g. if it caused any problems.
 - **Add Multiple Flags screen** - Ability to record a large set of flags of all available types at once.
 - **Settings screen** - Settings allow you to delete ALL overwritten flags and saved flags/packages. It is also possible to assign a start screen when launching the application and the ability to view more detailed information about the GMS Flags.
+
+## Note
+> [!IMPORTANT]
+> It usually takes 1 to 3 force-stops for a flag to be applied. If the flag still does not apply, you should wait 24 hours or reset the application data. 
 
 # Download
 [<img src="gh_download.png"
