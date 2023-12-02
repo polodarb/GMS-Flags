@@ -130,6 +130,29 @@
   ],
   "secondary": [
     {
+      "name": "Unsubscribe button & bottom reply bar in Gmail",
+      "source": "AssembleDebug",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45410707",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45417569",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "gmail_android.device#com.google.android.gm",
+      "appPackage": "com.google.android.gm",
+      "minAppVersionCode": 64264425,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gappsleaks/395",
+      "enabled": true
+    },
+    {
       "name": "Note creation AI tool in Keep",
       "source": "Danyil Kobzar",
       "note": null,
