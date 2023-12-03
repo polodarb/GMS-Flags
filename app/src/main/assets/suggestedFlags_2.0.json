@@ -168,7 +168,7 @@
       "minAppVersionCode": 220542111,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/24",
-      "enabled": true
+      "enabled": false
     },
     {
       "name": "Bottom search bar in Google App",
