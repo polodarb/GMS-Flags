@@ -130,7 +130,7 @@
   ],
   "secondary": [
       {
-      "name": "Enables auto-archive option in the Documents section in Photos",
+      "name": "Enable archive option in the Documents section in Photos",
       "source": "Hridayan",
       "note": "Auto-archive after 30 days option in albums for the Documents section. This section is located on the search screen. This does not work for other albums",
       "flags": [
