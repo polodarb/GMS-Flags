@@ -130,6 +130,34 @@
   ],
   "secondary": [
       {
+      "name": "Enable stack similar photos feature in Photos",
+      "source": "Hridayan",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45412622",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45412900",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "45413534",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/28",
+      "enabled": true
+      },
+      {
       "name": "Enable archive option in the Documents section in Photos",
       "source": "Hridayan",
       "note": "Auto-archive after 30 days option in albums for the Documents section. This section is located on the search screen. This does not work for other albums",
