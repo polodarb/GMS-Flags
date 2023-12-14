@@ -130,6 +130,24 @@
   ],
   "secondary": [
       {
+      "name": "Month Navigation Chips in Calendar",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "MonthNavigationChips__enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.calendar",
+      "appPackage": "com.google.android.calendar",
+      "minAppVersionCode": 2017302984,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/30",
+      "enabled": true
+      },
+      {
       "name": "Enable stack similar photos feature in Photos",
       "source": "Hridayan",
       "note": null,
