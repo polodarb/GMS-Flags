@@ -155,4 +155,5 @@
     <string name="example">"Example: "</string>
     <string name="enter_flags_using_a_space">Enter flags using a space</string>
     <string name="enter_flags_using_the_equal_symbol">Enter flags using the equal symbol</string>
+    <string name="nav_bar_updates">Updates</string>
 </resources>
