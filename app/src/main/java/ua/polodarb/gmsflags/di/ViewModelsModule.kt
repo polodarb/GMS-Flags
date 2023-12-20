@@ -3,7 +3,7 @@ package ua.polodarb.gmsflags.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.ui.screens.apps.AppsScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.search.SearchScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddMultipleFlagsViewModel
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
@@ -30,7 +30,7 @@ val viewModelsModule = module {
     }
 
     viewModel {
-        AppsScreenViewModel(
+        SearchScreenViewModel(
             repository = get()
         )
     }

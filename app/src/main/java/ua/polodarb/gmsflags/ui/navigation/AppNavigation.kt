@@ -16,7 +16,7 @@ import androidx.navigation.compose.composable
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
-import ua.polodarb.gmsflags.ui.screens.apps.AppsScreen
+import ua.polodarb.gmsflags.ui.screens.search.AppsScreen
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
 import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreen

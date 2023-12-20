@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.apps
+package ua.polodarb.gmsflags.ui.screens.search
 
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -81,7 +80,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.apps.dialog.AppsScreenDialog
+import ua.polodarb.gmsflags.ui.screens.search.dialog.AppsScreenDialog
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -90,7 +89,7 @@ fun AppsScreen(
     onSettingsClick: () -> Unit,
     onPackagesClick: () -> Unit,
     onPackageItemClick: (packageName: String) -> Unit,
-    viewModel: AppsScreenViewModel = koinViewModel()
+    viewModel: SearchScreenViewModel = koinViewModel()
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -273,6 +272,9 @@ fun AppsScreen(
                             state = listState,
                             modifier = Modifier.fillMaxSize()
                         ) {
+                            item {
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
                             this.items(appsList) { item: AppInfo ->
                                 AppListItem(
                                     appName = item.appName,

@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.apps
+package ua.polodarb.gmsflags.ui.screens.search
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -20,7 +20,7 @@ import ua.polodarb.gmsflags.ui.screens.UiStates
 typealias AppInfoList = UiStates<PersistentList<AppInfo>>
 typealias AppDialogList = UiStates<PersistentList<String>>
 
-class AppsScreenViewModel(
+class SearchScreenViewModel(
     private val repository: AppsListRepository
 ) : ViewModel() {
 
