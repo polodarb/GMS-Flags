@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,6 +30,7 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var analytics: FirebaseAnalytics
     private val appContext = get<Context>() as GMSApplication
 
@@ -60,18 +63,10 @@ class MainActivity : ComponentActivity() {
         if (intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "text/plain") {
             Toast.makeText(this, "Load from file", Toast.LENGTH_SHORT).show()
             val uri = intent.data
-            Log.d("intent", "data - ${intent.data}")
-            Log.d("intent", "data-encodedQuery - ${intent.data?.encodedQuery}")
-            Log.d("intent", "extras - ${intent.extras}")
-            Log.d("intent", "action - ${intent.action}")
-            Log.d("intent", "categories - ${intent.categories}")
-            Log.d("intent", "flags - ${intent.flags}")
-            Log.d("intent", "identifier - ${intent.identifier}")
-            Log.d("intent", "identifier - ${intent.`package`}")
-            Log.d("intent", "type - ${intent.type}")
         }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         setContent {
             GMSFlagsTheme {

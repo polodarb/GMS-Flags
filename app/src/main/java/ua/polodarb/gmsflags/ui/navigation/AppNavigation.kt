@@ -35,7 +35,7 @@ sealed class NavBarItem(
     )
 
     data object Apps : NavBarItem(
-        title = R.string.nav_bar_apps,
+        title = R.string.nav_bar_search,
         iconActive = R.drawable.ic_navbar_apps,
         iconInactive = null,
         screenRoute = "apps"

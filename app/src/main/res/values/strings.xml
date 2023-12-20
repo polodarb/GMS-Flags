@@ -77,7 +77,7 @@
 
     <!-- Navigation Bar -->
     <string name="nav_bar_suggestions">Suggestions</string>
-    <string name="nav_bar_apps">Apps</string>
+    <string name="nav_bar_search">Search</string>
     <string name="nav_bar_saved">Saved</string>
     <string name="nav_bar_history">History</string>
 
