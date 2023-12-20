@@ -74,6 +74,7 @@ import my.nanihadesuka.compose.LazyColumnScrollbar
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
+import ua.polodarb.gmsflags.ui.components.buttons.fab.GFlagsFab
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
@@ -238,9 +239,10 @@ fun AppsScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
+            GFlagsFab(
                 onClick = { /*TODO*/ },
-                containerColor = MaterialTheme.colorScheme.primary,
+                visible = if (state == 0) true else false,
+                backgroundColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.offset(x = (-12).dp, y = 12.dp)
             ) {
                 Icon(
