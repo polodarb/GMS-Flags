@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.R
@@ -151,24 +152,30 @@ private fun NavGraphBuilder.rootRequestComposable(navController: NavHostControll
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 isButtonLoading = true
 
-                try {
-                    gmsApplication.initShell()
-                } catch (_: Exception) { }
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        gmsApplication.initShell()
+                    } catch (_: Exception) {
+                    }
 
-                if (Shell.getShell().isRoot) {
-                    gmsApplication.initDB()
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(700)
-                        navController.navigate(ScreensDestination.NotificationRequest.screenRoute)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if (Shell.getShell().isRoot) {
+                            withContext(Dispatchers.Main) {
+                                gmsApplication.initDB()
+                                delay(700)
+                                navController.navigate(ScreensDestination.NotificationRequest.screenRoute)
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                delay(150)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                isButtonLoading = false
+                                Toast.makeText(gmsApplication, "ROOT IS DENIED!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                } else {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                        delay(150)
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                    }
-                    isButtonLoading = false
-                    Toast.makeText(gmsApplication, "ROOT IS DENIED!", Toast.LENGTH_SHORT).show()
+
                 }
             },
             isButtonLoading = isButtonLoading
@@ -191,7 +198,8 @@ private fun NavGraphBuilder.notificationRequestComposable(navController: NavHost
             onSkip = {
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 mainActivity.setFirstLaunch()
-                Toast.makeText(mainActivity, R.string.notifications_toast, Toast.LENGTH_SHORT).show()
+                Toast.makeText(mainActivity, R.string.notifications_toast, Toast.LENGTH_SHORT)
+                    .show()
                 navController.navigate(ScreensDestination.Root.screenRoute)
             },
             onNotificationRequest = {
