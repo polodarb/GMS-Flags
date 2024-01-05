@@ -37,8 +37,8 @@ fun GFlagsTab(
         },
 
         modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 8.dp)
-            .height(36.dp)
+            .padding(horizontal = 4.dp, vertical = 12.dp)
+            .height(40.dp)
             .clip(MaterialTheme.shapes.extraLarge),
         enabled = enabled
     )

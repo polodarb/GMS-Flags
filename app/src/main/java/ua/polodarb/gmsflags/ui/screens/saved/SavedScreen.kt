@@ -66,7 +66,6 @@ import ua.polodarb.gmsflags.R
 @Composable
 fun SavedScreen(
     onSettingsClick: () -> Unit,
-    onPackagesClick: () -> Unit,
     onSavedPackageClick: (packageName: String) -> Unit,
     onSavedFlagClick: (packageName: String, flagName: String, type: String) -> Unit,
 ) {
@@ -80,9 +79,15 @@ fun SavedScreen(
 
     // Tabs
     var state by rememberSaveable { mutableIntStateOf(0) }
-    val titles = persistentListOf(stringResource(R.string.saved_packages), stringResource(R.string.saved_flags))
+    val titles = persistentListOf(
+        stringResource(R.string.saved_packages),
+        stringResource(R.string.saved_flags)
+    )
     val indicator = @Composable { tabPositions: List<TabPosition> ->
-        CustomTabIndicatorAnimation(tabPositions = tabPositions.toPersistentList(), selectedTabIndex = state)
+        CustomTabIndicatorAnimation(
+            tabPositions = tabPositions.toPersistentList(),
+            selectedTabIndex = state
+        )
     }
     val pagerState = rememberPagerState(pageCount = {
         2
@@ -112,15 +117,6 @@ fun SavedScreen(
 //                                contentDescription = "Localized description"
 //                            )
 //                        }
-                        IconButton(onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            onPackagesClick()
-                        }) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_packages),
-                                contentDescription = null
-                            )
-                        }
                         IconButton(onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             onSettingsClick()
@@ -192,6 +188,7 @@ fun SavedScreen(
                     viewModel = viewModel,
                     onPackageClick = onSavedPackageClick
                 )
+
                 1 -> SavedFlagsScreen(
                     savedFlagsList = savedFlags.value.reversed(),
                     viewModel = viewModel,
@@ -216,7 +213,10 @@ fun CustomTabIndicator(color: Color, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CustomTabIndicatorAnimation(tabPositions: PersistentList<TabPosition>, selectedTabIndex: Int) {
+fun CustomTabIndicatorAnimation(
+    tabPositions: PersistentList<TabPosition>,
+    selectedTabIndex: Int
+) {
     val transition = updateTransition(selectedTabIndex, label = "")
     val indicatorStart by transition.animateDp(
         transitionSpec = {
@@ -239,7 +239,7 @@ fun CustomTabIndicatorAnimation(tabPositions: PersistentList<TabPosition>, selec
             }
         },
         label = ""
-    ) { 
+    ) {
         tabPositions[it].right
     }
 

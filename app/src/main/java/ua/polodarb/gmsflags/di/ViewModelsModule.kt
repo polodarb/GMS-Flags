@@ -31,7 +31,9 @@ val viewModelsModule = module {
 
     viewModel {
         SearchScreenViewModel(
-            repository = get()
+            repository = get(),
+            gmsRepository = get(),
+            roomRepository = get()
         )
     }
 

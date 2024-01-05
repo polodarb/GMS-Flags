@@ -15,18 +15,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
+import ua.polodarb.gmsflags.data.repo.GmsDBRepository
+import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
 typealias AppInfoList = UiStates<PersistentList<AppInfo>>
 typealias AppDialogList = UiStates<PersistentList<String>>
+typealias PackagesScreenUiStates = UiStates<Map<String, String>>
 
 class SearchScreenViewModel(
-    private val repository: AppsListRepository
+    private val repository: AppsListRepository,
+    private val gmsRepository: GmsDBRepository,
+    private val roomRepository: RoomDBRepository
 ) : ViewModel() {
 
-    private val _state =
+    // Apps List
+    private val _appsListUiState =
         MutableStateFlow<AppInfoList>(UiStates.Loading())
-    val state: StateFlow<AppInfoList> = _state.asStateFlow()
+    val appsListUiState: StateFlow<AppInfoList> = _appsListUiState.asStateFlow()
 
     private val _dialogDataState =
         MutableStateFlow<AppDialogList>(UiStates.Loading())
@@ -36,12 +42,33 @@ class SearchScreenViewModel(
     val dialogPackage: StateFlow<String> = _dialogPackage.asStateFlow()
 
 
-    var searchQuery = mutableStateOf("")
+    // Packages List
+    private val _packagesListUiState = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
+    val packagesListUiState: StateFlow<PackagesScreenUiStates> = _packagesListUiState.asStateFlow()
 
-    private val listAppsFiltered: MutableList<AppInfo> = mutableListOf()
+    private val _stateSavedPackages =
+        MutableStateFlow<List<String>>(emptyList())
+    val stateSavedPackages: StateFlow<List<String>> = _stateSavedPackages.asStateFlow()
+
+
+    // All Flags List // TODO
+//    private val _allFlagsListUiState = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
+//    val allFlagsListUiState: StateFlow<PackagesScreenUiStates> = _allFlagsListUiState.asStateFlow()
+
+    // Search and filter
+    var appsSearchQuery = mutableStateOf("")
+    private val appsListFiltered: MutableList<AppInfo> = mutableListOf()
+
+    var packagesSearchQuery = mutableStateOf("")
+    private val packagesListFiltered: MutableMap<String, String> = mutableMapOf()
+
+    var allFlagsSearchQuery = mutableStateOf("")
+    private val allFlagsListFiltered: MutableMap<String, String> = mutableMapOf()
 
     init {
         initAllInstalledApps()
+        initGmsPackagesList()
+        getAllSavedPackages()
     }
 
     fun setPackageToDialog(pkgName: String) {
@@ -52,6 +79,9 @@ class SearchScreenViewModel(
         _dialogDataState.value = UiStates.Success(persistentListOf())
     }
 
+    /**
+     * **AppsListScreen** - get list of packages in app
+     */
     fun getListByPackages(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -74,22 +104,25 @@ class SearchScreenViewModel(
         }
     }
 
+    /**
+     * **AppsListScreen** - init list of all installed apps
+     */
     private fun initAllInstalledApps() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
                     when (uiStates) {
                         is UiStates.Success -> {
-                            listAppsFiltered.addAll(uiStates.data)
+                            appsListFiltered.addAll(uiStates.data)
                             getAllInstalledApps()
                         }
 
                         is UiStates.Loading -> {
-                            _state.value = UiStates.Loading()
+                            _appsListUiState.value = UiStates.Loading()
                         }
 
                         is UiStates.Error -> {
-                            _state.value = UiStates.Error()
+                            _appsListUiState.value = UiStates.Error()
                         }
                     }
                 }
@@ -97,13 +130,75 @@ class SearchScreenViewModel(
         }
     }
 
+    /**
+     * **AppsListScreen** - get list of all installed apps
+     */
     fun getAllInstalledApps() {
-        if (listAppsFiltered.isNotEmpty()) {
-            _state.value = UiStates.Success(
-                listAppsFiltered.filter {
-                    it.appName.contains(searchQuery.value, ignoreCase = true)
+        if (appsListFiltered.isNotEmpty()) {
+            _appsListUiState.value = UiStates.Success(
+                appsListFiltered.filter {
+                    it.appName.contains(appsSearchQuery.value, ignoreCase = true)
                 }.toPersistentList()
             )
+        }
+    }
+
+    private fun initGmsPackagesList() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                gmsRepository.getGmsPackages().collect { uiState ->
+                    when (uiState) {
+                        is UiStates.Success -> {
+                            packagesListFiltered.putAll(uiState.data)
+                            getGmsPackagesList()
+                        }
+
+                        is UiStates.Loading -> {
+                            _packagesListUiState.value = UiStates.Loading()
+                        }
+
+                        is UiStates.Error -> {
+                            _packagesListUiState.value = UiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getGmsPackagesList() {
+        if (packagesListFiltered.isNotEmpty()) {
+            _packagesListUiState.value = UiStates.Success(
+                packagesListFiltered.filter {
+                    it.key.contains(packagesSearchQuery.value, ignoreCase = true)
+                }.toSortedMap()
+            )
+        }
+    }
+
+    private fun getAllSavedPackages() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.getSavedPackages().collect {
+                    _stateSavedPackages.value = it
+                }
+            }
+        }
+    }
+
+    fun savePackage(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.savePackage(pkgName)
+            }
+        }
+    }
+
+    fun deleteSavedPackage(pkgName: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                roomRepository.deleteSavedPackage(pkgName)
+            }
         }
     }
 }

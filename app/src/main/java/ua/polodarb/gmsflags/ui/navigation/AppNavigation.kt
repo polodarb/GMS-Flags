@@ -117,9 +117,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 }
             )
         }
@@ -128,10 +125,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                onDialogPackageItemClick = {
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                    )
                 },
-                onPackageItemClick = {
+                onAllPackagesItemClick = {
                     parentNavController.navigate(
                         ScreensDestination.FlagChange.createRoute(Uri.encode(it))
                     )
@@ -142,9 +141,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             SavedScreen(
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 },
                 onSavedPackageClick = {
                     parentNavController.navigate(
@@ -162,9 +158,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             UpdatesScreen(
 //                onSettingsClick = {
 //                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-//                },
-//                onPackagesClick = {
-//                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
 //                }
             )
         }
