@@ -5,7 +5,7 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.SettingsRepository
-import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 
 val repositoryModule = module {
 
@@ -37,7 +37,7 @@ val repositoryModule = module {
     }
 
     single {
-        MergeOverriddenFlagsInteractor(
+        MergeFlagsMapper(
             context = get()
         )
     }

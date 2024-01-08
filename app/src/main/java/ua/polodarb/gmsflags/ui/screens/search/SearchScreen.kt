@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -167,18 +169,18 @@ fun AppsScreen(
                                 if (!searchIconState) {
                                     when (pagerState.currentPage) {
                                         0 -> {
-                                            viewModel.appsSearchQuery.value = ""
                                             viewModel.getAllInstalledApps()
                                         }
+
                                         1 -> {
-                                            viewModel.packagesSearchQuery.value = ""
                                             viewModel.getGmsPackagesList()
                                         }
+
                                         else -> {
-                                            viewModel.allFlagsSearchQuery.value = ""
                                             // viewModel.getAllFlags()
                                         }
                                     }
+                                    viewModel.clearSearchQuery()
                                 }
                             },
                             modifier = if (searchIconState) Modifier
@@ -239,18 +241,18 @@ fun AppsScreen(
                         iconOnClick = {
                             when (pagerState.currentPage) {
                                 0 -> {
-                                    viewModel.appsSearchQuery.value = ""
                                     viewModel.getAllInstalledApps()
                                 }
+
                                 1 -> {
-                                    viewModel.packagesSearchQuery.value = ""
                                     viewModel.getGmsPackagesList()
                                 }
+
                                 2 -> {
-                                    viewModel.allFlagsSearchQuery.value = ""
                                     // viewModel.getAllFlags()
                                 }
                             }
+                            viewModel.clearSearchQuery()
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
@@ -261,15 +263,38 @@ fun AppsScreen(
         },
         floatingActionButton = {
             GFlagsFab(
-                onClick = { /*TODO*/ },
-                visible = if (state == 0) true else false,
+                onClick = {
+                    when (state) {
+                        0 -> {
+                            // TODO
+                        }
+
+                        1 -> {
+                            // TODO
+                        }
+                    }
+                },
                 backgroundColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.offset(x = (-12).dp, y = 12.dp)
+                visible = state != 2,
+                modifier = Modifier.offset(y = 24.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_sort),
-                    contentDescription = null
-                )
+                AnimatedContent(targetState = state, label = "fab") {
+                    when (it) {
+                        0 -> {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_sort),
+                                contentDescription = null
+                            )
+                        }
+
+                        1 -> {
+                            Icon(
+                                imageVector = Icons.Rounded.Add,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
             }
         }
     ) { paddingValues ->

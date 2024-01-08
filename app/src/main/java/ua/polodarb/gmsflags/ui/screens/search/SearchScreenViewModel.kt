@@ -65,6 +65,12 @@ class SearchScreenViewModel(
     var allFlagsSearchQuery = mutableStateOf("")
     private val allFlagsListFiltered: MutableMap<String, String> = mutableMapOf()
 
+    fun clearSearchQuery() {
+        appsSearchQuery.value = ""
+        packagesSearchQuery.value = ""
+        allFlagsSearchQuery.value = ""
+    }
+
     init {
         initAllInstalledApps()
         initGmsPackagesList()
