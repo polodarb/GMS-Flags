@@ -130,6 +130,24 @@
   ],
   "secondary": [
       {
+      "name": "Reorderable tasks lists in Tasks",
+      "source": "Nail Sadykov",
+      "note": null,
+      "flags": [
+        {
+          "tag": "ReorderableTaskListSelector__enabled",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.tasks",
+      "appPackage": "com.google.android.apps.tasks",
+      "minAppVersionCode": 1623361,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/32",
+      "enabled": true
+      },
+      {
       "name": "Month Navigation Chips in Calendar",
       "source": "Nail Sadykov",
       "note": null,
