@@ -33,7 +33,9 @@ val viewModelsModule = module {
         SearchScreenViewModel(
             repository = get(),
             gmsRepository = get(),
-            roomRepository = get()
+            roomRepository = get(),
+            mergeFlagsMapper = get(),
+            gmsDBInteractor = get()
         )
     }
 

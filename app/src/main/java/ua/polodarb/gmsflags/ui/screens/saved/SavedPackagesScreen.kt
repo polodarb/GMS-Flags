@@ -45,10 +45,10 @@ fun SavedPackagesScreen(
                     },
                     lastItem = savedPackagesList.size - 1 == index,
                     modifier = Modifier
+                        .animateItemPlacement()
                         .clickable {
                             onPackageClick(item)
                         }
-                        .animateItemPlacement()
                 )
             }
         }
@@ -63,9 +63,9 @@ fun SavedPackagesLazyItem(
     onCheckedChange: (Boolean) -> Unit,
     lastItem: Boolean,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {

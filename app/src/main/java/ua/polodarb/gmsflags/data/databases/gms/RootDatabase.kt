@@ -774,11 +774,9 @@ class RootDatabase : RootService() {
                 "FROM (\n" +
                 "    SELECT packageName, name\n" +
                 "    FROM Flags\n" +
-                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
                 "    UNION ALL\n" +
                 "    SELECT packageName, name\n" +
                 "    FROM FlagOverrides\n" +
-                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
                 ") AS f\n" +
                 "GROUP BY f.packageName;\n", null)
         val list = mutableMapOf<String, String>()

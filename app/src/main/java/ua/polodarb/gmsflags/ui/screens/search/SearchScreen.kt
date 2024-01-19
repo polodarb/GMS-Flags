@@ -61,10 +61,12 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.buttons.fab.GFlagsFab
+import ua.polodarb.gmsflags.ui.components.chips.types.GFlagTypesChipRow
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
+import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchAppsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchPackagesScreen
@@ -125,6 +127,14 @@ fun AppsScreen(
         0 -> stringResource(R.string.apps_search_advice)
         1 -> stringResource(R.string.packages_search_advice)
         else -> stringResource(R.string.flags_search_advice)
+    }
+
+    // Add package dialog
+    var showPackageDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var addPackageDialogField by rememberSaveable {
+        mutableStateOf("")
     }
 
     LaunchedEffect(pagerState.targetPage) {
@@ -259,6 +269,13 @@ fun AppsScreen(
                         keyboardFocus = focusRequester
                     )
                 }
+//                AnimatedVisibility(visible = state == 2) {
+//                    GFlagTypesChipRow(
+//                        selectedChips = 0,
+//                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
+//                        chipOnClick = {}
+//                    )
+//                }
             }
         },
         floatingActionButton = {
@@ -270,7 +287,7 @@ fun AppsScreen(
                         }
 
                         1 -> {
-                            // TODO
+                            showPackageDialog = true
                         }
                     }
                 },
@@ -357,9 +374,37 @@ fun AppsScreen(
                     }
                 )
 
-                2 -> SearchFlagsScreen()
+                2 -> {
+                    Column {
+                        GFlagTypesChipRow(
+                            selectedChips = 0,
+                            chipOnClick = {}
+                        )
+                        SearchFlagsScreen()
+                    }
+                }
             }
         }
+
+        AddPackageDialog(
+            showDialog = showPackageDialog,
+            pkgName = addPackageDialogField,
+            onPkgNameChange = {
+                addPackageDialogField = it
+            },
+            onAdd = {
+                showPackageDialog = false
+                viewModel.overrideFlag(
+                    packageName = addPackageDialogField,
+                    name = "initPackage",
+                )
+                viewModel.initGms()
+                addPackageDialogField = ""
+            },
+            onDismiss = {
+                showPackageDialog = false
+                addPackageDialogField = ""
+            })
 
     }
 }

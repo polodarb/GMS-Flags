@@ -1,7 +1,9 @@
 package ua.polodarb.gmsflags.data.repo.mappers
 
 import android.content.Context
+import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.ui.screens.UiStates
 
 class MergeFlagsMapper(
     context: Context
@@ -28,22 +30,30 @@ class MergeFlagsMapper(
 
     }
 
-    fun getMergedAllFlags(): MergedAllTypesFlags {
+    fun getMergedAllFlags() = flow<UiStates<MergedAllTypesFlags>> {
 
-        val boolFlags =
-            gmsApplication.getRootDatabase().allBoolFlags
-        val intFlags = gmsApplication.getRootDatabase().allIntFlags
-        val floatFlags =
-            gmsApplication.getRootDatabase().allFloatFlags
-        val stringFlags =
-            gmsApplication.getRootDatabase().allStringFlags
+        gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                val boolFlags =
+                    gmsApplication.getRootDatabase().allBoolFlags
+                val intFlags = gmsApplication.getRootDatabase().allIntFlags
+                val floatFlags =
+                    gmsApplication.getRootDatabase().allFloatFlags
+                val stringFlags =
+                    gmsApplication.getRootDatabase().allStringFlags
 
-        return (MergedAllTypesFlags(
-            boolFlag = boolFlags,
-            intFlag = intFlags,
-            floatFlag = floatFlags,
-            stringFlag = stringFlags
-        ))
+                emit(
+                    UiStates.Success(
+                        MergedAllTypesFlags(
+                            boolFlag = boolFlags,
+                            intFlag = intFlags,
+                            floatFlag = floatFlags,
+                            stringFlag = stringFlags
+                        )
+                    )
+                )
+            }
+        }
 
     }
 

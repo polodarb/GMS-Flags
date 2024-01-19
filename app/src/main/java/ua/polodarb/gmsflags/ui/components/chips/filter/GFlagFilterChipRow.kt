@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.components.chips
+package ua.polodarb.gmsflags.ui.components.chips.filter
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.di
+    package ua.polodarb.gmsflags.di
 
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.repo.AppsListRepository

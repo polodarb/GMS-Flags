@@ -17,16 +17,23 @@ import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
+import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
+import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
 import ua.polodarb.gmsflags.ui.screens.UiStates
+import java.util.Collections
 
 typealias AppInfoList = UiStates<PersistentList<AppInfo>>
 typealias AppDialogList = UiStates<PersistentList<String>>
 typealias PackagesScreenUiStates = UiStates<Map<String, String>>
+typealias AllFlagsScreenUiStates = UiStates<Map<String, String>>
 
 class SearchScreenViewModel(
     private val repository: AppsListRepository,
     private val gmsRepository: GmsDBRepository,
-    private val roomRepository: RoomDBRepository
+    private val roomRepository: RoomDBRepository,
+    private val mergeFlagsMapper: MergeFlagsMapper,
+    private val gmsDBInteractor: GmsDBInteractor
 ) : ViewModel() {
 
     // Apps List
@@ -52,8 +59,17 @@ class SearchScreenViewModel(
 
 
     // All Flags List // TODO
-//    private val _allFlagsListUiState = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
-//    val allFlagsListUiState: StateFlow<PackagesScreenUiStates> = _allFlagsListUiState.asStateFlow()
+    private val _allFlagsBoolUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    val allFlagsBoolUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsBoolUiState.asStateFlow()
+
+    private val _allFlagsIntUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    val allFlagsIntUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsIntUiState.asStateFlow()
+
+    private val _allFlagsFloatUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    val allFlagsFloatUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsFloatUiState.asStateFlow()
+
+    private val _allFlagsStringUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    val allFlagsStringUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsStringUiState.asStateFlow()
 
     // Search and filter
     var appsSearchQuery = mutableStateOf("")
@@ -63,7 +79,14 @@ class SearchScreenViewModel(
     private val packagesListFiltered: MutableMap<String, String> = mutableMapOf()
 
     var allFlagsSearchQuery = mutableStateOf("")
-    private val allFlagsListFiltered: MutableMap<String, String> = mutableMapOf()
+    private var allFlagsListFiltered: MergedAllTypesFlags = MergedAllTypesFlags(
+        emptyMap(),
+        emptyMap(),
+        emptyMap(),
+        emptyMap()
+    )
+
+    private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
     fun clearSearchQuery() {
         appsSearchQuery.value = ""
@@ -72,9 +95,22 @@ class SearchScreenViewModel(
     }
 
     init {
+        initUsers()
+        initGms()
+    }
+
+    fun initGms() {
         initAllInstalledApps()
         initGmsPackagesList()
         getAllSavedPackages()
+    }
+
+    private fun initUsers() {
+        viewModelScope.launch {
+            gmsRepository.getUsers().collect {
+                usersList.addAll(it)
+            }
+        }
     }
 
     fun setPackageToDialog(pkgName: String) {
@@ -205,6 +241,74 @@ class SearchScreenViewModel(
             withContext(Dispatchers.IO) {
                 roomRepository.deleteSavedPackage(pkgName)
             }
+        }
+    }
+
+    /**
+     * **AllFlagsScreen** - init list of all flags apps
+     */
+    private fun initAllFlags() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                mergeFlagsMapper.getMergedAllFlags().collectLatest { uiStates ->
+                    when (uiStates) {
+                        is UiStates.Success -> {
+                            allFlagsListFiltered = uiStates.data
+                            getAllFlags()
+                        }
+
+                        is UiStates.Loading -> {
+                            _appsListUiState.value = UiStates.Loading()
+                        }
+
+                        is UiStates.Error -> {
+                            _appsListUiState.value = UiStates.Error()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * **AppsListScreen** - get list of all installed apps
+     */
+    fun getAllFlags() {
+        if (appsListFiltered.isNotEmpty()) {
+//            _appsListUiState.value = UiStates.Success(
+//                allFlagsListFiltered.filter {
+//                    it.appName.contains(appsSearchQuery.value, ignoreCase = true)
+//                }.toPersistentList()
+//            )
+        }
+    }
+
+    fun overrideFlag(
+        packageName: String,
+        name: String,
+        flagType: Int = 0,
+        intVal: String? = null,
+        boolVal: String? = null,
+        floatVal: String? = null,
+        stringVal: String? = null,
+        extensionVal: String? = null,
+        committed: Int = 0,
+        clearData: Boolean = true
+    ) {
+        viewModelScope.launch {
+            gmsDBInteractor.overrideFlag(
+                packageName = packageName,
+                name = name,
+                flagType = flagType,
+                intVal = intVal,
+                boolVal = boolVal,
+                floatVal = floatVal,
+                stringVal = stringVal,
+                extensionVal = extensionVal,
+                committed = committed,
+                clearData = clearData,
+                usersList = listOf("")
+            )
         }
     }
 }
