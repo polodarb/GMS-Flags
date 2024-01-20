@@ -62,8 +62,11 @@ import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.buttons.fab.GFlagsFab
 import ua.polodarb.gmsflags.ui.components.chips.types.GFlagTypesChipRow
+import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
+import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
@@ -98,6 +101,11 @@ fun AppsScreen(
         viewModel.stateSavedPackages.collectAsState()
 
     // All Flags Screen
+    val flagsUiState = viewModel.allFlagsUiState.collectAsState()
+    val boolFlagUiState = viewModel.allFlagsBoolUiState.collectAsState()
+    val intFlagUiState = viewModel.allFlagsIntUiState.collectAsState()
+    val floatFlagUiState = viewModel.allFlagsFloatUiState.collectAsState()
+    val stringFlagUiState = viewModel.allFlagsStringUiState.collectAsState()
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -108,7 +116,11 @@ fun AppsScreen(
 
     // Tabs
     var state by rememberSaveable { mutableIntStateOf(0) }
-    val titles = persistentListOf("Apps", "All packages", "All flags")
+    val titles = persistentListOf(
+        "Apps",
+        "All packages",
+//        "All flags"
+    )
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimation(
             tabPositions = tabPositions.toPersistentList(),
@@ -116,7 +128,7 @@ fun AppsScreen(
         )
     }
     val pagerState = rememberPagerState(pageCount = {
-        3
+        2 // 3 with AllFlagsScreen
     })
 
     var searchIconState by remember {
@@ -377,10 +389,52 @@ fun AppsScreen(
                 2 -> {
                     Column {
                         GFlagTypesChipRow(
-                            selectedChips = 0,
-                            chipOnClick = {}
+                            selectedChips = viewModel.selectedFlagsTypeChip.value,
+                            chipOnClick = {
+                                viewModel.selectedFlagsTypeChip.value = it
+                            }
                         )
-                        SearchFlagsScreen()
+                        when (val result = flagsUiState.value) {
+                            is UiStates.Success -> {
+                                SearchFlagsScreen(
+                                    flags = when (viewModel.selectedFlagsTypeChip.value) {
+                                        0 -> result.data.boolFlag
+                                        1 -> result.data.intFlag
+                                        2 -> result.data.floatFlag
+                                        else -> result.data.stringFlag
+                                    }
+                                )
+                            }
+
+                            is UiStates.Loading -> {
+                                LoadingProgressBar()
+                            }
+
+                            is UiStates.Error -> {
+                                NotFoundContent()
+                            }
+                        }
+//                        when (val result = when (viewModel.selectedFlagsTypeChip.value) {
+//                            0 -> boolFlagUiState.value
+//                            1 -> intFlagUiState.value
+//                            2 -> floatFlagUiState.value
+//                            else -> stringFlagUiState.value
+//                        }) {
+//                            is UiStates.Success -> {
+//                                SearchFlagsScreen(
+//                                    flags = result.data
+//                                )
+//                            }
+//
+//                            is UiStates.Loading -> {
+//                                LoadingProgressBar()
+//                            }
+//
+//                            is UiStates.Error -> {
+//                                NotFoundContent()
+//                            }
+//                        }
+
                     }
                 }
             }

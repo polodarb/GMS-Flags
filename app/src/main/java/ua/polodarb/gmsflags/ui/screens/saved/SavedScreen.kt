@@ -191,7 +191,9 @@ fun SavedScreen(
 
                 1 -> SavedFlagsScreen(
                     savedFlagsList = savedFlags.value.reversed(),
-                    viewModel = viewModel,
+                    onCheckedChange = { it, flagName, packageName ->
+                        if (!it) viewModel.deleteSavedFlag(flagName, packageName)
+                    },
                     onFlagClick = onSavedFlagClick
                 )
             }

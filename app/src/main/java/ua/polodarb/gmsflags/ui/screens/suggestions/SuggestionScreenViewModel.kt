@@ -26,6 +26,7 @@ import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
+import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesOverriddenFlags
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 import java.util.Collections
@@ -104,7 +105,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    private var overriddenFlags = mutableMapOf<String, MergedAllTypesFlags>()
+    private var overriddenFlags = mutableMapOf<String, MergedAllTypesOverriddenFlags>()
 
     fun getSuggestedFlags() {
         viewModelScope.launch {

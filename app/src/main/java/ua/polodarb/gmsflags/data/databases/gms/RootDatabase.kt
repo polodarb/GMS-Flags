@@ -394,17 +394,17 @@ class RootDatabase : RootService() {
 
     private fun getAllBoolFlags(): Map<String, String> {
         val cursor = gmsDB.rawQuery(
-            "SELECT packageName, name" +
-                    "FROM (" +
-                    " SELECT packageName, name" +
+            "SELECT name, packageName" +
+                    " FROM (" +
+                    " SELECT name, packageName" +
                     " FROM Flags" +
                     " WHERE boolVal IS NOT NULL" +
                     " UNION" +
-                    " SELECT packageName, name" +
+                    " SELECT name, packageName" +
                     " FROM FlagOverrides" +
                     " WHERE boolVal IS NOT NULL" +
                     ")" +
-                    "GROUP BY packageName, name;",
+                    " GROUP BY packageName, name;",
             null
         )
         val list = mutableMapOf<String, String>()
@@ -415,7 +415,7 @@ class RootDatabase : RootService() {
 
         val cursorVending = vendingDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE boolVal IS NOT NULL" +
@@ -424,7 +424,7 @@ class RootDatabase : RootService() {
                     " FROM FlagOverrides" +
                     " WHERE boolVal IS NOT NULL" +
                     ")" +
-                    "GROUP BY packageName, name;",
+                    " GROUP BY packageName, name;",
             null
         )
         while (cursorVending.moveToNext()) {
@@ -437,7 +437,7 @@ class RootDatabase : RootService() {
     private fun getAllIntFlags(): Map<String, String> {
         val cursor = gmsDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE intVal IS NOT NULL" +
@@ -446,7 +446,7 @@ class RootDatabase : RootService() {
                     " FROM FlagOverrides" +
                     " WHERE intVal IS NOT NULL" +
                     ")" +
-                    "GROUP BY packageName, name;",
+                    " GROUP BY packageName, name;",
             null
         )
         val list = mutableMapOf<String, String>()
@@ -457,7 +457,7 @@ class RootDatabase : RootService() {
 
         val cursorVending = vendingDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE intVal IS NOT NULL" +
@@ -466,7 +466,7 @@ class RootDatabase : RootService() {
                     " FROM FlagOverrides" +
                     " WHERE intVal IS NOT NULL" +
                     ")" +
-                    "GROUP BY packageName, name;",
+                    " GROUP BY packageName, name;",
             null
         )
         while (cursorVending.moveToNext()) {
@@ -479,7 +479,7 @@ class RootDatabase : RootService() {
     private fun getAllFloatFlags(): Map<String, String> {
         val cursor = gmsDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE floatVal IS NOT NULL" +
@@ -488,7 +488,7 @@ class RootDatabase : RootService() {
                     " FROM FlagOverrides" +
                     " WHERE floatVal IS NOT NULL" +
                     ")" +
-                    "GROUP BY packageName, name;",
+                    " GROUP BY packageName, name;",
             null
         )
         val list = mutableMapOf<String, String>()
@@ -499,7 +499,7 @@ class RootDatabase : RootService() {
 
         val cursorVending = vendingDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE floatVal IS NOT NULL" +
@@ -521,7 +521,7 @@ class RootDatabase : RootService() {
     private fun getAllStringFlags(): Map<String, String> {
         val cursor = gmsDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE stringVal IS NOT NULL" +
@@ -541,7 +541,7 @@ class RootDatabase : RootService() {
 
         val cursorVending = vendingDB.rawQuery(
             "SELECT packageName, name" +
-                    "FROM (" +
+                    " FROM (" +
                     " SELECT packageName, name" +
                     " FROM Flags" +
                     " WHERE stringVal IS NOT NULL" +

@@ -37,7 +37,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 @Composable
 fun SavedFlagsScreen(
     savedFlagsList: List<SavedFlags>,
-    viewModel: SavedScreenViewModel,
+    onCheckedChange: (value: Boolean, itemFlag: String, itemPackage: String) -> Unit,
     onFlagClick: (packageName: String, flagName: String, type: String) -> Unit
 ) {
 
@@ -80,7 +80,7 @@ fun SavedFlagsScreen(
                             flagName = item.flagName,
                             checked = isEqual,
                             onCheckedChange = {
-                                if (!it) viewModel.deleteSavedFlag(item.flagName, item.pkgName)
+                                onCheckedChange(it, item.flagName, item.pkgName)
                             },
                             modifier = Modifier.combinedClickable(
                                 onClick = {

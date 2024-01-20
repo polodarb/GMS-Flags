@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.search
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,15 +19,17 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
+import ua.polodarb.gmsflags.data.repo.mappers.FlagDetails
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
+import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesOverriddenFlags
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.util.Collections
 
 typealias AppInfoList = UiStates<PersistentList<AppInfo>>
 typealias AppDialogList = UiStates<PersistentList<String>>
 typealias PackagesScreenUiStates = UiStates<Map<String, String>>
-typealias AllFlagsScreenUiStates = UiStates<Map<String, String>>
+typealias AllFlagsScreenUiStates = UiStates<List<FlagDetails>>
 
 class SearchScreenViewModel(
     private val repository: AppsListRepository,
@@ -57,8 +60,13 @@ class SearchScreenViewModel(
         MutableStateFlow<List<String>>(emptyList())
     val stateSavedPackages: StateFlow<List<String>> = _stateSavedPackages.asStateFlow()
 
+    val selectedFlagsTypeChip = mutableStateOf(0)
 
     // All Flags List // TODO
+
+    private val _allFlagsUiState = MutableStateFlow<UiStates<MergedAllTypesFlags>>(UiStates.Loading())
+    val allFlagsUiState: StateFlow<UiStates<MergedAllTypesFlags>> = _allFlagsUiState.asStateFlow()
+
     private val _allFlagsBoolUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
     val allFlagsBoolUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsBoolUiState.asStateFlow()
 
@@ -66,10 +74,13 @@ class SearchScreenViewModel(
     val allFlagsIntUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsIntUiState.asStateFlow()
 
     private val _allFlagsFloatUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
-    val allFlagsFloatUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsFloatUiState.asStateFlow()
+    val allFlagsFloatUiState: StateFlow<AllFlagsScreenUiStates> =
+        _allFlagsFloatUiState.asStateFlow()
 
-    private val _allFlagsStringUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
-    val allFlagsStringUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsStringUiState.asStateFlow()
+    private val _allFlagsStringUiState =
+        MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    val allFlagsStringUiState: StateFlow<AllFlagsScreenUiStates> =
+        _allFlagsStringUiState.asStateFlow()
 
     // Search and filter
     var appsSearchQuery = mutableStateOf("")
@@ -80,10 +91,10 @@ class SearchScreenViewModel(
 
     var allFlagsSearchQuery = mutableStateOf("")
     private var allFlagsListFiltered: MergedAllTypesFlags = MergedAllTypesFlags(
-        emptyMap(),
-        emptyMap(),
-        emptyMap(),
-        emptyMap()
+        emptyList(),
+        emptyList(),
+        emptyList(),
+        emptyList()
     )
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
@@ -103,6 +114,7 @@ class SearchScreenViewModel(
         initAllInstalledApps()
         initGmsPackagesList()
         getAllSavedPackages()
+//        initAllFlags()
     }
 
     private fun initUsers() {
@@ -130,7 +142,8 @@ class SearchScreenViewModel(
                 repository.getListByPackages(pkgName).collect { uiStates ->
                     when (uiStates) {
                         is UiStates.Success -> {
-                            _dialogDataState.value = UiStates.Success(uiStates.data.toPersistentList())
+                            _dialogDataState.value =
+                                UiStates.Success(uiStates.data.toPersistentList())
                         }
 
                         is UiStates.Loading -> {
@@ -247,41 +260,56 @@ class SearchScreenViewModel(
     /**
      * **AllFlagsScreen** - init list of all flags apps
      */
-    private fun initAllFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                mergeFlagsMapper.getMergedAllFlags().collectLatest { uiStates ->
-                    when (uiStates) {
-                        is UiStates.Success -> {
-                            allFlagsListFiltered = uiStates.data
-                            getAllFlags()
-                        }
-
-                        is UiStates.Loading -> {
-                            _appsListUiState.value = UiStates.Loading()
-                        }
-
-                        is UiStates.Error -> {
-                            _appsListUiState.value = UiStates.Error()
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    private fun initAllFlags() {
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+//                mergeFlagsMapper.getMergedAllFlags().collectLatest { uiStates ->
+//                    when (uiStates) {
+//                        is UiStates.Success -> {
+//                            Log.d("initAllFlags", "initAllFlags: ${uiStates.data}")
+//                            allFlagsListFiltered = uiStates.data
+//                            getAllFlags()
+//                        }
+//
+//                        is UiStates.Loading -> {
+//                            _appsListUiState.value = UiStates.Loading()
+//                        }
+//
+//                        is UiStates.Error -> {
+//                            _appsListUiState.value = UiStates.Error()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      * **AppsListScreen** - get list of all installed apps
      */
-    fun getAllFlags() {
-        if (appsListFiltered.isNotEmpty()) {
-//            _appsListUiState.value = UiStates.Success(
-//                allFlagsListFiltered.filter {
-//                    it.appName.contains(appsSearchQuery.value, ignoreCase = true)
-//                }.toPersistentList()
+//    fun getAllFlags() {
+//        if (allFlagsListFiltered.isNotEmpty()) {
+//            _allFlagsUiState.value = UiStates.Success(
+//                MergedAllTypesFlags(
+//                    boolFlag = allFlagsListFiltered.boolFlag.filter {
+//                        it.flagName.contains(appsSearchQuery.value, ignoreCase = true)
+//                    },
+//                    intFlag = emptyList(),
+//                    floatFlag = emptyList(),
+//                    stringFlag = emptyList()
+//                    intFlag = allFlagsListFiltered.intFlag.filter {
+//                        it.flagName.contains(appsSearchQuery.value, ignoreCase = true)
+//                    },
+//                    floatFlag = allFlagsListFiltered.floatFlag.filter {
+//                        it.flagName.contains(appsSearchQuery.value, ignoreCase = true)
+//                    },
+//                    stringFlag = allFlagsListFiltered.stringFlag.filter {
+//                        it.flagName.contains(appsSearchQuery.value, ignoreCase = true)
+//                    }
+//                )
 //            )
-        }
-    }
+//        }
+//    }
 
     fun overrideFlag(
         packageName: String,
