@@ -1,17 +1,18 @@
 [versions]
-activity = "1.8.0"
+activity = "1.8.2"
 agp = "8.1.2"
 androidJunit = "1.1.5"
 coil = "2.4.0"
-compose = "2023.10.00"
+compose = "2023.10.01"
 composeCompiler = "1.5.3"
-composeMaterial3 = "1.2.0-alpha04"
+composeMaterial3 = "1.2.0-beta01"
+composeAnimation = "1.6.0-beta03"
 coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
 detekt = "1.23.1"
 espresso = "3.5.1"
-firebase = "32.3.1"
+firebase = "32.7.0"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 gms = "4.4.0"
@@ -24,9 +25,9 @@ ktor = "2.3.5"
 lazyColumnScrollbar = "1.8.0"
 libsu = "5.2.1"
 lifecycle = "2.6.2"
-material = "1.10.0"
-navigation = "2.7.4"
-room = "2.5.2"
+material = "1.11.0"
+navigation = "2.7.6"
+room = "2.6.1"
 sqlite = "3.42.0"
 
 [libraries]
@@ -36,6 +37,7 @@ coil-bom = { group = "io.coil-kt", name = "coil-bom", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-test-juni4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }

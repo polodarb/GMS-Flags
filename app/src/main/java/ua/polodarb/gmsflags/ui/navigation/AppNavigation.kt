@@ -16,7 +16,7 @@ import androidx.navigation.compose.composable
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
-import ua.polodarb.gmsflags.ui.screens.apps.AppsScreen
+import ua.polodarb.gmsflags.ui.screens.search.AppsScreen
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
 import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreen
@@ -35,7 +35,7 @@ sealed class NavBarItem(
     )
 
     data object Apps : NavBarItem(
-        title = R.string.nav_bar_apps,
+        title = R.string.nav_bar_search,
         iconActive = R.drawable.ic_navbar_apps,
         iconInactive = null,
         screenRoute = "apps"
@@ -117,9 +117,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 }
             )
         }
@@ -128,10 +125,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                onDialogPackageItemClick = {
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                    )
                 },
-                onPackageItemClick = {
+                onAllPackagesItemClick = {
                     parentNavController.navigate(
                         ScreensDestination.FlagChange.createRoute(Uri.encode(it))
                     )
@@ -142,9 +141,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             SavedScreen(
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 },
                 onSavedPackageClick = {
                     parentNavController.navigate(
@@ -162,9 +158,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             UpdatesScreen(
 //                onSettingsClick = {
 //                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-//                },
-//                onPackagesClick = {
-//                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
 //                }
             )
         }

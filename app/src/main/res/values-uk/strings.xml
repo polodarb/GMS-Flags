@@ -41,7 +41,7 @@
     <string name="settings_about_telegram_title">Telegram канал</string>
     <string name="settings_about_telegram_content">Оновленя і інформація</string>
     <string name="nav_bar_suggestions">Рекомендації</string>
-    <string name="nav_bar_apps">Додатки</string>
+    <string name="nav_bar_search">Пошук</string>
     <string name="nav_bar_saved">Збережене</string>
     <string name="nav_bar_history">Історія</string>
     <string name="component_error_load">Помилка завантаження даних</string>

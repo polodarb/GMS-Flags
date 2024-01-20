@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.screens.apps.dialog
+package ua.polodarb.gmsflags.ui.screens.search.dialog
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -28,7 +28,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable

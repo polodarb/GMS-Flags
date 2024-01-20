@@ -38,8 +38,8 @@ android {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
         targetSdk = 33
-        versionCode = 11
-        versionName = "1.1.0"
+        versionCode = 12
+        versionName = "1.1.1-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -110,6 +110,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.animation)
     androidTestImplementation(libs.compose.test.juni4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)

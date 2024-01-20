@@ -24,8 +24,9 @@ import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagTypes
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
-import ua.polodarb.gmsflags.data.repo.mappers.MergeOverriddenFlagsInteractor
-import ua.polodarb.gmsflags.data.repo.mappers.MergedOverriddenFlag
+import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
+import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
+import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesOverriddenFlags
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.io.File
 import java.util.Collections
@@ -37,7 +38,7 @@ class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
     private val appsRepository: AppsListRepository,
     private val flagsApiService: FlagsApiService,
-    private val mapper: MergeOverriddenFlagsInteractor,
+    private val mapper: MergeFlagsMapper,
     private val interactor: GmsDBInteractor
 ) : ViewModel() {
 
@@ -104,7 +105,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    private var overriddenFlags = mutableMapOf<String, MergedOverriddenFlag>()
+    private var overriddenFlags = mutableMapOf<String, MergedAllTypesOverriddenFlags>()
 
     fun getSuggestedFlags() {
         viewModelScope.launch {

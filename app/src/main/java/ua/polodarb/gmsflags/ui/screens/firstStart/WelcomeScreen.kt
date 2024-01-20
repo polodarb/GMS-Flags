@@ -47,7 +47,7 @@ fun WelcomeScreen(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(32.dp)
+                .padding(top = 64.dp, bottom = 32.dp, start = 32.dp, end = 32.dp)
         )
         Text(
             text = stringResource(id = R.string.welcome_title),

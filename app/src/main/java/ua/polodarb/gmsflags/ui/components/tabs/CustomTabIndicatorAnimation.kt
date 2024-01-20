@@ -47,7 +47,8 @@ fun CustomTabIndicatorAnimation(
     }
 
     CustomTabIndicator(
-        color = MaterialTheme.colorScheme.primary, modifier = Modifier
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(align = Alignment.BottomStart)
             .offset(x = indicatorStart)
