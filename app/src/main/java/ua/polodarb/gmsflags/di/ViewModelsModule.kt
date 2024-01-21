@@ -10,6 +10,7 @@ import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
 
@@ -36,6 +37,13 @@ val viewModelsModule = module {
             roomRepository = get(),
             mergeFlagsMapper = get(),
             gmsDBInteractor = get()
+        )
+    }
+
+    viewModel {
+        UpdatesScreenViewModel(
+            googleAppUpdatesService = get(),
+            googleUpdatesMapper = get()
         )
     }
 

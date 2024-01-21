@@ -29,6 +29,7 @@ material = "1.11.0"
 navigation = "2.7.6"
 room = "2.6.1"
 sqlite = "3.42.0"
+ktRssReader = "2.2.1"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -73,6 +74,7 @@ requery-sqlite = { group = "com.github.requery", name = "sqlite-android", versio
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+rssReader = { group = "com.github.ivanisidrowu.KtRssReader", name = "android", version.ref = "ktRssReader" }
 
 # Dependencies of the included build-logic
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

@@ -140,6 +140,9 @@ dependencies {
     implementation(libs.ktor.serialization.json)
     implementation(libs.ktor.logging)
 
+    // KtRssRss
+    implementation(libs.rssReader)
+
     // SQLite
     implementation(libs.requery.sqlite)
 
