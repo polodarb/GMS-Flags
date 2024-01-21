@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.updates
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -62,6 +64,8 @@ fun UpdatesScreen() {
 
     val viewModel = koinViewModel<UpdatesScreenViewModel>()
     val state = viewModel.uiState.collectAsState()
+
+    val uriHandler = LocalUriHandler.current
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
@@ -126,7 +130,7 @@ fun UpdatesScreen() {
                                 appVersion = item.date,
                                 appDate = "Ver: " + item.version,
                                 onClick = {
-
+                                    uriHandler.openUri(item.link)
                                 }
                             )
                         }
@@ -155,11 +159,14 @@ private fun UpdatesAppItem(
     appDate: String,
     onClick: () -> Unit
 ) {
-    Row(
+    Row (
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(24.dp))
+            .clickable {
+                onClick()
+            }
             .background(
                 if (!isSystemInDarkTheme())
                     MaterialTheme.colorScheme.surfaceContainerLow
