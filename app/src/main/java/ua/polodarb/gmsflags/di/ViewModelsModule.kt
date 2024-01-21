@@ -43,7 +43,8 @@ val viewModelsModule = module {
     viewModel {
         UpdatesScreenViewModel(
             googleAppUpdatesService = get(),
-            googleUpdatesMapper = get()
+            googleUpdatesMapper = get(),
+            sharedPrefs = get()
         )
     }
 

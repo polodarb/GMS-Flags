@@ -1,5 +1,7 @@
 package ua.polodarb.gmsflags.ui.screens.updates
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -38,12 +41,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -56,6 +68,7 @@ import androidx.compose.ui.unit.sp
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +78,8 @@ fun UpdatesScreen() {
     val viewModel = koinViewModel<UpdatesScreenViewModel>()
     val state = viewModel.uiState.collectAsState()
 
+    val haptic = LocalHapticFeedback.current
+
     val uriHandler = LocalUriHandler.current
 
     val topBarState = rememberTopAppBarState()
@@ -73,30 +88,24 @@ fun UpdatesScreen() {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.nav_bar_updates),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description"
+                LargeTopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.nav_bar_updates),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+                    },
+                    actions = {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Settings"
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -124,12 +133,13 @@ fun UpdatesScreen() {
                         item {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        itemsIndexed(result.data.articles) { index, item ->
+                        itemsIndexed(result.data) { _, item ->
                             UpdatesAppItem(
                                 appTitle = item.title,
                                 appVersion = item.date,
                                 appDate = "Ver: " + item.version,
                                 onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     uriHandler.openUri(item.link)
                                 }
                             )

@@ -55,8 +55,8 @@ data class NewRssArticle(
 )
 
 fun convertDateString(inputDateString: String): String {
-    val inputFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+    val inputFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
+    val outputFormat = SimpleDateFormat("dd.MM - HH:mm", Locale.getDefault())
 
     return try {
         val date = inputFormat.parse(inputDateString)
