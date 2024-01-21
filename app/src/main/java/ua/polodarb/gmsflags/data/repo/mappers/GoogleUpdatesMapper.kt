@@ -5,6 +5,8 @@ import tw.ktrssreader.kotlin.model.channel.RssStandardChannelData
 import tw.ktrssreader.kotlin.model.item.RssStandardItem
 import ua.polodarb.gmsflags.data.remote.googleUpdates.dto.Article
 import ua.polodarb.gmsflags.data.remote.googleUpdates.dto.RssMainModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class GoogleUpdatesMapper {
 
@@ -26,7 +28,7 @@ class GoogleUpdatesMapper {
                 NewRssArticle(
                     title = appName,
                     version = appVersion,
-                    date = article.pubDate.orEmpty(),
+                    date = convertDateString(article.pubDate.orEmpty()),
                     link = article.link.orEmpty()
                 )
             }
@@ -51,3 +53,16 @@ data class NewRssArticle(
     val date: String,
     val link: String,
 )
+
+fun convertDateString(inputDateString: String): String {
+    val inputFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+
+    return try {
+        val date = inputFormat.parse(inputDateString)
+        outputFormat.format(date ?: "Invalid date format")
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "Invalid date format"
+    }
+}

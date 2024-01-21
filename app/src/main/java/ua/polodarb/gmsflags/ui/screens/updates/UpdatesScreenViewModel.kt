@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.updates
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
