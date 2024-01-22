@@ -27,6 +27,7 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.data.remote.github.GithubApiServiceImpl
 import ua.polodarb.gmsflags.data.workers.GOOGLE_UPDATES_WORKER_TAG
 import ua.polodarb.gmsflags.data.workers.GoogleUpdatesCheckWorker
@@ -36,7 +37,7 @@ import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
     private val appContext = get<Context>() as GMSApplication
@@ -78,7 +79,7 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.SECONDS)
+        val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .addTag(GOOGLE_UPDATES_WORKER_TAG)
             .build()

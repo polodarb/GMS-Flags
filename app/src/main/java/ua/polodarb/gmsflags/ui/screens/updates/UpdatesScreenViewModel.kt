@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.updates
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -45,10 +46,7 @@ class UpdatesScreenViewModel(
                 _uiState.update {
                     UiStates.Success(result.articles)
                 }
-//                sharedPrefs.saveData(
-//                    PreferenceConstants.GOOGLE_LAST_UPDATE,
-//                    "${result.articles.first().title}/${result.articles.first().version}"
-//                )
+                Log.d("UpdatesScreenViewModel", "loadArticles: ${result.articles}")
             } catch (err: Throwable) {
                 _uiState.update { UiStates.Error(err) }
             }
