@@ -22,7 +22,7 @@ open class BaseActivity: ComponentActivity() {
     }
 
     private fun createNotificationChannel() {
-        val name = "GFNotifications"
+        val name = "Google app updates"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(CHANNEL_ID, name, importance)
 

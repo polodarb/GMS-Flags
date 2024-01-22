@@ -46,7 +46,10 @@ class UpdatesScreenViewModel(
                 _uiState.update {
                     UiStates.Success(result.articles)
                 }
-                Log.d("UpdatesScreenViewModel", "loadArticles: ${result.articles}")
+                sharedPrefs.saveData(
+                    PreferenceConstants.GOOGLE_LAST_UPDATE,
+                    "${result.articles.first().title}/${result.articles.first().version}"
+                )
             } catch (err: Throwable) {
                 _uiState.update { UiStates.Error(err) }
             }

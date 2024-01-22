@@ -69,24 +69,31 @@ class GoogleUpdatesCheckWorker(
         val localData = sharedPrefs.getData(PreferenceConstants.GOOGLE_LAST_UPDATE, "")
         val (localTitle, localVersion) = localData.split("/")
 
-        val filteredData = newArticles.filter { article ->
+        val indexOfLocalArticle = newArticles.indexOfFirst { article ->
             article.title == localTitle && article.version == localVersion
         }
 
-        val resultStringBuilder = StringBuilder()
+        if (indexOfLocalArticle >= 0) {
+            val resultStringBuilder = StringBuilder()
 
-        filteredData.forEachIndexed { index, article ->
-            resultStringBuilder.append("${article.title} (${article.version})\n")
+            for (i in 0 until indexOfLocalArticle) {
+                val article = newArticles[i]
+                resultStringBuilder.append("${article.title} (${article.version})\n")
+            }
+
+            return resultStringBuilder.toString()
         }
 
-        return resultStringBuilder.toString()
+        return ""
     }
 
     private fun sendNotification(title: String, message: String) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notify_logo)
             .setContentTitle(title)
-            .setContentText(message)
+//            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(message))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         with(NotificationManagerCompat.from(context)) {
