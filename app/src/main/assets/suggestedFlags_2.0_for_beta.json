@@ -1,0 +1,93 @@
+{
+  "primary": [
+    {
+      "primaryTag": "call_recording",
+      "name": "Enable call recording for unsupported countries",
+      "source": null,
+      "note": null,
+      "flags": [
+        {
+          "tag": "G__enable_call_recording",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_system_feature",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "CallRecording__enable_call_recording_for_fi",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_call_recording_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__force_within_crosby_geofence_value",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "G__use_call_recording_geofence_overrides",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "enable_call_recording_indicator",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.dialer",
+      "appPackage": "com.google.android.dialer",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": false
+    },
+    {
+      "primaryTag": "enable_magic_compose",
+      "name": "Enable Magic Compose in Messages",
+      "source": null,
+      "note": "There is a daily limit on the number of requests!",
+      "flags": [
+        {
+          "tag": "bugle_phenotype__always_use_magic_compose_transitions",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_magic_compose_view",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_combined_magic_compose",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__enable_additional_functionalities_for_magic_compose",
+          "type": "bool",
+          "value": "1"
+        },
+        {
+          "tag": "bugle_phenotype__debug_menu_default_available",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.messaging#com.google.android.apps.messaging",
+      "appPackage": "com.google.android.apps.messaging",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": null,
+      "enabled": true
+    }
+  ],
+  "secondary": []
+}
