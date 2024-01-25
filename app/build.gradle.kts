@@ -111,6 +111,8 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.animation)
+    implementation(libs.compose.icons)
+    implementation(libs.work.runtime.ktx)
     androidTestImplementation(libs.compose.test.juni4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
@@ -131,6 +133,7 @@ dependencies {
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.compose)
+    implementation(libs.koin.work.manager)
 
     // Ktor
     implementation(platform(libs.ktor.bom))
@@ -139,6 +142,9 @@ dependencies {
     implementation(libs.ktor.negotation)
     implementation(libs.ktor.serialization.json)
     implementation(libs.ktor.logging)
+
+    // KtRssRss
+    implementation(libs.rssReader)
 
     // SQLite
     implementation(libs.requery.sqlite)

@@ -15,6 +15,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.AppInfo
+import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.APP_NAME
+import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.APP_NAME_REVERSED
+import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.LAST_UPDATE
+import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.PACKAGE_NAME
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
@@ -22,7 +26,6 @@ import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.data.repo.mappers.FlagDetails
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
-import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesOverriddenFlags
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import java.util.Collections
 
@@ -64,7 +67,8 @@ class SearchScreenViewModel(
 
     // All Flags List // TODO
 
-    private val _allFlagsUiState = MutableStateFlow<UiStates<MergedAllTypesFlags>>(UiStates.Loading())
+    private val _allFlagsUiState =
+        MutableStateFlow<UiStates<MergedAllTypesFlags>>(UiStates.Loading())
     val allFlagsUiState: StateFlow<UiStates<MergedAllTypesFlags>> = _allFlagsUiState.asStateFlow()
 
     private val _allFlagsBoolUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
@@ -104,6 +108,16 @@ class SearchScreenViewModel(
         packagesSearchQuery.value = ""
         allFlagsSearchQuery.value = ""
     }
+
+    // Sorting
+    val sortType = mapOf(
+        APP_NAME to "By app name",
+        APP_NAME_REVERSED to "By app name (Reversed)",
+        LAST_UPDATE to "By last update",
+        PACKAGE_NAME to "By package name"
+    )
+
+    var setSortType = mutableStateOf(sortType[APP_NAME])
 
     init {
         initUsers()
@@ -193,10 +207,33 @@ class SearchScreenViewModel(
             _appsListUiState.value = UiStates.Success(
                 appsListFiltered.filter {
                     it.appName.contains(appsSearchQuery.value, ignoreCase = true)
+                }.let { filteredList ->
+                    when (setSortType.value) {
+                        sortType[PACKAGE_NAME] -> filteredList.sortedBy { it.applicationInfo.packageName }
+                        sortType[APP_NAME], sortType[APP_NAME_REVERSED] -> {
+                            if (setSortType.value == sortType[APP_NAME_REVERSED]) {
+                                filteredList.sortedByDescending { it.appName }
+                            } else {
+                                filteredList.sortedBy { it.appName }
+                            }
+                        }
+                        sortType[LAST_UPDATE] -> {
+                            filteredList.sortedByDescending {
+                                if (it.packageInfo != null) {
+                                    it.packageInfo.lastUpdateTime
+                                } else {
+                                    0L
+                                }
+                            }
+                        }
+                        else -> filteredList
+                    }
                 }.toPersistentList()
             )
         }
     }
+
+
 
     private fun initGmsPackagesList() {
         viewModelScope.launch {

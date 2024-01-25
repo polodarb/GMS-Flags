@@ -70,6 +70,7 @@ import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
+import ua.polodarb.gmsflags.ui.screens.search.dialog.SortAppsDialog
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchAppsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchPackagesScreen
@@ -147,6 +148,11 @@ fun AppsScreen(
     }
     var addPackageDialogField by rememberSaveable {
         mutableStateOf("")
+    }
+
+    // Sort options dialog
+    var showSortOptionsDialog by rememberSaveable {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(pagerState.targetPage) {
@@ -281,13 +287,6 @@ fun AppsScreen(
                         keyboardFocus = focusRequester
                     )
                 }
-//                AnimatedVisibility(visible = state == 2) {
-//                    GFlagTypesChipRow(
-//                        selectedChips = 0,
-//                        colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
-//                        chipOnClick = {}
-//                    )
-//                }
             }
         },
         floatingActionButton = {
@@ -295,7 +294,7 @@ fun AppsScreen(
                 onClick = {
                     when (state) {
                         0 -> {
-                            // TODO
+                            showSortOptionsDialog = true
                         }
 
                         1 -> {
@@ -414,27 +413,6 @@ fun AppsScreen(
                                 NotFoundContent()
                             }
                         }
-//                        when (val result = when (viewModel.selectedFlagsTypeChip.value) {
-//                            0 -> boolFlagUiState.value
-//                            1 -> intFlagUiState.value
-//                            2 -> floatFlagUiState.value
-//                            else -> stringFlagUiState.value
-//                        }) {
-//                            is UiStates.Success -> {
-//                                SearchFlagsScreen(
-//                                    flags = result.data
-//                                )
-//                            }
-//
-//                            is UiStates.Loading -> {
-//                                LoadingProgressBar()
-//                            }
-//
-//                            is UiStates.Error -> {
-//                                NotFoundContent()
-//                            }
-//                        }
-
                     }
                 }
             }
@@ -458,6 +436,18 @@ fun AppsScreen(
             onDismiss = {
                 showPackageDialog = false
                 addPackageDialogField = ""
+            })
+
+        SortAppsDialog(
+            showDialog = showSortOptionsDialog,
+            sortTypes = viewModel.sortType.values.toList(),
+            onSelect = {
+                showSortOptionsDialog = false
+                viewModel.setSortType.value = it
+                viewModel.getAllInstalledApps()
+            },
+            onDismiss = {
+                showSortOptionsDialog = false
             })
 
     }

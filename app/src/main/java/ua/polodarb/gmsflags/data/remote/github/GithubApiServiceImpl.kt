@@ -11,7 +11,7 @@ import ua.polodarb.gmsflags.data.remote.github.dto.ReleaseInfo
 import ua.polodarb.gmsflags.data.remote.setConfig
 
 private const val BASE_URL = "https://api.github.com"
-private const val LOG_TAG = "GithubApiService"
+const val LOG_TAG = "GithubApiService"
 
 class GithubApiServiceImpl(
     engine: HttpClientEngine

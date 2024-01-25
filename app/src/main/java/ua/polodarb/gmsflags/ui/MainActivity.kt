@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -23,13 +27,17 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
+import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.data.remote.github.GithubApiServiceImpl
+import ua.polodarb.gmsflags.data.workers.GOOGLE_UPDATES_WORKER_TAG
+import ua.polodarb.gmsflags.data.workers.GoogleUpdatesCheckWorker
 import ua.polodarb.gmsflags.ui.components.UpdateDialog
 import ua.polodarb.gmsflags.ui.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import java.io.File
+import java.util.concurrent.TimeUnit
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
     private val appContext = get<Context>() as GMSApplication
@@ -39,6 +47,10 @@ class MainActivity : ComponentActivity() {
     private val configuredFile = File(appContext.filesDir, "configured")
 
     private var isFirstStart = !configuredFile.exists()
+
+    private val constraints = Constraints.Builder()
+        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+        .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +79,16 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .addTag(GOOGLE_UPDATES_WORKER_TAG)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            GOOGLE_UPDATES_WORKER_TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            workerRequester
+        )
 
         setContent {
             GMSFlagsTheme {

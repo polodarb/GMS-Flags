@@ -1,6 +1,8 @@
 package ua.polodarb.gmsflags.data.repo
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import kotlinx.coroutines.flow.flow
@@ -38,7 +40,7 @@ class AppsListRepository(
                                 && it.packageName.contains("com.google")
                                 || it.packageName.contains("com.android.vending")
                     }
-                    .map { AppInfo(pm = pm, applicationInfo = it) }
+                    .map { createAppInfo(pm, it) }
                     .sortedBy { it.appName }
                     .toList()
 
@@ -46,6 +48,20 @@ class AppsListRepository(
                     emit(UiStates.Success(filteredAppInfoList))
                 }
             }
+        }
+    }
+
+    private fun createAppInfo(pm: PackageManager, appInfo: ApplicationInfo): AppInfo {
+        val packageInfo = getPackageInfo(appInfo.packageName)
+        return AppInfo(pm = pm, applicationInfo = appInfo, packageInfo = packageInfo)
+    }
+
+    private fun getPackageInfo(packageName: String): PackageInfo? {
+        return try {
+            context.packageManager.getPackageInfo(packageName, PackageManager.GET_META_DATA)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -58,6 +74,17 @@ class AppsListRepository(
                 e.printStackTrace()
             }
             return -1
+    }
+
+    fun getAppLastUpdateTime(packageName: String): Long {
+        val packageManager: PackageManager = context.packageManager
+        try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            return packageInfo.lastUpdateTime
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return -1
     }
 
     fun getListByPackages(pkgName: String) = flow<UiStates<List<String>>> {
