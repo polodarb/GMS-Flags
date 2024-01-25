@@ -29,7 +29,7 @@ class FlagsApiServiceImpl(
     override suspend fun getSuggestedFlags(): Resource<SuggestedFlagTypes> {
         return try {
             val url = if (BuildConfig.VERSION_NAME.contains("beta")) {
-                "suggestedFlags_2.0.json_for_beta"
+                "suggestedFlags_2.0_for_beta.json"
             } else {
                 "suggestedFlags_2.0.json"
             }
