@@ -70,8 +70,6 @@ class MainActivity : BaseActivity() {
             if (!isFirstStart) setKeepOnScreenCondition { !appContext.isRootDatabaseInitialized }
         }
 
-        Log.d("intent", intent.toString())
-
         if (intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "text/plain") {
             Toast.makeText(this, "Load from file", Toast.LENGTH_SHORT).show()
             val uri = intent.data

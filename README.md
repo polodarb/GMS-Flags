@@ -6,29 +6,32 @@
 
 ![Banner](gf_banner.png)
 ![Root](gf_root.png)
-# Description
-GMS Flags is a tool for changing parameters in Google services to activate or deactivate certain functionality in Google applications.
-## Features available in the current version:
-- Change parameters of flags of Boolean, Int, Float and String types
-- Ability to add a flag manually 
-- Removing overwritten flags by package
-- Generating a list of applications with all packages belonging to it
-- Access to the entire list of packages 
-- Filtering flags by various parameters, including overwritten values
-- Error Handler. You can send a report with an error to the mail and restart applications for correct operation
-- Option to save package names and flags 
-- The list of suggested flags depends on the network and can be updated without updating the application
-- Ability to receive notifications about new suggested flags and updates
-- Ability to add several flags to favorites at once
-- Ability to activate and deactivate all boolean flags
-- Ability to suggest flags
-- Ability to report a problem caused by a flag
 
+## Features:
+- **Suggestions screen** - This is a screen that prompts the user to activate some interesting flags. The suggested flags allow the user to read some notes, open the application itself and its settings. It is possible to reset the flag value, see more detailed information or report some problem to the developer.
+- **Apps screen** - This screen generates a list of applications and their associated list of packages with flags within them. This allows you to quickly and conveniently find the appropriate flag.
+- **Saved screen** - Display lists of user-saved packages and flags.
+- **Packages screen** - Display a list of all packages in alphabetical order that contain flags. There is a search and an option to save the package for quick access.
+- **Flag Change screen** - The most important screen, which allows you to change the parameters of the flags. Flags are divided into 4 different types - Boolean/Int/Float/String. Screen functionality:
+     - Ability to select some or all booleans flags and activate or deactivate them in one click.
+     - Ability to save all selected flags in one click.
+     - Ability to send a list of selected flags to another application.
+     - Ability to suggest or report a problem about a flag or set of flags.
+     - For Int/Float/String flags, it is possible to delete an overwritten value.
+     - Filtering of flags by modified, activated and deactivated flags.
+     - Ability to add a flag manually.
+     - Ability to delete all flags changes, e.g. if it caused any problems.
+- **Add Multiple Flags screen** - Ability to record a large set of flags of all available types at once.
+- **Settings screen** - Settings allow you to delete ALL overwritten flags and saved flags/packages. It is also possible to assign a start screen when launching the application and the ability to view more detailed information about the GMS Flags.
+
+## Note
+> [!IMPORTANT]
+> It usually takes 1 to 3 force-stops for a flag to be applied. If the flag still does not apply, you should wait 24 hours or reset the application data. 
 
 # Download
 [<img src="gh_download.png"
      alt="Get it on GitHub"
-     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.0.8/gms_flags_1.0.8.apk)
+     height="80">](https://github.com/polodarb/GMS-Flags/releases/download/1.1.0/gms_flags_1.1.0.apk)
 
 ## License
 
