@@ -214,7 +214,6 @@ fun AppsScreen(
                             modifier = if (searchIconState) Modifier
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                .border(1.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                             else Modifier.background(Color.Transparent)
                         ) {
                             Icon(

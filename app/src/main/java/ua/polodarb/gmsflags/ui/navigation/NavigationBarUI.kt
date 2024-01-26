@@ -1,6 +1,7 @@
 package ua.polodarb.gmsflags.ui.navigation
 
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -28,6 +29,10 @@ fun BottomBarUI(
                             else
                                 item.iconInactive
                         ),
+                        tint = if (currentSelectedItem == item || item.iconInactive == null)
+                            MaterialTheme.colorScheme.onSecondaryContainer
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = stringResource(id = item.title)
                     )
                 },
