@@ -37,6 +37,18 @@ class RootDatabase : RootService() {
             override fun getStringFlags(pkgName: String): Map<String, String> =
                 this@RootDatabase.getStringFlags(pkgName)
 
+            override fun getAllBoolFlags(): Map<String, String> =
+                this@RootDatabase.getAllBoolFlags()
+
+            override fun getAllIntFlags(): Map<String, String> =
+                this@RootDatabase.getAllIntFlags()
+
+            override fun getAllFloatFlags(): Map<String, String> =
+                this@RootDatabase.getAllFloatFlags()
+
+            override fun getAllStringFlags(): Map<String, String> =
+                this@RootDatabase.getAllStringFlags()
+
             override fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> =
                 this@RootDatabase.getOverriddenBoolFlagsByPackage(pkgName)
 
@@ -380,6 +392,174 @@ class RootDatabase : RootService() {
         return list.toMap()
     }
 
+    private fun getAllBoolFlags(): Map<String, String> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT name, packageName" +
+                    " FROM (" +
+                    " SELECT name, packageName" +
+                    " FROM Flags" +
+                    " WHERE boolVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT name, packageName" +
+                    " FROM FlagOverrides" +
+                    " WHERE boolVal IS NOT NULL" +
+                    ")" +
+                    " GROUP BY packageName, name;",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE boolVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE boolVal IS NOT NULL" +
+                    ")" +
+                    " GROUP BY packageName, name;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    private fun getAllIntFlags(): Map<String, String> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE intVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE intVal IS NOT NULL" +
+                    ")" +
+                    " GROUP BY packageName, name;",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE intVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE intVal IS NOT NULL" +
+                    ")" +
+                    " GROUP BY packageName, name;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    private fun getAllFloatFlags(): Map<String, String> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE floatVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE floatVal IS NOT NULL" +
+                    ")" +
+                    " GROUP BY packageName, name;",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE floatVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE floatVal IS NOT NULL" +
+                    ")" +
+                    "GROUP BY packageName, name;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
+    private fun getAllStringFlags(): Map<String, String> {
+        val cursor = gmsDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE stringVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE stringVal IS NOT NULL" +
+                    ")" +
+                    "GROUP BY packageName, name;",
+            null
+        )
+        val list = mutableMapOf<String, String>()
+        while (cursor.moveToNext()) {
+            list[cursor.getString(0)] = cursor.getString(1)
+        }
+        cursor.close()
+
+        val cursorVending = vendingDB.rawQuery(
+            "SELECT packageName, name" +
+                    " FROM (" +
+                    " SELECT packageName, name" +
+                    " FROM Flags" +
+                    " WHERE stringVal IS NOT NULL" +
+                    " UNION" +
+                    " SELECT packageName, name" +
+                    " FROM FlagOverrides" +
+                    " WHERE stringVal IS NOT NULL" +
+                    ")" +
+                    "GROUP BY packageName, name;",
+            null
+        )
+        while (cursorVending.moveToNext()) {
+            list[cursorVending.getString(0)] = cursorVending.getString(1)
+        }
+        cursorVending.close()
+        return list.toMap()
+    }
+
     private fun getOverriddenBoolFlagsByPackage(pkgName: String?): Map<String?, String?> {
         val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, boolVal FROM FlagOverrides WHERE packageName = '$pkgName' AND boolVal IS NOT NULL;",
@@ -594,11 +774,9 @@ class RootDatabase : RootService() {
                 "FROM (\n" +
                 "    SELECT packageName, name\n" +
                 "    FROM Flags\n" +
-                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
                 "    UNION ALL\n" +
                 "    SELECT packageName, name\n" +
                 "    FROM FlagOverrides\n" +
-                "    WHERE (boolVal IS NOT NULL OR intVal IS NOT NULL OR floatVal IS NOT NULL OR stringVal IS NOT NULL)\n" +
                 ") AS f\n" +
                 "GROUP BY f.packageName;\n", null)
         val list = mutableMapOf<String, String>()

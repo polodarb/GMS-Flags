@@ -33,7 +33,7 @@
     <string name="notification_request">Request</string>
     <string name="notification_skip">Skip</string>
     <string name="packages_title">Packages</string>
-    <string name="packages_search_advice">Search a package name</string>
+    <string name="packages_search_advice">Search by package name</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
@@ -77,7 +77,7 @@
 
     <!-- Navigation Bar -->
     <string name="nav_bar_suggestions">Suggestions</string>
-    <string name="nav_bar_apps">Apps</string>
+    <string name="nav_bar_search">Search</string>
     <string name="nav_bar_saved">Saved</string>
     <string name="nav_bar_history">History</string>
 
@@ -139,7 +139,7 @@
     <string name="flag_change_dialog_suggest_placeholder_description">Write flag`s description</string>
     <string name="flag_change_dialog_suggest_name">Write your name or nickname</string>
     <string name="flag_change_dialog_suggest_action_send">Send suggest</string>
-    <string name="apps_search_advice">Search by apps name</string>
+    <string name="apps_search_advice">Search by app name</string>
     <string name="toast_flag_value_is_reset">The flag value is reset!</string>
     <string name="note">"Note: "</string>
     <string name="open">Open %1$s</string>
@@ -155,4 +155,6 @@
     <string name="example">"Example: "</string>
     <string name="enter_flags_using_a_space">Enter flags using a space</string>
     <string name="enter_flags_using_the_equal_symbol">Enter flags using the equal symbol</string>
+    <string name="nav_bar_updates">Updates</string>
+    <string name="flags_search_advice">Search by flag name</string>
 </resources>

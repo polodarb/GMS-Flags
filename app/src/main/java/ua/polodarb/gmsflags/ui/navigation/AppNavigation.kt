@@ -16,9 +16,10 @@ import androidx.navigation.compose.composable
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
-import ua.polodarb.gmsflags.ui.screens.apps.AppsScreen
+import ua.polodarb.gmsflags.ui.screens.search.AppsScreen
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
+import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreen
 
 sealed class NavBarItem(
     @StringRes val title: Int,
@@ -34,7 +35,7 @@ sealed class NavBarItem(
     )
 
     data object Apps : NavBarItem(
-        title = R.string.nav_bar_apps,
+        title = R.string.nav_bar_search,
         iconActive = R.drawable.ic_navbar_apps,
         iconInactive = null,
         screenRoute = "apps"
@@ -47,15 +48,15 @@ sealed class NavBarItem(
         screenRoute = "saved"
     )
 
-//    data object History : NavBarItem(
-//        title = R.string.nav_bar_history,
-//        iconActive = R.drawable.ic_navbar_history,
-//        iconInactive = null,
-//        screenRoute = "history"
-//    )
+    data object Updates : NavBarItem(
+        title = R.string.nav_bar_updates,
+        iconActive = R.drawable.ic_updates_active,
+        iconInactive = R.drawable.ic_updates_inactive,
+        screenRoute = "updates"
+    )
 }
 
-val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved /*, NavBarItem.History*/)
+val navBarItems = listOf(NavBarItem.Suggestions, NavBarItem.Apps, NavBarItem.Saved, NavBarItem.Updates)
 
 internal sealed class ScreensDestination(var screenRoute: String) {
 
@@ -116,9 +117,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 isFirstStart = isFirstStart,
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 }
             )
         }
@@ -127,10 +125,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
                 },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
+                onDialogPackageItemClick = {
+                    parentNavController.navigate(
+                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                    )
                 },
-                onPackageItemClick = {
+                onAllPackagesItemClick = {
                     parentNavController.navigate(
                         ScreensDestination.FlagChange.createRoute(Uri.encode(it))
                     )
@@ -141,9 +141,6 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
             SavedScreen(
                 onSettingsClick = {
                     parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onPackagesClick = {
-                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
                 },
                 onSavedPackageClick = {
                     parentNavController.navigate(
@@ -157,15 +154,12 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 }
             )
         }
-//        composable(route = NavBarItem.History.screenRoute) {
-//            HistoryScreen(
+        composable(route = NavBarItem.Updates.screenRoute) {
+            UpdatesScreen(
 //                onSettingsClick = {
 //                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-//                },
-//                onPackagesClick = {
-//                    parentNavController.navigate(ScreensDestination.Packages.screenRoute)
 //                }
-//            )
-//        }
+            )
+        }
     }
 }

@@ -45,7 +45,7 @@ fun RootRequestScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 44.dp)
+                    .padding(top = 48.dp)
             )
             Text(
                 text = stringResource(id = R.string.root_title),

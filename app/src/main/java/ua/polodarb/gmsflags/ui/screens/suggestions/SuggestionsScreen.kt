@@ -98,8 +98,7 @@ import ua.polodarb.gmsflags.ui.screens.suggestions.dialog.ResetFlagToDefaultDial
 @Composable
 fun SuggestionsScreen(
     isFirstStart: Boolean,
-    onSettingsClick: () -> Unit,
-    onPackagesClick: () -> Unit
+    onSettingsClick: () -> Unit
 ) {
     val viewModel = koinViewModel<SuggestionScreenViewModel>()
 
@@ -127,7 +126,6 @@ fun SuggestionsScreen(
     var reportFlagName by rememberSaveable {
         mutableStateOf("")
     }
-
 
     // Reset dialog
     var showResetDialog by rememberSaveable {
@@ -159,15 +157,6 @@ fun SuggestionsScreen(
 //                    }
                     IconButton(onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onPackagesClick()
-                    }) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_packages),
-                            contentDescription = "Localized description"
-                        )
-                    }
-                    IconButton(onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onSettingsClick()
                     }) {
                         Icon(
@@ -192,6 +181,9 @@ fun SuggestionsScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                         item {
                             WarningBanner(isFirstStart)
                         }
@@ -768,7 +760,7 @@ fun WarningBanner(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp, 0.dp, 16.dp, 16.dp)
                 .clip(RoundedCornerShape(24.dp))
                 .background(MaterialTheme.colorScheme.errorContainer)
         ) {

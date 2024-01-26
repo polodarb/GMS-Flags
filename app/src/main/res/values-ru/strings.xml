@@ -39,7 +39,7 @@
     <string name="settings_about_telegram_title">Telegram канал</string>
     <string name="settings_about_telegram_content">Обновления и информация</string>
     <string name="nav_bar_suggestions">Рекомендации</string>
-    <string name="nav_bar_apps">Приложения</string>
+    <string name="nav_bar_search">Поиск</string>
     <string name="nav_bar_saved">Избранное</string>
     <string name="nav_bar_history">История</string>
     <string name="component_error_load">Ошибка загрузки данных</string>

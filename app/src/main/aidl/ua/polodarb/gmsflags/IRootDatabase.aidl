@@ -14,6 +14,11 @@ interface IRootDatabase {
     Map<String, String> getOverriddenFloatFlagsByPackage(String pkgName);
     Map<String, String> getOverriddenStringFlagsByPackage(String pkgName);
 
+    Map<String, String> getAllBoolFlags();
+    Map<String, String> getAllIntFlags();
+    Map<String, String> getAllFloatFlags();
+    Map<String, String> getAllStringFlags();
+
     Map<String, String> getAllOverriddenBoolFlags();
     Map<String, String> getAllOverriddenIntFlags();
     Map<String, String> getAllOverriddenFloatFlags();

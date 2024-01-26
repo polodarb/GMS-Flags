@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.ui.components.chips
+package ua.polodarb.gmsflags.ui.components.chips.filter
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
-import com.google.firebase.crashlytics.internal.model.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 
 @Composable

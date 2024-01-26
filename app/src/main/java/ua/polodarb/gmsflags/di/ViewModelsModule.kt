@@ -3,13 +3,14 @@ package ua.polodarb.gmsflags.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.ui.screens.apps.AppsScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.search.SearchScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddMultipleFlagsViewModel
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
+import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
 
@@ -30,8 +31,20 @@ val viewModelsModule = module {
     }
 
     viewModel {
-        AppsScreenViewModel(
-            repository = get()
+        SearchScreenViewModel(
+            repository = get(),
+            gmsRepository = get(),
+            roomRepository = get(),
+            mergeFlagsMapper = get(),
+            gmsDBInteractor = get()
+        )
+    }
+
+    viewModel {
+        UpdatesScreenViewModel(
+            googleAppUpdatesService = get(),
+            googleUpdatesMapper = get(),
+            sharedPrefs = get()
         )
     }
 

@@ -28,7 +28,13 @@ class FlagsApiServiceImpl(
 
     override suspend fun getSuggestedFlags(): Resource<SuggestedFlagTypes> {
         return try {
-            val response: String = client.get { url("suggestedFlags_2.0.json") }.body()
+            val url = if (BuildConfig.VERSION_NAME.contains("beta")) {
+                "suggestedFlags_2.0_for_beta.json"
+            } else {
+                "suggestedFlags_2.0.json"
+            }
+
+            val response: String = client.get { url(url) }.body()
             Resource.Success(Json.decodeFromString(response))
         } catch (e: Exception) {
             Resource.Error(e)
