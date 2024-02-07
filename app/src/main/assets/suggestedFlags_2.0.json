@@ -130,6 +130,24 @@
   ],
   "secondary": [
       {
+      "name": "Redesigned Collections tab in Photos",
+      "source": "AssembleDebug & Rahul",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45617367",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.apps.photos",
+      "appPackage": "com.google.android.apps.photos",
+      "minAppVersionCode": 48792594,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/39",
+      "enabled": true
+      },
+      {
       "name": "Reorderable tasks lists in Tasks",
       "source": "Nail Sadykov",
       "note": null,
