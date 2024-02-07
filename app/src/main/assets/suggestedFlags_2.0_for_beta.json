@@ -86,7 +86,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/23",
-      "enabled": true
+      "enabled": false
     },
     {
       "primaryTag": "enable_magic_compose",
@@ -426,7 +426,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/13",
-      "enabled": true
+      "enabled": false
     },
     {
       "name": "Floating NavBar in Google Photos",
