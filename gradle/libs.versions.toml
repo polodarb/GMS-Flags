@@ -1,35 +1,35 @@
 [versions]
 activity = "1.8.2"
-agp = "8.1.2"
+agp = "8.2.2"
 androidJunit = "1.1.5"
-coil = "2.4.0"
-compose = "2023.10.01"
-composeCompiler = "1.5.3"
-composeMaterial3 = "1.2.0-beta01"
-composeAnimation = "1.6.0-beta03"
+coil = "2.5.0"
+compose = "2024.02.00"
+composeCompiler = "1.5.9"
+composeMaterial3 = "1.2.0"
+composeAnimation = "1.6.1"
 coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
-detekt = "1.23.1"
+detekt = "1.23.5"
 espresso = "3.5.1"
-firebase = "32.7.0"
+firebase = "32.7.1"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 gms = "4.4.0"
 junit = "4.13.2"
-koin = "3.5.0"
-kotlin = "1.9.10"
-kotlinCollectionsImmutable = "0.3.6"
-ksp = "1.9.10-1.0.13"
-ktor = "2.3.5"
-lazyColumnScrollbar = "1.8.0"
-libsu = "5.2.1"
-lifecycle = "2.6.2"
+koin = "3.5.3"
+kotlin = "1.9.22"
+kotlinCollectionsImmutable = "0.3.7"
+ksp = "1.9.22-1.0.17"
+ktor = "2.3.8"
+lazyColumnScrollbar = "1.9.0"
+libsu = "5.2.2"
+lifecycle = "2.7.0"
 material = "1.11.0"
-navigation = "2.7.6"
+navigation = "2.7.7"
 room = "2.6.1"
-sqlite = "3.42.0"
-ktRssReader = "2.2.1"
+sqlite = "3.45.0"
+ktRssReader = "2.2.2"
 workRuntimeKtx = "2.9.0"
 
 [libraries]
@@ -60,7 +60,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
 koin-work-manager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
-kotlin-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinCollectionsImmutable"  }
+kotlin-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinCollectionsImmutable" }
 ktor-android = { group = "io.ktor", name = "ktor-client-android" }
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
 ktor-core = { group = "io.ktor", name = "ktor-client-core" }
@@ -72,7 +72,7 @@ libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref 
 libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
 lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 requery-sqlite = { group = "com.github.requery", name = "sqlite-android", version.ref = "sqlite" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
