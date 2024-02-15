@@ -88,6 +88,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ReportFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.OtherTypesFlagsScreen
+import ua.polodarb.gmsflags.utils.Extensions.sendEMail
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -755,29 +756,13 @@ fun FlagChangeScreen(
 
                         val flagsText = selectedItemsWithValues.joinToString("\n")
 
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                            putExtra(
-                                Intent.EXTRA_SUBJECT,
-                                "Flags suggestion by ${senderName.value}"
-                            )
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                "Sender: ${senderName.value}\n\n" +
-                                        "Package: ${packageName.toString()}\n\n" +
-                                        "Description: \n${suggestFlagDesc.value}\n\n" +
-                                        "Flags: \n${flagsText}"
-                            )
-                        }
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        } else {
-                            Toast.makeText(
-                                context, "No app to send email. Please install at least one",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        context.sendEMail(
+                            subject = "Flags suggestion by ${senderName.value}",
+                            content = "Sender: ${senderName.value}\n\n" +
+                                    "Package: ${packageName.toString()}\n\n" +
+                                    "Description: \n${suggestFlagDesc.value}\n\n" +
+                                    "Flags: \n${flagsText}"
+                        )
                         showSendSuggestDialog.value = false
                         suggestFlagDesc.value = ""
                         senderName.value = ""
@@ -816,28 +801,12 @@ fun FlagChangeScreen(
 
                         val flagsText = selectedItemsWithValues.joinToString("\n")
 
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                            putExtra(
-                                Intent.EXTRA_SUBJECT,
-                                "Problem report"
-                            )
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                "Package: ${packageName.toString()}\n\n" +
-                                        "Description: \n${reportFlagDesc.value}\n\n" +
-                                        "Flags: \n${flagsText}"
-                            )
-                        }
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        } else {
-                            Toast.makeText(
-                                context, "No app to send email. Please install at least one",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        context.sendEMail(
+                            subject = "Problem report",
+                            content = "Package: ${packageName.toString()}\n\n" +
+                                    "Description: \n${reportFlagDesc.value}\n\n" +
+                                    "Flags: \n${flagsText}"
+                        )
                         showSendReportDialog.value = false
                         reportFlagDesc.value = ""
                     }

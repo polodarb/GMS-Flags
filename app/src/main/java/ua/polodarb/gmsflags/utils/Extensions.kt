@@ -1,5 +1,9 @@
 package ua.polodarb.gmsflags.utils
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ua.polodarb.gmsflags.R
 import java.util.SortedMap
 
 object Extensions {
@@ -116,4 +121,18 @@ object Extensions {
     }
 
     fun Boolean.toInt() = if (this) 1 else 0
+
+    fun Context.sendEMail(subject: String, content: String?) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, getString(R.string.developer_email))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, content)
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, getString(R.string.send_email_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
 }

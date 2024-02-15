@@ -1,14 +1,11 @@
 package ua.polodarb.gmsflags.ui
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -37,6 +34,7 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.utils.Constants
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
+import ua.polodarb.gmsflags.utils.Extensions.sendEMail
 import java.util.Locale
 import kotlin.system.exitProcess
 
@@ -57,28 +55,10 @@ class CrashActivity : ComponentActivity() {
             GMSFlagsTheme {
                 CrashScreen(
                     sendReport = {
-                        try {
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("mailto:")
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                                putExtra(
-                                    Intent.EXTRA_SUBJECT,
-                                    getString(R.string.crash_report_subject)
-                                )
-                                putExtra(Intent.EXTRA_TEXT, intent.getStringExtra(STACK_TRACE_KEY))
-                            }
-                            if (intent.resolveActivity(packageManager) != null) {
-                                startActivity(intent)
-                            } else {
-                                Toast.makeText(this, "No app to send email. Please install at least one", Toast.LENGTH_SHORT).show()
-                            }
-                        } catch (_: ActivityNotFoundException) {
-                            Toast.makeText(
-                                this,
-                                getString(R.string.crash_report_failed),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        sendEMail(
+                            subject = getString(R.string.crash_report_subject),
+                            content = intent.getStringExtra(STACK_TRACE_KEY)
+                        )
                     },
                     restartApp = {
                         startActivity(Intent(this, MainActivity::class.java))

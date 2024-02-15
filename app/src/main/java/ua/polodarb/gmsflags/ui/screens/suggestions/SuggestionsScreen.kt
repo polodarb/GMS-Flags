@@ -92,6 +92,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ReportFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.suggestions.dialog.ResetFlagToDefaultDialog
+import ua.polodarb.gmsflags.utils.Extensions.sendEMail
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -339,26 +340,16 @@ fun SuggestionsScreen(
                         },
                         onSend = {
                             showReportDialog = false
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                this.data = Uri.parse("mailto:")
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                                putExtra(
-                                    Intent.EXTRA_SUBJECT,
-                                    "Report on suggested flag"
-                                )
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
-                                            "Manufacturer: ${Build.MANUFACTURER}\n" +
-                                            "Android: ${Build.VERSION.RELEASE}\n" +
-                                            "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
-                                            "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
-
-                                            "Flag name: $reportFlagName\n\n" +
-                                            "Description: $reportFlagDesc"
-                                )
-                            }
-                            startActivity(context, intent, null)
+                            context.sendEMail(
+                                subject = "Report on suggested flag",
+                                content = "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
+                                        "Manufacturer: ${Build.MANUFACTURER}\n" +
+                                        "Android: ${Build.VERSION.RELEASE}\n" +
+                                        "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
+                                        "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
+                                        "Flag name: $reportFlagName\n\n" +
+                                        "Description: $reportFlagDesc"
+                            )
                             reportFlagDesc = ""
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         },
