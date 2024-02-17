@@ -342,13 +342,12 @@ fun SuggestionsScreen(
                             showReportDialog = false
                             context.sendEMail(
                                 subject = "Report on suggested flag",
-                                content = "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
-                                        "Manufacturer: ${Build.MANUFACTURER}\n" +
-                                        "Android: ${Build.VERSION.RELEASE}\n" +
-                                        "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
-                                        "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
-                                        "Flag name: $reportFlagName\n\n" +
-                                        "Description: $reportFlagDesc"
+                                content = """
+                                    |${OSUtils.getDeviceInfo()}
+
+                                    |Flag name: $reportFlagName
+                                    |Description: $reportFlagDesc
+                                """.trimMargin()
                             )
                             reportFlagDesc = ""
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

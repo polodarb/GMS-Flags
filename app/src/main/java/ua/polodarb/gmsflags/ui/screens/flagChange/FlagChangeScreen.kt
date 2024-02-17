@@ -72,6 +72,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.ui.OSUtils
 import ua.polodarb.gmsflags.ui.components.chips.filter.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
@@ -758,10 +759,14 @@ fun FlagChangeScreen(
 
                         context.sendEMail(
                             subject = "Flags suggestion by ${senderName.value}",
-                            content = "Sender: ${senderName.value}\n\n" +
-                                    "Package: ${packageName.toString()}\n\n" +
-                                    "Description: \n${suggestFlagDesc.value}\n\n" +
-                                    "Flags: \n${flagsText}"
+                            content = """
+                                |${OSUtils.getDeviceInfo()}
+
+                                |Sender: ${senderName.value}
+                                |Package: $packageName
+                                |Description: ${suggestFlagDesc.value}
+                                |Flags: $flagsText
+                            """.trimMargin()
                         )
                         showSendSuggestDialog.value = false
                         suggestFlagDesc.value = ""
