@@ -180,11 +180,7 @@ class ExceptionHandler(
 
     private fun Throwable.stackTraceToReport(): String {
         return """
-            Model: ${Build.DEVICE} (${Build.BOARD})
-            Manufacturer: ${Build.MANUFACTURER}
-            Android: ${Build.VERSION.RELEASE}
-            Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})
-            GMS Flags: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})
+            ${OSUtils.getDeviceInfo()}
             
             ${this.stackTraceToString()}
         """.trimIndent()
@@ -204,42 +200,29 @@ object OSUtils {
     private const val ROM_VIVO = "VIVO"
     private const val KEY_VERSION_MIUI = "ro.miui.ui.version.name"
     private const val KEY_VERSION_EMUI = "ro.build.version.emui"
+    private const val KEY_VERSION_FLYME = "ro.flyme.version.id"
     private const val KEY_VERSION_OPPO = "ro.build.version.opporom"
     private const val KEY_VERSION_SMARTISAN = "ro.smartisan.version"
     private const val KEY_VERSION_VIVO = "ro.vivo.os.version"
 
-    val sName: String
-    var sVersion: String
+    private val romSpecificKeyMap = mapOf(
+        KEY_VERSION_MIUI to ROM_MIUI,
+        KEY_VERSION_EMUI to ROM_EMUI,
+        KEY_VERSION_FLYME to ROM_FLYME,
+        KEY_VERSION_OPPO to ROM_OPPO,
+        KEY_VERSION_VIVO to ROM_VIVO,
+        KEY_VERSION_SMARTISAN to ROM_SMARTISAN,
+    )
+
+    private val sName: String
+    private val sVersion: String
 
     init {
-        if (!TextUtils.isEmpty(getProperty(KEY_VERSION_MIUI).also {
-                sVersion = it
-            })) {
-            sName = ROM_MIUI
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_EMUI).also {
-                sVersion = it
-            })) {
-            sName = ROM_EMUI
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_OPPO).also {
-                sVersion = it
-            })) {
-            sName = ROM_OPPO
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_VIVO).also {
-                sVersion = it
-            })) {
-            sName = ROM_VIVO
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_SMARTISAN).also {
-                sVersion = it
-            })) {
-            sName = ROM_SMARTISAN
-        } else {
-            sVersion = Build.DISPLAY
-            if (sVersion.uppercase(Locale.getDefault()).contains(ROM_FLYME)) {
-                sName = ROM_FLYME
-            } else {
-                sVersion = Build.UNKNOWN
-                sName = Build.MANUFACTURER.uppercase(Locale.getDefault())
-            }
+        romSpecificKeyMap.values.firstOrNull { key ->
+            getProperty(key).isNotEmpty()
+        }.let { key ->
+            sName = romSpecificKeyMap[key] ?: Build.MANUFACTURER.uppercase(Locale.getDefault())
+            sVersion = if (key != null) getProperty(key) else Build.DISPLAY
         }
     }
 
@@ -247,5 +230,15 @@ object OSUtils {
     private fun getProperty(key: String): String {
         return Class.forName("android.os.SystemProperties")
             .getMethod("get", String::class.java).invoke(null, key) as String
+    }
+
+    fun getDeviceInfo(): String {
+        return """
+            Model: ${Build.DEVICE} (${Build.BOARD})
+            Manufacturer: ${Build.MANUFACTURER}
+            Android: ${Build.VERSION.RELEASE}
+            Manufacturer OS: $sName ($sVersion)
+            GMS Flags: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})
+        """.trimIndent()
     }
 }
