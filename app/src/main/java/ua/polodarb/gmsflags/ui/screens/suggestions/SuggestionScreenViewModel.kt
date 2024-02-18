@@ -20,7 +20,7 @@ import ua.polodarb.gmsflags.data.remote.Resource
 import ua.polodarb.gmsflags.data.remote.flags.FlagsApiService
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
-import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagTypes
+import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlags
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
@@ -51,7 +51,7 @@ class SuggestionScreenViewModel(
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
-    private var rawSuggestedFlag: SuggestedFlagTypes = SuggestedFlagTypes(
+    private var rawSuggestedFlag: SuggestedFlags = SuggestedFlags(
         primary = emptyList(),
         secondary = emptyList()
     )
@@ -200,7 +200,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    private suspend fun loadSuggestedFlags(): SuggestedFlagTypes {
+    private suspend fun loadSuggestedFlags(): SuggestedFlags {
         try {
             val localFlags =
                 File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags_2.0.json")
@@ -224,7 +224,7 @@ class SuggestionScreenViewModel(
         } catch (e: Exception) {
             Log.e("TAG", e.toString())
             _stateSuggestionsFlags.value = UiStates.Error(e)
-            return SuggestedFlagTypes(emptyList(), emptyList())
+            return SuggestedFlags(emptyList(), emptyList())
         }
 
     }

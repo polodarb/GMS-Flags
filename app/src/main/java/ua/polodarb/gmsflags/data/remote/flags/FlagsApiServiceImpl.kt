@@ -9,7 +9,7 @@ import io.ktor.client.request.url
 import kotlinx.serialization.json.Json
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.data.remote.Resource
-import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlagTypes
+import ua.polodarb.gmsflags.data.remote.flags.dto.SuggestedFlags
 import ua.polodarb.gmsflags.data.remote.setConfig
 
 private const val BASE_URL = "https://raw.githubusercontent.com/polodarb/GMS-Flags/"
@@ -26,7 +26,7 @@ class FlagsApiServiceImpl(
         }
     }
 
-    override suspend fun getSuggestedFlags(): Resource<SuggestedFlagTypes> {
+    override suspend fun getSuggestedFlags(): Resource<SuggestedFlags> {
         return try {
             val url = if (BuildConfig.VERSION_NAME.contains("beta")) {
                 "suggestedFlags_2.0_for_beta.json"
