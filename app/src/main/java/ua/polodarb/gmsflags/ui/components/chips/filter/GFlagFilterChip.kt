@@ -14,7 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import ua.polodarb.gmsflags.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GFlagFilterChip(
     selected: Boolean,
