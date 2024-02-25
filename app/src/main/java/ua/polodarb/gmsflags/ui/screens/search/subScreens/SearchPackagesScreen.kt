@@ -29,7 +29,7 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
+import ua.polodarb.gmsflags.ui.screens.search.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.theme.Typography
 
 @Composable

@@ -67,7 +67,6 @@ import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.gmsflags.ui.screens.UiStates
-import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
 import ua.polodarb.gmsflags.ui.screens.search.dialog.SortAppsDialog

@@ -6,21 +6,12 @@ import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
 import ua.polodarb.gmsflags.ui.screens.search.SearchScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddMultipleFlagsViewModel
-import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
-
-    viewModel {
-        PackagesScreenViewModel(
-            gmsRepository = get(),
-            roomRepository = get()
-        )
-    }
-
     viewModel {
         FlagChangeScreenViewModel(
             pkgName = get(),

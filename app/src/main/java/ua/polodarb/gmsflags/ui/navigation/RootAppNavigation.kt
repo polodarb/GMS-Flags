@@ -41,7 +41,6 @@ import ua.polodarb.gmsflags.ui.screens.firstStart.WelcomeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddFlagList
 import ua.polodarb.gmsflags.ui.screens.loadFile.LoadFileScreen
-import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreen
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.about.AboutScreen
 import ua.polodarb.gmsflags.ui.screens.settings.screens.resetFlags.ResetFlagsScreen
@@ -81,7 +80,6 @@ internal fun RootAppNavigation(
         settingsResetSavedComposable(navController = navController)
         settingsChangeNavigationComposable(navController = navController)
         settingsAboutComposable(navController = navController)
-        packagesComposable(navController = navController)
     }
 }
 
@@ -317,25 +315,6 @@ private fun NavGraphBuilder.settingsAboutComposable(navController: NavHostContro
         exitTransition = { exitAnim(toLeft = false) },
     ) {
         AboutScreen(
-            onBackPressed = navController::navigateUp
-        )
-    }
-}
-
-private fun NavGraphBuilder.packagesComposable(navController: NavHostController) {
-    composable(
-        route = ScreensDestination.Packages.screenRoute,
-        enterTransition = { enterAnim(toLeft = true) },
-        exitTransition = { exitAnim(toLeft = true) },
-        popEnterTransition = { enterAnim(toLeft = false) },
-        popExitTransition = { exitAnim(toLeft = false) }
-    ) {
-        PackagesScreen(
-            onFlagClick = { packageName ->
-                navController.navigate(
-                    ScreensDestination.FlagChange.createRoute(Uri.encode(packageName))
-                )
-            },
             onBackPressed = navController::navigateUp
         )
     }
