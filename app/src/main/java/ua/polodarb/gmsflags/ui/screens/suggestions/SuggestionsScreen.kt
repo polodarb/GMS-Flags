@@ -141,7 +141,7 @@ fun SuggestionsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        stringResource(id = R.string.nav_bar_suggestions),
+                        stringResource(id = R.string.suggestions_title),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -153,7 +153,7 @@ fun SuggestionsScreen(
 //                    }) {
 //                        Icon(
 //                            imageVector = Icons.Filled.Search,
-//                            contentDescription = "Localized description"
+//                            contentDescription = null
 //                        )
 //                    }
                     IconButton(onClick = {
@@ -162,7 +162,7 @@ fun SuggestionsScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(id = R.string.settings_title)
                         )
                     }
                 },
@@ -215,7 +215,7 @@ fun SuggestionsScreen(
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Couldn't open app",
+                                            context.getString(R.string.suggestions_open_app_failed),
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
@@ -282,7 +282,7 @@ fun SuggestionsScreen(
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Couldn't open app",
+                                            context.getString(R.string.suggestions_open_app_failed),
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
@@ -520,7 +520,7 @@ private fun NewSuggestedFlagItem(
                     }
                     if (sourceText != null) {
                         Text(
-                            text = "" + stringResource(R.string.finder) + " " + sourceText,
+                            text = "" + stringResource(R.string.suggestions_flag_source_title) + " " + sourceText,
                             fontSize = 13.sp,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
@@ -576,7 +576,7 @@ private fun NewSuggestedFlagItem(
                                 .padding(start = 16.dp, end = 16.dp, top = 8.dp)
                                 .fillMaxWidth(),
                         ) {
-                            Text(text = stringResource(R.string.open, appInfoName))
+                            Text(text = stringResource(R.string.button_open, appInfoName))
                         }
                         OutlinedButton(
                             onClick = onOpenSettingsClick,
@@ -768,7 +768,7 @@ fun WarningBanner(
                         .size(28.dp)
                 )
                 Text(
-                    text = stringResource(R.string.suggestion_banner),
+                    text = stringResource(R.string.suggestions_warning_banner_text),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
                     fontWeight = FontWeight.Medium,
@@ -788,7 +788,7 @@ fun WarningBanner(
                             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     ) {
-                        Text(text = stringResource(R.string.close))
+                        Text(text = stringResource(R.string.button_close))
                     }
                 }
             }

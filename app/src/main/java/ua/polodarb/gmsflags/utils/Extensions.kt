@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import kotlinx.collections.immutable.toPersistentList
 import ua.polodarb.gmsflags.R
 import java.util.SortedMap
 
@@ -56,4 +57,6 @@ object Extensions {
             Toast.makeText(this, getString(R.string.send_email_failed), Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun <T> Array<out T>.toPersistentList() = this.toList().toPersistentList()
 }

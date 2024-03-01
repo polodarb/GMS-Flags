@@ -137,7 +137,7 @@ fun PackagesLazyItem(
             Column(Modifier.weight(0.9f)) {
                 Text(text = packageName, style = Typography.bodyMedium)
                 Text(
-                    text = "Flags: $packagesCount",
+                    text = "Flags: $packagesCount", // TODO: Move to res
                     style = Typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline
                 )

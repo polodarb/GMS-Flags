@@ -24,7 +24,7 @@ fun LoadFileScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Load flags from file",
+                        text = "Load flags from file", // TODO: Move to res
                     )
                 }
             )

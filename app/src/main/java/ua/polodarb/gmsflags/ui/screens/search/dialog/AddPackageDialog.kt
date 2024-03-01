@@ -41,7 +41,7 @@ fun AddPackageDialog(
             dismissButton = {},
             title = {
                 Text(
-                    text = "Add package",
+                    text = "Add package", // TODO: Move to res
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -57,13 +57,13 @@ fun AddPackageDialog(
                         if (isError) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "The field cannot be empty",
+                                text = "The field cannot be empty", // TODO: Move to res
                                 color = MaterialTheme.colorScheme.error
                             )
                         } else {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "Enter package name",
+                                text = "Enter package name", // TODO: Move to res
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -78,7 +78,7 @@ fun AddPackageDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.close))
+                        Text(text = stringResource(id = R.string.button_close))
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
@@ -89,7 +89,7 @@ fun AddPackageDialog(
                             onAdd()
                         }
                     }) {
-                        Text(text = "Add")
+                        Text(text = "Add") // TODO: Move to res
                     }
                 }
             }

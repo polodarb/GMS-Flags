@@ -41,7 +41,7 @@ fun SortAppsDialog(
             dismissButton = {},
             title = {
                 Text(
-                    text = "Sort options",
+                    text = "Sort options", // TODO: Move to res
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -79,13 +79,13 @@ fun SortAppsDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.close))
+                        Text(text = stringResource(id = R.string.button_close))
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
                         onSelect(selectedOption)
                     }) {
-                        Text(text = "Select")
+                        Text(text = "Select") // TODO: Move to res
                     }
                 }
             }

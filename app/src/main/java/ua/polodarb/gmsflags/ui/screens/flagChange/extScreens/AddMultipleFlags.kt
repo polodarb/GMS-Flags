@@ -38,10 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -50,6 +50,7 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ProgressDialog
+import ua.polodarb.gmsflags.utils.Extensions.toPersistentList
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -72,8 +73,8 @@ fun AddFlagList(
     val showProgressDialog = rememberSaveable { mutableStateOf(false) }
 
     var tabState by remember { mutableIntStateOf(0) }
-    val titles = persistentListOf("Bool", "Int", "Float", "String")
-    val pagerState = rememberPagerState(pageCount = { 4 })
+    val titles = stringArrayResource(id = R.array.flag_change_add_multi_flags_type_titles).toPersistentList()
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -130,7 +131,7 @@ fun AddFlagList(
                         .weight(1f)
                 ) {
                     Text(
-                        text = stringResource(R.string.close),
+                        text = stringResource(R.string.button_close),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

@@ -50,19 +50,19 @@ fun WelcomeScreen(
                 .padding(top = 64.dp, bottom = 32.dp, start = 32.dp, end = 32.dp)
         )
         Text(
-            text = stringResource(id = R.string.welcome_title),
+            text = stringResource(id = R.string.setup_welcome_title),
             fontSize = 46.sp,
             fontWeight = FontWeight.W600,
             lineHeight = 44.sp,
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
         )
         Text(
-            text = stringResource(id = R.string.welcome_msg),
+            text = stringResource(id = R.string.setup_welcome_msg),
             fontSize = 20.sp,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
         Text(
-            text = stringResource(id = R.string.welcome_advice),
+            text = stringResource(id = R.string.setup_welcome_advice),
             fontSize = 20.sp,
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
         )
@@ -75,7 +75,7 @@ fun WelcomeScreen(
                 .height(48.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.welcome_start),
+                text = stringResource(id = R.string.setup_welcome_start),
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -86,15 +86,15 @@ fun WelcomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 24.dp, end = 24.dp, bottom = 36.dp, top = 24.dp),
-            disclaimer = context.getString(R.string.welcome_disclaimer),
+            disclaimer = context.getString(R.string.setup_welcome_disclaimer),
             links = persistentListOf(
                 Pair(
-                    context.getString(R.string.welcome_terms_chunk),
-                    context.getString(R.string.welcome_terms_url)
+                    context.getString(R.string.setup_welcome_terms_chunk),
+                    context.getString(R.string.setup_welcome_terms_url)
                 ),
                 Pair(
-                    context.getString(R.string.welcome_policy_chunk),
-                    context.getString(R.string.welcome_policy_url)
+                    context.getString(R.string.setup_welcome_policy_chunk),
+                    context.getString(R.string.setup_welcome_policy_url)
                 )
             ),
             openLink = openLink

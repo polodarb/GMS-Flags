@@ -55,7 +55,7 @@ fun ResetFlagToDefaultDialog(
                     OutlinedButton(
                         onClick = onDismiss
                     ) {
-                        Text(stringResource(id = R.string.close))
+                        Text(stringResource(id = R.string.button_close))
                     }
                     Button(
                         onClick = onConfirmClick

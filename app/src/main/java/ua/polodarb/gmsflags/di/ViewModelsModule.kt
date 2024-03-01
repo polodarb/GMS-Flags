@@ -23,6 +23,7 @@ val viewModelsModule = module {
 
     viewModel {
         SearchScreenViewModel(
+            application = get(),
             repository = get(),
             gmsRepository = get(),
             roomRepository = get(),

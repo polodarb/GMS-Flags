@@ -276,7 +276,7 @@ fun FlagChangeScreen(
                         Text(
                             text = if (isInSelectionMode && viewModel.selectedItems.isNotEmpty()) {
                                 stringResource(
-                                    R.string.flag_change_topbar_title_selected,
+                                    R.string.flag_change_selected_title,
                                     viewModel.selectedItems.size
                                 )
                             } else {
@@ -328,7 +328,7 @@ fun FlagChangeScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Search,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                         IconButton(
@@ -369,7 +369,7 @@ fun FlagChangeScreen(
                             )
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Localized description"
+                                contentDescription = null
                             )
                         }
                     },
@@ -382,7 +382,7 @@ fun FlagChangeScreen(
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
-                                    contentDescription = "Localized description"
+                                    contentDescription = null
                                 )
                             }
                         } else {
@@ -433,7 +433,7 @@ fun FlagChangeScreen(
                         onQueryChange = { newQuery ->
                             viewModel.searchQuery.value = newQuery
                         },
-                        placeHolderText = stringResource(R.string.search_flags_advice),
+                        placeHolderText = stringResource(R.string.flag_change_search_placeholder),
                         iconVisibility = viewModel.searchQuery.value.isNotEmpty(),
                         iconOnClick = {
                             viewModel.searchQuery.value = ""
@@ -549,7 +549,7 @@ fun FlagChangeScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_save_inactive),
-                                "Localized description"
+                                null
                             )
                         }
                     }

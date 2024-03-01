@@ -127,7 +127,7 @@ fun AppsScreenDialog(
             },
             confirmButton = {
                 OutlinedButton(onClick = onDismiss) {
-                    Text(text = stringResource(id = R.string.close))
+                    Text(text = stringResource(id = R.string.button_close))
                 }
             }
         )
@@ -181,7 +181,7 @@ fun DialogListWithSeparator(
         modifier = Modifier.clip(RoundedCornerShape(16.dp))
     ) {
         item {
-            SeparatorText(stringResource(R.string.primary))
+            SeparatorText(stringResource(R.string.search_package_dialog_primary_title))
         }
         itemsIndexed(filteredPrimaryList.toList()) { index: Int, item: String ->
             DialogListItem(
@@ -192,7 +192,7 @@ fun DialogListWithSeparator(
             )
         }
         item {
-            SeparatorText(stringResource(R.string.secondary))
+            SeparatorText(stringResource(R.string.search_package_dialog_secondary_title))
         }
         itemsIndexed(filteredSecondaryList.toList()) { index: Int, item: String ->
             DialogListItem(

@@ -66,12 +66,12 @@ fun UpdateDialog(
             confirmButton = {
                 Row {
                     OutlinedButton(onClick = { showDialog = false }) {
-                        Text(text = stringResource(R.string.update_dialog_close))
+                        Text(text = stringResource(R.string.button_close))
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
                         onClick = {
-                            uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest")
+                            uriHandler.openUri("https://github.com/polodarb/GMS-Flags/releases/latest") // TODO
                             showDialog = false
                         }) {
                         Text(text = stringResource(R.string.update_dialog_confirm))
@@ -85,11 +85,11 @@ fun UpdateDialog(
                 )
             },
             text = {
-                Text(text = stringResource(R.string.update_dialog_info))
+                Text(text = stringResource(R.string.component_update_dialog_info))
             },
             title = {
                 Text(
-                    text = stringResource(R.string.update_dialog_title, release),
+                    text = stringResource(R.string.component_update_dialog_title, release),
                     fontWeight = FontWeight.Medium
                 )
             },

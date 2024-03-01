@@ -58,7 +58,7 @@ fun SuggestFlagsDialog(
                         onValueChange = onFlagDescChange,
                         placeholder = {
                             Text(
-                                text = stringResource(R.string.flag_change_dialog_suggest_placeholder_description),
+                                text = stringResource(R.string.flag_change_dialog_suggest_description_placeholder),
                             )
                         },
                         modifier = Modifier.padding(top = 16.dp),
@@ -84,7 +84,7 @@ fun SuggestFlagsDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.close))
+                        Text(text = stringResource(id = R.string.button_close))
                     }
 
                     Spacer(modifier = Modifier.weight(1f))

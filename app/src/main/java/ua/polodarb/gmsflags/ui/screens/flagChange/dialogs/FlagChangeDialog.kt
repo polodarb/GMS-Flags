@@ -74,7 +74,7 @@ fun FlagChangeDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text(text = stringResource(id = R.string.close))
+                            Text(text = stringResource(id = R.string.button_close))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = onConfirm) {

@@ -160,12 +160,12 @@ fun IntFloatStringValItem(
                 if (saveChecked) {
                     Icon(
                         painterResource(id = R.drawable.ic_save_active),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 } else {
                     Icon(
                         painterResource(id = R.drawable.ic_save_inactive),
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 }
             }

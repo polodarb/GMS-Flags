@@ -1,6 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.search
 
-import android.util.Log
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.AppInfo
 import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.APP_NAME
 import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.APP_NAME_REVERSED
@@ -35,6 +36,7 @@ typealias PackagesScreenUiStates = UiStates<Map<String, String>>
 typealias AllFlagsScreenUiStates = UiStates<List<FlagDetails>>
 
 class SearchScreenViewModel(
+    application: Application,
     private val repository: AppsListRepository,
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: RoomDBRepository,
@@ -109,13 +111,9 @@ class SearchScreenViewModel(
         allFlagsSearchQuery.value = ""
     }
 
-    // Sorting
-    val sortType = mapOf(
-        APP_NAME to "By app name",
-        APP_NAME_REVERSED to "By app name (Reversed)",
-        LAST_UPDATE to "By last update",
-        PACKAGE_NAME to "By package name"
-    )
+    val sortType = listOf(APP_NAME, APP_NAME_REVERSED, LAST_UPDATE, PACKAGE_NAME).zip(
+        other = application.resources.getStringArray(R.array.search_sort_type_titles)
+    ).toMap()
 
     var setSortType = mutableStateOf(sortType[APP_NAME])
 

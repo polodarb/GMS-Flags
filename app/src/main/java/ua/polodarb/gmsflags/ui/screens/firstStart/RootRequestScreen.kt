@@ -48,19 +48,19 @@ fun RootRequestScreen(
                     .padding(top = 48.dp)
             )
             Text(
-                text = stringResource(id = R.string.root_title),
+                text = stringResource(id = R.string.setup_root_title),
                 fontSize = 46.sp,
                 fontWeight = FontWeight.W600,
                 lineHeight = 44.sp,
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
             )
             Text(
-                text = stringResource(id = R.string.root_msg),
+                text = stringResource(id = R.string.setup_root_msg),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
-                text = stringResource(id = R.string.root_advice),
+                text = stringResource(id = R.string.setup_root_advice),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
@@ -78,7 +78,7 @@ fun RootRequestScreen(
                         .height(48.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.root_exit),
+                        text = stringResource(id = R.string.setup_root_exit),
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -102,7 +102,7 @@ fun RootRequestScreen(
                         )
                     } else {
                         Text(
-                            text = stringResource(id = R.string.root_request),
+                            text = stringResource(id = R.string.setup_root_request),
                             fontWeight = FontWeight.Medium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

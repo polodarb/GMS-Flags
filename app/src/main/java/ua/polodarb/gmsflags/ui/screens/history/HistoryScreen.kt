@@ -20,6 +20,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.NotImplementedScreen
@@ -40,7 +41,7 @@ fun HistoryScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "History",
+                        "History", // TODO: Move to res
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -52,7 +53,7 @@ fun HistoryScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description"
+                            contentDescription = null
                         )
                     }
                     IconButton(onClick = {
@@ -61,7 +62,7 @@ fun HistoryScreen(
                     }) {
                         Icon(
                             painterResource(id = R.drawable.ic_packages),
-                            contentDescription = "Localized description"
+                            contentDescription = null
                         )
                     }
                     IconButton(onClick = {
@@ -70,7 +71,7 @@ fun HistoryScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(id = R.string.settings_title)
                         )
                     }
                 },

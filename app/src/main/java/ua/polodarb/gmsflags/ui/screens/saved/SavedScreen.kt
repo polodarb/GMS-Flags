@@ -114,7 +114,7 @@ fun SavedScreen(
 //                        }) {
 //                            Icon(
 //                                imageVector = Icons.Filled.Search,
-//                                contentDescription = "Localized description"
+//                                contentDescription = null
 //                            )
 //                        }
                         IconButton(onClick = {
@@ -123,7 +123,7 @@ fun SavedScreen(
                         }) {
                             Icon(
                                 imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Settings"
+                                contentDescription = stringResource(id = R.string.settings_title)
                             )
                         }
                     },

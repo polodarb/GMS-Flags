@@ -56,7 +56,7 @@ fun ConfirmationDialog(
                     OutlinedButton(
                         onClick = onDismiss
                     ) {
-                        Text(text = stringResource(id = R.string.settings_confirmation_dialog_close))
+                        Text(text = stringResource(id = R.string.button_close))
                     }
                     Button(
                         onClick = onConfirmClick

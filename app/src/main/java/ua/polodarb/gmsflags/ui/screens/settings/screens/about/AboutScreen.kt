@@ -211,7 +211,7 @@ fun SettingsAboutListInfo(
         )
         ListItem(
             headlineContent = {
-                Text(text = stringResource(id = R.string.settings_about_project_title))
+                Text(text = stringResource(id = R.string.settings_about_project_content))
             },
             leadingContent = {
                 Image(
@@ -221,7 +221,7 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = stringResource(R.string.settings_about_project_source_code))
+                Text(text = stringResource(R.string.settings_about_project_title))
             },
             modifier = Modifier
                 .clickable {
@@ -232,7 +232,7 @@ fun SettingsAboutListInfo(
         )
         ListItem(
             headlineContent = {
-                Text(text = stringResource(id = R.string.settings_about_telegram_title))
+                Text(text = stringResource(id = R.string.settings_about_telegram_content))
             },
             leadingContent = {
                 Image(
@@ -242,7 +242,7 @@ fun SettingsAboutListInfo(
                 )
             },
             overlineContent = {
-                Text(text = stringResource(id = R.string.settings_about_telegram_content))
+                Text(text = stringResource(id = R.string.settings_about_telegram_title))
             },
             modifier = Modifier
                 .clickable {

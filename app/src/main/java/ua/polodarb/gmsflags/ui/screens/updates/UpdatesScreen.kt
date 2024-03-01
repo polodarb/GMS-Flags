@@ -94,7 +94,7 @@ fun UpdatesScreen() {
                 LargeTopAppBar(
                     title = {
                         Text(
-                            text = stringResource(id = R.string.nav_bar_updates),
+                            text = stringResource(id = R.string.updates_title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -103,7 +103,7 @@ fun UpdatesScreen() {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Settings"
+                                contentDescription = stringResource(id = R.string.settings_title)
                             )
                         }
                     },
@@ -114,14 +114,8 @@ fun UpdatesScreen() {
             ExtendedFloatingActionButton(
                 onClick = { viewModel.loadArticles() },
                 modifier = Modifier.offset(y = 24.dp),
-                text = {
-                    Text(
-                        text = "Refresh",
-                    )
-                },
-                icon = {
-                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
-                }
+                text = { Text(text = stringResource(id = R.string.updates_fab_refresh)) },
+                icon = { Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null) }
             )
         }
     ) {
@@ -140,7 +134,7 @@ fun UpdatesScreen() {
                             UpdatesAppItem(
                                 appTitle = item.title,
                                 appVersion = item.date,
-                                appDate = "Ver: " + item.version,
+                                appDate = stringResource(id = R.string.updates_version_text, item.version),
                                 onClick = {
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     uriHandler.openUri(item.link)
@@ -158,7 +152,7 @@ fun UpdatesScreen() {
                 }
 
                 is UiStates.Error -> {
-                    Text(text = "err")
+                    Text(text = stringResource(id = R.string.updates_error_title))
                 }
             }
         }

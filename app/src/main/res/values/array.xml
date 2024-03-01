@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="search_tabs_titles">
+        <item>Apps</item>
+        <item>All packages</item>
+    </string-array>
+    <string-array name="search_sort_type_titles">
+        <item>By app name</item>
+        <item>By app name (reversed)</item>
+        <item>By last update</item>
+        <item>By package name</item>
+    </string-array>
+
+    <string-array name="flag_change_add_multi_flags_type_titles" translatable="false">
+        <item>Bool</item>
+        <item>Int</item>
+        <item>Float</item>
+        <item>String</item>
+    </string-array>
+</resources>

@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,6 +74,7 @@ import ua.polodarb.gmsflags.ui.screens.search.dialog.SortAppsDialog
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchAppsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchPackagesScreen
+import ua.polodarb.gmsflags.utils.Extensions.toPersistentList
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -116,20 +118,15 @@ fun AppsScreen(
 
     // Tabs
     var state by rememberSaveable { mutableIntStateOf(0) }
-    val titles = persistentListOf(
-        "Apps",
-        "All packages",
-//        "All flags"
-    )
+    val titles = stringArrayResource(id = R.array.search_tabs_titles).toPersistentList()
+
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomTabIndicatorAnimation(
             tabPositions = tabPositions.toPersistentList(),
             selectedTabIndex = state
         )
     }
-    val pagerState = rememberPagerState(pageCount = {
-        2 // 3 with AllFlagsScreen
-    })
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
     var searchIconState by remember {
         mutableStateOf(false)

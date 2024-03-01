@@ -45,7 +45,7 @@ fun AddFlagDialog(
     onDismiss: () -> Unit
 ) {
 
-    val rowTypes = persistentListOf("Boolean", "Integer", "Float", "String")
+    val rowTypes = persistentListOf("Boolean", "Integer", "Float", "String") // TODO: Move to res
     val chipsBooleanSelect = persistentListOf("True", "False")
 
     if (showDialog) {
@@ -84,7 +84,7 @@ fun AddFlagDialog(
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(id = R.string.close))
+                    Text(text = stringResource(id = R.string.button_close))
                 }
             }
         )
@@ -224,7 +224,7 @@ fun FlagNameInput(
     enabled: Boolean
 ) {
     Text(
-        text = stringResource(R.string.flag_change_dialog_add_flag_title_name),
+        text = stringResource(R.string.flag_change_dialog_add_flag_name_title),
         color = if (enabled)
             MaterialTheme.colorScheme.onSurfaceVariant
         else
@@ -256,7 +256,7 @@ fun FlagValueInput(
     enabled: Boolean
 ) {
     Text(
-        text = stringResource(R.string.flag_change_dialog_add_flag_title_value),
+        text = stringResource(R.string.flag_change_dialog_add_flag_value_title),
         color = if (enabled)
             MaterialTheme.colorScheme.onSurfaceVariant
         else

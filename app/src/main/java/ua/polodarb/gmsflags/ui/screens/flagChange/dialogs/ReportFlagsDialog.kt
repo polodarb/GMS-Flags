@@ -70,7 +70,7 @@ fun ReportFlagsDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.close))
+                        Text(text = stringResource(id = R.string.button_close))
                     }
 
                     Spacer(modifier = Modifier.weight(1f))

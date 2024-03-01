@@ -78,19 +78,19 @@ fun RequestNotificationPermissionScreen(
                     .padding(top = 48.dp)
             )
             Text(
-                text = stringResource(id = R.string.notification_title),
+                text = stringResource(id = R.string.setup_notification_title),
                 fontSize = 46.sp,
                 fontWeight = FontWeight.W600,
                 lineHeight = 44.sp,
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp)
             )
             Text(
-                text = stringResource(id = R.string.notification_msg),
+                text = stringResource(id = R.string.setup_notification_msg),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
-                text = stringResource(id = R.string.notification_advice),
+                text = stringResource(id = R.string.setup_notification_advice),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
@@ -108,7 +108,7 @@ fun RequestNotificationPermissionScreen(
                         .height(48.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.notification_skip),
+                        text = stringResource(R.string.setup_notification_skip),
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -144,7 +144,7 @@ fun RequestNotificationPermissionScreen(
                             if (hasNotificationPermission)
                                 stringResource(R.string.notification_finish)
                             else
-                                stringResource(R.string.notification_request)
+                                stringResource(R.string.setup_notification_request)
                         } else {
                             stringResource(R.string.notifications_open_settings)
                         },
