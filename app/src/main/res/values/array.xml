@@ -17,4 +17,16 @@
         <item>Float</item>
         <item>String</item>
     </string-array>
+    <string-array name="flag_change_filter_chips_titles">
+        <item>All</item>
+        <item>Changed</item>
+        <item>Disabled</item>
+        <item>Enabled</item>
+    </string-array>
+    <string-array name="flag_change_filter_chips_compatibility" translatable="false">
+        <item>true|true|true|true</item>
+        <item>true|true|false|false</item>
+        <item>true|true|false|false</item>
+        <item>true|true|false|false</item>
+    </string-array>
 </resources>

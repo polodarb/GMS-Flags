@@ -84,10 +84,6 @@
     <string name="component_no_packages">Пакети не знайдено</string>
     <string name="suggestions_dialog_title">Скинути флаг?</string>
     <string name="suggestions_dialog_text">Ця дія призведе до скидання значення флага на значення за замовчуванням. Використовуйте цю дію, якщо просте вимкнення прапора не працює або спричиняє будь-які проблеми</string>
-    <string name="filter_chip_all">Всі</string>
-    <string name="filter_chip_changed">Змінені</string>
-    <string name="filter_chip_disabled">Вимкнені</string>
-    <string name="filter_chip_enabled">Увімкнені</string>
     <string name="flag_change_search_placeholder">Пошук флагів за ім\'ям</string>
     <string name="drop_down_enable_selected">Активувати обране</string>
     <string name="drop_down_disable_selected">Деактивувати обране</string>

@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.ui.components.chips.filter
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableChipColors
@@ -9,15 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import ua.polodarb.gmsflags.R
 
 @Composable
 fun GFlagFilterChip(
     selected: Boolean,
-    pagerCurrentState: Int,
+    enabled: Boolean,
     chipOnClick: () -> Unit,
     chipTitle: String,
     modifier: Modifier
@@ -55,11 +52,6 @@ fun GFlagFilterChip(
         },
         leadingIcon = null,
         modifier = modifier,
-        enabled = when (pagerCurrentState) {
-            0 -> true
-            else -> {
-                chipTitle == stringResource(R.string.filter_chip_all) || chipTitle == stringResource(R.string.filter_chip_changed)
-            }
-        }
+        enabled = enabled
     )
 }

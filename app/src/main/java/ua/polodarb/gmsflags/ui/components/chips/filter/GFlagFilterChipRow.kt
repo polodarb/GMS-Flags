@@ -16,8 +16,8 @@ import kotlinx.collections.immutable.PersistentList
 @Composable
 fun GFlagFilterChipRow(
     list: PersistentList<String>,
+    compatibility: PersistentList<Boolean>,
     selectedChips: Int,
-    pagerCurrentState: Int,
     colorFraction: Float? = null,
     chipOnClick: (index: Int) -> Unit
 ) {
@@ -41,7 +41,7 @@ fun GFlagFilterChipRow(
         list.forEachIndexed { index, title ->
             GFlagFilterChip(
                 selected = selectedChips == index,
-                pagerCurrentState = pagerCurrentState,
+                enabled = compatibility[index],
                 chipOnClick = {
                     chipOnClick(index)
                 },

@@ -61,12 +61,13 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -90,6 +91,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.OtherTypesFlagsScreen
 import ua.polodarb.gmsflags.utils.Extensions.sendEMail
+import ua.polodarb.gmsflags.utils.Extensions.toPersistentList
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -126,11 +128,12 @@ fun FlagChangeScreen(
 
     // Tab bar
     var tabState by remember { mutableIntStateOf(0) }
-    val titles = persistentListOf("Bool", "Int", "Float", "String")
+    val titles = stringArrayResource(id = R.array.flag_change_add_multi_flags_type_titles).toPersistentList()
+    val compatibility = stringArrayResource(id = R.array.flag_change_filter_chips_compatibility).map { str ->
+        str.split(regex = Regex(pattern = "[|]")).map { it.toBoolean() }.toPersistentList()
+    }.toPersistentList()
 
-    val pagerState = rememberPagerState(pageCount = {
-        4 // 5 with extVal
-    })
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
 
     // Select states
@@ -160,12 +163,7 @@ fun FlagChangeScreen(
 
     // Filter
     var selectedChips by remember { mutableIntStateOf(0) }
-    val chipsList = persistentListOf(
-        stringResource(R.string.filter_chip_all),
-        stringResource(R.string.filter_chip_changed),
-        stringResource(R.string.filter_chip_disabled),
-        stringResource(R.string.filter_chip_enabled)
-    )
+    val chipsList = stringArrayResource(id = R.array.flag_change_filter_chips_titles).toPersistentList()
 
     // Tab state for filter button
     var tabFilterState by rememberSaveable {
@@ -413,8 +411,8 @@ fun FlagChangeScreen(
                 AnimatedVisibility(visible = filterIconState) {
                     GFlagFilterChipRow(
                         list = chipsList,
+                        compatibility = compatibility[pagerState.currentPage],
                         selectedChips = selectedChips,
-                        pagerCurrentState = pagerState.currentPage,
                         colorFraction = FastOutLinearInEasing.transform(topBarState.collapsedFraction),
                         chipOnClick = {
                             when (it) {
