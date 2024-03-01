@@ -4,7 +4,7 @@
       "primaryTag": "call_recording",
       "name": "Enable call recording for unsupported countries",
       "source": null,
-      "note": null,
+      "note": "This flag does not activate the Call Screen feature",
       "flags": [
         {
           "tag": "G__enable_call_recording",
@@ -86,7 +86,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/23",
-      "enabled": true
+      "enabled": false
     },
     {
       "primaryTag": "enable_magic_compose",
@@ -125,7 +125,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/20",
-      "enabled": true
+      "enabled": false
     }
   ],
   "secondary": [
