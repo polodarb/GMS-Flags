@@ -25,7 +25,6 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.data.remote.github.GithubApiServiceImpl
@@ -54,9 +53,6 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (!BuildConfig.DEBUG)
-            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
 
