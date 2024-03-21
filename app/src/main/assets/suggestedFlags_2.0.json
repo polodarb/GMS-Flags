@@ -48,87 +48,27 @@
       "minAndroidSdkCode": null,
       "details": null,
       "enabled": true
-    },
-    {
-      "primaryTag": "rcs_new_features",
-      "name": "Activate new UI of RCS chats in Messages",
-      "source": "Danyil Kobzar",
-      "note": "1. New background in chats\n2. Animated reactions\n3. New message input field UI\n4. Noise reduction in voice",
-      "flags": [
-        {
-          "tag": "45425786",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45403082",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45462082",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45477604",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45491632",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.apps.messaging.auto#com.google.android.apps.messaging",
-      "appPackage": "com.google.android.apps.messaging",
-      "minAppVersionCode": null,
-      "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/23",
-      "enabled": false
-    },
-    {
-      "primaryTag": "enable_magic_compose",
-      "name": "Enable Magic Compose in Messages",
-      "source": null,
-      "note": "There is a daily limit on the number of requests!",
-      "flags": [
-        {
-          "tag": "bugle_phenotype__always_use_magic_compose_transitions",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "bugle_phenotype__enable_magic_compose_view",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "bugle_phenotype__enable_combined_magic_compose",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "bugle_phenotype__enable_additional_functionalities_for_magic_compose",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "bugle_phenotype__debug_menu_default_available",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.apps.messaging#com.google.android.apps.messaging",
-      "appPackage": "com.google.android.apps.messaging",
-      "minAppVersionCode": null,
-      "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/20",
-      "enabled": false
     }
   ],
   "secondary": [
+      {
+      "name": "New Bottom bar in Google Keep",
+      "source": "Danyil Kobzar",
+      "note": null,
+      "flags": [
+        {
+          "tag": "45618251",
+          "type": "bool",
+          "value": "1"
+        }
+      ],
+      "flagPackage": "com.google.android.keep#com.google.android.keep",
+      "appPackage": "com.google.android.keep",
+      "minAppVersionCode": null,
+      "minAndroidSdkCode": null,
+      "details": "https://t.me/gmsflags_content/43",
+      "enabled": true
+      },
       {
       "name": "Redesigned Collections tab in Photos",
       "source": "AssembleDebug & Rahul",
