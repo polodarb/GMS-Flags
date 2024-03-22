@@ -4,8 +4,8 @@
 ![License](https://img.shields.io/github/license/polodarb/GMS-Flags?style=for-the-badge) 
 [![Telegram](https://img.shields.io/badge/telegram-telegram?style=for-the-badge&logo=telegram&logoColor=white&label=GMS%20Flags&color=%23229ED9)](https://t.me/gmsflags)
 
-![Banner](gf_banner.png)
-![Root](gf_root.png)
+![Banner](img/gf_banner.png)
+![Root](img/gf_root.png)
 
 ## Features:
 - **Suggestions screen** - This is a screen that prompts the user to activate some interesting flags. The suggested flags allow the user to read some notes, open the application itself and its settings. It is possible to reset the flag value, see more detailed information or report some problem to the developer.
