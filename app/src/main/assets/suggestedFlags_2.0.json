@@ -47,7 +47,7 @@
       "minAppVersionCode": null,
       "minAndroidSdkCode": null,
       "details": null,
-      "enabled": true
+      "enabled": false
     }
   ],
   "secondary": [
