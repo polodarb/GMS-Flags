@@ -19,7 +19,7 @@ import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
 import ua.polodarb.gmsflags.ui.screens.search.AppsScreen
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
-import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreen
+import ua.polodarb.updates.navigation.updatesScreen
 
 sealed class NavBarItem(
     @StringRes val title: Int,
@@ -154,12 +154,13 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 }
             )
         }
-        composable(route = NavBarItem.Updates.screenRoute) {
-            UpdatesScreen(
-//                onSettingsClick = {
-//                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-//                }
-            )
-        }
+        updatesScreen()
+//        composable(route = NavBarItem.Updates.screenRoute) {
+//            UpdatesScreen(
+////                onSettingsClick = {
+////                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+////                }
+//            )
+//        }
     }
 }

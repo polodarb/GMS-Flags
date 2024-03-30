@@ -170,6 +170,8 @@ dependencies {
 
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
+
+    implementation(project(":features:updates"))
 }
 
 tasks.withType<KotlinCompile> {

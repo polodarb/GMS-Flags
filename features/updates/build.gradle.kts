@@ -27,12 +27,37 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 dependencies {
+
+    // Navigation
+    implementation(libs.navigation.compose)
+
+    // Jetpack Compose
+    platform(libs.compose.bom).let { bom ->
+        implementation(bom)
+        androidTestImplementation(bom)
+        debugImplementation(bom)
+    }
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.animation)
+    implementation(libs.compose.icons)
+    implementation(libs.work.runtime.ktx)
+    androidTestImplementation(libs.compose.test.juni4)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.test.manifest)
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
