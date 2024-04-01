@@ -19,7 +19,7 @@ import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.utils.Extensions.filterByDisabled
 import ua.polodarb.gmsflags.utils.Extensions.filterByEnabled
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
@@ -27,7 +27,7 @@ import java.util.Collections
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-typealias FlagChangeUiStates = UiStates<Map<String, String>>
+typealias FlagChangeUiStates = ua.polodarb.repository.uiStates.UiStates<Map<String, String>>
 typealias SavedFlagsFlow = List<SavedFlags>
 
 class FlagChangeScreenViewModel(
@@ -43,19 +43,19 @@ class FlagChangeScreenViewModel(
     }
 
     private val _stateBoolean =
-        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
+        MutableStateFlow<FlagChangeUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val stateBoolean: StateFlow<FlagChangeUiStates> = _stateBoolean.asStateFlow()
 
     private val _stateInteger =
-        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
+        MutableStateFlow<FlagChangeUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val stateInteger: StateFlow<FlagChangeUiStates> = _stateInteger.asStateFlow()
 
     private val _stateFloat =
-        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
+        MutableStateFlow<FlagChangeUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val stateFloat: StateFlow<FlagChangeUiStates> = _stateFloat.asStateFlow()
 
     private val _stateString =
-        MutableStateFlow<FlagChangeUiStates>(UiStates.Loading())
+        MutableStateFlow<FlagChangeUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val stateString: StateFlow<FlagChangeUiStates> = _stateString.asStateFlow()
 
     private val _stateSavedFlags =
@@ -145,7 +145,7 @@ class FlagChangeScreenViewModel(
     fun getBoolFlags() {
         viewModelScope.launch {
             _stateBoolean.value = Dispatchers.Default {
-                UiStates.Success(
+                ua.polodarb.repository.uiStates.UiStates.Success(
                     when (filterMethod.value) {
                         FilterMethod.ENABLED -> listBoolFiltered.toMap().filterByEnabled()
                         FilterMethod.DISABLED -> listBoolFiltered.toMap().filterByDisabled()
@@ -160,7 +160,7 @@ class FlagChangeScreenViewModel(
     fun getIntFlags() {
         viewModelScope.launch {
             _stateInteger.value = Dispatchers.Default {
-                UiStates.Success(
+                ua.polodarb.repository.uiStates.UiStates.Success(
                     when (filterMethod.value) {
                         FilterMethod.CHANGED -> changedFilterIntList.filterBySearchQuery()
                         else -> listIntFiltered.filterBySearchQuery()
@@ -173,7 +173,7 @@ class FlagChangeScreenViewModel(
     fun getFloatFlags() {
         viewModelScope.launch {
             _stateFloat.value = Dispatchers.Default {
-                UiStates.Success(
+                ua.polodarb.repository.uiStates.UiStates.Success(
                     when (filterMethod.value) {
                         FilterMethod.CHANGED -> changedFilterFloatList.filterBySearchQuery()
                         else -> listFloatFiltered.filterBySearchQuery()
@@ -186,7 +186,7 @@ class FlagChangeScreenViewModel(
     fun getStringFlags() {
         viewModelScope.launch {
             _stateString.value = Dispatchers.Default {
-                UiStates.Success(
+                ua.polodarb.repository.uiStates.UiStates.Success(
                     when (filterMethod.value) {
                         FilterMethod.CHANGED -> changedFilterStringList.filterBySearchQuery()
                         else -> listStringFiltered.filterBySearchQuery()
@@ -213,7 +213,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 _stateBoolean.update {
                     val currentState = it
-                    if (currentState is UiStates.Success) {
+                    if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                         val updatedData = currentState.data.toMutableMap()
 
                         for (flagName in flagNames) {
@@ -235,7 +235,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 _stateInteger.update {
                     val currentState = it
-                    if (currentState is UiStates.Success) {
+                    if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                         val updatedData = currentState.data.toMutableMap()
                         updatedData[flagName] = newValue
                         currentState.copy(data = updatedData.toSortMap())
@@ -252,7 +252,7 @@ class FlagChangeScreenViewModel(
     fun updateFloatFlagValue(flagName: String, newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _stateFloat.value
-            if (currentState is UiStates.Success) {
+            if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                 val updatedData = currentState.data.toMutableMap()
                 updatedData[flagName] = newValue
                 Dispatchers.Main {
@@ -266,7 +266,7 @@ class FlagChangeScreenViewModel(
     fun updateStringFlagValue(flagName: String, newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _stateString.value
-            if (currentState is UiStates.Success) {
+            if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                 val updatedData = currentState.data.toMutableMap()
                 updatedData[flagName] = newValue
                 _stateString.value = currentState.copy(data = updatedData.toSortMap())
@@ -317,18 +317,18 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getOverriddenStringFlagsByPackage(pkgName).collect {
                     when (val data = it) {
-                        is UiStates.Success -> {
+                        is ua.polodarb.repository.uiStates.UiStates.Success -> {
                             changedFilterStringList.clear()
                             changedFilterStringList.putAll(data.data)
                             listStringFiltered.putAll(data.data)
                         }
 
-                        is UiStates.Loading -> {
-                            _stateString.value = UiStates.Loading()
+                        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            _stateString.value = ua.polodarb.repository.uiStates.UiStates.Loading()
                         }
 
-                        is UiStates.Error -> {
-                            _stateString.value = UiStates.Error()
+                        is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            _stateString.value = ua.polodarb.repository.uiStates.UiStates.Error()
                         }
                     }
                 }
@@ -361,13 +361,13 @@ class FlagChangeScreenViewModel(
     }
 
     private fun addManuallyFlag(
-        state: MutableStateFlow<UiStates<Map<String, String>>>,
+        state: MutableStateFlow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>>,
         flagName: String,
         flagValue: String
     ) {
         viewModelScope.launch {
             val currentState = state.value
-            if (currentState is UiStates.Success) {
+            if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                 val updatedData = currentState.data.toSortMap()
                 updatedData[flagName] = flagValue
                 state.value = currentState.copy(data = updatedData)
@@ -381,7 +381,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 _stateBoolean.update {
                     val currentState = it
-                    if (currentState is UiStates.Success) {
+                    if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                         val updatedData = currentState.data.mapValues { "1" }.toMutableMap()
                         currentState.copy(data = updatedData.toSortMap())
                     } else {
@@ -399,7 +399,7 @@ class FlagChangeScreenViewModel(
             withContext(Dispatchers.IO) {
                 _stateBoolean.update {
                     val currentState = it
-                    if (currentState is UiStates.Success) {
+                    if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
                         val updatedData = currentState.data.mapValues { "0" }.toMutableMap()
                         currentState.copy(data = updatedData.toSortMap())
                     } else {
@@ -428,7 +428,7 @@ class FlagChangeScreenViewModel(
                     }
                 }
                 clearPhenotypeCache(pkgName)
-                if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+                if ((stateBoolean.value as ua.polodarb.repository.uiStates.UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                     turnOnAllBoolFlags()
                 } else {
                     updateBoolFlagValues(selectedItems, "1")
@@ -450,7 +450,7 @@ class FlagChangeScreenViewModel(
                 }
             }
             clearPhenotypeCache(pkgName)
-            if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
+            if ((stateBoolean.value as ua.polodarb.repository.uiStates.UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                 turnOffAllBoolFlags()
             } else {
                 updateBoolFlagValues(selectedItems, "0")
@@ -613,11 +613,11 @@ class FlagChangeScreenViewModel(
     }
 
     private fun <T> collectFlagsFlow(
-        dataFlow: Flow<UiStates<T>>,
+        dataFlow: Flow<ua.polodarb.repository.uiStates.UiStates<T>>,
         loadingState: MutableStateFlow<FlagChangeUiStates>,
         errorState: MutableStateFlow<FlagChangeUiStates>,
         coroutineContext: CoroutineContext = EmptyCoroutineContext,
-        onSuccess: suspend (UiStates.Success<T>) -> Unit
+        onSuccess: suspend (ua.polodarb.repository.uiStates.UiStates.Success<T>) -> Unit
     ) {
         viewModelScope.launch(coroutineContext) {
             dataFlow.collect { uiStates ->
@@ -632,17 +632,17 @@ class FlagChangeScreenViewModel(
     }
 
     private suspend fun <T> handleUiStates(
-        uiStates: UiStates<T>,
+        uiStates: ua.polodarb.repository.uiStates.UiStates<T>,
         loadingState: MutableStateFlow<FlagChangeUiStates>,
         errorState: MutableStateFlow<FlagChangeUiStates> = _stateInteger,
-        onSuccess: suspend (UiStates.Success<T>) -> Unit
+        onSuccess: suspend (ua.polodarb.repository.uiStates.UiStates.Success<T>) -> Unit
     ) {
         when (uiStates) {
-            is UiStates.Success -> onSuccess(uiStates)
+            is ua.polodarb.repository.uiStates.UiStates.Success -> onSuccess(uiStates)
 
-            is UiStates.Loading -> loadingState.value = UiStates.Loading()
+            is ua.polodarb.repository.uiStates.UiStates.Loading -> loadingState.value = ua.polodarb.repository.uiStates.UiStates.Loading()
 
-            is UiStates.Error -> errorState.value = UiStates.Error()
+            is ua.polodarb.repository.uiStates.UiStates.Error -> errorState.value = ua.polodarb.repository.uiStates.UiStates.Error()
         }
     }
 

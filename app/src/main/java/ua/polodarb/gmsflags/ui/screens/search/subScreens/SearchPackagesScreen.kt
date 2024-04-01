@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -28,7 +27,7 @@ import my.nanihadesuka.compose.LazyColumnScrollbar
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.theme.Typography
 
@@ -42,9 +41,9 @@ fun SearchPackagesScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (uiState.value) {
-            is UiStates.Success -> {
+            is ua.polodarb.repository.uiStates.UiStates.Success -> {
                 SuccessListItems(
-                    list = (uiState.value as UiStates.Success).data,
+                    list = (uiState.value as ua.polodarb.repository.uiStates.UiStates.Success).data,
                     listState = lazyListState,
                     savedPackagesList = savedPackagesList,
                     onPackageClick = { packageName ->
@@ -56,8 +55,8 @@ fun SearchPackagesScreen(
                 )
             }
 
-            is UiStates.Loading -> LoadingProgressBar()
-            is UiStates.Error -> ErrorLoadScreen()
+            is ua.polodarb.repository.uiStates.UiStates.Loading -> LoadingProgressBar()
+            is ua.polodarb.repository.uiStates.UiStates.Error -> ErrorLoadScreen()
         }
     }
 }

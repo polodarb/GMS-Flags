@@ -80,19 +80,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.remote.flags.dto.FlagInfo
-import ua.polodarb.gmsflags.data.remote.flags.dto.FlagType
 import ua.polodarb.gmsflags.ui.OSUtils
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.ReportFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.suggestions.dialog.ResetFlagToDefaultDialog
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,7 +172,7 @@ fun SuggestionsScreen(
                 .padding(top = it.calculateTopPadding())
         ) {
             when (val result = networkFlags.value) {
-                is UiStates.Success -> {
+                is ua.polodarb.repository.uiStates.UiStates.Success -> {
                     val data = result.data
                     Log.e("compose", "data: $data")
                     LazyColumn(
@@ -369,11 +366,11 @@ fun SuggestionsScreen(
                     )
                 }
 
-                is UiStates.Loading -> {
+                is ua.polodarb.repository.uiStates.UiStates.Loading -> {
                     LoadingProgressBar()
                 }
 
-                is UiStates.Error -> {
+                is ua.polodarb.repository.uiStates.UiStates.Error -> {
                     ErrorLoadScreen()
                 }
             }

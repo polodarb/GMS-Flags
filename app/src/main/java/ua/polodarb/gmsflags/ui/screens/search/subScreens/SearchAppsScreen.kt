@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,7 +34,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NoFlagsOrPackages
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.search.AppDialogList
 import ua.polodarb.gmsflags.ui.screens.search.AppInfoList
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AppsScreenDialog
@@ -54,7 +52,7 @@ fun SearchAppsScreen(
 ) {
     Column {
         when (val result = appsListUIState.value) {
-            is UiStates.Success -> {
+            is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
                 val appsList = result.data
 
@@ -91,7 +89,7 @@ fun SearchAppsScreen(
                 }
 
                 when (val dialogResult = packagesListUIState.value) {
-                    is UiStates.Success -> {
+                    is ua.polodarb.repository.uiStates.UiStates.Success -> {
                         AppsScreenDialog(
                             showDialog = showPackagesDialog,
                             onDismiss = onPackagesDialogDismiss,
@@ -101,21 +99,21 @@ fun SearchAppsScreen(
                         )
                     }
 
-                    is UiStates.Loading -> {
+                    is ua.polodarb.repository.uiStates.UiStates.Loading -> {
                         LoadingProgressBar()
                     }
 
-                    is UiStates.Error -> {
+                    is ua.polodarb.repository.uiStates.UiStates.Error -> {
                         ErrorLoadScreen()
                     }
                 }
             }
 
-            is UiStates.Loading -> {
+            is ua.polodarb.repository.uiStates.UiStates.Loading -> {
                 LoadingProgressBar()
             }
 
-            is UiStates.Error -> {
+            is ua.polodarb.repository.uiStates.UiStates.Error -> {
                 ErrorLoadScreen()
             }
         }

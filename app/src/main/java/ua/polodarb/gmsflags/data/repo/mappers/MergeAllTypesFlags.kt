@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 
 class MergeFlagsMapper(
     context: Context
@@ -31,7 +31,7 @@ class MergeFlagsMapper(
 
     }
 
-    fun getMergedAllFlags() = flow<UiStates<MergedAllTypesFlags>> {
+    fun getMergedAllFlags() = flow<ua.polodarb.repository.uiStates.UiStates<MergedAllTypesFlags>> {
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
@@ -62,7 +62,7 @@ class MergeFlagsMapper(
                 }
 
                 emit(
-                    UiStates.Success(
+                    ua.polodarb.repository.uiStates.UiStates.Success(
                         MergedAllTypesFlags(
                             boolFlag = mergedBoolFlags,
                             intFlag = mergedIntFlags,

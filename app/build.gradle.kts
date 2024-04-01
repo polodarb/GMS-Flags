@@ -171,6 +171,25 @@ dependencies {
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
 
+    implementation(project(":core:platform"))
+    implementation(project(":core:ui"))
+//    implementation(project(":core:navigation"))
+
+    implementation(project(":data:repository"))
+    implementation(project(":data:repository:impl"))
+
+    implementation(project(":data:preferences"))
+//    implementation(project(":data:preferences:impl"))
+
+    implementation(project(":data:network"))
+    implementation(project(":data:network:impl"))
+
+    implementation(project(":data:database"))
+//    implementation(project(":data:database:impl"))
+
+    implementation(project(":domain"))
+//    implementation(project(":domain:impl"))
+
     implementation(project(":features:updates"))
 }
 

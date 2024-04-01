@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="component_error_load">Data loading error</string>
+    <string name="component_not_implemented">Coming soon</string>
+
+    <string name="component_no_flags">Flags not found</string>
+    <string name="component_no_apps">Apps not found</string>
+    <string name="component_no_packages">Packages not found</string>
+</resources>

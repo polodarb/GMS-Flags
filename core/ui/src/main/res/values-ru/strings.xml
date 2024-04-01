@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="component_error_load">Ошибка загрузки данных</string>
+    <string name="component_not_implemented">Скоро будет</string>
+
+    <string name="component_no_flags">Флаги не найдены</string>
+    <string name="component_no_apps">Приложения не найдены</string>
+    <string name="component_no_packages">Пакеты не найдены</string>
+</resources>

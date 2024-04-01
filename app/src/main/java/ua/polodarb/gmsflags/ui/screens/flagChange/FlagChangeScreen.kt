@@ -77,7 +77,7 @@ import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.DISABLED
@@ -493,7 +493,7 @@ fun FlagChangeScreen(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
                             when (val result = uiStateBoolean.value) {
-                                is UiStates.Success -> {
+                                is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
                                     val listBool = result.data
 
@@ -739,7 +739,7 @@ fun FlagChangeScreen(
             },
             onSend = {
                 when (val result = uiStateBoolean.value) {
-                    is UiStates.Success -> {
+                    is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
                         val listBool = result.data.toSortMap()
 
@@ -800,7 +800,7 @@ fun FlagChangeScreen(
             },
             onSend = {
                 when (val result = uiStateBoolean.value) {
-                    is UiStates.Success -> {
+                    is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
                         val listBool = result.data.toSortMap()
 

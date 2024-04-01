@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -66,7 +65,7 @@ import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
 import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
@@ -393,7 +392,7 @@ fun AppsScreen(
                             }
                         )
                         when (val result = flagsUiState.value) {
-                            is UiStates.Success -> {
+                            is ua.polodarb.repository.uiStates.UiStates.Success -> {
                                 SearchFlagsScreen(
                                     flags = when (viewModel.selectedFlagsTypeChip.value) {
                                         0 -> result.data.boolFlag
@@ -404,11 +403,11 @@ fun AppsScreen(
                                 )
                             }
 
-                            is UiStates.Loading -> {
+                            is ua.polodarb.repository.uiStates.UiStates.Loading -> {
                                 LoadingProgressBar()
                             }
 
-                            is UiStates.Error -> {
+                            is ua.polodarb.repository.uiStates.UiStates.Error -> {
                                 NotFoundContent()
                             }
                         }

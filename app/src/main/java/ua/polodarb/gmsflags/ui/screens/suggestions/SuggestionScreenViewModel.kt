@@ -25,13 +25,12 @@ import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
-import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesOverriddenFlags
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import java.io.File
 import java.util.Collections
 
-typealias SuggestionsScreenUiState = UiStates<SuggestedFlag>
+typealias SuggestionsScreenUiState = ua.polodarb.repository.uiStates.UiStates<SuggestedFlag>
 
 class SuggestionScreenViewModel(
     private val application: Application,
@@ -45,7 +44,7 @@ class SuggestionScreenViewModel(
     private val gmsApplication = application as GMSApplication
 
     private val _stateSuggestionsFlags =
-        MutableStateFlow<SuggestionsScreenUiState>(UiStates.Loading())
+        MutableStateFlow<SuggestionsScreenUiState>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiState> =
         _stateSuggestionsFlags.asStateFlow()
 
@@ -72,7 +71,7 @@ class SuggestionScreenViewModel(
 
     fun updatePrimaryFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
-        if (currentState is UiStates.Success) {
+        if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
             val updatedData = currentState.data.primary.toMutableList()
             if (index != -1) {
                 updatedData[index] = updatedData[index].copy(enabled = newValue)
@@ -84,7 +83,7 @@ class SuggestionScreenViewModel(
 
     fun updateSecondaryFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
-        if (currentState is UiStates.Success) {
+        if (currentState is ua.polodarb.repository.uiStates.UiStates.Success) {
             val updatedData = currentState.data.secondary.toMutableList()
             if (index != -1) {
                 updatedData[index] = updatedData[index].copy(enabled = newValue)
@@ -190,7 +189,7 @@ class SuggestionScreenViewModel(
                             primary = primaryList.toSet().toImmutableList(),
                             secondary = secondaryList.toSet().toImmutableList()
                         )
-                        _stateSuggestionsFlags.value = UiStates.Success(
+                        _stateSuggestionsFlags.value = ua.polodarb.repository.uiStates.UiStates.Success(
                             data = data
                         )
 
@@ -223,7 +222,7 @@ class SuggestionScreenViewModel(
             return Json.decodeFromString(pkgContent)
         } catch (e: Exception) {
             Log.e("TAG", e.toString())
-            _stateSuggestionsFlags.value = UiStates.Error(e)
+            _stateSuggestionsFlags.value = ua.polodarb.repository.uiStates.UiStates.Error(e)
             return SuggestedFlagTypes(emptyList(), emptyList())
         }
 

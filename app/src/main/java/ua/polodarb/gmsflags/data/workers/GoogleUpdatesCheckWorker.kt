@@ -1,38 +1,23 @@
 package ua.polodarb.gmsflags.data.workers
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.work.Constraints
 import androidx.work.CoroutineWorker
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.core.platform.activity.CHANNEL_ID
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
 import ua.polodarb.gmsflags.data.remote.googleUpdates.GoogleAppUpdatesService
 import ua.polodarb.gmsflags.data.repo.mappers.GoogleUpdatesMapper
 import ua.polodarb.gmsflags.data.repo.mappers.NewRssArticle
-import ua.polodarb.gmsflags.ui.screens.UiStates
-import java.util.concurrent.TimeUnit
 
 const val GOOGLE_UPDATES_WORKER_TAG = "GOOGLE_UPDATES_WORKER_TAG"
 

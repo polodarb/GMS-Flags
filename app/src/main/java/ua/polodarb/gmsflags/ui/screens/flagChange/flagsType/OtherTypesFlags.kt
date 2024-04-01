@@ -1,7 +1,6 @@
 package ua.polodarb.gmsflags.ui.screens.flagChange.flagsType
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -23,7 +21,7 @@ import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.IntFloatStringValItem
@@ -52,7 +50,7 @@ fun OtherTypesFlagsScreen(
     val lazyListState = rememberLazyListState()
 
     when (uiState) {
-        is UiStates.Success -> {
+        is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
             val textFlagType = when (flagsType) {
                 SelectFlagsType.BOOLEAN -> "Boolean"
@@ -195,11 +193,11 @@ fun OtherTypesFlagsScreen(
             }
         }
 
-        is UiStates.Loading -> {
+        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
             LoadingProgressBar()
         }
 
-        is UiStates.Error -> {
+        is ua.polodarb.repository.uiStates.UiStates.Error -> {
             ErrorLoadScreen()
         }
     }

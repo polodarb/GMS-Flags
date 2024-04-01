@@ -11,16 +11,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
 import ua.polodarb.gmsflags.data.repo.RoomDBRepository
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 
-typealias PackagesScreenUiStates = UiStates<Map<String, String>>
+typealias PackagesScreenUiStates = ua.polodarb.repository.uiStates.UiStates<Map<String, String>>
 
 class PackagesScreenViewModel(
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: RoomDBRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
+    private val _state = MutableStateFlow<PackagesScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val state: StateFlow<PackagesScreenUiStates> = _state.asStateFlow()
 
     private val _stateSavedPackages =
@@ -41,17 +41,17 @@ class PackagesScreenViewModel(
             withContext(Dispatchers.IO) {
                 gmsRepository.getGmsPackages().collect { uiState ->
                     when (uiState) {
-                        is UiStates.Success -> {
+                        is ua.polodarb.repository.uiStates.UiStates.Success -> {
                             listFiltered.putAll(uiState.data)
                             getGmsPackagesList()
                         }
 
-                        is UiStates.Loading -> {
-                            _state.value = UiStates.Loading()
+                        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            _state.value = ua.polodarb.repository.uiStates.UiStates.Loading()
                         }
 
-                        is UiStates.Error -> {
-                            _state.value = UiStates.Error()
+                        is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            _state.value = ua.polodarb.repository.uiStates.UiStates.Error()
                         }
                     }
                 }
@@ -61,7 +61,7 @@ class PackagesScreenViewModel(
 
     fun getGmsPackagesList() {
         if (listFiltered.isNotEmpty()) {
-            _state.value = UiStates.Success(
+            _state.value = ua.polodarb.repository.uiStates.UiStates.Success(
                 listFiltered.filter {
                     it.key.contains(searchQuery.value, ignoreCase = true)
                 }.toSortedMap()

@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.invoke
 import ua.polodarb.gmsflags.GMSApplication
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 
 class GmsDBRepository(
     private val context: Context
@@ -41,130 +41,130 @@ class GmsDBRepository(
         )
     }
 
-    suspend fun getGmsPackages() = flow<UiStates<Map<String, String>>> {
+    suspend fun getGmsPackages() = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         delay(150)
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val list = Dispatchers.IO { rootDatabase.gmsPackages }
-                if (list.isNotEmpty()) emit(UiStates.Success(list))
-                else emit(UiStates.Error())
+                if (list.isNotEmpty()) emit(ua.polodarb.repository.uiStates.UiStates.Success(list))
+                else emit(ua.polodarb.repository.uiStates.UiStates.Error())
             }
         }
     }
 
     fun getBoolFlags(
         packageName: String, delay: Boolean
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         if (delay) delay(200)
-        emit(UiStates.Loading())
+        emit(ua.polodarb.repository.uiStates.UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolFlags = Dispatchers.IO { rootDatabase.getBoolFlags(packageName) }
-                emit(UiStates.Success(boolFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolFlags))
             }
         }
     }
 
     fun getIntFlags(
         packageName: String, delay: Boolean
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         if (delay) delay(200)
-        emit(UiStates.Loading())
+        emit(ua.polodarb.repository.uiStates.UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val intFlags = Dispatchers.IO { rootDatabase.getIntFlags(packageName) }
-                emit(UiStates.Success(intFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(intFlags))
             }
         }
     }
 
     fun getFloatFlags(
         packageName: String, delay: Boolean
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         if (delay) delay(200)
-        emit(UiStates.Loading())
+        emit(ua.polodarb.repository.uiStates.UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val floatFlags = Dispatchers.IO { rootDatabase.getFloatFlags(packageName) }
-                emit(UiStates.Success(floatFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(floatFlags))
             }
         }
     }
 
     fun getStringFlags(
         packageName: String, delay: Boolean
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         if (delay) delay(200)
-        emit(UiStates.Loading())
+        emit(ua.polodarb.repository.uiStates.UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val stringFlags = Dispatchers.IO { rootDatabase.getStringFlags(packageName) }
-                emit(UiStates.Success(stringFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(stringFlags))
             }
         }
     }
 
     fun getOverriddenBoolFlagsByPackage(
         packageName: String
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
                     rootDatabase.getOverriddenBoolFlagsByPackage(packageName)
                 }
-                emit(UiStates.Success(boolOverriddenFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolOverriddenFlags))
             }
         }
     }
 
     fun getOverriddenIntFlagsByPackage(
         packageName: String
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
                     rootDatabase.getOverriddenIntFlagsByPackage(packageName)
                 }
-                emit(UiStates.Success(boolOverriddenFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolOverriddenFlags))
             }
         }
     }
 
     fun getOverriddenFloatFlagsByPackage(
         packageName: String
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = Dispatchers.IO {
                     rootDatabase.getOverriddenFloatFlagsByPackage(packageName)
                 }
-                emit(UiStates.Success(boolOverriddenFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolOverriddenFlags))
             }
         }
     }
 
     fun getOverriddenStringFlagsByPackage(
         packageName: String
-    ) = flow<UiStates<Map<String, String>>> {
+    ) = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags =
                     rootDatabase.getOverriddenStringFlagsByPackage(packageName)
-                emit(UiStates.Success(boolOverriddenFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolOverriddenFlags))
             }
         }
     }
 
-    fun getAllOverriddenBoolFlags() = flow<UiStates<Map<String, String>>> {
+    fun getAllOverriddenBoolFlags() = flow<ua.polodarb.repository.uiStates.UiStates<Map<String, String>>> {
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolOverriddenFlags = rootDatabase.allOverriddenBoolFlags
-                emit(UiStates.Success(boolOverriddenFlags))
+                emit(ua.polodarb.repository.uiStates.UiStates.Success(boolOverriddenFlags))
             }
         }
     }

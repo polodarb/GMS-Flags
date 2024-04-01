@@ -26,6 +26,8 @@ import ua.polodarb.gmsflags.di.workerModule
 import ua.polodarb.gmsflags.ui.CrashActivity
 import ua.polodarb.gmsflags.ui.ExceptionHandler
 import ua.polodarb.gmsflags.utils.Constants
+import ua.polodarb.network.impl.di.networkBindsModule
+import ua.polodarb.repository.impl.di.repositoryBindsModule
 
 data class DatabaseInitializationState(val isInitialized: Boolean)
 
@@ -70,7 +72,9 @@ class GMSApplication : Application() {
                     repositoryModule,
                     remoteModule,
                     interactorsModule,
-                    workerModule
+                    workerModule,
+                    networkBindsModule,
+                    repositoryBindsModule
                 )
             )
         }

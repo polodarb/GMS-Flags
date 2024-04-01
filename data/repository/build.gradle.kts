@@ -34,10 +34,17 @@ android {
 
 dependencies {
 
+    // KtRssRss
+    api(libs.rssReader)
+
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
+
+    api(project(":data:preferences"))
+    api(project(":data:network"))
+    api(project(":data:database"))
 }

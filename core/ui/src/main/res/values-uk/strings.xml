@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="component_not_implemented">Скоро буде</string>
+    <string name="component_error_load">Помилка завантаження даних</string>
+
+    <string name="component_no_flags">Флаги не знайдені</string>
+    <string name="component_no_apps">Додатки не знайдені</string>
+    <string name="component_no_packages">Пакети не знайдено</string>
+</resources>

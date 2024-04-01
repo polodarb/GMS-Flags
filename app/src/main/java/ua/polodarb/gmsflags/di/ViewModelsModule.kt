@@ -10,7 +10,7 @@ import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.updates.UpdatesScreenViewModel
+import ua.polodarb.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
 
@@ -42,9 +42,10 @@ val viewModelsModule = module {
 
     viewModel {
         UpdatesScreenViewModel(
-            googleAppUpdatesService = get(),
-            googleUpdatesMapper = get(),
-            sharedPrefs = get()
+            repository = get()
+//            googleAppUpdatesService = get(),
+//            googleUpdatesMapper = get(),
+//            sharedPrefs = get()
         )
     }
 

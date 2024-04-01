@@ -8,7 +8,7 @@ import android.os.Build
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.data.AppInfo
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 
 class AppsListRepository(
     private val context: Context
@@ -17,7 +17,7 @@ class AppsListRepository(
     private val gmsApplication = context as GMSApplication
 
     fun getAllInstalledApps() = flow {
-        emit(UiStates.Loading())
+        emit(ua.polodarb.repository.uiStates.UiStates.Loading())
 
         gmsApplication.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
@@ -45,7 +45,7 @@ class AppsListRepository(
                     .toList()
 
                 if (filteredAppInfoList.isNotEmpty()) {
-                    emit(UiStates.Success(filteredAppInfoList))
+                    emit(ua.polodarb.repository.uiStates.UiStates.Success(filteredAppInfoList))
                 }
             }
         }
@@ -87,7 +87,7 @@ class AppsListRepository(
         return -1
     }
 
-    fun getListByPackages(pkgName: String) = flow<UiStates<List<String>>> {
+    fun getListByPackages(pkgName: String) = flow<ua.polodarb.repository.uiStates.UiStates<List<String>>> {
         val context = context as GMSApplication
         val list = context.getRootDatabase().getListByPackages(pkgName).filterNot {
             if (pkgName == "com.google.android.gm") {
@@ -105,7 +105,7 @@ class AppsListRepository(
             )
         )
 
-        emit(UiStates.Success(list))
+        emit(ua.polodarb.repository.uiStates.UiStates.Success(list))
     }
 
 }

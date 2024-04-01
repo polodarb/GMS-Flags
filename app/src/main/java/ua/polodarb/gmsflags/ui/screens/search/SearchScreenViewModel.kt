@@ -1,6 +1,5 @@
 package ua.polodarb.gmsflags.ui.screens.search
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,13 +25,13 @@ import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.data.repo.mappers.FlagDetails
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import java.util.Collections
 
-typealias AppInfoList = UiStates<PersistentList<AppInfo>>
-typealias AppDialogList = UiStates<PersistentList<String>>
-typealias PackagesScreenUiStates = UiStates<Map<String, String>>
-typealias AllFlagsScreenUiStates = UiStates<List<FlagDetails>>
+typealias AppInfoList = ua.polodarb.repository.uiStates.UiStates<PersistentList<AppInfo>>
+typealias AppDialogList = ua.polodarb.repository.uiStates.UiStates<PersistentList<String>>
+typealias PackagesScreenUiStates = ua.polodarb.repository.uiStates.UiStates<Map<String, String>>
+typealias AllFlagsScreenUiStates = ua.polodarb.repository.uiStates.UiStates<List<FlagDetails>>
 
 class SearchScreenViewModel(
     private val repository: AppsListRepository,
@@ -44,11 +43,11 @@ class SearchScreenViewModel(
 
     // Apps List
     private val _appsListUiState =
-        MutableStateFlow<AppInfoList>(UiStates.Loading())
+        MutableStateFlow<AppInfoList>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val appsListUiState: StateFlow<AppInfoList> = _appsListUiState.asStateFlow()
 
     private val _dialogDataState =
-        MutableStateFlow<AppDialogList>(UiStates.Loading())
+        MutableStateFlow<AppDialogList>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val dialogDataState: StateFlow<AppDialogList> = _dialogDataState.asStateFlow()
 
     private val _dialogPackage = MutableStateFlow("")
@@ -56,7 +55,7 @@ class SearchScreenViewModel(
 
 
     // Packages List
-    private val _packagesListUiState = MutableStateFlow<PackagesScreenUiStates>(UiStates.Loading())
+    private val _packagesListUiState = MutableStateFlow<PackagesScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val packagesListUiState: StateFlow<PackagesScreenUiStates> = _packagesListUiState.asStateFlow()
 
     private val _stateSavedPackages =
@@ -68,21 +67,21 @@ class SearchScreenViewModel(
     // All Flags List // TODO
 
     private val _allFlagsUiState =
-        MutableStateFlow<UiStates<MergedAllTypesFlags>>(UiStates.Loading())
-    val allFlagsUiState: StateFlow<UiStates<MergedAllTypesFlags>> = _allFlagsUiState.asStateFlow()
+        MutableStateFlow<ua.polodarb.repository.uiStates.UiStates<MergedAllTypesFlags>>(ua.polodarb.repository.uiStates.UiStates.Loading())
+    val allFlagsUiState: StateFlow<ua.polodarb.repository.uiStates.UiStates<MergedAllTypesFlags>> = _allFlagsUiState.asStateFlow()
 
-    private val _allFlagsBoolUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    private val _allFlagsBoolUiState = MutableStateFlow<AllFlagsScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val allFlagsBoolUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsBoolUiState.asStateFlow()
 
-    private val _allFlagsIntUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    private val _allFlagsIntUiState = MutableStateFlow<AllFlagsScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val allFlagsIntUiState: StateFlow<AllFlagsScreenUiStates> = _allFlagsIntUiState.asStateFlow()
 
-    private val _allFlagsFloatUiState = MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+    private val _allFlagsFloatUiState = MutableStateFlow<AllFlagsScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val allFlagsFloatUiState: StateFlow<AllFlagsScreenUiStates> =
         _allFlagsFloatUiState.asStateFlow()
 
     private val _allFlagsStringUiState =
-        MutableStateFlow<AllFlagsScreenUiStates>(UiStates.Loading())
+        MutableStateFlow<AllFlagsScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())
     val allFlagsStringUiState: StateFlow<AllFlagsScreenUiStates> =
         _allFlagsStringUiState.asStateFlow()
 
@@ -144,7 +143,7 @@ class SearchScreenViewModel(
     }
 
     fun setEmptyList() {
-        _dialogDataState.value = UiStates.Success(persistentListOf())
+        _dialogDataState.value = ua.polodarb.repository.uiStates.UiStates.Success(persistentListOf())
     }
 
     /**
@@ -155,17 +154,17 @@ class SearchScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getListByPackages(pkgName).collect { uiStates ->
                     when (uiStates) {
-                        is UiStates.Success -> {
+                        is ua.polodarb.repository.uiStates.UiStates.Success -> {
                             _dialogDataState.value =
-                                UiStates.Success(uiStates.data.toPersistentList())
+                                ua.polodarb.repository.uiStates.UiStates.Success(uiStates.data.toPersistentList())
                         }
 
-                        is UiStates.Loading -> {
-                            _dialogDataState.value = UiStates.Loading()
+                        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            _dialogDataState.value = ua.polodarb.repository.uiStates.UiStates.Loading()
                         }
 
-                        is UiStates.Error -> {
-                            _dialogDataState.value = UiStates.Error()
+                        is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            _dialogDataState.value = ua.polodarb.repository.uiStates.UiStates.Error()
                         }
                     }
                 }
@@ -181,17 +180,17 @@ class SearchScreenViewModel(
             withContext(Dispatchers.IO) {
                 repository.getAllInstalledApps().collectLatest { uiStates ->
                     when (uiStates) {
-                        is UiStates.Success -> {
+                        is ua.polodarb.repository.uiStates.UiStates.Success -> {
                             appsListFiltered.addAll(uiStates.data)
                             getAllInstalledApps()
                         }
 
-                        is UiStates.Loading -> {
-                            _appsListUiState.value = UiStates.Loading()
+                        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            _appsListUiState.value = ua.polodarb.repository.uiStates.UiStates.Loading()
                         }
 
-                        is UiStates.Error -> {
-                            _appsListUiState.value = UiStates.Error()
+                        is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            _appsListUiState.value = ua.polodarb.repository.uiStates.UiStates.Error()
                         }
                     }
                 }
@@ -204,7 +203,7 @@ class SearchScreenViewModel(
      */
     fun getAllInstalledApps() {
         if (appsListFiltered.isNotEmpty()) {
-            _appsListUiState.value = UiStates.Success(
+            _appsListUiState.value = ua.polodarb.repository.uiStates.UiStates.Success(
                 appsListFiltered.filter {
                     it.appName.contains(appsSearchQuery.value, ignoreCase = true)
                 }.let { filteredList ->
@@ -240,17 +239,17 @@ class SearchScreenViewModel(
             withContext(Dispatchers.IO) {
                 gmsRepository.getGmsPackages().collect { uiState ->
                     when (uiState) {
-                        is UiStates.Success -> {
+                        is ua.polodarb.repository.uiStates.UiStates.Success -> {
                             packagesListFiltered.putAll(uiState.data)
                             getGmsPackagesList()
                         }
 
-                        is UiStates.Loading -> {
-                            _packagesListUiState.value = UiStates.Loading()
+                        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            _packagesListUiState.value = ua.polodarb.repository.uiStates.UiStates.Loading()
                         }
 
-                        is UiStates.Error -> {
-                            _packagesListUiState.value = UiStates.Error()
+                        is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            _packagesListUiState.value = ua.polodarb.repository.uiStates.UiStates.Error()
                         }
                     }
                 }
@@ -260,7 +259,7 @@ class SearchScreenViewModel(
 
     fun getGmsPackagesList() {
         if (packagesListFiltered.isNotEmpty()) {
-            _packagesListUiState.value = UiStates.Success(
+            _packagesListUiState.value = ua.polodarb.repository.uiStates.UiStates.Success(
                 packagesListFiltered.filter {
                     it.key.contains(packagesSearchQuery.value, ignoreCase = true)
                 }.toSortedMap()

@@ -40,6 +40,11 @@ android {
 
 dependencies {
 
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.compose)
+    implementation(libs.koin.work.manager)
+
     // Navigation
     implementation(libs.navigation.compose)
 
@@ -65,4 +70,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(project(":data:repository"))
+    implementation(project(":core:ui"))
 }

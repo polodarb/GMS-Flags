@@ -21,7 +21,7 @@ import ua.polodarb.gmsflags.utils.Extensions.toInt
 import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
-import ua.polodarb.gmsflags.ui.screens.UiStates
+import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.BoolValItem
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeUiStates
@@ -43,7 +43,7 @@ fun BooleanFlagsScreen(
     val lazyListState = rememberLazyListState()
 
     when (val listBool = uiState) {
-        is UiStates.Success -> {
+        is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
             if (listBool.data.isEmpty()) NotFoundContent()
 
@@ -136,11 +136,11 @@ fun BooleanFlagsScreen(
             }
         }
 
-        is UiStates.Loading -> {
+        is ua.polodarb.repository.uiStates.UiStates.Loading -> {
             LoadingProgressBar()
         }
 
-        is UiStates.Error -> {
+        is ua.polodarb.repository.uiStates.UiStates.Error -> {
             NotFoundContent()
         }
     }
