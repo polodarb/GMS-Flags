@@ -4,8 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "ua.polodarb.navigation"
+    namespace = "ua.polodarb.gms"
     compileSdk = 34
+
+//    aidlPackagedList("src/main/aidl/ua/polodarb/gms/IRootDatabase.aidl")
 
     defaultConfig {
         minSdk = 29
@@ -27,6 +29,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        buildConfig = true
+        aidl = true
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -34,10 +40,20 @@ android {
 
 dependencies {
 
+    // SQLite
+    implementation(libs.requery.sqlite)
+
+    // libsu
+    implementation(libs.libsu.core)
+    implementation(libs.libsu.service)
+    implementation(libs.libsu.nio)
+
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(project(":core:common"))
 }

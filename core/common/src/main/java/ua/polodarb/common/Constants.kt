@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.utils
+package ua.polodarb.common
 
 import android.annotation.SuppressLint
 

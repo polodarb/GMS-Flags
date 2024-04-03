@@ -1,6 +1,6 @@
 package ua.polodarb.repository.databases.local.mapper
 
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.local.entities.SavedFlagsEntity
 import ua.polodarb.repository.databases.local.model.SavedFlags
 

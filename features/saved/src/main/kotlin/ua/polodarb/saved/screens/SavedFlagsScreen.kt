@@ -28,7 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.repository.databases.local.model.SavedFlags
 import ua.polodarb.saved.R
 import ua.polodarb.ui.components.inserts.NoFlagsOrPackages

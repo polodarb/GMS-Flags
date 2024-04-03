@@ -1,7 +1,8 @@
 package ua.polodarb.repository.databases.local
 
 import kotlinx.coroutines.flow.Flow
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
+
 import ua.polodarb.repository.databases.local.model.SavedFlags
 
 interface LocalDBRepository {

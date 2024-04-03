@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags;
+package ua.polodarb.gms;
 
 interface IRootDatabase {
     Map<String, String> getGmsPackages();

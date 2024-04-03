@@ -71,7 +71,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.chips.filter.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown

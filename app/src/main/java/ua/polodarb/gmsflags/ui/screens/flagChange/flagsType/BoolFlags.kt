@@ -17,7 +17,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import my.nanihadesuka.compose.LazyColumnScrollbar
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.screens.flagChange.BoolValItem

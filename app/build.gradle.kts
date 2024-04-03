@@ -67,7 +67,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        aidl = true
         buildConfig = true
         compose = true
     }
@@ -181,6 +180,7 @@ dependencies {
 
     implementation(project(":data:databases:local"))
     implementation(project(":data:databases:local:impl"))
+    implementation(project(":data:databases:gms"))
 
     implementation(project(":domain"))
 //    implementation(project(":domain:impl"))

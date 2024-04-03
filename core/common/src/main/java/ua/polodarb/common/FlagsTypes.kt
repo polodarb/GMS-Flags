@@ -1,4 +1,4 @@
-package ua.polodarb.common.fagsTypes
+package ua.polodarb.common
 
 enum class FlagsTypes {
     BOOLEAN,

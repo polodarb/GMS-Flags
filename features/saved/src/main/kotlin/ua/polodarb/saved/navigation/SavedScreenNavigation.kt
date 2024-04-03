@@ -2,7 +2,7 @@ package ua.polodarb.saved.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.saved.SavedScreen
 
 private const val savedScreenRoute = "saved"

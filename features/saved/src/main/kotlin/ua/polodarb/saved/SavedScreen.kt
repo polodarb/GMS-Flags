@@ -59,7 +59,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import ua.polodarb.common.fagsTypes.FlagsTypes
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.saved.screens.SavedFlagsScreen
 import ua.polodarb.saved.screens.SavedPackagesScreen
 
