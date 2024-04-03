@@ -17,15 +17,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import my.nanihadesuka.compose.LazyColumnScrollbar
-import ua.polodarb.gmsflags.utils.Extensions.toInt
-import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
+import ua.polodarb.common.fagsTypes.FlagsTypes
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
-import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.BoolValItem
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeUiStates
-import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
+import ua.polodarb.gmsflags.utils.Extensions.toInt
+import ua.polodarb.repository.databases.local.model.SavedFlags
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -73,7 +72,7 @@ fun BooleanFlagsScreen(
                                 val targetFlag = SavedFlags(
                                     packageName.toString(),
                                     flagName,
-                                    SelectFlagsType.BOOLEAN.name
+                                    FlagsTypes.BOOLEAN
                                 )
                                 val isEqual = savedFlagsList.any { flag ->
                                     flag.pkgName == targetFlag.pkgName &&
@@ -104,7 +103,7 @@ fun BooleanFlagsScreen(
                                             viewModel.saveFlag(
                                                 flagName,
                                                 packageName.toString(),
-                                                SelectFlagsType.BOOLEAN.name
+                                                FlagsTypes.BOOLEAN
                                             )
                                         } else {
                                             viewModel.deleteSavedFlag(

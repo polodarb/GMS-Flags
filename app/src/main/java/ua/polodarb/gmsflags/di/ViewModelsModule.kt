@@ -7,9 +7,9 @@ import ua.polodarb.gmsflags.ui.screens.search.SearchScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddMultipleFlagsViewModel
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.saved.SavedScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
+import ua.polodarb.saved.SavedScreenViewModel
 import ua.polodarb.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
@@ -62,7 +62,7 @@ val viewModelsModule = module {
 
     viewModel {
         SavedScreenViewModel(
-            roomRepository = get()
+            localDBRepository = get()
         )
     }
 

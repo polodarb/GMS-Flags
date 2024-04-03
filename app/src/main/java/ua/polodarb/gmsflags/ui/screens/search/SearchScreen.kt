@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TabPosition
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -53,7 +52,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -65,14 +63,12 @@ import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
-import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenUiStates
-import ua.polodarb.gmsflags.ui.screens.saved.CustomTabIndicatorAnimation
 import ua.polodarb.gmsflags.ui.screens.search.dialog.AddPackageDialog
 import ua.polodarb.gmsflags.ui.screens.search.dialog.SortAppsDialog
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchAppsScreen
-import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.search.subScreens.SearchPackagesScreen
+import ua.polodarb.repository.uiStates.UiStates
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -121,12 +117,6 @@ fun AppsScreen(
         "All packages",
 //        "All flags"
     )
-    val indicator = @Composable { tabPositions: List<TabPosition> ->
-        CustomTabIndicatorAnimation(
-            tabPositions = tabPositions.toPersistentList(),
-            selectedTabIndex = state
-        )
-    }
     val pagerState = rememberPagerState(pageCount = {
         2 // 3 with AllFlagsScreen
     })
@@ -392,22 +382,22 @@ fun AppsScreen(
                             }
                         )
                         when (val result = flagsUiState.value) {
-                            is ua.polodarb.repository.uiStates.UiStates.Success -> {
-                                SearchFlagsScreen(
-                                    flags = when (viewModel.selectedFlagsTypeChip.value) {
-                                        0 -> result.data.boolFlag
-                                        1 -> result.data.intFlag
-                                        2 -> result.data.floatFlag
-                                        else -> result.data.stringFlag
-                                    }
-                                )
+                            is UiStates.Success -> {
+//                                SearchFlagsScreen(
+//                                    flags = when (viewModel.selectedFlagsTypeChip.value) {
+//                                        0 -> result.data.boolFlag
+//                                        1 -> result.data.intFlag
+//                                        2 -> result.data.floatFlag
+//                                        else -> result.data.stringFlag
+//                                    }
+//                                )
                             }
 
-                            is ua.polodarb.repository.uiStates.UiStates.Loading -> {
+                            is UiStates.Loading -> {
                                 LoadingProgressBar()
                             }
 
-                            is ua.polodarb.repository.uiStates.UiStates.Error -> {
+                            is UiStates.Error -> {
                                 NotFoundContent()
                             }
                         }

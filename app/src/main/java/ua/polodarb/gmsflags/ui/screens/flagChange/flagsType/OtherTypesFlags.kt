@@ -16,17 +16,16 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import my.nanihadesuka.compose.LazyColumnScrollbar
-import ua.polodarb.gmsflags.utils.Extensions.toSortMap
-import ua.polodarb.gmsflags.data.databases.local.enities.SavedFlags
+import ua.polodarb.common.fagsTypes.FlagsTypes
 import ua.polodarb.gmsflags.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.gmsflags.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.gmsflags.ui.components.inserts.NotFoundContent
-import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
 import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeUiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.IntFloatStringValItem
-import ua.polodarb.gmsflags.ui.screens.flagChange.SelectFlagsType
 import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.FlagChangeDialog
+import ua.polodarb.gmsflags.utils.Extensions.toSortMap
+import ua.polodarb.repository.databases.local.model.SavedFlags
 
 @Composable
 fun OtherTypesFlagsScreen(
@@ -35,7 +34,7 @@ fun OtherTypesFlagsScreen(
     packageName: String?,
     flagName: String,
     flagValue: String,
-    flagsType: SelectFlagsType,
+    flagsType: FlagsTypes,
     editTextValue: String,
     showDialog: Boolean,
     savedFlagsList: List<SavedFlags>,
@@ -53,17 +52,19 @@ fun OtherTypesFlagsScreen(
         is ua.polodarb.repository.uiStates.UiStates.Success -> {
 
             val textFlagType = when (flagsType) {
-                SelectFlagsType.BOOLEAN -> "Boolean"
-                SelectFlagsType.INTEGER -> "Integer"
-                SelectFlagsType.FLOAT -> "Float"
-                SelectFlagsType.STRING -> "String"
+                FlagsTypes.BOOLEAN -> "Boolean"
+                FlagsTypes.INTEGER -> "Integer"
+                FlagsTypes.FLOAT -> "Float"
+                FlagsTypes.STRING -> "String"
+                FlagsTypes.EXTENSION -> "Extensions"
+                FlagsTypes.UNKNOWN -> "Unknown"
             }
 
             fun setViewModelMethods() = when (flagsType) {
 
-                SelectFlagsType.BOOLEAN -> {}
+                FlagsTypes.BOOLEAN -> {}
 
-                SelectFlagsType.INTEGER -> {
+                FlagsTypes.INTEGER -> {
                     viewModel.updateIntFlagValue(
                         flagName,
                         editTextValue
@@ -75,7 +76,7 @@ fun OtherTypesFlagsScreen(
                     )
                 }
 
-                SelectFlagsType.FLOAT -> {
+                FlagsTypes.FLOAT -> {
                     viewModel.updateFloatFlagValue(
                         flagName,
                         editTextValue
@@ -87,7 +88,7 @@ fun OtherTypesFlagsScreen(
                     )
                 }
 
-                SelectFlagsType.STRING -> {
+                FlagsTypes.STRING -> {
                     viewModel.updateStringFlagValue(
                         flagName,
                         editTextValue
@@ -98,6 +99,20 @@ fun OtherTypesFlagsScreen(
                         stringVal = editTextValue
                     )
                 }
+
+                FlagsTypes.EXTENSION -> {
+//                    viewModel.updateExtensionFlagValue(
+//                        flagName,
+//                        editTextValue
+//                    )
+//                    viewModel.overrideFlag(
+//                        packageName = packageName.toString(),
+//                        name = flagName,
+//                        extensionVal = editTextValue
+//                    )
+                }
+
+                FlagsTypes.UNKNOWN -> Unit
             }
 
             val listInt = uiState.data.toList().sortedBy { it.first }.toMap().toSortMap()
@@ -127,13 +142,13 @@ fun OtherTypesFlagsScreen(
                                 val targetFlag = SavedFlags(
                                     packageName.toString(),
                                     item.first,
-                                    flagsType.name
+                                    flagsType
                                 )
                                 val isEqual =
-                                    savedFlagsList.any { (packageName, flag, selectFlagsType, _) ->
+                                    savedFlagsList.any { (packageName, flag, FlagsTypes) ->
                                         packageName == targetFlag.pkgName &&
                                                 flag == targetFlag.flagName &&
-                                                selectFlagsType == targetFlag.type
+                                                FlagsTypes == targetFlag.type
                                     }
 
                                 IntFloatStringValItem(
@@ -146,7 +161,7 @@ fun OtherTypesFlagsScreen(
                                             viewModel.saveFlag(
                                                 item.first,
                                                 packageName.toString(),
-                                                flagsType.name
+                                                flagsType
                                             )
                                         } else {
                                             viewModel.deleteSavedFlag(

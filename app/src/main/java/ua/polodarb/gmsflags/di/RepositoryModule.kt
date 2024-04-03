@@ -3,12 +3,11 @@
 import org.koin.dsl.module
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.SettingsRepository
-import ua.polodarb.gmsflags.data.repo.mappers.GoogleUpdatesMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
+import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
 
-val repositoryModule = module {
+    val repositoryModule = module {
 
     single {
         GmsDBRepository(
@@ -22,12 +21,12 @@ val repositoryModule = module {
         )
     }
 
-    single {
-        RoomDBRepository(
-            savedPackagesDao = get(),
-            savedFlagsDao = get()
-        )
-    }
+//    single {
+//        RoomDBRepository(
+//            savedPackagesDao = get(),
+//            savedFlagsDao = get()
+//        )
+//    }
 
     single {
         SettingsRepository(

@@ -17,7 +17,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import ua.polodarb.gmsflags.data.databases.gms.RootDatabase
 import ua.polodarb.gmsflags.di.appModule
-import ua.polodarb.gmsflags.di.databaseModule
 import ua.polodarb.gmsflags.di.interactorsModule
 import ua.polodarb.gmsflags.di.remoteModule
 import ua.polodarb.gmsflags.di.repositoryModule
@@ -26,6 +25,8 @@ import ua.polodarb.gmsflags.di.workerModule
 import ua.polodarb.gmsflags.ui.CrashActivity
 import ua.polodarb.gmsflags.ui.ExceptionHandler
 import ua.polodarb.gmsflags.utils.Constants
+import ua.polodarb.local.impl.di.localDBBindsModule
+import ua.polodarb.local.impl.di.localDatabaseModule
 import ua.polodarb.network.impl.di.networkBindsModule
 import ua.polodarb.repository.impl.di.repositoryBindsModule
 
@@ -68,7 +69,8 @@ class GMSApplication : Application() {
                 listOf(
                     appModule,
                     viewModelsModule,
-                    databaseModule,
+                    localDatabaseModule,
+                    localDBBindsModule,
                     repositoryModule,
                     remoteModule,
                     interactorsModule,

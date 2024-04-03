@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.RoomDBRepository
-import ua.polodarb.repository.uiStates.UiStates
+import ua.polodarb.repository.databases.local.LocalDBRepository
 
 typealias PackagesScreenUiStates = ua.polodarb.repository.uiStates.UiStates<Map<String, String>>
 
 class PackagesScreenViewModel(
     private val gmsRepository: GmsDBRepository,
-    private val roomRepository: RoomDBRepository,
+    private val roomRepository: LocalDBRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<PackagesScreenUiStates>(ua.polodarb.repository.uiStates.UiStates.Loading())

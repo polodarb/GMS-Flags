@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.data.workers
 
+import ua.polodarb.gmsflags.R
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,13 +12,12 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
-import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.core.platform.activity.CHANNEL_ID
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
-import ua.polodarb.gmsflags.data.remote.googleUpdates.GoogleAppUpdatesService
-import ua.polodarb.gmsflags.data.repo.mappers.GoogleUpdatesMapper
-import ua.polodarb.gmsflags.data.repo.mappers.NewRssArticle
+import ua.polodarb.network.googleUpdates.GoogleAppUpdatesService
+import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
+import ua.polodarb.repository.googleUpdates.model.MainRssArticle
 
 const val GOOGLE_UPDATES_WORKER_TAG = "GOOGLE_UPDATES_WORKER_TAG"
 
@@ -44,13 +44,13 @@ class GoogleUpdatesCheckWorker(
                     "${result.articles.first().title}/${result.articles.first().version}"
                 )
             }
-            Result.success()
+             Result.success()
         } catch (err: Throwable) {
             Result.failure()
         }
     }
 
-    private fun getNewArticlesString(newArticles: List<NewRssArticle>): String {
+    private fun getNewArticlesString(newArticles: List<MainRssArticle>): String {
         val localData = sharedPrefs.getData(PreferenceConstants.GOOGLE_LAST_UPDATE, "")
         val (localTitle, localVersion) = localData.split("/")
 

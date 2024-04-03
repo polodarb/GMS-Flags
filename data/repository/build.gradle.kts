@@ -46,5 +46,7 @@ dependencies {
 
     api(project(":data:preferences"))
     api(project(":data:network"))
-    api(project(":data:database"))
+    api(project(":data:databases:local"))
+//    api(project(":data:databases:gms"))
+    api(project(":core:common"))
 }

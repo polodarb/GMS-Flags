@@ -17,8 +17,8 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.data.prefs.shared.PreferenceConstants
 import ua.polodarb.gmsflags.data.prefs.shared.PreferencesManager
 import ua.polodarb.gmsflags.ui.screens.search.AppsScreen
-import ua.polodarb.gmsflags.ui.screens.saved.SavedScreen
 import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionsScreen
+import ua.polodarb.saved.navigation.savedScreen
 import ua.polodarb.updates.navigation.updatesScreen
 
 sealed class NavBarItem(
@@ -137,23 +137,38 @@ internal fun BottomBarNavigation( // Navigation realization for BottomBar
                 }
             )
         }
-        composable(route = NavBarItem.Saved.screenRoute) {
-            SavedScreen(
-                onSettingsClick = {
-                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
-                },
-                onSavedPackageClick = {
-                    parentNavController.navigate(
-                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
-                    )
-                },
-                onSavedFlagClick = { packageName, flagName, type  ->
-                    parentNavController.navigate(
-                        ScreensDestination.FlagChange.createRoute(Uri.encode(packageName)) // TODO: Implement search flag in list after navigation
-                    )
-                }
-            )
-        }
+//        composable(route = NavBarItem.Saved.screenRoute) {
+//            SavedScreen(
+//                onSettingsClick = {
+//                    parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+//                },
+//                onSavedPackageClick = {
+//                    parentNavController.navigate(
+//                        ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+//                    )
+//                },
+//                onSavedFlagClick = { packageName, flagName, type  ->
+//                    parentNavController.navigate(
+//                        ScreensDestination.FlagChange.createRoute(Uri.encode(packageName)) // TODO: Implement search flag in list after navigation
+//                    )
+//                }
+//            )
+//        }
+        savedScreen(
+            onSettingsClick = {
+                parentNavController.navigate(ScreensDestination.Settings.screenRoute)
+            },
+            onSavedPackageClick = {
+                parentNavController.navigate(
+                    ScreensDestination.FlagChange.createRoute(Uri.encode(it))
+                )
+            },
+            onSavedFlagClick = { packageName, flagName, type  ->
+                parentNavController.navigate(
+                    ScreensDestination.FlagChange.createRoute(Uri.encode(packageName)) // TODO: Implement search flag in list after navigation
+                )
+            }
+        )
         updatesScreen()
 //        composable(route = NavBarItem.Updates.screenRoute) {
 //            UpdatesScreen(

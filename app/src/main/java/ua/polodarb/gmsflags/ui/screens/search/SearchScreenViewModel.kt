@@ -20,12 +20,11 @@ import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.LAST_UPDATE
 import ua.polodarb.gmsflags.data.constants.SortingTypeConstants.PACKAGE_NAME
 import ua.polodarb.gmsflags.data.repo.AppsListRepository
 import ua.polodarb.gmsflags.data.repo.GmsDBRepository
-import ua.polodarb.gmsflags.data.repo.RoomDBRepository
 import ua.polodarb.gmsflags.data.repo.interactors.GmsDBInteractor
 import ua.polodarb.gmsflags.data.repo.mappers.FlagDetails
 import ua.polodarb.gmsflags.data.repo.mappers.MergeFlagsMapper
 import ua.polodarb.gmsflags.data.repo.mappers.MergedAllTypesFlags
-import ua.polodarb.repository.uiStates.UiStates
+import ua.polodarb.repository.databases.local.LocalDBRepository
 import java.util.Collections
 
 typealias AppInfoList = ua.polodarb.repository.uiStates.UiStates<PersistentList<AppInfo>>
@@ -36,7 +35,7 @@ typealias AllFlagsScreenUiStates = ua.polodarb.repository.uiStates.UiStates<List
 class SearchScreenViewModel(
     private val repository: AppsListRepository,
     private val gmsRepository: GmsDBRepository,
-    private val roomRepository: RoomDBRepository,
+    private val roomRepository: LocalDBRepository,
     private val mergeFlagsMapper: MergeFlagsMapper,
     private val gmsDBInteractor: GmsDBInteractor
 ) : ViewModel() {

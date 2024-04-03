@@ -71,13 +71,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import ua.polodarb.common.fagsTypes.FlagsTypes
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.components.chips.filter.GFlagFilterChipRow
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.gmsflags.ui.components.dropDown.FlagSelectDropDown
 import ua.polodarb.gmsflags.ui.components.searchBar.GFlagsSearchBar
 import ua.polodarb.gmsflags.ui.components.tabs.GFlagsTabRow
-import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.ALL
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.CHANGED
 import ua.polodarb.gmsflags.ui.screens.flagChange.FilterMethod.DISABLED
@@ -89,6 +89,7 @@ import ua.polodarb.gmsflags.ui.screens.flagChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.gmsflags.ui.screens.flagChange.flagsType.OtherTypesFlagsScreen
 import ua.polodarb.gmsflags.utils.Extensions.toSortMap
+import ua.polodarb.repository.uiStates.UiStates
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -207,21 +208,21 @@ fun FlagChangeScreen(
         mutableStateOf("")
     }
 
-    val selectedFlagsType: SelectFlagsType = when (pagerState.targetPage) {
+    val selectedFlagsType: FlagsTypes = when (pagerState.targetPage) {
         0 -> {
-            SelectFlagsType.BOOLEAN
+            FlagsTypes.BOOLEAN
         }
 
         1 -> {
-            SelectFlagsType.INTEGER
+            FlagsTypes.INTEGER
         }
 
         2 -> {
-            SelectFlagsType.FLOAT
+            FlagsTypes.FLOAT
         }
 
         else -> {
-            SelectFlagsType.STRING
+            FlagsTypes.STRING
         }
     }
 
@@ -493,7 +494,7 @@ fun FlagChangeScreen(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
                             when (val result = uiStateBoolean.value) {
-                                is ua.polodarb.repository.uiStates.UiStates.Success -> {
+                                is UiStates.Success -> {
 
                                     val listBool = result.data
 
@@ -800,7 +801,7 @@ fun FlagChangeScreen(
             },
             onSend = {
                 when (val result = uiStateBoolean.value) {
-                    is ua.polodarb.repository.uiStates.UiStates.Success -> {
+                    is UiStates.Success -> {
 
                         val listBool = result.data.toSortMap()
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_bar_saved">Избранное</string>
+    <string name="saved_packages">Имена пакетов</string>
+    <string name="saved_flags">Флаги</string>
+</resources>

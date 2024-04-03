@@ -154,11 +154,6 @@ dependencies {
     implementation(libs.libsu.service)
     implementation(libs.libsu.nio)
 
-    // Room Database
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
-
     // Coil
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
@@ -173,7 +168,7 @@ dependencies {
 
     implementation(project(":core:platform"))
     implementation(project(":core:ui"))
-//    implementation(project(":core:navigation"))
+    implementation(project(":core:common"))
 
     implementation(project(":data:repository"))
     implementation(project(":data:repository:impl"))
@@ -184,13 +179,14 @@ dependencies {
     implementation(project(":data:network"))
     implementation(project(":data:network:impl"))
 
-    implementation(project(":data:database"))
-//    implementation(project(":data:database:impl"))
+    implementation(project(":data:databases:local"))
+    implementation(project(":data:databases:local:impl"))
 
     implementation(project(":domain"))
 //    implementation(project(":domain:impl"))
 
     implementation(project(":features:updates"))
+    implementation(project(":features:saved"))
 }
 
 tasks.withType<KotlinCompile> {
