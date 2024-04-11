@@ -40,14 +40,6 @@ android {
 
 dependencies {
 
-    // SQLite
-    implementation(libs.requery.sqlite)
-
-    // libsu
-    implementation(libs.libsu.core)
-    implementation(libs.libsu.service)
-    implementation(libs.libsu.nio)
-
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.google.material)
@@ -55,5 +47,4 @@ dependencies {
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation(project(":core:common"))
 }

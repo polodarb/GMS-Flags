@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top Bar -->
+    <string name="nav_bar_search">Пошук</string>
+    <!-- Search Bar -->
+    <string name="apps_search_advice">Пошук за іменами додатків</string>
+    <string name="packages_search_advice">Пошук по пакетах</string>
+    <!-- Common -->
+    <string name="close">Закрити</string>
+    <!-- Search screen dialog -->
+    <string name="apps_dialog_choose_package">Оберіть пакет</string>
+    <string name="primary">Первинні</string>
+    <string name="secondary">Вторинні</string>
+</resources>

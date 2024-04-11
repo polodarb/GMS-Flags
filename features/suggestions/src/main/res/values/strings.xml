@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top Bar -->
+    <string name="nav_bar_suggestions">Suggestions</string>
+    <!-- Item -->
+    <string name="finder">"Source: "</string>
+    <string name="note">"Note: "</string>
+    <string name="open">Open %1$s</string>
+    <string name="open_app_details_settings">Open app details settings</string>
+    <string name="view_more_information">View more information</string>
+    <string name="reset">Reset</string>
+    <string name="report">Report</string>
+    <!-- Banner -->
+    <string name="suggestion_banner">To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.</string>
+    <string name="close">Close</string>
+    <!-- Reset flags to default dialog -->
+    <string name="suggestions_dialog_title">Reset flag value to default?</string>
+    <string name="suggestions_dialog_text">This action will reset the flag value to the default. Use this if simply turning off the flag doesn\'t work or causes any problems</string>
+    <!-- Common -->
+    <string name="settings_confirmation_dialog_confirm">Confirm</string>
+</resources>

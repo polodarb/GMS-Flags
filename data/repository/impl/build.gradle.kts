@@ -34,6 +34,11 @@ android {
 
 dependencies {
 
+    // libsu
+    implementation(libs.libsu.core)
+    implementation(libs.libsu.service)
+    implementation(libs.libsu.nio)
+
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.compose)
@@ -47,4 +52,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(project(":data:repository"))
+    implementation(project(":data:databases:gms"))
 }

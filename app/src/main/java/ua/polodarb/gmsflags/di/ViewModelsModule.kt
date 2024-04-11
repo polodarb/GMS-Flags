@@ -1,25 +1,18 @@
 package ua.polodarb.gmsflags.di
 
+import org.koin.androidx.compose.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import ua.polodarb.gmsflags.data.remote.flags.FlagsApiServiceImpl
-import ua.polodarb.gmsflags.ui.screens.search.SearchScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.flagChange.FlagChangeScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.flagChange.extScreens.AddMultipleFlagsViewModel
-import ua.polodarb.gmsflags.ui.screens.packages.PackagesScreenViewModel
-import ua.polodarb.gmsflags.ui.screens.settings.SettingsViewModel
-import ua.polodarb.gmsflags.ui.screens.suggestions.SuggestionScreenViewModel
+import ua.polodarb.flagsChange.FlagChangeScreenViewModel
+import ua.polodarb.flagsChange.extScreens.AddMultipleFlagsViewModel
+import ua.polodarb.network.impl.suggestedFlags.SuggestedFlagsApiServiceImpl
 import ua.polodarb.saved.SavedScreenViewModel
+import ua.polodarb.search.SearchScreenViewModel
+import ua.polodarb.settings.SettingsViewModel
+import ua.polodarb.suggestions.SuggestionScreenViewModel
 import ua.polodarb.updates.UpdatesScreenViewModel
 
 val viewModelsModule = module {
-
-    viewModel {
-        PackagesScreenViewModel(
-            gmsRepository = get(),
-            roomRepository = get()
-        )
-    }
 
     viewModel {
         FlagChangeScreenViewModel(
@@ -35,17 +28,14 @@ val viewModelsModule = module {
             repository = get(),
             gmsRepository = get(),
             roomRepository = get(),
-            mergeFlagsMapper = get(),
-            gmsDBInteractor = get()
+            gmsDBInteractor = get(),
+            mergedFlags = get()
         )
     }
 
     viewModel {
         UpdatesScreenViewModel(
             repository = get()
-//            googleAppUpdatesService = get(),
-//            googleUpdatesMapper = get(),
-//            sharedPrefs = get()
         )
     }
 
@@ -54,9 +44,10 @@ val viewModelsModule = module {
             application = get(),
             repository = get(),
             appsRepository = get(),
-            flagsApiService = get<FlagsApiServiceImpl>(),
-            mapper = get(),
-            interactor = get()
+            flagsApiService = get<SuggestedFlagsApiServiceImpl>(),
+            interactor = get(),
+            mergedFlags = get(),
+            localFilesProvider = get()
         )
     }
 

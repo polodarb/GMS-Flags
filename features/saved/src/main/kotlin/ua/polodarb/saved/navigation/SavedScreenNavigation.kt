@@ -5,14 +5,13 @@ import androidx.navigation.compose.composable
 import ua.polodarb.common.FlagsTypes
 import ua.polodarb.saved.SavedScreen
 
-private const val savedScreenRoute = "saved"
-
 fun NavGraphBuilder.savedScreen(
+    route: String,
     onSettingsClick: () -> Unit,
     onSavedPackageClick: (packageName: String) -> Unit,
     onSavedFlagClick: (packageName: String, flagName: String, type: FlagsTypes) -> Unit,
 ) {
-    composable(savedScreenRoute) {
+    composable(route) {
         SavedScreen(
             onSettingsClick = onSettingsClick,
             onSavedPackageClick = onSavedPackageClick,

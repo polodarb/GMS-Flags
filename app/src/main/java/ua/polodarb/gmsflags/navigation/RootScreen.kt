@@ -1,0 +1,32 @@
+package ua.polodarb.gmsflags.navigation
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import ua.polodarb.gmsflags.navigation.navBar.BottomBarNavigation
+import ua.polodarb.gmsflags.navigation.navBar.BottomBarUI
+
+@Composable
+fun RootScreen(
+    isFirstStart: Boolean,
+    parentNavController: NavController,
+    childNavController: NavHostController = rememberNavController()
+) {
+    Scaffold(
+        bottomBar = { BottomBarUI(navController = childNavController) }
+    ) { paddingValues ->
+        BottomBarNavigation(
+            isFirstStart = isFirstStart,
+            parentNavController = parentNavController,
+            navController = childNavController,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+        )
+    }
+}

@@ -40,6 +40,12 @@ android {
 
 dependencies {
 
+    // Kotlin immutable collections
+    implementation(libs.kotlin.collections.immutable)
+
+    // Scrollbar library for Jetpack Compose
+    implementation(libs.lazyColumnScrollbar)
+
     // Jetpack Compose
     platform(libs.compose.bom).let { bom ->
         implementation(bom)

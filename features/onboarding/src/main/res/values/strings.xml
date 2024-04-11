@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notifications -->
+    <string name="notification_title">Notifications</string>
+    <string name="notification_msg">Allow notifications to stay up to date with new flags and news.</string>
+    <string name="notification_advice">To request click the "Request" button</string>
+    <string name="notification_request">Request</string>
+    <string name="notification_skip">Skip</string>
+    <string name="notifications_toast">You will not receive notifications</string>
+    <string name="notification_finish">Finish!</string>
+    <string name="notifications_open_settings">Open settings</string>
+    <!-- Root request -->
+    <string name="root_title">Root required</string>
+    <string name="root_msg">"The application requires superuser rights to function. "</string>
+    <string name="root_advice">To request click the "Request root"</string>
+    <string name="root_exit">Exit</string>
+    <string name="root_request">Request root</string>
+    <!-- Welcome -->
+    <string name="welcome_title">Welcome!</string>
+    <string name="welcome_msg">Explore Google Apps for hidden features, redesigns, abilities to turn off regional restrictions, and more…</string>
+    <string name="welcome_advice">Become part of the community!</string>
+    <string name="welcome_start">Start!</string>
+    <string name="welcome_disclaimer">By continuing, you agree to our Terms of Service and Privacy Policy</string>
+    <string name="welcome_terms_chunk" translatable="false">Terms of Service</string>
+    <string name="welcome_terms_url" translatable="false">https://polodarb.github.io/gms-flags/terms-of-service</string>
+    <string name="welcome_policy_chunk" translatable="false">Privacy Policy</string>
+    <string name="welcome_policy_url" translatable="false">https://polodarb.github.io/gms-flags/privacy</string>
+</resources>

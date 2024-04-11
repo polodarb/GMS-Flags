@@ -1,13 +1,11 @@
 package ua.polodarb.gmsflags.ui
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,9 +35,8 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.common.Constants
 import ua.polodarb.gmsflags.ui.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
-import java.util.Locale
+import ua.polodarb.platform.utils.OSUtils
 import kotlin.system.exitProcess
-
 
 class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,64 +205,5 @@ class ExceptionHandler(
             
             ${this.stackTraceToString()}
         """.trimIndent()
-    }
-}
-
-/*
- * Taken from https://bit.ly/3PA1IYS. Credits to https://github.com/Z-P-J!
- */
-@Suppress("SpellCheckingInspection")
-object OSUtils {
-    private const val ROM_MIUI = "MIUI"
-    private const val ROM_EMUI = "EMUI"
-    private const val ROM_FLYME = "FLYME"
-    private const val ROM_OPPO = "OPPO"
-    private const val ROM_SMARTISAN = "SMARTISAN"
-    private const val ROM_VIVO = "VIVO"
-    private const val KEY_VERSION_MIUI = "ro.miui.ui.version.name"
-    private const val KEY_VERSION_EMUI = "ro.build.version.emui"
-    private const val KEY_VERSION_OPPO = "ro.build.version.opporom"
-    private const val KEY_VERSION_SMARTISAN = "ro.smartisan.version"
-    private const val KEY_VERSION_VIVO = "ro.vivo.os.version"
-
-    val sName: String
-    var sVersion: String
-
-    init {
-        if (!TextUtils.isEmpty(getProperty(KEY_VERSION_MIUI).also {
-                sVersion = it
-            })) {
-            sName = ROM_MIUI
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_EMUI).also {
-                sVersion = it
-            })) {
-            sName = ROM_EMUI
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_OPPO).also {
-                sVersion = it
-            })) {
-            sName = ROM_OPPO
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_VIVO).also {
-                sVersion = it
-            })) {
-            sName = ROM_VIVO
-        } else if (!TextUtils.isEmpty(getProperty(KEY_VERSION_SMARTISAN).also {
-                sVersion = it
-            })) {
-            sName = ROM_SMARTISAN
-        } else {
-            sVersion = Build.DISPLAY
-            if (sVersion.uppercase(Locale.getDefault()).contains(ROM_FLYME)) {
-                sName = ROM_FLYME
-            } else {
-                sVersion = Build.UNKNOWN
-                sName = Build.MANUFACTURER.uppercase(Locale.getDefault())
-            }
-        }
-    }
-
-    @SuppressLint("PrivateApi")
-    private fun getProperty(key: String): String {
-        return Class.forName("android.os.SystemProperties")
-            .getMethod("get", String::class.java).invoke(null, key) as String
     }
 }

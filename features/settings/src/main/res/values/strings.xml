@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="app_name" translatable="false">GMS Flags</string>
+    <string name="toast_done">Done!</string>
+    <!-- Navigation Bar -->
+    <string name="nav_bar_suggestions">Suggestions</string>
+    <string name="nav_bar_search">Search</string>
+    <string name="nav_bar_saved">Saved</string>
+    <string name="nav_bar_history">History</string>
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_item_reset_flags_headline">Reset flags</string>
+    <string name="settings_item_reset_flags_description">Reset all overridden flags</string>
+    <string name="settings_item_reset_saved_headline">Reset saved</string>
+    <string name="settings_item_reset_saved_description">Reset all saved packages or flags</string>
+    <string name="settings_item_start_route_headline">Change the start screen</string>
+    <string name="settings_item_start_route_description">Select from which screen the app will start</string>
+    <string name="settings_item_about_headline">About &amp; support</string>
+    <string name="settings_item_about_description">Useful information and resources</string>
+    <!-- Settings About Screen -->
+    <string name="settings_about_developer_title">Developer</string>
+    <string name="settings_about_developer_content">Danyil Kobzar</string>
+    <string name="settings_about_developer_url" translatable="false">https://github.com/polodarb</string>
+    <string name="settings_about_project_title">Source code</string>
+    <string name="settings_about_project_url" translatable="false">https://github.com/polodarb/GMS-Flags</string>
+    <string name="settings_about_telegram_title">Telegram channel</string>
+    <string name="settings_about_telegram_content">Support &amp; updates</string>
+    <string name="settings_about_telegram_url" translatable="false">https://t.me/gmsflags</string>
+    <!-- Settings Reset Flags -->
+    <string name="settings_reset_flags_description">Restore default settings and clears any user-customized (overridden) flags or preferences within the application</string>
+    <string name="settings_reset_flags_opt_gms">Reset flags in GMS Database</string>
+    <string name="settings_reset_flags_opt_vending">Reset flags in Play Store Database</string>
+    <string name="settings_reset_flags_opt_all">Reset all overridden flags</string>
+    <string name="settings_reset_flags_warning">All flags that you changed will be reset!</string>
+    <!-- Settings Reset Saved -->
+    <string name="settings_reset_saved_description">In this section you can reset all packages and flags on the Saved screen that you have saved before.</string>
+    <string name="settings_reset_saved_opt_packages">Reset saved packages</string>
+    <string name="settings_reset_saved_opt_flags">Reset saved flags</string>
+    <string name="settings_reset_saved_opt_all">Reset all saved flags and packages</string>
+    <string name="settings_reset_saved_warning">All flags that you saved will be reset!</string>
+    <!-- Settings Start Route -->
+    <string name="settings_start_route_title">Change the start screen</string>
+    <string name="settings_start_route_description">Select the screen that will be displayed when
+        the application is launched. Default screen - Suggestions.</string>
+    <!-- Settings Common -->
+    <string name="settings_confirmation_dialog_title">Confirm action</string>
+    <string name="settings_confirmation_dialog_confirm">Confirm</string>
+    <string name="settings_confirmation_dialog_close">Close</string>
+
+    <string name="settings_about_project_source_code" translatable="false">GitHub</string>
+</resources>

@@ -1,4 +1,8 @@
 [versions]
+# project
+version-name = "1.1.1-beta02"
+version-code = "12"
+
 activity = "1.8.2"
 agp = "8.1.2"
 androidJunit = "1.1.5"
@@ -61,6 +65,7 @@ google-material = { group = "com.google.android.material", name = "material", ve
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
 koin-work-manager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
 kotlin-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinCollectionsImmutable"  }
 ktor-android = { group = "io.ktor", name = "ktor-client-android" }

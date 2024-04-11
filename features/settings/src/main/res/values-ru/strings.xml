@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="toast_done">Готово!</string>
+    <!-- Navigation Bar -->
+    <string name="nav_bar_suggestions">Рекомендации</string>
+    <string name="nav_bar_search">Поиск</string>
+    <string name="nav_bar_saved">Избранное</string>
+    <string name="nav_bar_history">История</string>
+    <!-- Settings Screen -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_item_reset_flags_headline">Сбросить флаги</string>
+    <string name="settings_item_reset_flags_description">Сброс всех перезаписанных флагов</string>
+    <string name="settings_item_reset_saved_headline">Сбросить избранное</string>
+    <string name="settings_item_reset_saved_description">Сброс всех избранных флагов</string>
+    <string name="settings_item_start_route_headline">Изменить начальный экран</string>
+    <string name="settings_item_start_route_description">Выбор стартового экрана при запуске</string>
+    <string name="settings_item_about_headline">О приложении</string>
+    <string name="settings_item_about_description">Информация о приложении и ресурсы</string>
+    <!-- Settings About Screen -->
+    <string name="settings_about_developer_title">Разработчик</string>
+    <string name="settings_about_developer_content">Danyil Kobzar</string>
+    <string name="settings_about_project_title">Исходный код</string>
+    <string name="settings_about_telegram_title">Telegram канал</string>
+    <string name="settings_about_telegram_content">Обновления и информация</string>
+    <!-- Settings Reset Flags -->
+    <string name="settings_reset_flags_description">Восстановление настроек по умолчанию и очистка всех пользовательских (переопределенных) флагов и параметров в приложении</string>
+    <string name="settings_reset_flags_opt_gms">Сбросить флаги у GMS</string>
+    <string name="settings_reset_flags_opt_vending">Сбросить флаги у Play Store</string>
+    <string name="settings_reset_flags_opt_all">Сбросить все флаги</string>
+    <string name="settings_reset_flags_warning">Все переопределенные флаги будут сброшены!</string>
+    <!-- Settings Reset Saved -->
+    <string name="settings_reset_saved_description">В этом разделе вы можете сбросить все сохраненные Вами пакеты и флаги</string>
+    <string name="settings_reset_saved_opt_packages">Сбросить сохранённые пакеты</string>
+    <string name="settings_reset_saved_opt_flags">Сбросить сохранённые флаги</string>
+    <string name="settings_reset_saved_opt_all">Сбросить все сохраненные флаги и пакеты</string>
+    <string name="settings_reset_saved_warning">Все сохраненные Вами флаги будут сброшены!</string>
+    <!-- Settings Start Route -->
+    <string name="settings_start_route_title">Изменить начальный экран</string>
+    <string name="settings_start_route_description">Выберите экран, который будет отображаться при запуске приложения. Экран по умолчанию - Рекомендации.</string>
+    <!-- Settings Common -->
+    <string name="settings_confirmation_dialog_title">Подтвердите действие</string>
+    <string name="settings_confirmation_dialog_confirm">Подтвердить</string>
+    <string name="settings_confirmation_dialog_close">Закрыть</string>
+</resources>

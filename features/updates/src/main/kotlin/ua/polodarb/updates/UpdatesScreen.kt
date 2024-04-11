@@ -55,7 +55,9 @@ import ua.polodarb.ui.components.inserts.LoadingProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdatesScreen() {
+fun UpdatesScreen(
+    onSettingsClick: () -> Unit
+) {
 
     val viewModel = koinViewModel<UpdatesScreenViewModel>()
     val state = viewModel.uiState.collectAsState()
@@ -80,7 +82,7 @@ fun UpdatesScreen() {
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = onSettingsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = "Settings"

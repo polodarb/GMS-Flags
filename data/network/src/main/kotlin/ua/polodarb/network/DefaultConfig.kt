@@ -9,6 +9,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import tw.ktrssreader.BuildConfig
 
 fun HttpClientConfig<*>.setConfig(tag: String) {
     install(Logging) { this.setConfig(tag = tag) }
@@ -17,7 +18,7 @@ fun HttpClientConfig<*>.setConfig(tag: String) {
 }
 
 private fun Logging.Config.setConfig(tag: String) {
-//    this.level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE // todo
+    this.level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE // todo
     this.logger = object: Logger {
         override fun log(message: String) {
             Log.e(tag, message)
