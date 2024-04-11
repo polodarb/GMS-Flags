@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.core.updates
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.AlertDialog
@@ -30,7 +31,7 @@ import ua.polodarb.network.Resource
 import ua.polodarb.network.appUpdates.AppUpdatesApiService
 
 @Composable
-fun UpdateDialog(
+fun UpdateDialog( // TODO: Refactor and move to :core:ui
     appUpdatesApiService: AppUpdatesApiService,
     isFirstStart: Boolean
 ) {
@@ -43,7 +44,8 @@ fun UpdateDialog(
             CoroutineScope(Dispatchers.IO).launch {
                 val res = appUpdatesApiService.getLatestRelease()
                 if (res is Resource.Success) {
-                    this@produceState.value = res.data?.tagName!!
+                    Log.e("UpdateDialog", res.data?.tagName.toString())
+                    this@produceState.value = res.data?.tagName ?: BuildConfig.VERSION_NAME
                 }
             }
         }

@@ -182,7 +182,7 @@ internal fun RootAppNavigation(
 
         settingsChangeNavigationComposable(
             route = ScreensDestination.SettingsChangeNavigation.screenRoute,
-            parentSettingsRoute = ScreensDestination.Settings.screenRoute,
+            parentSettingsRoute = NavBarItem.Suggestions.screenRoute,
             onBackPressed = navController::navigateUp
         )
 

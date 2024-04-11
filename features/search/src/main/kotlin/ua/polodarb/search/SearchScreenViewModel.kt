@@ -70,20 +70,11 @@ class SearchScreenViewModel(
     var packagesSearchQuery = mutableStateOf("")
     private val packagesListFiltered: MutableMap<String, String> = mutableMapOf()
 
-    var allFlagsSearchQuery = mutableStateOf("")
-    private var allFlagsListFiltered: MergedAllTypesFlags = MergedAllTypesFlags(
-        emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList()
-    )
-
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
     fun clearSearchQuery() {
         appsSearchQuery.value = ""
         packagesSearchQuery.value = ""
-        allFlagsSearchQuery.value = ""
     }
 
     // Sorting
@@ -102,6 +93,7 @@ class SearchScreenViewModel(
     }
 
     fun initGms() {
+        appsListFiltered.clear()
         initAllInstalledApps()
         initGmsPackagesList()
         getAllSavedPackages()

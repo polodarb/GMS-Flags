@@ -141,8 +141,7 @@ fun SearchScreen(
 
     LaunchedEffect(
         key1 = viewModel.appsSearchQuery.value,
-        key2 = viewModel.packagesSearchQuery.value,
-        key3 = viewModel.allFlagsSearchQuery.value
+        key2 = viewModel.packagesSearchQuery.value
     ) {
         when (pagerState.currentPage) {
             0 -> viewModel.getAllInstalledApps()
@@ -223,21 +222,18 @@ fun SearchScreen(
                     GFlagsSearchBar(
                         query = when (pagerState.currentPage) {
                             0 -> viewModel.appsSearchQuery.value
-                            1 -> viewModel.packagesSearchQuery.value
-                            else -> viewModel.allFlagsSearchQuery.value
+                            else -> viewModel.packagesSearchQuery.value
                         },
                         onQueryChange = { newQuery ->
                             when (pagerState.currentPage) {
                                 0 -> viewModel.appsSearchQuery.value = newQuery
-                                1 -> viewModel.packagesSearchQuery.value = newQuery
-                                else -> viewModel.allFlagsSearchQuery.value = newQuery
+                                else -> viewModel.packagesSearchQuery.value = newQuery
                             }
                         },
                         placeHolderText = searchPlaceHolderText,
                         iconVisibility = when (pagerState.currentPage) {
                             0 -> viewModel.appsSearchQuery.value.isNotEmpty()
-                            1 -> viewModel.packagesSearchQuery.value.isNotEmpty()
-                            else -> viewModel.allFlagsSearchQuery.value.isNotEmpty()
+                            else -> viewModel.packagesSearchQuery.value.isNotEmpty()
                         },
                         iconOnClick = {
                             when (pagerState.currentPage) {

@@ -81,12 +81,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
-import ua.polodarb.ui.components.inserts.ErrorLoadScreen
-import ua.polodarb.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.network.suggestedFlags.model.FlagInfo
 import ua.polodarb.platform.utils.OSUtils
 import ua.polodarb.suggestions.dialog.ResetFlagToDefaultDialog
 import ua.polodarb.ui.components.dialogs.ReportFlagsDialog
+import ua.polodarb.ui.components.inserts.ErrorLoadScreen
+import ua.polodarb.ui.components.inserts.LoadingProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +102,6 @@ fun SuggestionsScreen(
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val packageManager = context.packageManager
 
@@ -486,6 +485,7 @@ private fun NewSuggestedFlagItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SuggestedFlagItemArrow(
+                        badge = noteText != null,
                         expanded = expanded,
                         onExpandedChange = {
                             expanded = !expanded
@@ -694,39 +694,58 @@ fun AppContent(
 @Composable
 fun SuggestedFlagItemArrow(
     expanded: Boolean,
+    badge: Boolean,
     onExpandedChange: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
+    // Animating rotation state
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         animationSpec = tween(durationMillis = 300, easing = LinearEasing),
         label = "Rotation"
     )
 
-    Box(
-        modifier = Modifier
-            .size(28.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            Icons.Rounded.KeyboardArrowDown,
-            contentDescription = null,
+    Box(modifier = Modifier.size(36.dp)) {
+        // Arrow Box
+        Box(
             modifier = Modifier
-                .graphicsLayer(
-                    rotationX = rotationState
-                )
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null
-                ) {
-                    onExpandedChange()
-                }
-        )
+                .size(28.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .align(Alignment.Center),
+            contentAlignment = Alignment.Center
+        ) {
+            // Arrow Icon
+            Icon(
+                Icons.Rounded.KeyboardArrowDown,
+                contentDescription = null,
+                modifier = Modifier
+                    .graphicsLayer(
+                        rotationX = rotationState
+                    )
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) {
+                        onExpandedChange()
+                    }
+            )
+        }
+
+        // Badge Box
+        if (badge) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .align(Alignment.TopEnd)
+            )
+        }
     }
 }
+
 
 
 @Composable

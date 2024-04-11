@@ -71,8 +71,8 @@ fun ChangeNavigationScreen(
             screenRoute = "suggestions"
         ),
         NavBarItems(
-            title = "Apps",
-            screenRoute = "apps"
+            title = "Search",
+            screenRoute = "search"
         ),
         NavBarItems(
             title = "Saved",
