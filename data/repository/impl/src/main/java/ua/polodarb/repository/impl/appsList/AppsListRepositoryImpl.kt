@@ -17,7 +17,9 @@ class AppsListRepositoryImpl(
     private val rootDB: InitRootDB
 ): AppsListRepository {
     
-    private val rootDatabase = rootDB.getRootDatabase()
+    private val rootDatabase by lazy {
+        rootDB.getRootDatabase()
+    }
 
     override fun getAllInstalledApps(): Flow<UiStates<List<AppInfo>>> = flow {
         emit(UiStates.Loading())

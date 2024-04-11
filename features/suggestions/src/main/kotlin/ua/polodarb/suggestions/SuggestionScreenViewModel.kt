@@ -11,15 +11,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import ua.polodarb.network.Resource
 import ua.polodarb.network.suggestedFlags.SuggestedFlagsApiService
 import ua.polodarb.network.suggestedFlags.model.FlagInfo
 import ua.polodarb.network.suggestedFlags.model.FlagType
 import ua.polodarb.network.suggestedFlags.model.SuggestedFlagTypes
-import ua.polodarb.network.Resource
 import ua.polodarb.platform.providers.LocalFilesProvider
 import ua.polodarb.repository.appsList.AppsListRepository
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
@@ -27,7 +28,6 @@ import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.suggestedFlags.MergedSuggestedFlagsRepository
 import ua.polodarb.repository.suggestedFlags.model.MergedAllTypesOverriddenFlags
 import ua.polodarb.repository.uiStates.UiStates
-import java.io.File
 import java.util.Collections
 
 typealias SuggestionsScreenUiState = UiStates<SuggestedFlag>
@@ -125,69 +125,69 @@ class SuggestionScreenViewModel(
                 overriddenFlags = mutableMapOf()
                 rawSuggestedFlag.primary.map { it.flagPackage }.forEach { pkg ->
                     if (overriddenFlags[pkg] == null) {
-                        overriddenFlags[pkg] = mergedFlags.getMergedOverriddenFlagsByPackage(pkg)
+                        overriddenFlags[pkg] =
+                            mergedFlags.getMergedOverriddenFlagsByPackage(pkg).first()
                     }
                 }
                 rawSuggestedFlag.secondary.map { it.flagPackage }.forEach { pkg ->
                     if (overriddenFlags[pkg] == null) {
-                        overriddenFlags[pkg] = mergedFlags.getMergedOverriddenFlagsByPackage(pkg)
+                        overriddenFlags[pkg] =
+                            mergedFlags.getMergedOverriddenFlagsByPackage(pkg).first()
                     }
                 }
 
-                if (primaryList.isEmpty() || secondaryList.isEmpty()) {
-                    rawSuggestedFlag.primary.mapIndexed { index, flag ->
+                rawSuggestedFlag.primary.mapIndexed { index, flag ->
 
-                        val minAndroidSdkCode = flag.minAndroidSdkCode
-                        val minVersionCode = flag.minVersionCode
-                        val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
+                    val minAndroidSdkCode = flag.minAndroidSdkCode
+                    val minVersionCode = flag.minVersionCode
+                    val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
 
-                        if (flag.enabled && appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
-                            (minVersionCode == null || minVersionCode <= appVersionCode)
-                        ) {
-                            primaryList.add(
-                                PrimarySuggestedFlag(
-                                    flag = flag,
-                                    enabled = flag.flags.firstOrNull {
-                                        overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.intFlag?.get(
-                                                    it.tag
-                                                ) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.floatFlag?.get(
-                                                    it.tag
-                                                ) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.stringFlag?.get(
-                                                    it.tag
-                                                ) != it.value
-                                    } == null
-                                )
+                    if (flag.enabled && appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                        (minVersionCode == null || minVersionCode <= appVersionCode)
+                    ) {
+                        primaryList.add(
+                            PrimarySuggestedFlag(
+                                flag = flag,
+                                enabled = flag.flags.firstOrNull {
+                                    overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.intFlag?.get(
+                                                it.tag
+                                            ) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.floatFlag?.get(
+                                                it.tag
+                                            ) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.stringFlag?.get(
+                                                it.tag
+                                            ) != it.value
+                                } == null
                             )
-                        }
+                        )
                     }
-                    rawSuggestedFlag.secondary.mapIndexed { index, flag ->
+                }
+                rawSuggestedFlag.secondary.mapIndexed { index, flag ->
 
-                        val minAndroidSdkCode = flag.minAndroidSdkCode
-                        val minVersionCode = flag.minVersionCode
-                        val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
+                    val minAndroidSdkCode = flag.minAndroidSdkCode
+                    val minVersionCode = flag.minVersionCode
+                    val appVersionCode = appsRepository.getAppVersionCode(flag.appPackage)
 
-                        if (flag.enabled && appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
-                            (minVersionCode == null || minVersionCode <= appVersionCode)
-                        ) {
-                            secondaryList.add(
-                                SecondarySuggestedFlag(
-                                    flag = flag,
-                                    enabled = flag.flags.firstOrNull {
-                                        overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.intFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.floatFlag?.get(it.tag) != it.value &&
-                                                overriddenFlags[flag.flagPackage]?.stringFlag?.get(
-                                                    it.tag
-                                                ) != it.value
-                                    } == null
-                                )
+                    if (flag.enabled && appVersionCode != -1L && (minAndroidSdkCode == null || Build.VERSION.SDK_INT >= minAndroidSdkCode) &&
+                        (minVersionCode == null || minVersionCode <= appVersionCode)
+                    ) {
+                        secondaryList.add(
+                            SecondarySuggestedFlag(
+                                flag = flag,
+                                enabled = flag.flags.firstOrNull {
+                                    overriddenFlags[flag.flagPackage]?.boolFlag?.get(it.tag) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.intFlag?.get(it.tag) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.floatFlag?.get(it.tag) != it.value &&
+                                            overriddenFlags[flag.flagPackage]?.stringFlag?.get(
+                                                it.tag
+                                            ) != it.value
+                                } == null
                             )
-                        }
-
+                        )
                     }
+
                 }
 
                 val data = SuggestedFlag(
@@ -215,7 +215,8 @@ class SuggestionScreenViewModel(
             try {
                 if (localFlags.exists())
                     return Json.decodeFromString(localFlags.readText())
-            } catch (_: Exception) { }
+            } catch (_: Exception) {
+            }
 
             val pkgFlags = application.assets.open("suggestedFlags_2.0.json")
             val pkgContent = pkgFlags.bufferedReader().use { it.readText() }

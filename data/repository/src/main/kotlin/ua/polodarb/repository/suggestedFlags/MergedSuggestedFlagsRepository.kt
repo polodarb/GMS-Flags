@@ -7,7 +7,7 @@ import ua.polodarb.repository.uiStates.UiStates
 
 interface MergedSuggestedFlagsRepository {
 
-    suspend fun getMergedOverriddenFlagsByPackage(pkg: String): MergedAllTypesOverriddenFlags
+    suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags>
 
     suspend fun getMergedAllFlags(): Flow<UiStates<MergedAllTypesFlags>>
 

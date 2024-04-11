@@ -33,7 +33,7 @@ class GMSApplication : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.DEBUG else Level.NONE)
             androidContext(this@GMSApplication)
-//            workManagerFactory()
+            workManagerFactory()
             modules(
                 listOf(
                     appModule,
@@ -42,7 +42,7 @@ class GMSApplication : Application() {
                     localDatabaseModule,
                     localDBBindsModule,
                     platformModule,
-//                    workerModule,
+                    workerModule,
                     sharedPrefsModule,
                     networkBindsModule,
                     repositoryBindsModule

@@ -35,12 +35,14 @@ class InitRootDBImpl(
         val intent = Intent(context, RootDatabase::class.java)
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                Log.e("InitRootDBImpl", "onServiceConnected")
                 rootDatabase = IRootDatabase.Stub.asInterface(service)
                 isRootDatabaseInitialized = true
                 setDatabaseInitialized(true)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
+                Log.e("InitRootDBImpl", "onServiceDisconnected")
                 isRootDatabaseInitialized = false
                 setDatabaseInitialized(false)
             }
@@ -49,7 +51,7 @@ class InitRootDBImpl(
     }
 
     override fun getRootDatabase(): IRootDatabase {
-        Log.e("InitRootDBImpl", isRootDatabaseInitialized.toString())
+        Log.e("InitRootDBImpl", "getRootDatabase: $isRootDatabaseInitialized")
         check(isRootDatabaseInitialized) { Constants.GMS_DATABASE_CRASH_MSG }
         return rootDatabase
     }

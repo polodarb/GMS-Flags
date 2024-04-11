@@ -37,7 +37,7 @@ android {
     defaultConfig {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
-        targetSdk = 33
+        targetSdk = 34
         versionCode = libs.versions.version.code.get().toInt()
         versionName = libs.versions.version.name.get()
 

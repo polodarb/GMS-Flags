@@ -12,27 +12,32 @@ import ua.polodarb.repository.suggestedFlags.model.MergedAllTypesOverriddenFlags
 import ua.polodarb.repository.uiStates.UiStates
 
 class MergedSuggestedFlagsRepositoryImpl(
-    private val context: Context,
     private val rootDB: InitRootDB
 ): MergedSuggestedFlagsRepository {
 
-    private val rootDatabase = rootDB.getRootDatabase()
+    private val rootDatabase by lazy {
+        rootDB.getRootDatabase()
+    }
 
-    override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): MergedAllTypesOverriddenFlags {
-        val boolFlags =
-            rootDatabase.getOverriddenBoolFlagsByPackage(pkg)
-        val intFlags = rootDatabase.getOverriddenIntFlagsByPackage(pkg)
-        val floatFlags =
-            rootDatabase.getOverriddenFloatFlagsByPackage(pkg)
-        val stringFlags =
-            rootDatabase.getOverriddenStringFlagsByPackage(pkg)
+    override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags> = flow {
+        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
 
-        return (MergedAllTypesOverriddenFlags(
-            boolFlag = boolFlags,
-            intFlag = intFlags,
-            floatFlag = floatFlags,
-            stringFlag = stringFlags
-        ))
+                val boolFlags = rootDatabase.getOverriddenBoolFlagsByPackage(pkg)
+                val intFlags = rootDatabase.getOverriddenIntFlagsByPackage(pkg)
+                val floatFlags = rootDatabase.getOverriddenFloatFlagsByPackage(pkg)
+                val stringFlags = rootDatabase.getOverriddenStringFlagsByPackage(pkg)
+
+                emit(
+                    MergedAllTypesOverriddenFlags(
+                        boolFlag = boolFlags,
+                        intFlag = intFlags,
+                        floatFlag = floatFlags,
+                        stringFlag = stringFlags
+                    )
+                )
+            }
+        }
     }
 
     override suspend fun getMergedAllFlags(): Flow<UiStates<MergedAllTypesFlags>> = flow {
