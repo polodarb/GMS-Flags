@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Insert blocks -->
+    <string name="component_error_load">Ошибка загрузки данных</string>
+    <string name="component_not_implemented">Скоро будет</string>
+    <string name="component_no_flags">Флаги не найдены</string>
+    <string name="component_no_apps">Приложения не найдены</string>
+    <string name="component_no_packages">Пакеты не найдены</string>
+    <!-- ReportFlagDialog -->
+    <string name="flag_change_dialog_report_title">Отчет о проблеме</string>
+    <string name="flag_change_dialog_report_text">Если вы заметили, что этот флаг вызывает какие-либо проблемы или нарушает работу приложения - пожалуйста, сообщите нам об этом.</string>
+    <string name="flag_change_dialog_report_placeholder">Опишите проблему</string>
+    <string name="flag_change_dialog_report_action_send">Отправить</string>
+    <string name="close">Закрыть</string>
+    <!-- Filter chips -->
+    <string name="filter_chip_all">Все</string>
+    <string name="filter_chip_changed">Изменённые</string>
+    <string name="filter_chip_disabled">Отключённые</string>
+    <string name="filter_chip_enabled">Включённые</string>
+    <!-- Flags change dropDown menu -->
+    <string name="component_add_flag">Добавить флаг</string>
+    <string name="add_a_multiple_flags">Добавить несколько флагов</string>
+    <string name="open_app_details_settings">Открыть настройки</string>
+    <string name="component_reset_flags">Сбросить флаги</string>
+    <string name="drop_down_enable_selected">Активировать выбранное</string>
+    <string name="drop_down_disable_selected">Деактивировать выбранное</string>
+    <string name="drop_down_select_all">Выбрать всё</string>
+</resources>

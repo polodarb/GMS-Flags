@@ -37,9 +37,9 @@ android {
     defaultConfig {
         applicationId = "ua.polodarb.gmsflags"
         minSdk = 29
-        targetSdk = 33
-        versionCode = 12
-        versionName = "1.1.1-beta01"
+        targetSdk = 34
+        versionCode = libs.versions.version.code.get().toInt()
+        versionName = libs.versions.version.name.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -67,7 +67,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        aidl = true
         buildConfig = true
         compose = true
     }
@@ -133,6 +132,7 @@ dependencies {
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.compose)
+    implementation(libs.koin.core)
     implementation(libs.koin.work.manager)
 
     // Ktor
@@ -154,11 +154,6 @@ dependencies {
     implementation(libs.libsu.service)
     implementation(libs.libsu.nio)
 
-    // Room Database
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
-
     // Coil
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
@@ -170,6 +165,33 @@ dependencies {
 
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
+
+    implementation(project(":core:platform"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:common"))
+
+    implementation(project(":data:repository"))
+    implementation(project(":data:repository:impl"))
+
+    implementation(project(":data:preferences"))
+    implementation(project(":data:preferences:impl"))
+
+    implementation(project(":data:network"))
+    implementation(project(":data:network:impl"))
+
+    implementation(project(":data:databases:local"))
+    implementation(project(":data:databases:local:impl"))
+    implementation(project(":data:databases:gms"))
+    implementation(project(":data:databases:gms:impl"))
+
+    implementation(project(":features:updates"))
+    implementation(project(":features:saved"))
+    implementation(project(":features:settings"))
+    implementation(project(":features:onboarding"))
+    implementation(project(":features:search"))
+    implementation(project(":features:suggestions"))
+    implementation(project(":features:flagsChange"))
+    implementation(project(":features:flagsFile"))
 }
 
 tasks.withType<KotlinCompile> {

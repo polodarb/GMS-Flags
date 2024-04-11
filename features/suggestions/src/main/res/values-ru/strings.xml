@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top Bar -->
+    <string name="nav_bar_suggestions">Рекомендации</string>
+    <!-- Item -->
+    <string name="finder">"Источник: "</string>
+    <string name="note">Примечание:</string>
+    <string name="open">Открыть %1$s</string>
+    <string name="open_app_details_settings">Открыть настройки</string>
+    <string name="view_more_information">Узнать подробности</string>
+    <string name="reset">Сбросить</string>
+    <string name="report">Сообщить</string>
+    <!-- Banner -->
+    <string name="suggestion_banner">Чтобы применить флаг, нужно несколько раз нажать \"Остановить\" в настройках соответствующего приложения.</string>
+    <string name="close">Закрыть</string>
+    <!-- Reset flags to default dialog -->
+    <string name="suggestions_dialog_title">Сбросить флаг?</string>
+    <string name="suggestions_dialog_text">Это действие приведет к сбросу значения флага на значение по умолчанию. Используйте это действие, если простое отключение флага не работает или вызывает какие-либо проблемы</string>
+    <!-- Common -->
+    <string name="settings_confirmation_dialog_confirm">Подтвердить</string>
+</resources>

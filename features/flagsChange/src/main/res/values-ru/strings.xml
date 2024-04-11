@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Progress Dialog -->
+    <string name="flag_change_dialog_progress_title">Ожидайте</string>
+    <!-- Filter chips -->
+    <string name="filter_chip_all">Все</string>
+    <string name="filter_chip_changed">Изменённые</string>
+    <string name="filter_chip_disabled">Отключённые</string>
+    <string name="filter_chip_enabled">Включённые</string>
+    <!-- TopBar -->
+    <string name="flag_change_topbar_title_selected">Выбрано: %1$s</string>
+    <!-- SearchBar -->
+    <string name="search_flags_advice">Поиск флагов по имени</string>
+    <!-- Toast -->
+    <string name="toast_flag_value_is_reset">Значение флага сброшено!</string>
+    <!-- Add Flag dialog -->
+    <string name="flag_change_dialog_add_flag_title">Добавить флаг</string>
+    <string name="flag_change_dialog_add_flag_confirm">Добавить флаг</string>
+    <string name="flag_change_dialog_add_flag_choose_type">Выберите тип флага</string>
+    <string name="flag_change_dialog_add_flag_select_value">Выберите значение</string>
+    <string name="flag_change_dialog_add_flag_enter_name">Напишите имя флага</string>
+    <string name="flag_change_dialog_add_flag_title_name">Имя флага</string>
+    <string name="flag_change_dialog_add_flag_title_value">Значение флага</string>
+    <string name="flag_change_dialog_add_flag_type_value">Напишите значение</string>
+    <!-- Change Flag dialog -->
+    <string name="flag_change_dialog_other_type_title">Параметр флага</string>
+    <string name="flag_change_dialog_other_type_name">Имя: %1$s</string>
+    <string name="flag_change_dialog_other_type_type">Тип: %1$s</string>
+    <string name="flag_change_dialog_other_action_default">Сброс</string>
+    <string name="flag_change_dialog_other_action_save">ОК</string>
+    <!-- Report Flag dialog -->
+    <string name="flag_change_dialog_report_title">Отчет о проблеме</string>
+    <string name="flag_change_dialog_report_text">Если вы заметили, что этот флаг вызывает какие-либо проблемы или нарушает работу приложения - пожалуйста, сообщите нам об этом.</string>
+    <string name="flag_change_dialog_report_placeholder">Опишите проблему</string>
+    <string name="flag_change_dialog_report_action_send">Отправить</string>
+    <!-- Suggest Flag dialog -->
+    <string name="flag_change_dialog_suggest_title">Предложить флаг</string>
+    <string name="flag_change_dialog_suggest_text">Если вы заметили, что этот флаг дает интересный результат, вы можете представить его нам на рассмотрение. Если Ваше предложение будет одобрено - оно появится на экране \"Рекомендации\"</string>
+    <string name="flag_change_dialog_suggest_placeholder_description">Опишите флаг</string>
+    <string name="flag_change_dialog_suggest_name">Напишите Ваше имя</string>
+    <string name="flag_change_dialog_suggest_action_send">Отправить</string>
+    <!-- Add flags list screen -->
+    <string name="add_a_multiple_flags">Добавить несколько флагов</string>
+    <string name="enter_the_flags">Введённые флаги</string>
+    <string name="formed_flags">Сформированные флаги</string>
+    <string name="no_flags_added">Нет добавленных флагов</string>
+    <string name="activate_added_flags">Активировать флаги</string>
+    <string name="example">"Например: "</string>
+    <string name="enter_flags_using_a_space">Используйте пробел для ввода</string>
+    <string name="enter_flags_using_the_equal_symbol">Используйте знак равенства для ввода</string>
+    <!-- Common -->
+    <string name="close">Закрыть</string>
+    <string name="save">Сохранить</string>
+</resources>

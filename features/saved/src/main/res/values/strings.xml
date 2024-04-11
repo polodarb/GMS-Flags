@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_bar_saved">Saved</string>
+    <string name="saved_packages">Saved packages</string>
+    <string name="saved_flags">Saved flags</string>
+</resources>

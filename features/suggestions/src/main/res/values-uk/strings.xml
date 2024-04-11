@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top Bar -->
+    <string name="nav_bar_suggestions">Рекомендації</string>
+    <!-- Item -->
+    <string name="finder">"Джерело: "</string>
+    <string name="note">Примітка: </string>
+    <string name="open">Відкрити %1$s</string>
+    <string name="open_app_details_settings">Відкрити налаштування</string>
+    <string name="view_more_information">Детальна інформація</string>
+    <string name="reset">Скинути</string>
+    <string name="report">Повідомити</string>
+    <!-- Banner -->
+    <string name="suggestion_banner">Щоб примінити флаг, потрібно кілька разів натиснути \"Зупинити\" в налаштуваннях відповідного додатку.</string>
+    <string name="close">Закрити</string>
+    <!-- Reset flags to default dialog -->
+    <string name="suggestions_dialog_title">Скинути флаг?</string>
+    <string name="suggestions_dialog_text">Ця дія призведе до скидання значення флага на значення за замовчуванням. Використовуйте цю дію, якщо просте вимкнення прапора не працює або спричиняє будь-які проблеми</string>
+    <!-- Common -->
+    <string name="settings_confirmation_dialog_confirm">Підтвердити</string>
+</resources>

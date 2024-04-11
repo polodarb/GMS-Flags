@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notifications -->
+    <string name="notification_title">Повідомлення</string>
+    <string name="notification_msg">"Дозвольте отримувати сповіщення, щоб бути в курсі нових флагів та новин. "</string>
+    <string name="notification_advice">Щоб запитати дозвіл, натисніть на відповідну кнопку</string>
+    <string name="notification_request">Дозволити</string>
+    <string name="notification_skip">Пропустити</string>
+    <string name="notifications_toast">Ви не будете отримувати сповіщення</string>
+    <string name="notification_finish">Продовжити</string>
+    <string name="notifications_open_settings">Налаштування</string>
+    <!-- Root request -->
+    <string name="root_title">Необхідні root-права</string>
+    <string name="root_msg">"Для роботи програми потрібні права суперкористувача. "</string>
+    <string name="root_advice">Щоб запитати дозвіл, натисніть на відповідну кнопку</string>
+    <string name="root_exit">Вийти</string>
+    <string name="root_request">Запитати права</string>
+    <!-- Welcome -->
+    <string name="welcome_title">Вітаємо!</string>
+    <string name="welcome_msg">Досліджуйте додатки Google, щоб дізнатися про приховані функції, оновлені інтерфейси, а також майте можливість вимкнути регіональні обмеження та багато чого іншого</string>
+    <string name="welcome_advice">Станьте частиною спільноти!</string>
+    <string name="welcome_start">Почати!</string>
+    <string name="welcome_disclaimer">Продовжуючи, ви погоджуєтеся з нашими Умовами користування та Політикою конфіденційності</string>
+    <string name="welcome_terms_chunk">Умовами користування</string>
+    <string name="welcome_policy_chunk">Політикою конфіденційності</string>
+</resources>
