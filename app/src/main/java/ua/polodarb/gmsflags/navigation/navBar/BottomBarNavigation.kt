@@ -30,6 +30,7 @@ internal fun BottomBarNavigation(
 
     val sharedPrefs = koinInject<PreferencesManager>()
     val preferencesManager = remember { sharedPrefs }
+
     val startScreen = remember {
         mutableStateOf(
             preferencesManager.getData(
@@ -39,9 +40,11 @@ internal fun BottomBarNavigation(
         )
     }
 
+    val migrationStartScreen = if (startScreen.value == "apps") "search" else startScreen.value
+
     NavHost(
         navController = navController,
-        startDestination = startScreen.value,
+        startDestination = migrationStartScreen,
         modifier = modifier
     ) {
         suggestionsScreen(
