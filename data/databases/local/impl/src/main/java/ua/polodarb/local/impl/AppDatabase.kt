@@ -9,7 +9,7 @@ import ua.polodarb.local.impl.dao.PackagesDAO
 
 @Database(
     entities = [SavedPackagesEntity::class, SavedFlagsEntity::class],
-    version = 2
+    version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
 
