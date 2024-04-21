@@ -20,16 +20,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-//            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-//            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        debug {
-//            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-//            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
         }
     }
     compileOptions {
@@ -85,11 +79,9 @@ dependencies {
     debugImplementation(libs.compose.test.manifest)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(project(":data:repository"))
     implementation(project(":core:ui"))

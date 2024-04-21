@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -34,19 +35,23 @@ android {
 
 dependencies {
 
+    // XML
+    api(libs.jackson.dataformat)
+    api(libs.javax.xml.stream)
+
+    // Ktor serialization
+    implementation(libs.ktor.serialization.json)
+
     // KtRssRss
     api(libs.rssReader)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     api(project(":data:preferences"))
     api(project(":data:network"))
     api(project(":data:databases:local"))
-//    api(project(":data:databases:gms"))
     api(project(":core:common"))
 }

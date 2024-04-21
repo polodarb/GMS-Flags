@@ -161,7 +161,6 @@ dependencies {
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)

@@ -7,8 +7,6 @@ android {
     namespace = "ua.polodarb.gms"
     compileSdk = 34
 
-//    aidlPackagedList("src/main/aidl/ua/polodarb/gms/IRootDatabase.aidl")
-
     defaultConfig {
         minSdk = 29
 
@@ -41,10 +39,8 @@ android {
 dependencies {
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
 }

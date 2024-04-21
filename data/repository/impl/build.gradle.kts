@@ -45,11 +45,9 @@ dependencies {
     implementation(libs.koin.work.manager)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(project(":data:repository"))
     implementation(project(":data:databases:gms"))

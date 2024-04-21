@@ -7,12 +7,14 @@ import ua.polodarb.repository.appsList.AppsListRepository
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.databases.local.LocalDBRepository
+import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
 import ua.polodarb.repository.googleUpdates.GoogleUpdatesRepository
 import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
 import ua.polodarb.repository.impl.appsList.AppsListRepositoryImpl
 import ua.polodarb.repository.impl.databases.gms.GmsDBInteractorImpl
 import ua.polodarb.repository.impl.databases.gms.GmsDBRepositoryImpl
 import ua.polodarb.repository.impl.databases.local.LocalDBRepositoryImpl
+import ua.polodarb.repository.impl.flagsFile.FlagsFromFileRepositoryImpl
 import ua.polodarb.repository.impl.googleUpdates.GoogleUpdatesRepositoryImpl
 import ua.polodarb.repository.impl.settings.SettingsRepositoryImpl
 import ua.polodarb.repository.impl.suggestedFlags.MergedSuggestedFlagsRepositoryImpl
@@ -65,5 +67,11 @@ val repositoryBindsModule = module {
             rootDB = get()
         )
     } bind MergedSuggestedFlagsRepository::class
+
+    single {
+        FlagsFromFileRepositoryImpl(
+            context = androidContext()
+        )
+    } bind FlagsFromFileRepository::class
 
 }

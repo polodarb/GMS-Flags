@@ -15,7 +15,6 @@ coreKtx = "1.12.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
 detekt = "1.23.1"
-espresso = "3.5.1"
 firebase = "32.7.0"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
@@ -35,8 +34,9 @@ room = "2.6.1"
 sqlite = "3.42.0"
 ktRssReader = "2.2.1"
 workRuntimeKtx = "2.9.0"
-appcompat = "1.6.1"
 jetbrainsKotlinJvm = "1.9.10"
+jackson = "2.15.0"
+javaxXmlStream = "1.0-2"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -55,7 +55,6 @@ compose-icons = { group = "androidx.compose.material", name = "material-icons-ex
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
@@ -85,12 +84,13 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 rssReader = { group = "com.github.ivanisidrowu.KtRssReader", name = "android", version.ref = "ktRssReader" }
+jackson-dataformat = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml", version.ref = "jackson" }
+javax-xml-stream = { group = "javax.xml.stream", name = "stax-api", version.ref = "javaxXmlStream" }
 
 # Dependencies of the included build-logic
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 firebase-crashlytics-gradle = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

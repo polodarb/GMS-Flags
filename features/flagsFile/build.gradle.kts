@@ -41,6 +41,14 @@ android {
 
 dependencies {
 
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.compose)
+    implementation(libs.koin.work.manager)
+
+    // Kotlin immutable collections
+    implementation(libs.kotlin.collections.immutable)
+
     // Navigation
     implementation(libs.navigation.compose)
 
@@ -61,11 +69,10 @@ dependencies {
     debugImplementation(libs.compose.test.manifest)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(project(":core:ui"))
+    implementation(project(":data:repository"))
 }

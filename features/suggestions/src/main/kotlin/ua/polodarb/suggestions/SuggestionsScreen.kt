@@ -98,8 +98,6 @@ fun SuggestionsScreen(
 
     val networkFlags = viewModel.stateSuggestionsFlags.collectAsState()
 
-    Log.e("TAG", "SuggestionsScreen: ${networkFlags.value}")
-
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current

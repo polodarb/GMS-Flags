@@ -76,21 +76,13 @@ dependencies {
     debugImplementation(libs.compose.test.manifest)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(project(":data:repository"))
     implementation(project(":core:ui"))
     implementation(project(":core:platform"))
     implementation(project(":core:common"))
 
-    implementation(libs.core.ktx)
-    implementation(libs.appcompat)
-    implementation(libs.google.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 }

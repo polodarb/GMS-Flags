@@ -48,11 +48,9 @@ dependencies {
     implementation(libs.libsu.nio)
 
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(project(":data:databases:gms"))
     implementation(project(":core:common"))

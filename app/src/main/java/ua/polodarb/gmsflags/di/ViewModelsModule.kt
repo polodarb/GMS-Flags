@@ -5,6 +5,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ua.polodarb.flagsChange.FlagChangeScreenViewModel
 import ua.polodarb.flagsChange.extScreens.AddMultipleFlagsViewModel
+import ua.polodarb.flagsfile.LoadFileScreenViewModel
 import ua.polodarb.network.impl.suggestedFlags.SuggestedFlagsApiServiceImpl
 import ua.polodarb.saved.SavedScreenViewModel
 import ua.polodarb.search.SearchScreenViewModel
@@ -68,6 +69,13 @@ val viewModelsModule = module {
             pkgName = get(),
             repository = get(),
             gmsDBInteractor = get()
+        )
+    }
+
+    viewModel {
+        LoadFileScreenViewModel(
+            fileUri = get(),
+            repository = get()
         )
     }
 }
