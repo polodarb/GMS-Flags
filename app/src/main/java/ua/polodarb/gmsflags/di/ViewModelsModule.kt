@@ -75,6 +75,8 @@ val viewModelsModule = module {
     viewModel {
         LoadFileScreenViewModel(
             fileUri = get(),
+            gmsDBInteractor = get(),
+            gmsDBRepository = get(),
             repository = get()
         )
     }

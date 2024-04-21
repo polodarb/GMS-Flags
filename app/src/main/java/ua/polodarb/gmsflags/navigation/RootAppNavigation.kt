@@ -77,7 +77,9 @@ internal fun RootAppNavigation(
             navController = navController,
             isFirstStart = isFirstStart,
             loadFlagIntent = loadFlagIntent
-        )
+        ) {
+            context.finish()
+        }
 
         welcomeComposable(
             route = ScreensDestination.Welcome.screenRoute,
@@ -198,12 +200,14 @@ internal fun RootAppNavigation(
 private fun NavGraphBuilder.rootComposable(
     navController: NavHostController,
     isFirstStart: Boolean,
-    loadFlagIntent: Intent?
+    loadFlagIntent: Intent?,
+    onExit: () -> Unit
 ) {
     if (!isFirstStart && isLoadFileIntent(loadFlagIntent)) {
         loadFileComposable(
             route = ScreensDestination.LoadFile.screenRoute,
-            fileUri = loadFlagIntent?.data
+            fileUri = loadFlagIntent?.data,
+            onExit = onExit
         )
     } else {
         composable(

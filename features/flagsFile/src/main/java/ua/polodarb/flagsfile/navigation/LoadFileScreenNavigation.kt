@@ -11,7 +11,8 @@ import ua.polodarb.ui.animations.exitAnim
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.loadFileComposable(
     route: String,
-    fileUri: Uri?
+    fileUri: Uri?,
+    onExit: () -> Unit
 ) {
     composable(
         route = route,
@@ -21,7 +22,8 @@ fun NavGraphBuilder.loadFileComposable(
         popExitTransition = { exitAnim(toLeft = false) }
     ) {
         LoadFileScreen(
-            fileUri = fileUri
+            fileUri = fileUri,
+            onExit = onExit
         )
     }
 }
