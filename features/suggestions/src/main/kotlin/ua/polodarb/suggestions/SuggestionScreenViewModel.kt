@@ -121,7 +121,6 @@ class SuggestionScreenViewModel(
                     rawSuggestedFlag = loadSuggestedFlags()
                 }
 
-
                 overriddenFlags = mutableMapOf()
                 rawSuggestedFlag.primary.map { it.flagPackage }.forEach { pkg ->
                     if (overriddenFlags[pkg] == null) {

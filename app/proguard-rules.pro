@@ -23,3 +23,4 @@
 -dontobfuscate
 -keepattributes LineNumberTable,SourceFile
 -renamesourcefileattribute SourceFile
+-dontwarn aQute.bnd.annotation.spi.ServiceProvider
