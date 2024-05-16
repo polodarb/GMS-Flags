@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.impl"
+    namespace = "ua.polodarb.repository.impl"
     compileSdk = 34
 
     defaultConfig {

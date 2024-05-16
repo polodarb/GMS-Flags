@@ -21,3 +21,4 @@ interface FlagsDAO {
     @Query("DELETE FROM saved_flags")
     fun deleteAllSavedFlags()
 }
+

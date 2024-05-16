@@ -3,6 +3,12 @@ package ua.polodarb.repository.impl.flagsFile
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.Keep
+import com.ctc.wstx.api.WstxInputProperties
+import com.ctc.wstx.api.WstxOutputProperties
+import com.ctc.wstx.stax.WstxInputFactory
+import com.ctc.wstx.stax.WstxOutputFactory
+import com.fasterxml.jackson.dataformat.xml.XmlFactory
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import kotlinx.coroutines.flow.flow
 import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
@@ -10,7 +16,10 @@ import ua.polodarb.repository.flagsFile.model.LoadedFlagData
 import ua.polodarb.repository.flagsFile.model.LoadedFlags
 import ua.polodarb.repository.flagsFile.model.PackageFlags
 import ua.polodarb.repository.uiStates.UiStates
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLOutputFactory
 
+@Keep
 class FlagsFromFileRepositoryImpl(
     private val context: Context
 ) : FlagsFromFileRepository {
@@ -19,7 +28,19 @@ class FlagsFromFileRepositoryImpl(
         runCatching {
             val inputStream = context.contentResolver.openInputStream(uri)
 
-            val xmlMapper = XmlMapper()
+            val inputFactory: XMLInputFactory = WstxInputFactory()
+            inputFactory.setProperty(WstxInputProperties.P_MAX_ATTRIBUTE_SIZE, 32000)
+
+            val outputFactory: XMLOutputFactory = WstxOutputFactory()
+            outputFactory.setProperty(WstxOutputProperties.P_OUTPUT_CDATA_AS_TEXT, true)
+
+            val factory: XmlFactory = XmlFactory.builder()
+                .xmlInputFactory(inputFactory)
+                .xmlOutputFactory(outputFactory)
+                .build()
+
+            val xmlMapper = XmlMapper(factory)
+
             val flags: PackageFlags = inputStream.use {
                 xmlMapper.readValue(it, PackageFlags::class.java)
             }
@@ -50,9 +71,12 @@ class FlagsFromFileRepositoryImpl(
             )
 
         }.onFailure {
+            Log.e("FILE", "message: ${it.message}")
+            Log.e("FILE", "stackTrace: ${it.stackTrace}")
             emit(UiStates.Error(it.cause))
         }
     }
+
 
 
     override suspend fun write(flags: LoadedFlags, fileName: String) {

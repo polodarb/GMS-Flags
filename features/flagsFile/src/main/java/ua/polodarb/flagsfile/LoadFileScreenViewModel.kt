@@ -1,7 +1,6 @@
 package ua.polodarb.flagsfile
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +8,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.flagsfile.model.LoadedFlagsUI
@@ -17,7 +15,6 @@ import ua.polodarb.flagsfile.model.toLoadedFlagsUIList
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
-import ua.polodarb.repository.flagsFile.model.LoadedFlags
 import ua.polodarb.repository.uiStates.UiStates
 import java.util.Collections
 
@@ -65,7 +62,7 @@ class LoadFileScreenViewModel(
                             _flagsData.value = UiStates.Loading()
                         }
                         is UiStates.Error -> {
-                            _flagsData.value = UiStates.Error(Throwable("Error read file"))
+                            _flagsData.value = UiStates.Error(uiState.throwable)
                         }
                         is UiStates.Success -> {
                             _flagsData.value = UiStates.Success(uiState.data.toLoadedFlagsUIList())
@@ -73,7 +70,7 @@ class LoadFileScreenViewModel(
                     }
                 }
             } ?: run {
-                _flagsData.value = UiStates.Error(Throwable("Error read file"))
+                _flagsData.value = UiStates.Error(Throwable("fileUri is null"))
             }
         }
     }
