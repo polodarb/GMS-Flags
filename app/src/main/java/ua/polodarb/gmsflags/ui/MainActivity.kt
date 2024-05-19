@@ -58,8 +58,8 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!BuildConfig.DEBUG)
-            ExceptionHandler.initialize(this, CrashActivity::class.java)
+//        if (!BuildConfig.DEBUG)
+//            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
 

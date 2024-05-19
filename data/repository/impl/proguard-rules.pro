@@ -20,3 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
+-dontwarn aQute.bnd.annotation.spi.ServiceProvider
+-dontwarn org.slf4j.impl.StaticLoggerBinder

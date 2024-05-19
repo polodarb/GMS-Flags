@@ -11,6 +11,6 @@ interface FlagsFromFileRepository {
 
     suspend fun read(uri: Uri): Flow<UiStates<LoadedFlags>>
 
-    suspend fun write(flags: LoadedFlags, fileName: String)
+    suspend fun write(flags: LoadedFlags, fileName: String): Uri
 
 }

@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,16 +36,13 @@ android {
 dependencies {
 
     // XML
-    api(libs.jackson.dataformat)
-    api(libs.jackson.core)
-    api(libs.jackson.annotations)
-    api(libs.jackson.databind)
-    api(libs.javax.xml.stream)
-//    api(libs.slf4j.api)
-//    api(libs.slf4j.simple)
-//    api(libs.bnd) {
-//        isTransitive = false
-//    }
+    implementation(libs.jackson.dataformat)
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.annotations)
+    implementation(libs.jackson.databind)
+    implementation(libs.javax.xml.stream)
+//    api(libs.stax.api)
+//    implementation("com.bea.xml.stream:org.motechproject.com.bea.xml.stream:1.2.0-r033")
 
     // Ktor serialization
     implementation(libs.ktor.serialization.json)

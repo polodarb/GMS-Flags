@@ -60,7 +60,8 @@ val viewModelsModule = module {
 
     viewModel {
         SettingsViewModel(
-            settingsRepository = get()
+            settingsRepository = get(),
+            flagsFromFileRepository = get()
         )
     }
 

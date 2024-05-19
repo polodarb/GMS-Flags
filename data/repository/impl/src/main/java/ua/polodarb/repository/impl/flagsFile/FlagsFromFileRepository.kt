@@ -4,18 +4,23 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.Keep
+import androidx.documentfile.provider.DocumentFile
 import com.ctc.wstx.api.WstxInputProperties
 import com.ctc.wstx.api.WstxOutputProperties
 import com.ctc.wstx.stax.WstxInputFactory
 import com.ctc.wstx.stax.WstxOutputFactory
 import com.fasterxml.jackson.dataformat.xml.XmlFactory
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import kotlinx.coroutines.flow.flow
+import org.codehaus.stax2.XMLOutputFactory2
 import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
 import ua.polodarb.repository.flagsFile.model.LoadedFlagData
 import ua.polodarb.repository.flagsFile.model.LoadedFlags
 import ua.polodarb.repository.flagsFile.model.PackageFlags
 import ua.polodarb.repository.uiStates.UiStates
+import java.io.File
+import java.io.StringWriter
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLOutputFactory
 
@@ -77,9 +82,46 @@ class FlagsFromFileRepositoryImpl(
         }
     }
 
+    override suspend fun write(flags: LoadedFlags, fileName: String): Uri {
+        return try {
+            val xmlMapper = XmlMapper()
+            xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
 
+            val outputFactory = XMLOutputFactory2.newInstance()
+            val stringWriter = StringWriter()
+            val xmlStreamWriter = outputFactory.createXMLStreamWriter(stringWriter)
 
-    override suspend fun write(flags: LoadedFlags, fileName: String) {
-        TODO("Not yet implemented")
+            with(xmlStreamWriter) {
+                writeStartDocument()
+                writeComment("GMS Flags")
+                writeStartElement("package")
+                writeAttribute("name", flags.packageName)
+                writeStartElement("flags")
+
+                flags.flags.getFlagsList().forEach { flag ->
+                    writeStartElement("flag")
+                    writeAttribute("name", flag.name)
+                    writeAttribute("type", flag.type)
+                    writeAttribute("value", flag.value.toString())
+                    writeEndElement()
+                }
+
+                writeEndElement()
+                writeEndElement()
+                writeEndDocument()
+
+                flush()
+                close()
+            }
+
+            val file = File(context.filesDir, "${fileName}123.xml")
+            file.writeText(stringWriter.toString())
+            DocumentFile.fromFile(file).createFile("application/xml", fileName)
+
+            Uri.fromFile(file)
+        } catch (e: Exception) {
+            Log.e("write", e.stackTraceToString())
+            Uri.EMPTY
+        }
     }
 }

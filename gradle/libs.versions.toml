@@ -93,6 +93,7 @@ jackson-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-an
 jackson-dataformat = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml", version.ref = "jackson" }
 woodstox = { group = "com.fasterxml.woodstox", name = "woodstox-core", version.ref = "woodstox" }
 javax-xml-stream = { group = "javax.xml.stream", name = "stax-api", version.ref = "javaxXmlStream" }
+stax-api = { group = "com.bea.xml.stream", name = "org.motechproject.com.bea.xml.stream", version = "1.2.0-r033" }
 slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 bnd = { group = "biz.aQute.bnd", name = "biz.aQute.bndlib", version.ref = "bnd" }

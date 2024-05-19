@@ -34,6 +34,12 @@ android {
 
 dependencies {
 
+    implementation(libs.jackson.dataformat)
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.annotations)
+    implementation(libs.jackson.databind)
+    implementation(libs.javax.xml.stream)
+
     // libsu
     implementation(libs.libsu.core)
     implementation(libs.libsu.service)
