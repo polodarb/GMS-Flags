@@ -67,7 +67,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}"
+            android:authorities="ua.polodarb.gmsflags.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

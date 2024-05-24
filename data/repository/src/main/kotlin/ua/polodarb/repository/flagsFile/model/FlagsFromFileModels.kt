@@ -26,11 +26,11 @@ data class LoadedFlags(
 
 @Keep
 data class LoadedFlagData(
-    val bool: Map<String, Boolean>,
-    val int: Map<String, Int>,
-    val float: Map<String, Float>,
-    val string: Map<String, String>,
-    val extVal: Map<String, String>
+    val bool: Map<String, Boolean> = emptyMap(),
+    val int: Map<String, Int> = emptyMap(),
+    val float: Map<String, Float> = emptyMap(),
+    val string: Map<String, String> = emptyMap(),
+    val extVal: Map<String, String> = emptyMap()
 ) {
     fun size(): Int {
         return bool.size + int.size + float.size + string.size + extVal.size

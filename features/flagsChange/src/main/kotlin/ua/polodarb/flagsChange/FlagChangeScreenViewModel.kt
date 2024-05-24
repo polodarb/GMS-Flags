@@ -1,5 +1,6 @@
 package ua.polodarb.flagsChange
 
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,10 +20,14 @@ import ua.polodarb.common.Extensions.filterByDisabled
 import ua.polodarb.common.Extensions.filterByEnabled
 import ua.polodarb.common.Extensions.toSortMap
 import ua.polodarb.common.FlagsTypes
+import ua.polodarb.flagsChange.mappers.mapToExtractBoolData
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.databases.local.LocalDBRepository
 import ua.polodarb.repository.databases.local.model.SavedFlags
+import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
+import ua.polodarb.repository.flagsFile.model.LoadedFlagData
+import ua.polodarb.repository.flagsFile.model.LoadedFlags
 import ua.polodarb.repository.uiStates.UiStates
 import java.util.Collections
 import kotlin.coroutines.CoroutineContext
@@ -35,7 +40,8 @@ class FlagChangeScreenViewModel(
     private val pkgName: String,
     private val repository: GmsDBRepository,
     private val roomRepository: LocalDBRepository,
-    private val gmsDBInteractor: GmsDBInteractor
+    private val gmsDBInteractor: GmsDBInteractor,
+    private val flagsFromFileRepository: FlagsFromFileRepository
 ) : ViewModel() {
 
     init {
@@ -98,6 +104,28 @@ class FlagChangeScreenViewModel(
         ) { data ->
             listBoolFiltered.putAll(data)
             getBoolFlags()
+        }
+    }
+
+    suspend fun extractToFile(
+        fileName: String,
+        packageName: String
+    ): Uri {
+        return when (val result = stateBoolean.value) {
+            is UiStates.Success -> {
+                val selectedItemsWithValues = selectedItems.mapToExtractBoolData(result.data)
+
+                flagsFromFileRepository.write(
+                    flags = LoadedFlags(
+                        packageName = packageName,
+                        flags = LoadedFlagData(
+                            bool = selectedItemsWithValues
+                        )
+                    ),
+                    fileName = fileName
+                )
+            }
+            else -> Uri.EMPTY
         }
     }
 

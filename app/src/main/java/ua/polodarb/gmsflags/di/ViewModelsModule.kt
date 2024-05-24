@@ -20,7 +20,8 @@ val viewModelsModule = module {
             pkgName = get(),
             repository = get(),
             roomRepository = get(),
-            gmsDBInteractor = get()
+            gmsDBInteractor = get(),
+            flagsFromFileRepository = get()
         )
     }
 
@@ -60,8 +61,7 @@ val viewModelsModule = module {
 
     viewModel {
         SettingsViewModel(
-            settingsRepository = get(),
-            flagsFromFileRepository = get()
+            settingsRepository = get()
         )
     }
 

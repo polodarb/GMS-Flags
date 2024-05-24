@@ -114,9 +114,9 @@ class FlagsFromFileRepositoryImpl(
                 close()
             }
 
-            val file = File(context.filesDir, "${fileName}123.xml")
+            val file = File(context.cacheDir, "${fileName}.gmsflags")
             file.writeText(stringWriter.toString())
-            DocumentFile.fromFile(file).createFile("application/xml", fileName)
+//            DocumentFile.fromFile(file).createFile("application/xml", fileName)
 
             Uri.fromFile(file)
         } catch (e: Exception) {

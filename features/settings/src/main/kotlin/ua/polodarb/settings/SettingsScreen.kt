@@ -41,8 +41,7 @@ fun SettingsScreen(
     onResetFlagsClick: () -> Unit,
     onResetSavedClick: () -> Unit,
     onChangeNavigationClick: () -> Unit,
-    onAboutClick: () -> Unit,
-    viewModel: SettingsViewModel = koinViewModel()
+    onAboutClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -70,15 +69,6 @@ fun SettingsScreen(
                     },
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
-            }
-        },
-        bottomBar = {
-            Button(onClick = {
-                coroutineScope.launch {
-                    viewModel.write()
-                }
-            }) {
-                Text(text = "Create file")
             }
         }
     ) { paddingValues ->

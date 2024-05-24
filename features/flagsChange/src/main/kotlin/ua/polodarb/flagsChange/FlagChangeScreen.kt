@@ -1,9 +1,16 @@
 package ua.polodarb.flagsChange
 
+import android.content.ClipData
+import android.content.Context
 import android.content.Intent
+import android.content.Intent.EXTRA_STREAM
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.content.Intent.createChooser
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -66,7 +73,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -78,6 +89,7 @@ import ua.polodarb.flagsChange.dialogs.ProgressDialog
 import ua.polodarb.flagsChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.flagsChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.flagsChange.flagsType.OtherTypesFlagsScreen
+import ua.polodarb.flagschange.BuildConfig
 import ua.polodarb.flagschange.R
 import ua.polodarb.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.repository.uiStates.UiStates
@@ -86,6 +98,7 @@ import ua.polodarb.ui.components.dialogs.ReportFlagsDialog
 import ua.polodarb.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.ui.components.dropDown.FlagSelectDropDown
 import ua.polodarb.ui.components.searchBar.GFlagsSearchBar
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -344,11 +357,13 @@ fun FlagChangeScreen(
                                 onDeleteOverriddenFlags = {
                                     dropDownExpanded = false
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    viewModel.showFalseProgressDialog()
-                                    viewModel.deleteOverriddenFlagByPackage(packageName = packageName.toString())
-                                    viewModel.resetFilterLists()
-                                    viewModel.initAllFlags()
-                                    viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
+                                    with(viewModel) {
+                                        showFalseProgressDialog()
+                                        deleteOverriddenFlagByPackage(packageName = packageName.toString())
+                                        resetFilterLists()
+                                        initAllFlags()
+                                        initAllOverriddenFlagsByPackage(packageName.toString())
+                                    }
                                     Log.e("intState", uiStateInteger.value.toString())
                                 },
                                 onOpenAppDetailsSettings = {
@@ -486,42 +501,45 @@ fun FlagChangeScreen(
                             )
                         }
                         IconButton(onClick = {
-
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            coroutineScope.launch(Dispatchers.IO) {
 
-                            when (val result = uiStateBoolean.value) {
-                                is UiStates.Success -> {
+                                fun goToFileIntent(context: Context, file: File): Intent {
+                                    val intent = Intent(Intent.ACTION_VIEW)
+                                    val contentUri = FileProvider.getUriForFile(context, "ua.polodarb.gmsflags.fileprovider", file)
+                                    val mimeType = context.contentResolver.getType(contentUri)
+                                    intent.setDataAndType(contentUri, mimeType)
+                                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 
-                                    val listBool = result.data
-
-                                    val selectedItemsWithValues =
-                                        viewModel.selectedItems.mapNotNull { selectedItem ->
-                                            val value = listBool[selectedItem]
-                                            if (value != null) {
-                                                "$selectedItem: $value"
-                                            } else {
-                                                null
-                                            }
-                                        }
-
-                                    val flagsText = selectedItemsWithValues.joinToString("\n")
-
-                                    val intent = Intent(Intent.ACTION_SEND).apply {
-                                        type = "text/plain"
-                                        putExtra(
-                                            Intent.EXTRA_SUBJECT,
-                                            "Extracted flags from GMS Flags"
-                                        )
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "Package: \n${packageName.toString()}\n\n" +
-                                                    "Flags: \n$flagsText"
-                                        )
-                                    }
-                                    context.startActivity(intent)
+                                    return intent
                                 }
 
-                                else -> {}
+                                try {
+                                    packageName?.let {
+                                        val file = viewModel.extractToFile("testName", it).toFile() //todo set name
+                                        if (file.exists()) {
+                                            val uri = FileProvider.getUriForFile(
+                                                context,
+                                                "ua.polodarb.gmsflags.fileprovider",
+                                                file
+                                            )
+                                            Intent(Intent.ACTION_SEND).apply {
+                                                addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+                                                setType("application/xml")
+                                                putExtra(EXTRA_STREAM, uri)
+                                                setFlags(FLAG_ACTIVITY_NEW_TASK)
+                                                val chooserIntent = createChooser(this, null)
+                                                context.startActivity(chooserIntent)
+                                            }
+                                        } else {
+                                            coroutineScope.launch(Dispatchers.Main) {
+                                                Toast.makeText(context, "The file was not created", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("file", e.toString())
+                                }
                             }
                         }, enabled = true) {
                             Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
