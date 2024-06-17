@@ -46,4 +46,8 @@ interface IRootDatabase {
         String extensionVal,
         int committed
     );
+
+    boolean isPhixitSchemaUsed();
+    boolean isDbFullyRecreated();
+    boolean isFlagOverridesTableEmpty();
 }

@@ -40,6 +40,8 @@ javaxXmlStream = "1.0-2"
 woodstox = "6.5.1"
 slf4j = "2.0.5"
 bnd = "7.0.0"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -102,6 +104,8 @@ bnd = { group = "biz.aQute.bnd", name = "biz.aQute.bndlib", version.ref = "bnd" 
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 firebase-crashlytics-gradle = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

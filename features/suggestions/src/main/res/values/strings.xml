@@ -11,7 +11,7 @@
     <string name="reset">Reset</string>
     <string name="report">Report</string>
     <!-- Banner -->
-    <string name="suggestion_banner">To apply the flag, you need to click \"Force stop\" several times in the settings on the *target* App info settings page.</string>
+    <string name="suggestion_banner">To apply the flag, you need to click \"Force stop\" several times in the settings on the target App info settings page.</string>
     <string name="close">Close</string>
     <!-- Reset flags to default dialog -->
     <string name="suggestions_dialog_title">Reset flag value to default?</string>

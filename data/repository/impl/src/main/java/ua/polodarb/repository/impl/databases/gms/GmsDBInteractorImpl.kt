@@ -24,23 +24,11 @@ class GmsDBInteractorImpl(
         clearData: Boolean,
         usersList: List<String>
     ) = Dispatchers.IO {
-        repository.deleteRowByFlagName(packageName, name)
-        repository.overrideFlag(
-            packageName = packageName,
-            user = "",
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed
-        )
-        for (i in usersList) {
-            repository.overrideFlag(
+        with(repository) {
+            deleteRowByFlagName(packageName, name)
+            overrideFlag(
                 packageName = packageName,
-                user = i,
+                user = "",
                 name = name,
                 flagType = flagType,
                 intVal = intVal,
@@ -50,6 +38,20 @@ class GmsDBInteractorImpl(
                 extensionVal = extensionVal,
                 committed = committed
             )
+            for (i in usersList) {
+                overrideFlag(
+                    packageName = packageName,
+                    user = i,
+                    name = name,
+                    flagType = flagType,
+                    intVal = intVal,
+                    boolVal = boolVal,
+                    floatVal = floatVal,
+                    stringVal = stringVal,
+                    extensionVal = extensionVal,
+                    committed = committed
+                )
+            }
         }
         if (clearData) clearPhenotypeCache(packageName)
     }

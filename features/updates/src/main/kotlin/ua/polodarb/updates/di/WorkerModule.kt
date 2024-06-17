@@ -14,7 +14,8 @@ val workerModule = module {
             workerParameters = get(),
             googleAppUpdatesService = get(),
             googleUpdatesMapper = GoogleUpdatesMapper(),
-            sharedPrefs = get()
+            sharedPrefs = get(),
+            datastore = get()
         )
     }
 

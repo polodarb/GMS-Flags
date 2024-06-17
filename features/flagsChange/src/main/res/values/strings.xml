@@ -39,6 +39,9 @@
     <string name="flag_change_dialog_suggest_placeholder_description">Write flag`s description</string>
     <string name="flag_change_dialog_suggest_name">Write your name or nickname</string>
     <string name="flag_change_dialog_suggest_action_send">Send suggest</string>
+    <!-- Share Flag dialog -->
+    <string name="share_flag_dialog_suggest_title">Set the file name</string>
+    <string name="flag_dialog_share_action_send">Share</string>
     <!-- Add flags list screen -->
     <string name="add_a_multiple_flags">Add a multiple flags</string>
     <string name="enter_the_flags">Enter the flags</string>

@@ -11,5 +11,4 @@ interface MergedSuggestedFlagsRepository {
 
     suspend fun getMergedAllFlags(): Flow<UiStates<MergedAllTypesFlags>>
 
-
 }

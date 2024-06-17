@@ -1,9 +1,45 @@
 plugins {
-    id("java-library")
-    alias(libs.plugins.jetbrainsKotlinJvm)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+android {
+    namespace = "ua.polodarb.domain"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 24
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.compose)
+    implementation(libs.koin.work.manager)
+
+    implementation(project(":data:repository"))
+
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.google.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.android.junit)
+    androidTestImplementation(libs.espresso.core)
 }

@@ -40,10 +40,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import ua.polodarb.flagsfile.dialogs.ProgressDialog
+import ua.polodarb.ui.components.dialogs.ProgressValueDialog
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.ui.modifiers.shimmer
 
@@ -143,9 +144,10 @@ fun LoadFileScreen(
                                     },
                                     onComplete = {
                                         dialogShow.value = false
-                                        isApplyButtonEnabled.value = true
                                         coroutineScope.launch(Dispatchers.Main) {
                                             Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show()
+                                            delay(300)
+                                            onExit()
                                         }
                                     }
                                 )
@@ -187,7 +189,7 @@ fun LoadFileScreen(
                 }
             }
 
-            ProgressDialog(showDialog = dialogShow.value, progress = dialogProgress.floatValue)
+            ProgressValueDialog(showDialog = dialogShow.value, progress = dialogProgress.floatValue)
 
         }
     }

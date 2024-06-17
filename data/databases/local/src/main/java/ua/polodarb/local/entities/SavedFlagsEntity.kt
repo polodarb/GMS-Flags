@@ -11,3 +11,4 @@ data class SavedFlagsEntity(
     @ColumnInfo(name = "flag_type") val type: String,
     @PrimaryKey(autoGenerate = true) val id: Int = 0
 )
+

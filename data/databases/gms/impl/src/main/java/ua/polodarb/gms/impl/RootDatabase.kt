@@ -3,6 +3,7 @@ package ua.polodarb.gms.impl
 import android.content.ContentValues
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
@@ -93,6 +94,15 @@ class RootDatabase : RootService() {
 
             override fun deleteOverriddenFlagByPackage(packageName: String) =
                 this@RootDatabase.deleteOverriddenFlagByPackage(packageName)
+
+            override fun isPhixitSchemaUsed(): Boolean =
+                this@RootDatabase.isPhixitSchemaUsed()
+
+            override fun isFlagOverridesTableEmpty(): Boolean =
+                this@RootDatabase.isFlagOverridesTableEmpty()
+
+            override fun isDbFullyRecreated(): Boolean =
+                this@RootDatabase.isDbFullyRecreated()
 
             override fun overrideFlag(
                 packageName: String?,
@@ -257,7 +267,6 @@ class RootDatabase : RootService() {
         if (packageName?.contains("finsky") == true || packageName?.contains("vending") == true) {
             vendingDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         }
-
     }
 
     private fun getBoolFlags(pkgName: String): Map<String, String> {
@@ -791,6 +800,42 @@ class RootDatabase : RootService() {
         }
         cursorVending.close()
         return list.toMap()
+    }
+
+    private fun isFlagOverridesTableEmpty(): Boolean {
+        val query = gmsDB.rawQuery("SELECT COUNT(*) FROM FlagOverrides", null)
+        query.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                return count == 0
+            }
+        }
+        return false
+    }
+
+    // Checking for FlagOverrides table after a gms reset
+    private fun isDbFullyRecreated(): Boolean {
+        return try {
+            val query = gmsDB.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name=?", arrayOf("Flags"))
+
+            query.use { cursor ->
+                cursor.count > 0
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun isPhixitSchemaUsed(): Boolean {
+        return try {
+            val query1 = gmsDB.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name=?", arrayOf("flag_overrides"))
+
+            query1.use { cursor1 ->
+                cursor1.count > 0
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
 }
