@@ -39,6 +39,12 @@ interface GmsDBRepository {
 
     fun getUsers(): Flow<MutableList<String>>
 
+    suspend fun isPhixitSchemaUsed(): Flow<Boolean>
+
+    suspend fun isDbFullyRecreated(): Flow<Boolean>
+
+    suspend fun isFlagOverridesTableEmpty(): Flow<Boolean>
+
     suspend fun getAndroidPackage(pkgName: String): Flow<String>
 
     suspend fun deleteRowByFlagName(packageName: String, name: String)

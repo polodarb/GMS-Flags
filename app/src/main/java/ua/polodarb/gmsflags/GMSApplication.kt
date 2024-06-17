@@ -7,16 +7,16 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import ua.polodarb.domain.di.useCaseModule
 import ua.polodarb.gms.impl.di.initRootDBModule
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.viewModelsModule
-import ua.polodarb.gmsflags.ui.CrashActivity
-import ua.polodarb.gmsflags.ui.ExceptionHandler
+import ua.polodarb.gmsflags.errors.phixit.di.workerPhixitModule
 import ua.polodarb.local.impl.di.localDBBindsModule
 import ua.polodarb.local.impl.di.localDatabaseModule
 import ua.polodarb.network.impl.di.networkBindsModule
 import ua.polodarb.platform.di.platformModule
-import ua.polodarb.preferences.impl.sharedPrefs.di.sharedPrefsModule
+import ua.polodarb.preferences.impl.di.prefsModule
 import ua.polodarb.repository.impl.di.repositoryBindsModule
 import ua.polodarb.updates.di.workerModule
 
@@ -41,9 +41,11 @@ class GMSApplication : Application() {
                     viewModelsModule,
                     localDatabaseModule,
                     localDBBindsModule,
+                    useCaseModule,
                     platformModule,
                     workerModule,
-                    sharedPrefsModule,
+                    workerPhixitModule,
+                    prefsModule,
                     networkBindsModule,
                     repositoryBindsModule
                 )

@@ -192,6 +192,8 @@ dependencies {
     implementation(project(":features:suggestions"))
     implementation(project(":features:flagsChange"))
     implementation(project(":features:flagsFile"))
+
+    implementation(project(":domain"))
 }
 
 tasks.withType<KotlinCompile> {

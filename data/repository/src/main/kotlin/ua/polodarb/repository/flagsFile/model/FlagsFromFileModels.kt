@@ -38,11 +38,11 @@ data class LoadedFlagData(
 
     fun getFlagsList(): List<LoadedFlagDetails> {
         return mutableListOf<LoadedFlagDetails>().apply {
-            bool.forEach { (key, value) -> add(LoadedFlagDetails(key, "Boolean", value)) }
-            int.forEach { (key, value) -> add(LoadedFlagDetails(key, "Int", value)) }
-            float.forEach { (key, value) -> add(LoadedFlagDetails(key, "Float", value)) }
-            string.forEach { (key, value) -> add(LoadedFlagDetails(key, "String", value)) }
-            extVal.forEach { (key, value) -> add(LoadedFlagDetails(key, "ExtensionVal", value)) }
+            bool.forEach { (key, value) -> add(LoadedFlagDetails(key, "boolean", value)) }
+            int.forEach { (key, value) -> add(LoadedFlagDetails(key, "int", value)) }
+            float.forEach { (key, value) -> add(LoadedFlagDetails(key, "float", value)) }
+            string.forEach { (key, value) -> add(LoadedFlagDetails(key, "string", value)) }
+            extVal.forEach { (key, value) -> add(LoadedFlagDetails(key, "extVal", value)) }
         }
     }
 

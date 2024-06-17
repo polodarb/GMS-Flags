@@ -1,8 +1,10 @@
 package ua.polodarb.repository.impl.databases.gms
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.invoke
 import ua.polodarb.gms.init.InitRootDB
@@ -174,6 +176,33 @@ class GmsDBRepositoryImpl(
         rootDB.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 emit(Dispatchers.IO { rootDatabase.users })
+            }
+        }
+    }
+
+    override suspend fun isPhixitSchemaUsed(): Flow<Boolean> = flow {
+        Log.e("repo", "init method")
+        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
+            Log.e("repo", "isInitialized - ${isInitialized.isInitialized}")
+            if (isInitialized.isInitialized) {
+                Log.e("repo", "data - ${rootDatabase.isPhixitSchemaUsed()}")
+                emit(rootDatabase.isPhixitSchemaUsed())
+            }
+        }
+    }
+
+    override suspend fun isDbFullyRecreated(): Flow<Boolean> = flow {
+        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                emit(rootDatabase.isDbFullyRecreated())
+            }
+        }
+    }
+
+    override suspend fun isFlagOverridesTableEmpty(): Flow<Boolean> = flow {
+        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
+            if (isInitialized.isInitialized) {
+                emit(rootDatabase.isFlagOverridesTableEmpty())
             }
         }
     }

@@ -78,6 +78,9 @@ internal fun RootAppNavigation(
             isFirstStart = isFirstStart,
             loadFlagIntent = loadFlagIntent
         ) {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
             context.finish()
         }
 
@@ -223,5 +226,5 @@ private fun NavGraphBuilder.rootComposable(
 }
 
 fun isLoadFileIntent(intent: Intent?): Boolean {
-    return intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "application/xml"
+    return intent != null && intent.action == Intent.ACTION_VIEW && intent.type == "application/octet-stream"
 }

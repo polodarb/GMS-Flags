@@ -1,6 +1,7 @@
 package ua.polodarb.flagsfile
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +58,7 @@ class LoadFileScreenViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             fileUri?.let {
                 repository.read(it).collect { uiState ->
+                    Log.e("file", uiState.toString())
                     when (uiState) {
                         is UiStates.Loading -> {
                             _flagsData.value = UiStates.Loading()

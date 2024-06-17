@@ -120,6 +120,7 @@ class FlagChangeScreenViewModel(
                         packageName = packageName,
                         flags = LoadedFlagData(
                             bool = selectedItemsWithValues
+                            // todo: implement other types
                         )
                     ),
                     fileName = fileName

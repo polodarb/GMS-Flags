@@ -3,10 +3,12 @@ package ua.polodarb.flagsChange
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.EXTRA_MIME_TYPES
 import android.content.Intent.EXTRA_STREAM
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.createChooser
+import android.content.Intent.normalizeMimeType
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
@@ -86,6 +88,7 @@ import ua.polodarb.common.FlagsTypes
 import ua.polodarb.common.Extensions.toSortMap
 import ua.polodarb.flagsChange.dialogs.AddFlagDialog
 import ua.polodarb.flagsChange.dialogs.ProgressDialog
+import ua.polodarb.flagsChange.dialogs.ShareFlagsDialog
 import ua.polodarb.flagsChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.flagsChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.flagsChange.flagsType.OtherTypesFlagsScreen
@@ -265,6 +268,10 @@ fun FlagChangeScreen(
         viewModel.getAllFlags()
         viewModel.initAllOverriddenFlagsByPackage(packageName.toString())
     }
+
+    // Share flags dialog
+    val showShareDialog = remember { mutableStateOf(false) }
+    val fileName = remember { mutableStateOf(packageName ?: "") }
 
     // SuggestFlagsDialog
     val showSendSuggestDialog = remember { mutableStateOf(false) }
@@ -502,45 +509,7 @@ fun FlagChangeScreen(
                         }
                         IconButton(onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            coroutineScope.launch(Dispatchers.IO) {
-
-                                fun goToFileIntent(context: Context, file: File): Intent {
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    val contentUri = FileProvider.getUriForFile(context, "ua.polodarb.gmsflags.fileprovider", file)
-                                    val mimeType = context.contentResolver.getType(contentUri)
-                                    intent.setDataAndType(contentUri, mimeType)
-                                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-
-                                    return intent
-                                }
-
-                                try {
-                                    packageName?.let {
-                                        val file = viewModel.extractToFile("testName", it).toFile() //todo set name
-                                        if (file.exists()) {
-                                            val uri = FileProvider.getUriForFile(
-                                                context,
-                                                "ua.polodarb.gmsflags.fileprovider",
-                                                file
-                                            )
-                                            Intent(Intent.ACTION_SEND).apply {
-                                                addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-                                                setType("application/xml")
-                                                putExtra(EXTRA_STREAM, uri)
-                                                setFlags(FLAG_ACTIVITY_NEW_TASK)
-                                                val chooserIntent = createChooser(this, null)
-                                                context.startActivity(chooserIntent)
-                                            }
-                                        } else {
-                                            coroutineScope.launch(Dispatchers.Main) {
-                                                Toast.makeText(context, "The file was not created", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("file", e.toString())
-                                }
-                            }
+                            showShareDialog.value = true
                         }, enabled = true) {
                             Icon(imageVector = Icons.Outlined.Share, contentDescription = null)
                         }
@@ -740,6 +709,53 @@ fun FlagChangeScreen(
                     savedFlagsList = savedFlags.value
                 )
             }
+        }
+
+        ShareFlagsDialog(
+            showDialog = showShareDialog.value,
+            fileName = fileName.value,
+            fileNameChange = {
+                fileName.value = it
+            },
+            onTrailingIconClick = {
+                fileName.value = ""
+            },
+            onSend = {
+
+                Toast.makeText(context, "Exporting...", Toast.LENGTH_SHORT).show()
+                showShareDialog.value = false
+
+                coroutineScope.launch(Dispatchers.IO) {
+                    try {
+                        packageName?.let {
+                            val file = viewModel.extractToFile(fileName.value, it).toFile()
+                            if (file.exists()) {
+                                val uri = FileProvider.getUriForFile(
+                                    context,
+                                    "ua.polodarb.gmsflags.fileprovider",
+                                    file
+                                )
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+                                    putExtra(EXTRA_STREAM, uri)
+                                    setFlags(FLAG_ACTIVITY_NEW_TASK)
+                                    setType("application/gmsflags")
+                                }
+                                val chooserIntent = createChooser(intent, null)
+                                context.startActivity(chooserIntent)
+                            } else {
+                                coroutineScope.launch(Dispatchers.Main) {
+                                    Toast.makeText(context, "The file was not created", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("file", e.toString())
+                    }
+                }
+            }
+        ) {
+            showShareDialog.value = false
         }
 
         SuggestFlagsDialog(

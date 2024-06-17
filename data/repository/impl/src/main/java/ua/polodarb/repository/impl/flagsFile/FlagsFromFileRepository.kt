@@ -76,8 +76,6 @@ class FlagsFromFileRepositoryImpl(
             )
 
         }.onFailure {
-            Log.e("FILE", "message: ${it.message}")
-            Log.e("FILE", "stackTrace: ${it.stackTrace}")
             emit(UiStates.Error(it.cause))
         }
     }
