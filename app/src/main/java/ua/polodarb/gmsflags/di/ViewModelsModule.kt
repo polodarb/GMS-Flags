@@ -46,7 +46,9 @@ val viewModelsModule = module {
 
     viewModel {
         UpdatesScreenViewModel(
-            repository = get()
+            repository = get(),
+            sharedPrefs = get(),
+            datastore = get()
         )
     }
 

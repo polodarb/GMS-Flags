@@ -9,9 +9,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ua.polodarb.preferences.datastore.DatastoreManager
+import ua.polodarb.preferences.datastore.models.LastUpdatesAppModel
 
 val Context.dataStore by preferencesDataStore(name = "gms_flags_datastore")
 
@@ -23,6 +25,8 @@ class DatastoreManagerImpl(
         booleanPreferencesKey(name = "is_open_gms_settings_btn_clicked")
     private val prefKeyExecutionCount =
         intPreferencesKey("phixit_worker_execution_count")
+    private val prefKeyLastUpdatedGoogleApp =
+        stringPreferencesKey("last_updated_google_app")
 
     override val isOpenGmsSettingsBtnClicked: Flow<Boolean> =
         context.dataStore.data.map { prefs -> prefs[prefKeyOpenGmsSettings] ?: false }
@@ -46,4 +50,16 @@ class DatastoreManagerImpl(
         }
     }
 
+    override suspend fun setLastUpdatedGoogleApp(data: LastUpdatesAppModel) {
+        context.dataStore.edit { prefs ->
+            prefs[prefKeyLastUpdatedGoogleApp] = "${data.appName}|${data.appVersion}"
+        }
+    }
+
+    override suspend fun getLastUpdatedGoogleApp(): LastUpdatesAppModel {
+        val prefs = context.dataStore.data.first()
+        val savedData = prefs[prefKeyLastUpdatedGoogleApp] ?: ""
+        val (appName, date) = savedData.split("|")
+        return LastUpdatesAppModel(appName, date)
+    }
 }

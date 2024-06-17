@@ -1,6 +1,7 @@
 package ua.polodarb.preferences.datastore
 
 import kotlinx.coroutines.flow.Flow
+import ua.polodarb.preferences.datastore.models.LastUpdatesAppModel
 
 interface DatastoreManager {
 
@@ -11,5 +12,9 @@ interface DatastoreManager {
    fun setOpenGmsSettingsBtnClicked(value: Boolean)
 
    suspend fun phixitWorkerIncrementExecutionCount()
+
+   suspend fun setLastUpdatedGoogleApp(data: LastUpdatesAppModel)
+
+   suspend fun getLastUpdatedGoogleApp(): LastUpdatesAppModel
 
 }

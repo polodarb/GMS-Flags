@@ -3,6 +3,7 @@ package ua.polodarb.updates.worker
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import ua.polodarb.network.googleUpdates.GoogleAppUpdatesService
+import ua.polodarb.preferences.datastore.DatastoreManager
 import ua.polodarb.preferences.sharedPrefs.PreferenceConstants
 import ua.polodarb.preferences.sharedPrefs.PreferencesManager
 import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
@@ -26,7 +28,8 @@ class GoogleUpdatesCheckWorker(
     private val workerParameters: WorkerParameters,
     private val googleAppUpdatesService: GoogleAppUpdatesService,
     private val googleUpdatesMapper: GoogleUpdatesMapper,
-    private val sharedPrefs: PreferencesManager
+    private val sharedPrefs: PreferencesManager,
+    private val datastore: DatastoreManager
 ) : CoroutineWorker(context, workerParameters), KoinComponent {
 
     override suspend fun doWork(): Result {
@@ -45,30 +48,29 @@ class GoogleUpdatesCheckWorker(
             }
              Result.success()
         } catch (err: Throwable) {
+            err.printStackTrace()
+            Log.e("GMS Flags", "GoogleUpdatesCheckWorker - ${err.message}")
             Result.failure()
         }
     }
 
-    private fun getNewArticlesString(newArticles: List<MainRssArticle>): String {
-        val localData = sharedPrefs.getData(PreferenceConstants.GOOGLE_LAST_UPDATE, "")
-        val (localTitle, localVersion) = localData.split("/")
+    private suspend fun getNewArticlesString(newArticles: List<MainRssArticle>): String {
+        val localData = datastore.getLastUpdatedGoogleApp()
 
         val indexOfLocalArticle = newArticles.indexOfFirst { article ->
-            article.title == localTitle && article.version == localVersion
+            article.title == localData.appName && article.version == localData.appVersion
         }
 
-        if (indexOfLocalArticle >= 0) {
-            val resultStringBuilder = StringBuilder()
+        val resultStringBuilder = StringBuilder()
 
+        if (indexOfLocalArticle >= 0) {
             for (i in 0 until indexOfLocalArticle) {
                 val article = newArticles[i]
                 resultStringBuilder.append("${article.title} (${article.version})\n")
             }
-
-            return resultStringBuilder.toString()
         }
 
-        return ""
+        return resultStringBuilder.toString()
     }
 
     private fun sendNotification(title: String, message: String) {
@@ -92,7 +94,7 @@ class GoogleUpdatesCheckWorker(
         }
     }
 
-    fun getRandomNotifyID(): Int {
+    private fun getRandomNotifyID(): Int {
         return System.currentTimeMillis().toInt()
     }
 
