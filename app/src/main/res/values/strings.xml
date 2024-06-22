@@ -26,4 +26,7 @@
 
     <!-- Toast -->
     <string name="notifications_toast">You will not receive notifications</string>
+    <string name="gms_crashes_notifications_title">Detected a critical state in Google Mobile Services (GMS)</string>
+    <string name="gms_crashes_notifications_content">The GMS Flags application has detected an unstable state in GMS due to multiple errors, which may lead to overheating and performance issues.</string>
+    <string name="gms_crashes_notifications_action">How to fix if?</string>
 </resources>

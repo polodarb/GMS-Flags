@@ -55,12 +55,12 @@ fun RootRequestScreen(
             )
             Text(
                 text = stringResource(id = R.string.root_msg),
-                fontSize = 20.sp,
+                fontSize = 19.sp,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
                 text = stringResource(id = R.string.root_advice),
-                fontSize = 20.sp,
+                fontSize = 19.sp,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))

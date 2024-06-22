@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_bar_updates">Оновлення</string>
+    <string name="button_fab_refresh">Оновити</string>
+</resources>

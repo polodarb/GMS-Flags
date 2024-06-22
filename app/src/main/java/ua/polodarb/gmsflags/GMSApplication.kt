@@ -1,6 +1,8 @@
 package ua.polodarb.gmsflags
 
 import android.app.Application
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
 import com.google.android.material.color.DynamicColors
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -11,6 +13,7 @@ import ua.polodarb.domain.di.useCaseModule
 import ua.polodarb.gms.impl.di.initRootDBModule
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.viewModelsModule
+import ua.polodarb.gmsflags.errors.gms.GmsCrashesDetectWorker
 import ua.polodarb.gmsflags.errors.phixit.di.workerPhixitModule
 import ua.polodarb.local.impl.di.localDBBindsModule
 import ua.polodarb.local.impl.di.localDatabaseModule

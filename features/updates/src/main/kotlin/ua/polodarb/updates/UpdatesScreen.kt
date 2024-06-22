@@ -98,7 +98,7 @@ fun UpdatesScreen(
                 modifier = Modifier.offset(y = 24.dp),
                 text = {
                     Text(
-                        text = "Refresh",
+                        text = stringResource(R.string.button_fab_refresh),
                     )
                 },
                 icon = {

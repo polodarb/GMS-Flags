@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.errors.crash
+package ua.polodarb.gmsflags.errors.general
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

@@ -43,7 +43,7 @@ fun SortAppsDialog(
             dismissButton = {},
             title = {
                 Text(
-                    text = "Sort options",
+                    text = stringResource(R.string.search_sort_dialog_title),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -88,7 +88,7 @@ fun SortAppsDialog(
                     Button(onClick = {
                         onSelect(selectedOption)
                     }) {
-                        Text(text = "Select")
+                        Text(text = stringResource(R.string.search_sort_dialog_action_select))
                     }
                 }
             }

@@ -51,7 +51,6 @@ class InitRootDBImpl(
     }
 
     override fun getRootDatabase(): IRootDatabase {
-        Log.e("InitRootDBImpl", "getRootDatabase: $isRootDatabaseInitialized")
         check(isRootDatabaseInitialized) { Constants.GMS_DB_CRASH_MSG }
         return rootDatabase
     }

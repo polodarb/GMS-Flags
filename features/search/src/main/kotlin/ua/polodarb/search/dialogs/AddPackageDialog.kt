@@ -41,7 +41,7 @@ fun AddPackageDialog(
             dismissButton = {},
             title = {
                 Text(
-                    text = "Add package",
+                    text = stringResource(R.string.search_dialog_add_package),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -57,13 +57,13 @@ fun AddPackageDialog(
                         if (isError) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "The field cannot be empty",
+                                text = stringResource(R.string.search_dialog_error),
                                 color = MaterialTheme.colorScheme.error
                             )
                         } else {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "Enter package name",
+                                text = stringResource(R.string.search_dialog_placeholder),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -89,7 +89,7 @@ fun AddPackageDialog(
                             onAdd()
                         }
                     }) {
-                        Text(text = "Add")
+                        Text(text = stringResource(R.string.search_dialog_add))
                     }
                 }
             }

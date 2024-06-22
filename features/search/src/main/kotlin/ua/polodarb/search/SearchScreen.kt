@@ -100,8 +100,8 @@ fun SearchScreen(
     // Tabs
     var state by rememberSaveable { mutableIntStateOf(0) }
     val titles = persistentListOf(
-        "Apps",
-        "All packages"
+        stringResource(R.string.search_tabs_title_apps),
+        stringResource(R.string.search_tabs_title_packages)
     )
     val pagerState = rememberPagerState(pageCount = {
         2

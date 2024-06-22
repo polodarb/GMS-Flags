@@ -11,4 +11,12 @@
     <string name="apps_dialog_choose_package">Choose a package</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
+    <string name="search_tabs_title_apps">Apps</string>
+    <string name="search_tabs_title_packages">All packages</string>
+    <string name="search_sort_dialog_title">Sort options</string>
+    <string name="search_sort_dialog_action_select">Select</string>
+    <string name="search_dialog_add_package">Add package</string>
+    <string name="search_dialog_placeholder">Enter package name</string>
+    <string name="search_dialog_error">The field cannot be empty</string>
+    <string name="search_dialog_add">Add</string>
 </resources>
