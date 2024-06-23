@@ -1,0 +1,30 @@
+{
+  "ATTENTION_DISCLAIMER": "This is a fake google-services.json for an open-source project. For analytics tracking on your fork, create your own Firebase configuration.",
+  "project_info": {
+    "project_number": "351623831664",
+    "project_id": "gms-flags-fake",
+    "storage_bucket": "gms-flags-fake.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351623831664:android:9ccc9a881fe4d3b87714b5",
+        "android_client_info": {
+          "package_name": "ua.polodarb.gmsflags"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4Oc4CHW0C7roHNiFQ-Qb5v26Qp3My4f8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
