@@ -75,14 +75,6 @@ class MainActivity : BaseActivity() {
 
         analytics = Firebase.analytics
 
-        WorkManager.getInstance(this).apply {
-            enqueueUniquePeriodicWork(
-                PhixitDetectWorker.TAG,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                PhixitDetectWorker.initWorker(),
-            )
-        }
-
         if (!isFirstStart) {
             InitShell.initShell()
             rootDBInitializer.initDB()
