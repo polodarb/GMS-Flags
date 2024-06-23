@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".errors.gms.GmsCrashesDetectActivity"
+            android:name=".errors.gms.stateCheck.GmsCrashesDetectActivity"
             android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:screenOrientation="portrait"

@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.errors.phixit
+package ua.polodarb.gmsflags.errors.gms.phixit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

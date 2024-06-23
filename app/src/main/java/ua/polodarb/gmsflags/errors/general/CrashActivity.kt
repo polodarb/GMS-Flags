@@ -15,7 +15,7 @@ import ua.polodarb.gmsflags.BuildConfig
 import ua.polodarb.gmsflags.R
 import ua.polodarb.common.Constants
 import ua.polodarb.gmsflags.errors.general.ExceptionHandler.Companion.STACK_TRACE_KEY
-import ua.polodarb.gmsflags.errors.phixit.PhixitDetectScreen
+import ua.polodarb.gmsflags.errors.gms.phixit.PhixitDetectScreen
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.platform.utils.OSUtils
@@ -25,15 +25,15 @@ class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        if (intent.getStringExtra(STACK_TRACE_KEY)?.contains(Constants.GMS_DB_CRASH_MSG) == true) {
-//            startActivity(intentMain)
-//            finishAffinity()
-//        }
-
         setDecorFitsSystemWindows(window, false)
 
         val intentMain = Intent(this, MainActivity::class.java)
         val stackTraceKey = intent.getStringExtra(STACK_TRACE_KEY)
+
+        if (intent.getStringExtra(STACK_TRACE_KEY)?.contains(Constants.GMS_DB_CRASH_MSG) == true) {
+            startActivity(intentMain)
+            finishAffinity()
+        }
 
         setContent {
             GMSFlagsTheme {

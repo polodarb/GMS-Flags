@@ -1,12 +1,10 @@
-package ua.polodarb.gmsflags.errors.phixit.di
+package ua.polodarb.gmsflags.errors.gms.phixit.di
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
-import ua.polodarb.domain.OverrideFlagsUseCase
-import ua.polodarb.gmsflags.errors.gms.GmsCrashesDetectWorker
-import ua.polodarb.gmsflags.errors.phixit.PhixitDetectWorker
-import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
+import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectWorker
+import ua.polodarb.gmsflags.errors.gms.phixit.PhixitDetectWorker
 
 val workerPhixitModule = module {
     worker {

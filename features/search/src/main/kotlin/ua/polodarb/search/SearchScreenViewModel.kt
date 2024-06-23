@@ -78,18 +78,11 @@ class SearchScreenViewModel(
     }
 
     // Sorting
-//    val sortType = mapOf(
-//        APP_NAME to "By app name",
-//        APP_NAME_REVERSED to "By app name (Reversed)",
-//        LAST_UPDATE to "By last update",
-//        PACKAGE_NAME to "By package name"
-//    )
-
     val sortType = mapOf(
-        APP_NAME to "За іменем",
-        APP_NAME_REVERSED to "За оберненою назввою",
-        LAST_UPDATE to "За останнім оновленням",
-        PACKAGE_NAME to "За іменем пакету"
+        APP_NAME to "By app name",
+        APP_NAME_REVERSED to "By app name (Reversed)",
+        LAST_UPDATE to "By last update",
+        PACKAGE_NAME to "By package name"
     )
 
     var setSortType = mutableStateOf(sortType[APP_NAME])

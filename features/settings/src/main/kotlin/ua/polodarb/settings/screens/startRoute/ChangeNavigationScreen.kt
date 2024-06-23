@@ -65,40 +65,21 @@ fun ChangeNavigationScreen(
         )
     }
 
-//    val navBarItems = persistentListOf(
-//        NavBarItems(
-//            title = "Suggestions",
-//            screenRoute = "suggestions"
-//        ),
-//        NavBarItems(
-//            title = "Search",
-//            screenRoute = "search"
-//        ),
-//        NavBarItems(
-//            title = "Saved",
-//            screenRoute = "saved"
-//        ),
-//        NavBarItems(
-//            title = "Updates",
-//            screenRoute = "updates"
-//        )
-//    ) // TODO: make it dynamic
-
     val navBarItems = persistentListOf(
         NavBarItems(
-            title = "Рекомендації",
+            title = "Suggestions",
             screenRoute = "suggestions"
         ),
         NavBarItems(
-            title = "Пошук",
+            title = "Search",
             screenRoute = "search"
         ),
         NavBarItems(
-            title = "Збережене",
+            title = "Saved",
             screenRoute = "saved"
         ),
         NavBarItems(
-            title = "Оновлення",
+            title = "Updates",
             screenRoute = "updates"
         )
     ) // TODO: make it dynamic

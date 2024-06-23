@@ -1,16 +1,10 @@
 package ua.polodarb.gmsflags.core.platform.activity
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import ua.polodarb.gmsflags.R
 
 const val CHANNEL_ID = "gms_flags_notify_channel"
 

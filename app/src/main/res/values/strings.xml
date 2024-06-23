@@ -29,4 +29,18 @@
     <string name="gms_crashes_notifications_title">Detected a critical state in Google Mobile Services (GMS)</string>
     <string name="gms_crashes_notifications_content">The GMS Flags application has detected an unstable state in GMS due to multiple errors, which may lead to overheating and performance issues.</string>
     <string name="gms_crashes_notifications_action">How to fix if?</string>
+    <string name="phixit_fix_title">How to fix it?</string>
+    <string name="phixit_fix_desc_1">The only option to revert the changes is to delete the data of the Google Play Services app.\n\nRead all the side effects:</string>
+    <string name="phixit_fix_desc_2">1. If you have a wearable device - resetting the gms data will unpair your Wear OS watches. To pair it again, you will have to reset the watches.\n2. All bank cards saved on the device will also be reset.\nRarely, but it may take a few resets to get back the old scheme"</string>
+    <string name="phixit_fix_desc_3">After a reset, you will have to wait 15 minutes to a few hours for gms to create a new database.</string>
+    <string name="phixit_plan_title">How soon support is planned?</string>
+    <string name="phixit_plan_desc">Unfortunately, the change has brought many difficulties, we are working hard to solve this problem, but the result is unknown.</string>
+    <string name="phixit_title">Unsupported schema</string>
+    <string name="phixit_description">Google has recently changed the database scheme in Google Play services. Unfortunately, the new scheme is not yet supported by the \"GMS Flags\" app.</string>
+    <string name="phixit_button_title">Exit the application</string>
+    <string name="gms_error_description_1">The GMS Flags app has detected that Google Mobile Services (GMS) is running unstably and causing many errors. This can lead to severe overheating, reduced performance, or a complete system failure!</string>
+    <string name="gms_error_description_2">The only solution is to reset GMS data. Click the \"Fix it\" button and then select \"Clear all data\".</string>
+    <string name="gms_error_description_3">BUT! Resetting GMS will result in resetting bank cards and wearable devices.</string>
+    <string name="gms_error_title">GMS is broken!</string>
+    <string name="phixit_button_open_settings">Open GMS settings</string>
 </resources>

@@ -36,7 +36,7 @@ import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.core.updates.UpdateDialog
 import ua.polodarb.gmsflags.errors.general.CrashActivity
 import ua.polodarb.gmsflags.errors.general.ExceptionHandler
-import ua.polodarb.gmsflags.errors.gms.GmsCrashesDetectWorker
+import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectWorker
 import ua.polodarb.gmsflags.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.network.impl.appUpdates.AppUpdatesApiServiceImpl
@@ -77,15 +77,21 @@ class MainActivity : BaseActivity() {
         if (!isFirstStart) {
             InitShell.initShell()
             rootDBInitializer.initDB()
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                GmsCrashesDetectWorker.TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                GmsCrashesDetectWorker.initWorker(),
+            )
         }
 
-//        lifecycleScope.launch(Dispatchers.Main) {
-//            rootDBInitializer.databaseInitializationStateFlow.collect {
-//                if (it.isInitialized) {
-//                    check(!rootDBInitializer.getRootDatabase().isPhixitSchemaUsed) { Constants.GMS_DB_CRASH_MSG_PHIXIT }
-//                }
-//            }
-//        }
+        lifecycleScope.launch(Dispatchers.Main) {
+            rootDBInitializer.databaseInitializationStateFlow.collect {
+                if (it.isInitialized) {
+                    check(!rootDBInitializer.getRootDatabase().isPhixitSchemaUsed) { Constants.GMS_DB_CRASH_MSG_PHIXIT }
+                }
+            }
+        }
 
         installSplashScreen().apply {
             // TODO: Navigation to ErrorRootPermissionScreen
@@ -93,8 +99,6 @@ class MainActivity : BaseActivity() {
         }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        // todo:
 
         // TODO: Refactor using initWorker()
         val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.MINUTES)
@@ -124,18 +128,6 @@ class MainActivity : BaseActivity() {
                         loadFlagIntent = intent,
                         modifier = Modifier.fillMaxSize()
                     )
-                }
-                Button(
-                    onClick = {
-                        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                            GmsCrashesDetectWorker.TAG,
-                            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                            GmsCrashesDetectWorker.initWorker(),
-                        )
-                    },
-                    modifier = Modifier.padding(32.dp)
-                ) {
-                    Text("worker")
                 }
             }
         }
