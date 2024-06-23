@@ -43,4 +43,6 @@
     <string name="gms_error_description_3">BUT! Resetting GMS will result in resetting bank cards and wearable devices.</string>
     <string name="gms_error_title">GMS is broken!</string>
     <string name="phixit_button_open_settings">Open GMS settings</string>
+    <string name="phixit_detect_notification_desc">Notifications for GMS crashes and critical states</string>
+    <string name="phixit_detect_notification_title">Setup is complete, GMS Flags is ready for use</string>
 </resources>
