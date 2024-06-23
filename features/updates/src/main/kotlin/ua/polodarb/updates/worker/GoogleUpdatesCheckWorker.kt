@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import ua.polodarb.network.googleUpdates.GoogleAppUpdatesService
 import ua.polodarb.preferences.datastore.DatastoreManager
+import ua.polodarb.preferences.datastore.models.LastUpdatesAppModel
 import ua.polodarb.preferences.sharedPrefs.PreferenceConstants
 import ua.polodarb.preferences.sharedPrefs.PreferencesManager
 import ua.polodarb.repository.googleUpdates.mapper.GoogleUpdatesMapper
@@ -44,6 +45,12 @@ class GoogleUpdatesCheckWorker(
                 sharedPrefs.saveData(
                     PreferenceConstants.GOOGLE_LAST_UPDATE,
                     "${result.articles.first().title}/${result.articles.first().version}"
+                ) // TODO: delete after a few updates
+                datastore.setLastUpdatedGoogleApp(
+                    LastUpdatesAppModel(
+                        appName = result.articles.first().title,
+                        appVersion = result.articles.first().version
+                    )
                 )
             }
              Result.success()

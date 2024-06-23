@@ -23,7 +23,13 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".errors.crash.CrashActivity"
+            android:name=".errors.general.CrashActivity"
+            android:enableOnBackInvokedCallback="false"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".errors.gms.stateCheck.GmsCrashesDetectActivity"
             android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:screenOrientation="portrait"

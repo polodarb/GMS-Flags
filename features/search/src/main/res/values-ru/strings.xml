@@ -11,4 +11,6 @@
     <string name="apps_dialog_choose_package">Выберите пакет</string>
     <string name="primary">Первичные</string>
     <string name="secondary">Вторичные</string>
+    <string name="search_tabs_title_apps">Приложения</string>
+    <string name="search_tabs_title_packages">Пакеты</string>
 </resources>

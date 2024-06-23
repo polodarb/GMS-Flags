@@ -11,4 +11,12 @@
     <string name="apps_dialog_choose_package">Оберіть пакет</string>
     <string name="primary">Первинні</string>
     <string name="secondary">Вторинні</string>
+    <string name="search_tabs_title_apps">Додатки</string>
+    <string name="search_tabs_title_packages">Імена пакетів</string>
+    <string name="search_sort_dialog_title">Сортування</string>
+    <string name="search_sort_dialog_action_select">Обрати</string>
+    <string name="search_dialog_add_package">Додати пакет</string>
+    <string name="search_dialog_placeholder">Введіть ім\'я пакету</string>
+    <string name="search_dialog_error">Поле не може бути пустим</string>
+    <string name="search_dialog_add">Додати</string>
 </resources>

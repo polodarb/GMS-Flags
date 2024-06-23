@@ -159,7 +159,6 @@ fun SuggestionsScreen(
             when (val result = networkFlags.value) {
                 is ua.polodarb.repository.uiStates.UiStates.Success -> {
                     val data = result.data
-                    Log.e("compose", "data: $data")
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {

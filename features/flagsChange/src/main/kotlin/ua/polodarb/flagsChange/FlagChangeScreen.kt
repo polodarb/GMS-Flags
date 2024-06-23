@@ -1,18 +1,13 @@
 package ua.polodarb.flagsChange
 
-import android.content.ClipData
-import android.content.Context
 import android.content.Intent
-import android.content.Intent.EXTRA_MIME_TYPES
 import android.content.Intent.EXTRA_STREAM
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.createChooser
-import android.content.Intent.normalizeMimeType
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -77,31 +72,28 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
-import androidx.documentfile.provider.DocumentFile
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import ua.polodarb.common.FlagsTypes
 import ua.polodarb.common.Extensions.toSortMap
+import ua.polodarb.common.FlagsTypes
 import ua.polodarb.flagsChange.dialogs.AddFlagDialog
 import ua.polodarb.flagsChange.dialogs.ProgressDialog
 import ua.polodarb.flagsChange.dialogs.ShareFlagsDialog
 import ua.polodarb.flagsChange.dialogs.SuggestFlagsDialog
 import ua.polodarb.flagsChange.flagsType.BooleanFlagsScreen
 import ua.polodarb.flagsChange.flagsType.OtherTypesFlagsScreen
-import ua.polodarb.flagschange.BuildConfig
 import ua.polodarb.flagschange.R
-import ua.polodarb.ui.components.tabs.GFlagsTabRow
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.ui.components.chips.filter.GFlagFilterChipRow
 import ua.polodarb.ui.components.dialogs.ReportFlagsDialog
 import ua.polodarb.ui.components.dropDown.FlagChangeDropDown
 import ua.polodarb.ui.components.dropDown.FlagSelectDropDown
 import ua.polodarb.ui.components.searchBar.GFlagsSearchBar
-import java.io.File
+import ua.polodarb.ui.components.tabs.GFlagsTabRow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

@@ -86,12 +86,12 @@ fun RequestNotificationPermissionScreen(
             )
             Text(
                 text = stringResource(id = R.string.notification_msg),
-                fontSize = 20.sp,
+                fontSize = 19.sp,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Text(
                 text = stringResource(id = R.string.notification_advice),
-                fontSize = 20.sp,
+                fontSize = 19.sp,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
             )
             Spacer(modifier = Modifier.weight(1f))

@@ -40,6 +40,8 @@
     <string name="flag_change_dialog_suggest_name">Напишіть ваше ім\'я</string>
     <string name="flag_change_dialog_suggest_action_send">Надіслати</string>
     <!-- Add flags list screen -->
+    <string name="share_flag_dialog_suggest_title">Назва файлу</string>
+    <string name="flag_dialog_share_action_send">Поділитись</string>
     <string name="add_a_multiple_flags">Додати декілька прапорів</string>
     <string name="enter_the_flags">Введені прапори</string>
     <string name="formed_flags">Сформовані прапори</string>

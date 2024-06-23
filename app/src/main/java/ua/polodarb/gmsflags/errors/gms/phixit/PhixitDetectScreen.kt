@@ -1,4 +1,4 @@
-package ua.polodarb.gmsflags.errors.phixit
+package ua.polodarb.gmsflags.errors.gms.phixit
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,9 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.flagsfile.LoadFileScreenViewModel
 import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.errors.gms.sharedUI.HeaderDescription
+import ua.polodarb.gmsflags.errors.gms.sharedUI.HeaderIcon
+import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.suggestions.SuggestedFlagItemArrow
 
@@ -65,7 +69,7 @@ fun PhixitDetectScreen() {
         bottomBar = {
             BottomBar(
                 onExitClick = {
-                    // todo
+                    (context as MainActivity).finish()
                 },
                 isVisible = !isExpandedAction1 && !isExpandedAction2
             )
@@ -78,10 +82,17 @@ fun PhixitDetectScreen() {
                     rememberScrollState()
                 )
         ) {
-            HeaderIcon()
-            HeaderDescription()
+            HeaderIcon(
+                icon = R.drawable.ic_dissatisfied
+            )
+            HeaderDescription(
+                text = stringResource(R.string.phixit_title),
+                descriptions = arrayOf(
+                    stringResource(R.string.phixit_description)
+                )
+            )
             ActionsQAContainer(
-                title = "How to fix it?",
+                title = stringResource(R.string.phixit_fix_title),
                 shape = RoundedCornerShape(
                     topStart = 24.dp,
                     topEnd = 24.dp,
@@ -96,9 +107,7 @@ fun PhixitDetectScreen() {
                     .padding(top = 32.dp)
             ) {
                 Text(
-                    text = "The only option to revert the changes is to delete the data of the Google Play Services app. \n" +
-                            " \n" +
-                            "Read all the side effects:",
+                    text = stringResource(R.string.phixit_fix_desc_1),
                     fontSize = 16.sp
                 )
                 Box(
@@ -110,9 +119,7 @@ fun PhixitDetectScreen() {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "1. If you have a wearable device - resetting the gms data will unpair your Wear OS watches. To pair it again, you will have to reset the watches.\n" +
-                                "2. All bank cards saved on the device will also be reset.\n" +
-                                "Rarely, but it may take a few resets to get back the old scheme."
+                        text = stringResource(R.string.phixit_fix_desc_2).trimIndent()
                     )
                 }
                 Box(
@@ -124,7 +131,7 @@ fun PhixitDetectScreen() {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "After a reset, you will have to wait 15 minutes to a few hours for gms to create a new database."
+                        text = stringResource(R.string.phixit_fix_desc_3)
                     )
                 }
                 Button(
@@ -150,11 +157,11 @@ fun PhixitDetectScreen() {
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer
                     )
                 ) {
-                    Text("Open GMS settings")
+                    Text(stringResource(R.string.phixit_button_open_settings))
                 }
             }
             ActionsQAContainer(
-                title = "How soon support is planned?",
+                title = stringResource(R.string.phixit_plan_title),
                 shape = RoundedCornerShape(
                     topStart = 8.dp,
                     topEnd = 8.dp,
@@ -168,49 +175,12 @@ fun PhixitDetectScreen() {
                 }
             ) {
                 Text(
-                    text = "Unfortunately, the change has brought many difficulties, we are working hard to solve this problem, but the result is unknown.",
+                    text = stringResource(R.string.phixit_plan_desc),
                     fontSize = 16.sp
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
         }
-    }
-}
-
-@Composable
-private fun HeaderIcon(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 32.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            painterResource(R.drawable.ic_dissatisfied),
-            null,
-            modifier = Modifier
-                .size(172.dp),
-            tint = MaterialTheme.colorScheme.error
-        )
-    }
-}
-
-@Composable
-private fun HeaderDescription(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(horizontal = 24.dp)
-    ) {
-        Text(
-            text = "Unsupported schema",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = "Google has recently changed the database scheme in Google Play services. Unfortunately, the new scheme is not yet supported by the \"GMS Flags\" app.",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(top = 16.dp)
-        )
     }
 }
 
@@ -296,7 +266,7 @@ fun BottomBar(
                 onClick = onExitClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Exit the application")
+                Text(stringResource(R.string.phixit_button_title))
             }
         }
     }

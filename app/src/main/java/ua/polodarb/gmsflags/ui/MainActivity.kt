@@ -3,13 +3,16 @@ package ua.polodarb.gmsflags.ui
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +26,6 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -32,8 +34,9 @@ import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.core.updates.UpdateDialog
-import ua.polodarb.gmsflags.errors.crash.CrashActivity
-import ua.polodarb.gmsflags.errors.crash.ExceptionHandler
+import ua.polodarb.gmsflags.errors.general.CrashActivity
+import ua.polodarb.gmsflags.errors.general.ExceptionHandler
+import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectWorker
 import ua.polodarb.gmsflags.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.network.impl.appUpdates.AppUpdatesApiServiceImpl
@@ -74,6 +77,12 @@ class MainActivity : BaseActivity() {
         if (!isFirstStart) {
             InitShell.initShell()
             rootDBInitializer.initDB()
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                GmsCrashesDetectWorker.TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                GmsCrashesDetectWorker.initWorker(),
+            )
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
@@ -91,6 +100,7 @@ class MainActivity : BaseActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        // TODO: Refactor using initWorker()
         val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .addTag(GOOGLE_UPDATES_WORKER_TAG)
