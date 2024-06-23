@@ -1,4 +1,4 @@
-package ua.polodarb.repository.suggestedFlags.model
+package ua.polodarb.repository.suggestedFlags.models
 
 data class MergedAllTypesOverriddenFlags(
     val boolFlag: Map<String, String>,

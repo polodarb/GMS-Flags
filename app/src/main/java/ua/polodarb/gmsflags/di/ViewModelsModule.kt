@@ -54,13 +54,10 @@ val viewModelsModule = module {
 
     viewModel {
         SuggestionScreenViewModel(
-            application = get(),
             repository = get(),
             appsRepository = get(),
-            flagsApiService = get<SuggestedFlagsApiServiceImpl>(),
             interactor = get(),
-            mergedFlags = get(),
-            localFilesProvider = get()
+            flagsUseCase = get()
         )
     }
 

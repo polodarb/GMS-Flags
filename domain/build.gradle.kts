@@ -8,7 +8,10 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 29
+
+        buildConfigField("long", "VERSION_CODE", libs.versions.version.code.get())
+        buildConfigField("String","VERSION_NAME","\"${libs.versions.version.name.get()}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,6 +25,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        buildConfig = true
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -34,12 +40,13 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.work.manager)
 
-    implementation(project(":data:repository"))
+    // Kotlin immutable collections
+    implementation(libs.kotlin.collections.immutable)
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.google.material)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.android.junit)
-    androidTestImplementation(libs.espresso.core)
+
+    implementation(project(":data:repository"))
+
 }

@@ -10,8 +10,13 @@ class LocalFilesProvider(
 
     private val gmsApplication = context.applicationContext as Application
 
-    fun getLocalSuggestedFlags(): File {
-        return File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags_2.0.json")
+    fun getLocalSuggestedFlagsFile(): File {
+        return File(gmsApplication.filesDir.absolutePath + File.separator + "suggestedFlags.json")
+    }
+
+    fun getSuggestedFlagsData(): String {
+        val stream = context.assets.open("suggestedFlags.json")
+        return stream.bufferedReader().use { it.readText() }
     }
 
 }

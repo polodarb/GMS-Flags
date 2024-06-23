@@ -1,10 +1,10 @@
 package ua.polodarb.network.suggestedFlags
 
-import ua.polodarb.network.suggestedFlags.model.SuggestedFlagTypes
 import ua.polodarb.network.Resource
+import ua.polodarb.network.suggestedFlags.model.SuggestedFlagsNetModel
 
 interface SuggestedFlagsApiService {
-    suspend fun getSuggestedFlags(): Resource<SuggestedFlagTypes>
+    suspend fun getSuggestedFlags(): Resource<SuggestedFlagsNetModel>
 }
 
 

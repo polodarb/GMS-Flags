@@ -52,6 +52,7 @@ dependencies {
 
     implementation(libs.core.ktx)
     implementation(libs.google.material)
+    implementation(project(":core:platform"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
 

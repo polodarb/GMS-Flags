@@ -2,6 +2,7 @@
   {
     "title": "Google Tasks pages redesign",
     "flagPackage": "com.google.android.apps.tasks",
+    "appPackage": "com.google.android.apps.tasks",
     "source": "AssembleDebug",
     "minAppVersionCode": 1704481,
     "flags": [
@@ -12,6 +13,21 @@
       },
       {
         "name": "JadwalPhaseOne__toolbar_removal_and_task_list_bubble_enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "New Bottom bar in Google Keep",
+    "source": "Danyil Kobzar",
+    "flagPackage": "com.google.android.keep#com.google.android.keep",
+    "appPackage": "com.google.android.keep",
+    "detailsLink": "https://t.me/gmsflags_content/43",
+    "isBeta": true,
+    "flags": [
+      {
+        "name": "45618251",
         "type": "bool",
         "value": "1"
       }

@@ -7,12 +7,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.BADGE_ICON_LARGE
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -24,10 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
-import ua.polodarb.domain.OverrideFlagsUseCase
+import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.R
-import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectActivity
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.platform.init.InitShell
 import ua.polodarb.preferences.datastore.DatastoreManager
