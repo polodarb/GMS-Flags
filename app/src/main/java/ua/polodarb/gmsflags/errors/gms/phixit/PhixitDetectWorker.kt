@@ -1,8 +1,19 @@
 package ua.polodarb.gmsflags.errors.gms.phixit
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.BADGE_ICON_LARGE
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.PeriodicWorkRequest
@@ -15,6 +26,9 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import ua.polodarb.domain.OverrideFlagsUseCase
 import ua.polodarb.gms.init.InitRootDB
+import ua.polodarb.gmsflags.R
+import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectActivity
+import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.platform.init.InitShell
 import ua.polodarb.preferences.datastore.DatastoreManager
 import ua.polodarb.repository.databases.gms.GmsDBRepository
@@ -55,8 +69,6 @@ class PhixitDetectWorker(
 
                 val checkResult = !check1 && check2 && check3 && check4
 
-                Log.e("GMS Flags", "checkResult - $checkResult")
-
                 if (checkResult) {
                     flags.onEachIndexed { index, (name, value) ->
                         val isLast = index == flags.size - 1
@@ -68,9 +80,7 @@ class PhixitDetectWorker(
                         )
                     }
                     datastore.setOpenGmsSettingsBtnClicked(false)
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Setup is complete, GMS Flags is ready for use", Toast.LENGTH_SHORT).show()
-                    }
+                    showNotification()
                 }
 
                 datastore.phixitWorkerIncrementExecutionCount()
@@ -84,6 +94,36 @@ class PhixitDetectWorker(
             WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
             Result.success()
         }
+    }
+
+    private fun showNotification() {
+        val channelId = "phixit_detect_channel"
+        val notificationId = 102
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling ActivityCompat#requestPermissions
+            return
+        }
+
+        val notificationManager = NotificationManagerCompat.from(context)
+        val channel = NotificationChannel(channelId, "Completing the GMS setup", NotificationManager.IMPORTANCE_HIGH).apply {
+            description = context.getString(R.string.phixit_detect_notification_desc)
+        }
+        notificationManager.createNotificationChannel(channel)
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_notify_logo)
+            .setContentTitle(context.getString(R.string.phixit_detect_notification_title))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(notificationId, notification)
     }
 
     companion object {

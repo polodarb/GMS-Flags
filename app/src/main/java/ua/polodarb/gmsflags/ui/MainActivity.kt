@@ -36,6 +36,7 @@ import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.core.updates.UpdateDialog
 import ua.polodarb.gmsflags.errors.general.CrashActivity
 import ua.polodarb.gmsflags.errors.general.ExceptionHandler
+import ua.polodarb.gmsflags.errors.gms.phixit.PhixitDetectWorker
 import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectWorker
 import ua.polodarb.gmsflags.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
@@ -73,6 +74,14 @@ class MainActivity : BaseActivity() {
             ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
+
+        WorkManager.getInstance(this).apply {
+            enqueueUniquePeriodicWork(
+                PhixitDetectWorker.TAG,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                PhixitDetectWorker.initWorker(),
+            )
+        }
 
         if (!isFirstStart) {
             InitShell.initShell()
