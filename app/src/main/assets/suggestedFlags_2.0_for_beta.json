@@ -1,55 +1,5 @@
 {
-  "primary": [
-    {
-      "primaryTag": "call_recording",
-      "name": "Enable call recording for unsupported countries",
-      "source": null,
-      "note": null,
-      "flags": [
-        {
-          "tag": "G__enable_call_recording",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "enable_call_recording_system_feature",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "CallRecording__enable_call_recording_for_fi",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "G__force_within_call_recording_geofence_value",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "G__force_within_crosby_geofence_value",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "G__use_call_recording_geofence_overrides",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "enable_call_recording_indicator",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.dialer",
-      "appPackage": "com.google.android.dialer",
-      "minAppVersionCode": null,
-      "minAndroidSdkCode": null,
-      "details": null,
-      "enabled": true
-    }
-  ],
+  "primary": [],
   "secondary": [
     {
       "name": "New Bottom bar in Google Keep",
@@ -193,47 +143,6 @@
       "enabled": true
     },
     {
-      "name": "Note creation AI tool in Keep",
-      "source": "Danyil Kobzar",
-      "note": null,
-      "flags": [
-        {
-          "tag": "45427377",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.keep#com.google.android.keep",
-      "appPackage": "com.google.android.keep",
-      "minAppVersionCode": 220542111,
-      "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/24",
-      "enabled": false
-    },
-    {
-      "name": "Bottom search bar in Google App",
-      "source": "Nail Sadykov",
-      "note": "Requires Google app data reset!",
-      "flags": [
-        {
-          "tag": "45531391",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45517863",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.libraries.search.googleapp.user#com.google.android.googlequicksearchbox",
-      "appPackage": "com.google.android.googlequicksearchbox",
-      "minAppVersionCode": 301286883,
-      "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/21",
-      "enabled": true
-    },
-    {
       "name": "Date tips while creating task in Tasks",
       "source": "Nail Sadykov",
       "note": null,
@@ -309,64 +218,6 @@
       "minAndroidSdkCode": null,
       "details": "https://t.me/gmsflags_content/16",
       "enabled": true
-    },
-    {
-      "name": "New memories tab in Google Photos",
-      "source": "Danyil Kobzar",
-      "note": null,
-      "flags": [
-        {
-          "tag": "45386363",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45366356",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45414358",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45411123",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45401668",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45401669",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45411122",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45417430",
-          "type": "bool",
-          "value": "1"
-        },
-        {
-          "tag": "45412949",
-          "type": "bool",
-          "value": "1"
-        }
-      ],
-      "flagPackage": "com.google.android.apps.photos",
-      "appPackage": "com.google.android.apps.photos",
-      "minAppVersionCode": null,
-      "minAndroidSdkCode": null,
-      "details": "https://t.me/gmsflags_content/13",
-      "enabled": false
     },
     {
       "name": "Floating NavBar in Google Photos",
