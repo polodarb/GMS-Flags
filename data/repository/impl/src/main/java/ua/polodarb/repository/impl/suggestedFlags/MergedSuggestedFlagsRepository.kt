@@ -32,14 +32,15 @@ class SuggestedFlagsRepositoryImpl(
     override suspend fun loadSuggestedFlags(): List<SuggestedFlagsRepoModel>? {
         try {
             val localFlagsFile = localFilesProvider.getLocalSuggestedFlagsFile()
-
             val flags = flagsApiService.getSuggestedFlags()
             if (flags is Resource.Success && flags.data != null) {
-                localFlagsFile.writeText(Json.encodeToString(flags.data))
+                val flagsJson = Json.encodeToString(flags.data)
+                localFlagsFile.writeText(flagsJson)
             }
 
             val pkgContent = localFilesProvider.getSuggestedFlagsData()
-            return Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent).map { it.toRepoModel() }
+            val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent).map { it.toRepoModel() }
+            return result
         } catch (e: Exception) {
             Log.e("gmsf", "Error assets loading: ${e.message}")
             return null

@@ -3,7 +3,6 @@ package ua.polodarb.platform.providers
 import android.app.Application
 import android.content.Context
 import java.io.File
-
 class LocalFilesProvider(
     private val context: Context
 ) {
@@ -15,8 +14,11 @@ class LocalFilesProvider(
     }
 
     fun getSuggestedFlagsData(): String {
-        val stream = context.assets.open("suggestedFlags.json")
-        return stream.bufferedReader().use { it.readText() }
+        val file = getLocalSuggestedFlagsFile()
+        return if (file.exists()) {
+            file.readText()
+        } else {
+            ""
+        }
     }
-
 }

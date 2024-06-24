@@ -382,33 +382,47 @@ fun SuggestedFlagItem(
 
     val appInfoName by remember {
         mutableStateOf(
-            packageManager.getApplicationInfo(appInfoPackageName, 0).loadLabel(packageManager)
-                .toString()
+            try {
+                packageManager.getApplicationInfo(appInfoPackageName, 0).loadLabel(packageManager)
+                    .toString()
+            } catch (e: PackageManager.NameNotFoundException) {
+                null
+            }
         )
     }
+
     val appIcon by remember {
-        mutableStateOf(packageManager.getApplicationIcon(appInfoPackageName))
+        mutableStateOf(
+            try {
+                packageManager.getApplicationIcon(appInfoPackageName)
+            } catch (e: PackageManager.NameNotFoundException) {
+                null
+            }
+        )
     }
 
-    NewSuggestedFlagItem(
-        titleText = flagTitle,
-        switchValue = flagValue,
-        onSwitchChanged = flagOnCheckedChange,
-        note = note,
-        warning = warning,
-        sourceText = source,
-        appInfoIcon = appIcon,
-        appInfoName = appInfoName,
-        appInfoPackage = appInfoPackageName,
-        onOpenSettingsClick = onOpenSettingsClick,
-        onOpenAppClick = onOpenAppClick,
-        flagDetails = flagDetails,
-        listStart = listStart,
-        listEnd = listEnd,
-        onViewDetailsClick = onViewDetailsClick,
-        onResetClick = onResetClick,
-        onReportClick = onReportClick
-    )
+    if (appIcon != null && appInfoName != null) {
+        NewSuggestedFlagItem(
+            titleText = flagTitle,
+            switchValue = flagValue,
+            onSwitchChanged = flagOnCheckedChange,
+            note = note,
+            warning = warning,
+            sourceText = source,
+            appInfoIcon = appIcon,
+            appInfoName = appInfoName,
+            appInfoPackage = appInfoPackageName,
+            onOpenSettingsClick = onOpenSettingsClick,
+            onOpenAppClick = onOpenAppClick,
+            flagDetails = flagDetails,
+            listStart = listStart,
+            listEnd = listEnd,
+            onViewDetailsClick = onViewDetailsClick,
+            onResetClick = onResetClick,
+            onReportClick = onReportClick
+        )
+    }
+
 }
 
 @Composable
@@ -419,8 +433,8 @@ private fun NewSuggestedFlagItem(
     note: String?,
     warning: String?,
     sourceText: String?,
-    appInfoIcon: Drawable,
-    appInfoName: String,
+    appInfoIcon: Drawable?,
+    appInfoName: String?,
     appInfoPackage: String,
     flagDetails: String?,
     listStart: Boolean,
@@ -571,18 +585,20 @@ private fun NewSuggestedFlagItem(
                                     MaterialTheme.colorScheme.surfaceContainerHigh
                             )
                     ) {
-                        AppContent(
-                            appName = appInfoName,
-                            pkg = appInfoPackage,
-                            appIcon = appInfoIcon
-                        )
-                        OutlinedButton(
-                            onClick = onOpenAppClick,
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(text = stringResource(R.string.open, appInfoName))
+                        if (appInfoName != null && appInfoIcon != null) {
+                            AppContent(
+                                appName = appInfoName,
+                                pkg = appInfoPackage,
+                                appIcon = appInfoIcon
+                            )
+                            OutlinedButton(
+                                onClick = onOpenAppClick,
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(text = stringResource(R.string.open, appInfoName))
+                            }
                         }
                         OutlinedButton(
                             onClick = onOpenSettingsClick,

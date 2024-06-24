@@ -27,7 +27,7 @@ class SuggestedFlagsApiServiceImpl(
         }
     }
 
-    override suspend fun getSuggestedFlags(): Resource<SuggestedFlagsNetModel> {
+    override suspend fun getSuggestedFlags(): Resource<List<SuggestedFlagsNetModel>> {
         return try {
             val file = "suggestedFlags.json"
             val response: String = client.get { url(file) }.body()
