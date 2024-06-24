@@ -483,7 +483,7 @@ private fun NewSuggestedFlagItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SuggestedFlagItemArrow(
-                        badge = note != null,
+                        badge = note != null || warning != null,
                         expanded = expanded,
                         onExpandedChange = {
                             expanded = !expanded

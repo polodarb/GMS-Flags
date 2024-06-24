@@ -24,7 +24,6 @@
     "flagPackage": "com.google.android.keep#com.google.android.keep",
     "appPackage": "com.google.android.keep",
     "detailsLink": "https://t.me/gmsflags_content/43",
-    "isBeta": true,
     "flags": [
       {
         "name": "45618251",
@@ -32,5 +31,94 @@
         "value": "1"
       }
     ]
+  },
+  {
+    "title": "New search box in Google app",
+    "source": "Danyil Kobzar",
+    "note": "Requires Google app data reset!",
+    "warning": "For correct view - the \"Bottom search bar in Google App\" flag must be disabled",
+    "flagPackage": "com.google.android.libraries.search.googleapp.user#com.google.android.googlequicksearchbox",
+    "appPackage": "com.google.android.googlequicksearchbox",
+    "detailsLink": "https://t.me/gmsflags_content/33",
+    "flags": [
+      {
+        "name": "45478044",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "45517863",
+        "type": "bool",
+        "value": "0"
+      },
+      {
+        "name": "45531391",
+        "type": "bool",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "title": "Redesigned Collections tab in Photos",
+    "source": "AssembleDebug & Rahul",
+    "flagPackage": "com.google.android.apps.photos",
+    "appPackage": "com.google.android.apps.photos",
+    "minAppVersionCode": 48792594,
+    "detailsLink": "https://t.me/gmsflags_content/39",
+    "flags": [
+      {
+        "name": "45617367",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "Date tips while creating task in Tasks",
+    "source": "Nail Sadykov",
+    "flagPackage": "com.google.android.apps.tasks",
+    "appPackage": "com.google.android.apps.tasks",
+    "detailsLink": "https://t.me/gmsflags_content/19",
+    "flags": [
+      {
+        "name": "DateShortcuts__enabled",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "\"G\" on space in GBoard",
+    "source": "RBoard Themes",
+    "note": "If you want G not to disappear but to be displayed permanently, change this flag:\nInteger - branding_fadeout_delay_ms (Value: 600)",
+    "flags": [
+      {
+        "name": "show_branding_interval_seconds",
+        "type": "int",
+        "value": "0"
+      },
+      {
+        "name": "show_branding_on_space",
+        "type": "bool",
+        "value": "1"
+      }
+    ],
+    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "appPackage": "com.google.android.inputmethod.latin",
+    "detailsLink": "https://t.me/gmsflags_content/16"
+  },
+  {
+    "title": "Floating NavBar in Google Photos",
+    "source": "Danyil Kobzar",
+    "flags": [
+      {
+        "name": "45415956",
+        "type": "int",
+        "value": "1"
+      }
+    ],
+    "flagPackage": "com.google.android.apps.photos",
+    "appPackage": "com.google.android.apps.photos",
+    "detailsLink": "https://t.me/gmsflags_content/12"
   }
 ]
