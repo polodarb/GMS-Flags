@@ -120,5 +120,18 @@
     "flagPackage": "com.google.android.apps.photos",
     "appPackage": "com.google.android.apps.photos",
     "detailsLink": "https://t.me/gmsflags_content/12"
+  },
+  {
+    "title": "Test",
+    "source": "Test",
+    "flags": [
+      {
+        "name": "123123",
+        "type": "int",
+        "value": "1"
+      }
+    ],
+    "flagPackage": "com.package",
+    "appPackage": "com.package"
   }
 ]
