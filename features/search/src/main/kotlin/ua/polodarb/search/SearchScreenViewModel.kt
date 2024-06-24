@@ -1,6 +1,5 @@
 package ua.polodarb.search
 
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,9 +18,8 @@ import ua.polodarb.repository.appsList.AppsListRepository
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.databases.local.LocalDBRepository
-import ua.polodarb.repository.suggestedFlags.MergedSuggestedFlagsRepository
-import ua.polodarb.repository.suggestedFlags.model.FlagDetails
-import ua.polodarb.repository.suggestedFlags.model.MergedAllTypesFlags
+import ua.polodarb.repository.suggestedFlags.SuggestedFlagsRepository
+import ua.polodarb.repository.suggestedFlags.models.FlagDetails
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.search.constants.SortingTypeConstants.APP_NAME
 import ua.polodarb.search.constants.SortingTypeConstants.APP_NAME_REVERSED
@@ -38,7 +36,7 @@ class SearchScreenViewModel(
     private val repository: AppsListRepository,
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: LocalDBRepository,
-    private val mergedFlags: MergedSuggestedFlagsRepository,
+    private val mergedFlags: SuggestedFlagsRepository,
     private val gmsDBInteractor: GmsDBInteractor
 ) : ViewModel() {
 

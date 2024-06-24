@@ -1,4 +1,4 @@
-package ua.polodarb.repository.suggestedFlags.model
+package ua.polodarb.repository.suggestedFlags.models
 
 import ua.polodarb.common.FlagsTypes
 

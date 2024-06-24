@@ -1,22 +1,49 @@
 package ua.polodarb.repository.impl.suggestedFlags
 
-import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ua.polodarb.common.FlagsTypes
 import ua.polodarb.gms.init.InitRootDB
-import ua.polodarb.repository.suggestedFlags.MergedSuggestedFlagsRepository
-import ua.polodarb.repository.suggestedFlags.model.FlagDetails
-import ua.polodarb.repository.suggestedFlags.model.MergedAllTypesFlags
-import ua.polodarb.repository.suggestedFlags.model.MergedAllTypesOverriddenFlags
+import ua.polodarb.network.Resource
+import ua.polodarb.network.suggestedFlags.SuggestedFlagsApiService
+import ua.polodarb.network.suggestedFlags.model.SuggestedFlagsNetModel
+import ua.polodarb.platform.providers.LocalFilesProvider
+import ua.polodarb.repository.suggestedFlags.SuggestedFlagsRepository
+import ua.polodarb.repository.suggestedFlags.models.FlagDetails
+import ua.polodarb.repository.suggestedFlags.models.MergedAllTypesFlags
+import ua.polodarb.repository.suggestedFlags.models.MergedAllTypesOverriddenFlags
+import ua.polodarb.repository.suggestedFlags.models.SuggestedFlagsRepoModel
+import ua.polodarb.repository.suggestedFlags.models.SuggestedFlagsRepoModel.Companion.toRepoModel
 import ua.polodarb.repository.uiStates.UiStates
 
-class MergedSuggestedFlagsRepositoryImpl(
-    private val rootDB: InitRootDB
-): MergedSuggestedFlagsRepository {
+class SuggestedFlagsRepositoryImpl(
+    private val rootDB: InitRootDB,
+    private val localFilesProvider: LocalFilesProvider,
+    private val flagsApiService: SuggestedFlagsApiService
+    ): SuggestedFlagsRepository {
 
     private val rootDatabase by lazy {
         rootDB.getRootDatabase()
+    }
+
+    override suspend fun loadSuggestedFlags(): List<SuggestedFlagsRepoModel>? {
+        try {
+            val localFlagsFile = localFilesProvider.getLocalSuggestedFlagsFile()
+
+            val flags = flagsApiService.getSuggestedFlags()
+            if (flags is Resource.Success && flags.data != null) {
+                localFlagsFile.writeText(Json.encodeToString(flags.data))
+            }
+
+            val pkgContent = localFilesProvider.getSuggestedFlagsData()
+            return Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent).map { it.toRepoModel() }
+        } catch (e: Exception) {
+            Log.e("gmsf", "Error assets loading: ${e.message}")
+            return null
+        }
     }
 
     override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags> = flow {

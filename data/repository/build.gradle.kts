@@ -45,7 +45,7 @@ dependencies {
 //    implementation("com.bea.xml.stream:org.motechproject.com.bea.xml.stream:1.2.0-r033")
 
     // Ktor serialization
-    implementation(libs.ktor.serialization.json)
+    api(libs.ktor.serialization.json)
 
     // KtRssRss
     api(libs.rssReader)

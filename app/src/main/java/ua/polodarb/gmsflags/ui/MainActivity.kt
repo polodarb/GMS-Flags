@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
 //        if (!BuildConfig.DEBUG)
-            ExceptionHandler.initialize(this, CrashActivity::class.java)
+//            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
 

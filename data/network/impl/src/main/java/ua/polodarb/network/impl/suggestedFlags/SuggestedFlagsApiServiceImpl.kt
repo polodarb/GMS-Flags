@@ -9,9 +9,9 @@ import io.ktor.client.request.url
 import kotlinx.serialization.json.Json
 import ua.polodarb.network.impl.BuildConfig
 import ua.polodarb.network.suggestedFlags.SuggestedFlagsApiService
-import ua.polodarb.network.suggestedFlags.model.SuggestedFlagTypes
 import ua.polodarb.network.Resource
 import ua.polodarb.network.setConfig
+import ua.polodarb.network.suggestedFlags.model.SuggestedFlagsNetModel
 
 private const val BASE_URL = "https://raw.githubusercontent.com/polodarb/GMS-Flags/"
 private const val ASSETS_PATH = "/app/src/main/assets/"
@@ -27,15 +27,10 @@ class SuggestedFlagsApiServiceImpl(
         }
     }
 
-    override suspend fun getSuggestedFlags(): Resource<SuggestedFlagTypes> {
+    override suspend fun getSuggestedFlags(): Resource<SuggestedFlagsNetModel> {
         return try {
-            val url = if (BuildConfig.VERSION_NAME.contains("beta")) {
-                "suggestedFlags_2.0_for_beta.json"
-            } else {
-                "suggestedFlags_2.0.json"
-            }
-
-            val response: String = client.get { url(url) }.body()
+            val file = "suggestedFlags.json"
+            val response: String = client.get { url(file) }.body()
             Resource.Success(Json.decodeFromString(response))
         } catch (e: Exception) {
             Resource.Error(e)

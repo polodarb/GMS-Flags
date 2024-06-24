@@ -1,6 +1,6 @@
 [versions]
 # project
-version-name = "1.1.1-beta02"
+version-name = "1.1.1-beta03"
 version-code = "12"
 
 activity = "1.8.2"

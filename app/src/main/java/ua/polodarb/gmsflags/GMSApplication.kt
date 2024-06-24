@@ -11,6 +11,8 @@ import ua.polodarb.domain.di.useCaseModule
 import ua.polodarb.gms.impl.di.initRootDBModule
 import ua.polodarb.gmsflags.di.appModule
 import ua.polodarb.gmsflags.di.viewModelsModule
+import ua.polodarb.gmsflags.errors.general.CrashActivity
+import ua.polodarb.gmsflags.errors.general.ExceptionHandler
 import ua.polodarb.gmsflags.errors.gms.phixit.di.workerPhixitModule
 import ua.polodarb.local.impl.di.localDBBindsModule
 import ua.polodarb.local.impl.di.localDatabaseModule

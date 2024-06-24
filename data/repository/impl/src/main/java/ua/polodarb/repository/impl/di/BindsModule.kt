@@ -17,9 +17,9 @@ import ua.polodarb.repository.impl.databases.local.LocalDBRepositoryImpl
 import ua.polodarb.repository.impl.flagsFile.FlagsFromFileRepositoryImpl
 import ua.polodarb.repository.impl.googleUpdates.GoogleUpdatesRepositoryImpl
 import ua.polodarb.repository.impl.settings.SettingsRepositoryImpl
-import ua.polodarb.repository.impl.suggestedFlags.MergedSuggestedFlagsRepositoryImpl
+import ua.polodarb.repository.impl.suggestedFlags.SuggestedFlagsRepositoryImpl
 import ua.polodarb.repository.settings.SettingsRepository
-import ua.polodarb.repository.suggestedFlags.MergedSuggestedFlagsRepository
+import ua.polodarb.repository.suggestedFlags.SuggestedFlagsRepository
 
 val repositoryBindsModule = module {
 
@@ -63,10 +63,12 @@ val repositoryBindsModule = module {
     } bind SettingsRepository::class
 
     single {
-        MergedSuggestedFlagsRepositoryImpl(
-            rootDB = get()
+        SuggestedFlagsRepositoryImpl(
+            rootDB = get(),
+            localFilesProvider = get(),
+            flagsApiService = get()
         )
-    } bind MergedSuggestedFlagsRepository::class
+    } bind SuggestedFlagsRepository::class
 
     single {
         FlagsFromFileRepositoryImpl(
