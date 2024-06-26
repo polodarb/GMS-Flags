@@ -101,8 +101,8 @@ class FlagChangeScreenViewModel(
             loadingState = _stateBoolean,
             errorState = _stateBoolean,
             dataFlow = repository.getBoolFlags(pkgName, delay)
-        ) { data ->
-            listBoolFiltered.putAll(data)
+        ) { result ->
+            listBoolFiltered.putAll(result.data)
             getBoolFlags()
         }
     }
@@ -135,8 +135,8 @@ class FlagChangeScreenViewModel(
             loadingState = _stateInteger,
             errorState = _stateInteger,
             dataFlow = repository.getIntFlags(pkgName, delay)
-        ) { data ->
-            listIntFiltered.putAll(data)
+        ) { result ->
+            listIntFiltered.putAll(result.data)
             getIntFlags()
         }
     }
@@ -146,8 +146,8 @@ class FlagChangeScreenViewModel(
             loadingState = _stateFloat,
             errorState = _stateFloat,
             dataFlow = repository.getFloatFlags(pkgName, delay)
-        ) { data ->
-            listFloatFiltered.putAll(data)
+        ) { result ->
+            listFloatFiltered.putAll(result.data)
             getFloatFlags()
         }
     }
@@ -157,8 +157,8 @@ class FlagChangeScreenViewModel(
             loadingState = _stateString,
             errorState = _stateString,
             dataFlow = repository.getStringFlags(pkgName, delay)
-        ) { data ->
-            listStringFiltered.putAll(data)
+        ) { result ->
+            listStringFiltered.putAll(result.data)
             getStringFlags()
         }
     }
@@ -311,10 +311,10 @@ class FlagChangeScreenViewModel(
             dataFlow = repository.getOverriddenBoolFlagsByPackage(pkgName),
             loadingState = _stateBoolean,
             errorState = _stateBoolean
-        ) { data ->
+        ) { result ->
             changedFilterBoolList.clear()
-            changedFilterBoolList.putAll(data)
-            listBoolFiltered.putAll(data)
+            changedFilterBoolList.putAll(result.data)
+            listBoolFiltered.putAll(result.data)
         }
     }
 
@@ -323,10 +323,10 @@ class FlagChangeScreenViewModel(
             dataFlow = repository.getOverriddenIntFlagsByPackage(pkgName),
             loadingState = _stateInteger,
             errorState = _stateInteger
-        ) { data ->
+        ) { result ->
             changedFilterIntList.clear()
-            changedFilterIntList.putAll(data)
-            listIntFiltered.putAll(data)
+            changedFilterIntList.putAll(result.data)
+            listIntFiltered.putAll(result.data)
         }
     }
 
@@ -335,10 +335,10 @@ class FlagChangeScreenViewModel(
             dataFlow = repository.getOverriddenFloatFlagsByPackage(pkgName),
             loadingState = _stateFloat,
             errorState = _stateFloat
-        ) { data ->
+        ) { result ->
             changedFilterFloatList.clear()
-            changedFilterFloatList.putAll(data)
-            listFloatFiltered.putAll(data)
+            changedFilterFloatList.putAll(result.data)
+            listFloatFiltered.putAll(result.data)
         }
     }
 
@@ -603,13 +603,13 @@ class FlagChangeScreenViewModel(
     // Select all items by one click
     fun selectAllItems() {
         viewModelScope.launch(Dispatchers.IO) {
-            collectFlagsFlow(
-                stateBoolean,
+            handleUiStates(
+                stateBoolean.value,
                 loadingState = _stateBoolean,
                 errorState = _stateBoolean
             ) { result ->
                 selectedItems.clear()
-                selectedItems.addAll(result.keys)
+                selectedItems.addAll(result.data.keys)
             }
         }
     }
@@ -618,13 +618,13 @@ class FlagChangeScreenViewModel(
     val showProgressDialog = mutableStateOf(false)
     fun showFalseProgressDialog(customCount: Int? = null) {
         viewModelScope.launch {
-            collectFlagsFlow(
-                stateBoolean,
+            handleUiStates(
+                stateBoolean.value,
                 loadingState = _stateBoolean,
                 errorState = _stateBoolean
             ) { result ->
                 showProgressDialog.value = true
-                val flagsCount = customCount ?: result.keys.size
+                val flagsCount = customCount ?: result.data.keys.size
                 delay(
                     when {
                         flagsCount <= 50 -> 0
@@ -641,21 +641,37 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    private fun <T> collectFlagsFlow( // todo: move to BaseViewModel
+    private fun <T> collectFlagsFlow(
         dataFlow: Flow<UiStates<T>>,
         loadingState: MutableStateFlow<FlagChangeUiStates>,
         errorState: MutableStateFlow<FlagChangeUiStates>,
         coroutineContext: CoroutineContext = EmptyCoroutineContext,
-        onSuccess: suspend (T) -> Unit
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
     ) {
         viewModelScope.launch(coroutineContext) {
             dataFlow.collect { uiStates ->
-                when (uiStates) {
-                    is UiStates.Success -> onSuccess(uiStates.data)
-                    is UiStates.Loading -> loadingState.value = UiStates.Loading()
-                    is UiStates.Error -> errorState.value = UiStates.Error()
-                }
+                handleUiStates(
+                    uiStates = uiStates,
+                    loadingState = loadingState,
+                    errorState = errorState,
+                    onSuccess = onSuccess
+                )
             }
+        }
+    }
+
+    private suspend fun <T> handleUiStates(
+        uiStates: UiStates<T>,
+        loadingState: MutableStateFlow<FlagChangeUiStates>,
+        errorState: MutableStateFlow<FlagChangeUiStates> = _stateInteger,
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
+    ) {
+        when (uiStates) {
+            is UiStates.Success -> onSuccess(uiStates)
+
+            is UiStates.Loading -> loadingState.value = UiStates.Loading()
+
+            is UiStates.Error -> errorState.value = UiStates.Error()
         }
     }
 
