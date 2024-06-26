@@ -102,7 +102,7 @@ class LoadFileScreenViewModel(
                                     gmsDBInteractor.overrideFlag(
                                         packageName = data.data.packageName,
                                         name = flag.name,
-                                        boolVal = flag.value.toString(),
+                                        boolVal = if (flag.value == true) "1" else "0",
                                         usersList = usersList
                                     )
                                 }

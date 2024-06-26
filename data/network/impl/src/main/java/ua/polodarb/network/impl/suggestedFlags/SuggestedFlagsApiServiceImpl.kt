@@ -23,7 +23,8 @@ class SuggestedFlagsApiServiceImpl(
     private val client = HttpClient(engine) {
         this.setConfig(LOG_TAG)
         defaultRequest {
-            url(BASE_URL + (if (BuildConfig.DEBUG) "develop" else "master") + ASSETS_PATH)
+            url(BASE_URL + "develop" + ASSETS_PATH)
+//            url(BASE_URL + (if (BuildConfig.DEBUG) "develop" else "master") + ASSETS_PATH)
         }
     }
 

@@ -173,7 +173,7 @@ class FlagChangeScreenViewModel(
 
     // Getting initialized flags
     fun getBoolFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateBoolean.value = Dispatchers.Default {
                 UiStates.Success(
                     when (filterMethod.value) {
@@ -188,7 +188,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun getIntFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateInteger.value = Dispatchers.Default {
                 UiStates.Success(
                     when (filterMethod.value) {
@@ -201,7 +201,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun getFloatFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateFloat.value = Dispatchers.Default {
                 UiStates.Success(
                     when (filterMethod.value) {
@@ -214,7 +214,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun getStringFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateString.value = Dispatchers.Default {
                 UiStates.Success(
                     when (filterMethod.value) {
@@ -490,7 +490,7 @@ class FlagChangeScreenViewModel(
 
     // Init users
     private fun initUsers() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getUsers().collect {
                 usersList.addAll(it)
             }
@@ -523,7 +523,7 @@ class FlagChangeScreenViewModel(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             gmsDBInteractor.overrideFlag(
                 packageName = packageName,
                 name = name,
@@ -545,22 +545,21 @@ class FlagChangeScreenViewModel(
     }
 
     fun clearPhenotypeCache(pkgName: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             gmsDBInteractor.clearPhenotypeCache(pkgName)
         }
     }
 
-
     // Delete overridden flags
     fun deleteOverriddenFlagByPackage(packageName: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteOverriddenFlagByPackage(packageName)
         }
     }
 
     // Reset int/float/string flags to default value
     fun resetOtherTypesFlagsToDefault(flag: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO){
             repository.deleteRowByFlagName(
                 packageName = pkgName,
                 name = flag
@@ -570,7 +569,7 @@ class FlagChangeScreenViewModel(
 
     // Saved flags in local DB
     fun getAllSavedFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             roomRepository.getSavedFlags().collect {
                 _stateSavedFlags.value = it
             }
@@ -578,19 +577,19 @@ class FlagChangeScreenViewModel(
     }
 
     fun saveFlag(flagName: String, pkgName: String, flagType: FlagsTypes) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             roomRepository.saveFlag(flagName, pkgName, flagType)
         }
     }
 
     fun deleteSavedFlag(flagName: String, pkgName: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             roomRepository.deleteSavedFlag(flagName, pkgName)
         }
     }
 
     fun saveSelectedFlags() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             selectedItems.forEach {
                 saveFlag(
                     it,
@@ -603,7 +602,7 @@ class FlagChangeScreenViewModel(
 
     // Select all items by one click
     fun selectAllItems() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             collectFlagsFlow(
                 stateBoolean,
                 loadingState = _stateBoolean,
@@ -661,7 +660,7 @@ class FlagChangeScreenViewModel(
     }
 
     fun resetFilterLists() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             listBoolFiltered.clear()
             listIntFiltered.clear()
             listFloatFiltered.clear()

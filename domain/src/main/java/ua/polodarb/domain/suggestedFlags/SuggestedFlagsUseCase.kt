@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import ua.polodarb.domain.BuildConfig
 import ua.polodarb.domain.suggestedFlags.models.SuggestedFlagsModel
 import ua.polodarb.repository.appsList.AppsListRepository
@@ -19,7 +20,7 @@ class SuggestedFlagsUseCase(
     private val appsRepository: AppsListRepository
 ) {
 
-    operator fun invoke(): Flow<List<SuggestedFlagsModel>?> = flow {
+    suspend operator fun invoke(): Flow<List<SuggestedFlagsModel>?> = flow {
         try {
             val rawSuggestedFlag = repository.loadSuggestedFlags() ?: emptyList()
             val overriddenFlags = fetchOverriddenFlags(rawSuggestedFlag.map { it.flagPackage })

@@ -5,8 +5,11 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.repository.appsList.AppInfo
 import ua.polodarb.repository.appsList.AppsListRepository
@@ -21,7 +24,7 @@ class AppsListRepositoryImpl(
         rootDB.getRootDatabase()
     }
 
-    override fun getAllInstalledApps(): Flow<UiStates<List<AppInfo>>> = flow {
+    override suspend fun getAllInstalledApps(): Flow<UiStates<List<AppInfo>>> = flow {
         emit(UiStates.Loading())
 
         rootDB.databaseInitializationStateFlow.collect { isInitialized ->
@@ -54,7 +57,7 @@ class AppsListRepositoryImpl(
                 }
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     private fun createAppInfo(pm: PackageManager, appInfo: ApplicationInfo): AppInfo {
         val packageInfo = getPackageInfo(appInfo.packageName)
@@ -70,29 +73,33 @@ class AppsListRepositoryImpl(
         }
     }
 
-    override fun getAppVersionCode(packageName: String): Long {
+    override suspend fun getAppVersionCode(packageName: String): Long {
+        return withContext(Dispatchers.IO) {
             val packageManager: PackageManager = context.packageManager
             try {
                 val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                return packageInfo.longVersionCode
+                packageInfo.longVersionCode
             } catch (e: PackageManager.NameNotFoundException) {
                 e.printStackTrace()
+                -1
             }
-            return -1
-    }
-
-    override fun getAppLastUpdateTime(packageName: String): Long {
-        val packageManager: PackageManager = context.packageManager
-        try {
-            val packageInfo = packageManager.getPackageInfo(packageName, 0)
-            return packageInfo.lastUpdateTime
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
         }
-        return -1
     }
 
-    override fun getListByPackages(pkgName: String): Flow<UiStates<List<String>>> = flow {
+    override suspend fun getAppLastUpdateTime(packageName: String): Long {
+        return withContext(Dispatchers.IO) {
+            val packageManager: PackageManager = context.packageManager
+            try {
+                val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                packageInfo.lastUpdateTime
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+                -1
+            }
+        }
+    }
+
+    override suspend fun getListByPackages(pkgName: String): Flow<UiStates<List<String>>> = flow {
         val list = rootDatabase.getListByPackages(pkgName).filterNot {
             if (pkgName == "com.google.android.gm") {
                 it.contains("gms")

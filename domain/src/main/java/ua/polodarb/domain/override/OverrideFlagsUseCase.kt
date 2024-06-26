@@ -27,11 +27,8 @@ class OverrideFlagsUseCase(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        Log.d("usecase", "invoke()")
         try {
-            Log.d("usecase", "enter to try")
             usersList.addAll(repository.getUsers().first())
-            Log.d("usecase", "user is init")
             interactor.overrideFlag(
                 packageName = packageName,
                 name = name,
@@ -42,7 +39,6 @@ class OverrideFlagsUseCase(
                 floatVal = floatVal,
                 stringVal = stringVal
             )
-            Log.d("usecase", "flags overrided")
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("GMS Flags", "Flag override error: ${e.message}")

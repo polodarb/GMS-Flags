@@ -79,8 +79,7 @@ class SuggestionScreenViewModel(
     }
 
     fun getSuggestedFlags() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
                 try {
                     flagsUseCase.invoke().collect { flags ->
                         if (!flags.isNullOrEmpty()) {
@@ -92,7 +91,6 @@ class SuggestionScreenViewModel(
                 } catch (e: Exception) {
                     _stateSuggestionsFlags.value = UiStates.Error()
                 }
-            }
         }
     }
 

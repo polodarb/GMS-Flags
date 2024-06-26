@@ -1,8 +1,10 @@
 package ua.polodarb.repository.impl.suggestedFlags
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ua.polodarb.common.FlagsTypes
@@ -23,57 +25,61 @@ class SuggestedFlagsRepositoryImpl(
     private val rootDB: InitRootDB,
     private val localFilesProvider: LocalFilesProvider,
     private val flagsApiService: SuggestedFlagsApiService
-    ): SuggestedFlagsRepository {
+) : SuggestedFlagsRepository {
 
     private val rootDatabase by lazy {
         rootDB.getRootDatabase()
     }
 
     override suspend fun loadSuggestedFlags(): List<SuggestedFlagsRepoModel>? {
-        try {
-            val localFlagsFile = localFilesProvider.getLocalSuggestedFlagsFile()
-            val flags = flagsApiService.getSuggestedFlags()
-            if (flags is Resource.Success && flags.data != null) {
-                val flagsJson = Json.encodeToString(flags.data)
-                localFlagsFile.writeText(flagsJson)
-            }
+        return withContext(Dispatchers.IO) {
+            try {
+                val localFlagsFile = localFilesProvider.getLocalSuggestedFlagsFile()
+                val flags = flagsApiService.getSuggestedFlags()
+                if (flags is Resource.Success && flags.data != null) {
+                    val flagsJson = Json.encodeToString(flags.data)
+                    localFlagsFile.writeText(flagsJson)
+                }
 
-            val pkgContent = localFilesProvider.getSuggestedFlagsData()
-            val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent).map { it.toRepoModel() }
-            return result
-        } catch (e: Exception) {
-            Log.e("gmsf", "Error assets loading: ${e.message}")
-            return null
+                val pkgContent = localFilesProvider.getSuggestedFlagsData()
+                val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent)
+                    .map { it.toRepoModel() }
+                result
+            } catch (e: Exception) {
+                Log.e("gmsf", "Error assets loading: ${e.message}")
+                null
+            }
         }
     }
 
-    override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags> = flow {
-        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
-            if (isInitialized.isInitialized) {
+    override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags> =
+        flow {
+            rootDB.databaseInitializationStateFlow.collect { isInitialized ->
+                if (isInitialized.isInitialized) {
 
-                val boolFlags = rootDatabase.getOverriddenBoolFlagsByPackage(pkg)
-                val intFlags = rootDatabase.getOverriddenIntFlagsByPackage(pkg)
-                val floatFlags = rootDatabase.getOverriddenFloatFlagsByPackage(pkg)
-                val stringFlags = rootDatabase.getOverriddenStringFlagsByPackage(pkg)
+                    val boolFlags = rootDatabase.getOverriddenBoolFlagsByPackage(pkg)
+                    val intFlags = rootDatabase.getOverriddenIntFlagsByPackage(pkg)
+                    val floatFlags = rootDatabase.getOverriddenFloatFlagsByPackage(pkg)
+                    val stringFlags = rootDatabase.getOverriddenStringFlagsByPackage(pkg)
 
-                emit(
-                    MergedAllTypesOverriddenFlags(
-                        boolFlag = boolFlags,
-                        intFlag = intFlags,
-                        floatFlag = floatFlags,
-                        stringFlag = stringFlags
+                    emit(
+                        MergedAllTypesOverriddenFlags(
+                            boolFlag = boolFlags,
+                            intFlag = intFlags,
+                            floatFlag = floatFlags,
+                            stringFlag = stringFlags
+                        )
                     )
-                )
+                }
             }
         }
-    }
 
     override suspend fun getMergedAllFlags(): Flow<UiStates<MergedAllTypesFlags>> = flow {
         rootDB.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 val boolFlags: Map<String, String> =
                     rootDatabase.allBoolFlags
-                val intFlags: Map<String, String> =rootDatabase.allIntFlags
+                val intFlags: Map<String, String> = rootDatabase.allIntFlags
                 val floatFlags: Map<String, String> =
                     rootDatabase.allFloatFlags
                 val stringFlags: Map<String, String> =
