@@ -1,5 +1,6 @@
 package ua.polodarb.onboarding
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -112,7 +113,9 @@ private fun Disclaimer(
 
     links.forEach { link ->
         val end = disclaimer.indexOf(link.first)
-        require (end != -1) { "Links mismatch!" }
+        if (end == -1) {
+            return@forEach
+        }
         chunks.add(Pair(disclaimer.substring(start, end), null))
         chunks.add(link)
         start = end + link.first.length
