@@ -19,6 +19,7 @@ import ua.polodarb.local.impl.di.localDatabaseModule
 import ua.polodarb.network.impl.di.networkBindsModule
 import ua.polodarb.platform.di.platformModule
 import ua.polodarb.preferences.impl.di.prefsModule
+import ua.polodarb.protobuf.di.protobufModule
 import ua.polodarb.repository.impl.di.repositoryBindsModule
 import ua.polodarb.updates.di.workerModule
 
@@ -48,6 +49,7 @@ class GMSApplication : Application() {
                     workerModule,
                     workerPhixitModule,
                     prefsModule,
+                    protobufModule,
                     networkBindsModule,
                     repositoryBindsModule
                 )

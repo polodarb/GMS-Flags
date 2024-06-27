@@ -19,6 +19,7 @@ firebase = "32.7.0"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 gms = "4.4.0"
+protobufJava = "4.27.2"
 junit = "4.13.2"
 koin = "3.5.0"
 kotlin = "1.9.10"
@@ -84,6 +85,7 @@ libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = 
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
 lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufJava" }
 requery-sqlite = { group = "com.github.requery", name = "sqlite-android", version.ref = "sqlite" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
