@@ -5,12 +5,12 @@ import ua.polodarb.repository.uiStates.UiStates
 
 interface AppsListRepository {
 
-    fun getAllInstalledApps(): Flow<UiStates<List<AppInfo>>>
+    suspend fun getAllInstalledApps(): Flow<UiStates<List<AppInfo>>>
 
-    fun getAppVersionCode(packageName: String): Long
+    suspend fun getAppVersionCode(packageName: String): Long
 
-    fun getAppLastUpdateTime(packageName: String): Long
+    suspend fun getAppLastUpdateTime(packageName: String): Long
 
-    fun getListByPackages(pkgName: String): Flow<UiStates<List<String>>>
+    suspend fun getListByPackages(pkgName: String): Flow<UiStates<List<String>>>
 
 }
