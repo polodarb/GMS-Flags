@@ -1,12 +1,15 @@
 package ua.polodarb.suggestions
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
@@ -18,6 +21,8 @@ import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
 import ua.polodarb.repository.suggestedFlags.models.FlagTypeRepoModel
 import ua.polodarb.repository.uiStates.UiStates
 import java.util.Collections
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlagsModel>>
 
@@ -78,19 +83,22 @@ class SuggestionScreenViewModel(
         }
     }
 
-    fun getSuggestedFlags() {
+    suspend fun getSuggestedFlags() {
         viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    flagsUseCase.invoke().collect { flags ->
-                        if (!flags.isNullOrEmpty()) {
-                            _stateSuggestionsFlags.value = UiStates.Success(flags)
-                        } else {
-                            _stateSuggestionsFlags.value = UiStates.Error()
-                        }
+            try {
+                val flags = flagsUseCase.invoke()
+                withContext(Dispatchers.Main) {
+                    if (!flags.isNullOrEmpty()) {
+                        _stateSuggestionsFlags.value = UiStates.Success(flags)
+                    } else {
+                        _stateSuggestionsFlags.value = UiStates.Error()
                     }
-                } catch (e: Exception) {
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
                     _stateSuggestionsFlags.value = UiStates.Error()
                 }
+            }
         }
     }
 
@@ -181,6 +189,40 @@ class SuggestionScreenViewModel(
                 }
             }
             getSuggestedFlags()
+        }
+    }
+
+    private fun <T> collectFlagsFlow(
+        dataFlow: Flow<UiStates<T>>,
+        loadingState: MutableStateFlow<SuggestionsScreenUiState>,
+        errorState: MutableStateFlow<SuggestionsScreenUiState>,
+        coroutineContext: CoroutineContext = EmptyCoroutineContext,
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
+    ) {
+        viewModelScope.launch(coroutineContext) {
+            dataFlow.collect { uiStates ->
+                handleUiStates(
+                    uiStates = uiStates,
+                    loadingState = loadingState,
+                    errorState = errorState,
+                    onSuccess = onSuccess
+                )
+            }
+        }
+    }
+
+    private suspend fun <T> handleUiStates(
+        uiStates: UiStates<T>,
+        loadingState: MutableStateFlow<SuggestionsScreenUiState>,
+        errorState: MutableStateFlow<SuggestionsScreenUiState>,
+        onSuccess: suspend (UiStates.Success<T>) -> Unit
+    ) {
+        when (uiStates) {
+            is UiStates.Success -> onSuccess(uiStates)
+
+            is UiStates.Loading -> loadingState.value = UiStates.Loading()
+
+            is UiStates.Error -> errorState.value = UiStates.Error()
         }
     }
 

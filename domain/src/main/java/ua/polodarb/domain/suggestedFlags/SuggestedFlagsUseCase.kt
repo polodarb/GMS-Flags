@@ -2,12 +2,7 @@ package ua.polodarb.domain.suggestedFlags
 
 import android.os.Build
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import ua.polodarb.domain.BuildConfig
 import ua.polodarb.domain.suggestedFlags.models.SuggestedFlagsModel
 import ua.polodarb.repository.appsList.AppsListRepository
@@ -20,8 +15,8 @@ class SuggestedFlagsUseCase(
     private val appsRepository: AppsListRepository
 ) {
 
-    suspend operator fun invoke(): Flow<List<SuggestedFlagsModel>?> = flow {
-        try {
+    suspend operator fun invoke(): List<SuggestedFlagsModel>? {
+        return try {
             val rawSuggestedFlag = repository.loadSuggestedFlags() ?: emptyList()
             val overriddenFlags = fetchOverriddenFlags(rawSuggestedFlag.map { it.flagPackage })
             val data = mutableListOf<SuggestedFlagsModel>()
@@ -44,11 +39,12 @@ class SuggestedFlagsUseCase(
                 }
             }
 
-            emit(data.distinct().toImmutableList())
+            data.distinct().toImmutableList()
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-    }.flowOn(Dispatchers.IO)
+    }
 
     private suspend fun fetchOverriddenFlags(packages: List<String>): Map<String, MergedAllTypesOverriddenFlags> {
         val overriddenFlagsMap = mutableMapOf<String, MergedAllTypesOverriddenFlags>()
