@@ -59,6 +59,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -78,6 +79,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.platform.utils.OSUtils
 import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
@@ -104,6 +108,7 @@ fun SuggestionsScreen(
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
     val packageManager = context.packageManager
+    val coroutineScope = rememberCoroutineScope()
 
     // Report dialog
     var showReportDialog by rememberSaveable {
@@ -308,7 +313,9 @@ fun SuggestionsScreen(
                         showResetDialog = false
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                        viewModel.getSuggestedFlags()
+                        coroutineScope.launch(Dispatchers.IO) {
+                            viewModel.getSuggestedFlags()
+                        }
                     }
                     ReportFlagsDialog(
                         showDialog = showReportDialog,

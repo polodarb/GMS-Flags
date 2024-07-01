@@ -21,4 +21,6 @@
     <string name="welcome_advice">Станьте частью сообщества!</string>
     <string name="welcome_start">Начать!</string>
     <string name="welcome_disclaimer">Продолжая, вы соглашаетесь с нашими Условиями пользования и Политикой конфиденциальности</string>
+    <string name="welcome_terms_chunk">Условиями пользования</string>
+    <string name="welcome_policy_chunk">Политикой конфиденциальности</string>
 </resources>
