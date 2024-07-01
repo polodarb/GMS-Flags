@@ -84,5 +84,6 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:platform"))
     implementation(project(":core:common"))
+    implementation(project(":domain"))
 
 }

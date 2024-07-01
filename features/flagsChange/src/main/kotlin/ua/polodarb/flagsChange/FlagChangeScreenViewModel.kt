@@ -1,6 +1,7 @@
 package ua.polodarb.flagsChange
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,8 @@ import ua.polodarb.common.Extensions.filterByDisabled
 import ua.polodarb.common.Extensions.filterByEnabled
 import ua.polodarb.common.Extensions.toSortMap
 import ua.polodarb.common.FlagsTypes
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.flagsChange.mappers.mapToExtractBoolData
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
@@ -41,7 +44,8 @@ class FlagChangeScreenViewModel(
     private val repository: GmsDBRepository,
     private val roomRepository: LocalDBRepository,
     private val gmsDBInteractor: GmsDBInteractor,
-    private val flagsFromFileRepository: FlagsFromFileRepository
+    private val flagsFromFileRepository: FlagsFromFileRepository,
+    private val overrideFlagsUseCase: OverrideFlagsUseCase
 ) : ViewModel() {
 
     init {
@@ -126,6 +130,7 @@ class FlagChangeScreenViewModel(
                     fileName = fileName
                 )
             }
+
             else -> Uri.EMPTY
         }
     }
@@ -447,17 +452,15 @@ class FlagChangeScreenViewModel(
     fun enableSelectedFlag() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                listBoolFiltered.forEach { (key, value) ->
-                    if (selectedItems.contains(key) && value == "0") {
-                        overrideFlag(
-                            packageName = pkgName,
-                            key,
-                            boolVal = "1",
-                            clearData = false
-                        )
-                    }
-                }
-                clearPhenotypeCache(pkgName)
+                overrideFlagsUseCase.invoke(
+                    packageName = pkgName,
+                    OverriddenFlagsContainer(
+                        boolValues = listBoolFiltered.filter { selectedItems.contains(it.key) && it.value == "0" }.map { (key, _) -> key to "1" }.toMap(),
+                        intValues = listIntFiltered.filter { selectedItems.contains(it.key) },
+                        floatValues = listFloatFiltered.filter { selectedItems.contains(it.key) },
+                        stringValues = listStringFiltered.filter { selectedItems.contains(it.key) }
+                    )
+                )
                 if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                     turnOnAllBoolFlags()
                 } else {
@@ -469,17 +472,15 @@ class FlagChangeScreenViewModel(
 
     fun disableSelectedFlag() {
         viewModelScope.launch(Dispatchers.IO) {
-            listBoolFiltered.forEach { (key, value) ->
-                if (selectedItems.contains(key) && value == "1") {
-                    overrideFlag(
-                        packageName = pkgName,
-                        key,
-                        boolVal = "0",
-                        clearData = false
-                    )
-                }
-            }
-            clearPhenotypeCache(pkgName)
+            overrideFlagsUseCase.invoke(
+                packageName = pkgName,
+                OverriddenFlagsContainer(
+                    boolValues = listBoolFiltered.filter { selectedItems.contains(it.key) && it.value == "1" }.map { (key, _) -> key to "0" }.toMap(),
+                    intValues = listIntFiltered.filter { selectedItems.contains(it.key) },
+                    floatValues = listFloatFiltered.filter { selectedItems.contains(it.key) },
+                    stringValues = listStringFiltered.filter { selectedItems.contains(it.key) }
+                )
+            )
             if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                 turnOffAllBoolFlags()
             } else {
@@ -499,7 +500,7 @@ class FlagChangeScreenViewModel(
 
 
     // Get original Android package
-    fun getAndroidPackage(pkgName: String) {
+    private fun getAndroidPackage(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAndroidPackage(pkgName).collect {
@@ -509,6 +510,17 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    suspend fun overrideFlag(
+        packageName: String,
+        flags: OverriddenFlagsContainer
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            overrideFlagsUseCase(
+                packageName = packageName,
+                flags = flags
+            )
+        }
+    }
 
     // Override Flag
     fun overrideFlag(

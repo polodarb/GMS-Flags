@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.ui.MainActivity
@@ -66,13 +67,12 @@ class PhixitDetectWorker(
                 val checkResult = !check1 && check2 && check3 && check4
 
                 if (checkResult) {
-                    flags.onEachIndexed { index, (name, value) ->
-                        val isLast = index == flags.size - 1
+                    flags.forEach { (name, value) ->
                         overrideUseCase(
                             packageName = "com.google.android.gms.phenotype",
-                            name = name,
-                            boolVal = value,
-                            clearData = isLast
+                            flags = OverriddenFlagsContainer(
+                                boolValues = mapOf(name to value)
+                            )
                         )
                     }
                     datastore.setOpenGmsSettingsBtnClicked(false)

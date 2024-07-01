@@ -30,7 +30,8 @@ val viewModelsModule = module {
             repository = get(),
             roomRepository = get(),
             gmsDBInteractor = get(),
-            flagsFromFileRepository = get()
+            flagsFromFileRepository = get(),
+            overrideFlagsUseCase = get()
         )
     }
 

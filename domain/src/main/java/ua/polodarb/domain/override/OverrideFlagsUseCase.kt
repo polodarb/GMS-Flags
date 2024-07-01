@@ -1,9 +1,7 @@
 package ua.polodarb.domain.override
 
-import android.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import java.util.Collections
@@ -15,6 +13,7 @@ class OverrideFlagsUseCase(
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
+    // TODO: Rewrite to OverriddenFlagsContainer
     suspend operator fun invoke(
         packageName: String,
         name: String,
@@ -27,11 +26,8 @@ class OverrideFlagsUseCase(
         committed: Int = 0,
         clearData: Boolean = true
     ) {
-        Log.d("usecase", "invoke()")
         try {
-            Log.d("usecase", "enter to try")
             usersList.addAll(repository.getUsers().first())
-            Log.d("usecase", "user is init")
             interactor.overrideFlag(
                 packageName = packageName,
                 name = name,
@@ -42,20 +38,77 @@ class OverrideFlagsUseCase(
                 floatVal = floatVal,
                 stringVal = stringVal
             )
-            Log.d("usecase", "flags overrided")
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("GMS Flags", "Flag override error: ${e.message}")
         }
     }
 
-    private suspend fun initUsers() {
-        withContext(Dispatchers.IO) {
-            withContext(Dispatchers.IO) {
-                repository.getUsers().collect {
-                    usersList.addAll(it)
+    suspend operator fun invoke(
+        packageName: String,
+        flags: OverriddenFlagsContainer
+    ) {
+        try {
+            usersList.addAll(repository.getUsers().first())
+            with(flags) {
+                boolValues?.let {
+                    boolValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            boolVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
                 }
+                intValues?.let {
+                    intValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            intVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                floatValues?.let {
+                    floatValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            floatVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                stringValues?.let {
+                    stringValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            stringVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                extValues?.let {
+                    extValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            extensionVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                interactor.clearPhenotypeCache(packageName)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

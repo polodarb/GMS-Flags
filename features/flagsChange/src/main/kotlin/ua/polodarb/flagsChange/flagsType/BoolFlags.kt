@@ -12,12 +12,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ua.polodarb.common.FlagsTypes
 import ua.polodarb.common.Extensions.toInt
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.flagsChange.BoolValItem
 import ua.polodarb.flagsChange.FlagChangeScreenViewModel
 import ua.polodarb.flagsChange.FlagChangeUiStates
@@ -40,6 +43,7 @@ fun BooleanFlagsScreen(
 ) {
 
     val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     when (val listBool = uiState) {
         is ua.polodarb.repository.uiStates.UiStates.Success -> {
@@ -80,16 +84,19 @@ fun BooleanFlagsScreen(
                                     checked = checked,
                                     isSelected = isSelected,
                                     onCheckedChange = { newValue ->
-                                        viewModel.updateBoolFlagValues(
-                                            listOf(flagName),
-                                            newValue.toInt().toString()
-                                        )
-                                        viewModel.overrideFlag(
-                                            packageName = packageName.toString(),
-                                            name = flagName,
-                                            boolVal = newValue.toInt().toString()
-                                        )
-                                        viewModel.initOverriddenBoolFlags(packageName.toString())
+                                        coroutineScope.launch {
+                                            viewModel.updateBoolFlagValues(
+                                                listOf(flagName),
+                                                newValue.toInt().toString()
+                                            )
+                                            viewModel.overrideFlag(
+                                                packageName = packageName.toString(),
+                                                flags = OverriddenFlagsContainer(
+                                                    boolValues = mapOf(flagName to newValue.toInt().toString())
+                                                )
+                                            )
+                                            viewModel.initOverriddenBoolFlags(packageName.toString())
+                                        }
                                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                     },
                                     saveChecked = isEqual,

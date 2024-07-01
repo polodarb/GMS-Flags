@@ -80,6 +80,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ua.polodarb.common.Extensions.toSortMap
 import ua.polodarb.common.FlagsTypes
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.flagsChange.dialogs.AddFlagDialog
 import ua.polodarb.flagsChange.dialogs.ProgressDialog
 import ua.polodarb.flagsChange.dialogs.ShareFlagsDialog
@@ -737,7 +738,11 @@ fun FlagChangeScreen(
                                 context.startActivity(chooserIntent)
                             } else {
                                 coroutineScope.launch(Dispatchers.Main) {
-                                    Toast.makeText(context, "The file was not created", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "The file was not created",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -887,44 +892,58 @@ fun FlagChangeScreen(
             flagValue = flagAddValue,
             flagValueChange = { flagAddValue = it },
             onAddFlag = {
-                when (flagType) {
-                    0 -> {
-                        viewModel.overrideFlag(
-                            packageName = packageName.toString(),
-                            name = flagAddName,
-                            boolVal = if (flagBoolean == 0) "1" else "0"
-                        )
-                        viewModel.addManuallyBoolFlag(
-                            flagAddName,
-                            if (flagBoolean == 0) "1" else "0"
-                        )
-                    }
+                coroutineScope.launch {
+                    when (flagType) {
+                        0 -> {
+                            val value = if (flagBoolean == 0) "1" else "0"
+                            packageName?.let {
+                                viewModel.overrideFlag(
+                                    packageName = packageName,
+                                    flags = OverriddenFlagsContainer(
+                                        boolValues = mapOf(flagAddName to value)
+                                    )
+                                )
+                                viewModel.addManuallyBoolFlag(
+                                    flagAddName, value
+                                )
+                            }
+                        }
 
-                    1 -> {
-                        viewModel.overrideFlag(
-                            packageName = packageName.toString(),
-                            name = flagAddName,
-                            intVal = flagAddValue
-                        )
-                        viewModel.addManuallyIntFlag(flagAddName, flagAddValue)
-                    }
+                        1 -> {
+                            packageName?.let {
+                                viewModel.overrideFlag(
+                                    packageName = packageName.toString(),
+                                    flags = OverriddenFlagsContainer(
+                                        intValues = mapOf(flagAddName to flagAddValue)
+                                    )
+                                )
+                                viewModel.addManuallyIntFlag(flagAddName, flagAddValue)
+                            }
+                        }
 
-                    2 -> {
-                        viewModel.overrideFlag(
-                            packageName = packageName.toString(),
-                            name = flagAddName,
-                            floatVal = flagAddValue
-                        )
-                        viewModel.addManuallyFloatFlag(flagAddName, flagAddValue)
-                    }
+                        2 -> {
+                            packageName?.let {
+                                viewModel.overrideFlag(
+                                    packageName = packageName.toString(),
+                                    flags = OverriddenFlagsContainer(
+                                        floatValues = mapOf(flagAddName to flagAddValue)
+                                    )
+                                )
+                                viewModel.addManuallyFloatFlag(flagAddName, flagAddValue)
+                            }
+                        }
 
-                    3 -> {
-                        viewModel.overrideFlag(
-                            packageName = packageName.toString(),
-                            name = flagAddName,
-                            stringVal = flagAddValue
-                        )
-                        viewModel.addManuallyStringFlag(flagAddName, flagAddValue)
+                        3 -> {
+                            packageName?.let {
+                                viewModel.overrideFlag(
+                                    packageName = packageName.toString(),
+                                    flags = OverriddenFlagsContainer(
+                                        stringValues = mapOf(flagAddName to flagAddValue)
+                                    )
+                                )
+                                viewModel.addManuallyStringFlag(flagAddName, flagAddValue)
+                            }
+                        }
                     }
                 }
                 dropDownExpanded = false
