@@ -13,7 +13,7 @@ interface GmsDBRepository {
         boolVal: String?,
         floatVal: String?,
         stringVal: String?,
-        extensionVal: String?,
+        extensionVal: ByteArray?,
         committed: Int
     )
 

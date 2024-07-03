@@ -43,7 +43,7 @@ interface IRootDatabase {
         String boolVal,
         String floatVal,
         String stringVal,
-        String extensionVal,
+        in byte[] extensionVal,
         int committed
     );
 

@@ -360,9 +360,8 @@ fun SearchScreen(
             },
             onAdd = {
                 showPackageDialog = false
-                viewModel.overrideFlag(
-                    packageName = addPackageDialogField,
-                    name = "initPackage",
+                viewModel.addPackageToDB(
+                    packageName = addPackageDialogField
                 )
                 viewModel.initGms()
                 addPackageDialogField = ""

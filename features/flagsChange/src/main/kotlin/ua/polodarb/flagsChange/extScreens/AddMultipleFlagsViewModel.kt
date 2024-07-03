@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ua.polodarb.repository.databases.gms.GmsDBInteractor
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import java.util.Collections
 
@@ -18,7 +19,7 @@ typealias AddFlagType = List<String>
 class AddMultipleFlagsViewModel(
     private val pkgName: String,
     private val repository: GmsDBRepository,
-    private val gmsDBInteractor: GmsDBInteractor
+    private val overrideFlagsUseCase: OverrideFlagsUseCase
 ) : ViewModel() {
 
     init {
@@ -79,11 +80,11 @@ class AddMultipleFlagsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             if (booleanFlags.value.isNotEmpty()) {
                 booleanFlags.value.forEach {
-                    gmsDBInteractor.overrideFlag(
+                    overrideFlagsUseCase.invoke(
                         packageName = pkgName,
-                        name = it,
-                        boolVal = if (boolSwitch.value) "1" else "0",
-                        usersList = usersList
+                        flags = OverriddenFlagsContainer(
+                            boolValues = mapOf(it to if (boolSwitch.value) "1" else "0")
+                        )
                     )
                 }
             }
@@ -92,11 +93,11 @@ class AddMultipleFlagsViewModel(
                 integerFlags.value.forEach {
                     val parts = it.split("=")
                     if (parts.size == 2 && parts[0].isNotEmpty() && parts[1].isNotEmpty()) {
-                        gmsDBInteractor.overrideFlag(
+                        overrideFlagsUseCase.invoke(
                             packageName = pkgName,
-                            name = parts[0],
-                            intVal = parts[1],
-                            usersList = usersList
+                            flags = OverriddenFlagsContainer(
+                                intValues = mapOf(parts[0] to parts[1])
+                            )
                         )
                     }
                 }
@@ -106,11 +107,11 @@ class AddMultipleFlagsViewModel(
                 floatFlags.value.forEach {
                     val parts = it.split("=")
                     if (parts.size == 2 && parts[0].isNotEmpty() && parts[1].isNotEmpty()) {
-                        gmsDBInteractor.overrideFlag(
+                        overrideFlagsUseCase.invoke(
                             packageName = pkgName,
-                            name = parts[0],
-                            floatVal = parts[1],
-                            usersList = usersList
+                            flags = OverriddenFlagsContainer(
+                                floatValues = mapOf(parts[0] to parts[1])
+                            )
                         )
                     }
                 }
@@ -120,11 +121,11 @@ class AddMultipleFlagsViewModel(
                 stringFlags.value.forEach {
                     val parts = it.split("=")
                     if (parts.size == 2 && parts[0].isNotEmpty() && parts[1].isNotEmpty()) {
-                        gmsDBInteractor.overrideFlag(
+                        overrideFlagsUseCase.invoke(
                             packageName = pkgName,
-                            name = parts[0],
-                            stringVal = parts[1],
-                            usersList = usersList
+                            flags = OverriddenFlagsContainer(
+                                stringValues = mapOf(parts[0] to parts[1])
+                            )
                         )
                     }
                 }

@@ -1,6 +1,8 @@
 package ua.polodarb.domain.override
 
 import kotlinx.coroutines.flow.first
+import tw.ktrssreader.utils.convertToByteArray
+import ua.polodarb.byteUtils.ByteUtils
 import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
@@ -8,7 +10,8 @@ import java.util.Collections
 
 class OverrideFlagsUseCase(
     private val repository: GmsDBRepository,
-    private val interactor: GmsDBInteractor
+    private val interactor: GmsDBInteractor,
+    private val byteUtils: ByteUtils,
 ) {
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
@@ -99,7 +102,7 @@ class OverrideFlagsUseCase(
                         interactor.overrideFlag(
                             packageName = packageName,
                             name = it.key,
-                            extensionVal = it.value,
+                            extensionVal = byteUtils.convertToByteArray(it.value),
                             usersList = usersList,
                             clearData = false,
                         )

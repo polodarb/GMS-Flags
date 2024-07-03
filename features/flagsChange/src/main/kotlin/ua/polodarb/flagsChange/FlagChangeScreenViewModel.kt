@@ -49,7 +49,6 @@ class FlagChangeScreenViewModel(
 ) : ViewModel() {
 
     init {
-        initUsers()
         getAndroidPackage(pkgName)
     }
 
@@ -96,8 +95,7 @@ class FlagChangeScreenViewModel(
     private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listFloatFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-
-    private val usersList = Collections.synchronizedList(mutableListOf<String>())
+    private val listExtValsFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
 
     // Initialization of flags of all types
     private fun initBoolValues(delay: Boolean = true) {
@@ -458,7 +456,8 @@ class FlagChangeScreenViewModel(
                         boolValues = listBoolFiltered.filter { selectedItems.contains(it.key) && it.value == "0" }.map { (key, _) -> key to "1" }.toMap(),
                         intValues = listIntFiltered.filter { selectedItems.contains(it.key) },
                         floatValues = listFloatFiltered.filter { selectedItems.contains(it.key) },
-                        stringValues = listStringFiltered.filter { selectedItems.contains(it.key) }
+                        stringValues = listStringFiltered.filter { selectedItems.contains(it.key) },
+                        extValues = listExtValsFiltered.filter { selectedItems.contains(it.key) }
                     )
                 )
                 if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
@@ -488,16 +487,6 @@ class FlagChangeScreenViewModel(
             }
         }
     }
-
-    // Init users
-    private fun initUsers() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getUsers().collect {
-                usersList.addAll(it)
-            }
-        }
-    }
-
 
     // Get original Android package
     private fun getAndroidPackage(pkgName: String) {
@@ -531,30 +520,31 @@ class FlagChangeScreenViewModel(
         boolVal: String? = null,
         floatVal: String? = null,
         stringVal: String? = null,
-        extensionVal: String? = null,
+        extensionVal: ByteArray? = null,
         committed: Int = 0,
         clearData: Boolean = true
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            gmsDBInteractor.overrideFlag(
-                packageName = packageName,
-                name = name,
-                flagType = flagType,
-                intVal = intVal,
-                boolVal = boolVal,
-                floatVal = floatVal,
-                stringVal = stringVal,
-                extensionVal = extensionVal,
-                committed = committed,
-                clearData = clearData,
-                usersList = usersList
+            val overriddenFlags = OverriddenFlagsContainer(
+                intValues = if (intVal != null) mapOf(name to intVal) else null,
+                boolValues = if (boolVal != null) mapOf(name to boolVal) else null,
+                floatValues = if (floatVal != null) mapOf(name to floatVal) else null,
+                stringValues = if (stringVal != null) mapOf(name to stringVal) else null,
+                extValues = if (extensionVal != null) mapOf(name to extensionVal.toString(Charsets.UTF_8)) else null // конвертируем ByteArray в строку
             )
+
+            overrideFlagsUseCase.invoke(
+                packageName = packageName,
+                flags = overriddenFlags
+            )
+
+            changedFilterBoolList[name] = boolVal
+            changedFilterIntList[name] = intVal
+            changedFilterFloatList[name] = floatVal
+            changedFilterStringList[name] = stringVal
         }
-        changedFilterBoolList[name] = boolVal
-        changedFilterIntList[name] = intVal
-        changedFilterFloatList[name] = floatVal
-        changedFilterStringList[name] = stringVal
     }
+
 
     fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.appcompat)
     testImplementation(libs.junit)
 
+    implementation(project(":core:byteUtils"))
     implementation(project(":data:repository"))
 
 }

@@ -75,4 +75,5 @@ dependencies {
 
     implementation(project(":core:ui"))
     implementation(project(":data:repository"))
+    implementation(project(":domain"))
 }

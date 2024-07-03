@@ -1,5 +1,8 @@
 package ua.polodarb.byteUtils
 
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
+
 class ByteUtils {
 
     fun textToBytes(text: String): ByteArray {
@@ -12,16 +15,11 @@ class ByteUtils {
         }
     }
 
-    fun textAsBytes(hexString: String): ByteArray {
-        val cleanedHexString = hexString.replace("0x", "").replace("\\s".toRegex(), "")
-        require(cleanedHexString.length % 2 == 0) { "Invalid hex string length" }
-
-        return try {
-            ByteArray(cleanedHexString.length / 2) {
-                cleanedHexString.substring(it * 2, it * 2 + 2).toInt(16).toByte()
-            }
-        } catch (e: NumberFormatException) {
-            throw ByteUtilsException("Invalid hex string format", e)
+    fun convertToByteArray(hexText: String?): ByteArray? {
+        if (hexText.isNullOrEmpty()) return null
+        return ByteArrayOutputStream().use { bytes ->
+            ObjectOutputStream(bytes).writeObject(hexText)
+            bytes.toByteArray()
         }
     }
 }
