@@ -6,13 +6,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -34,9 +30,6 @@ import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
 import ua.polodarb.gmsflags.core.updates.UpdateDialog
-import ua.polodarb.gmsflags.errors.general.CrashActivity
-import ua.polodarb.gmsflags.errors.general.ExceptionHandler
-import ua.polodarb.gmsflags.errors.gms.phixit.PhixitDetectWorker
 import ua.polodarb.gmsflags.errors.gms.stateCheck.GmsCrashesDetectWorker
 import ua.polodarb.gmsflags.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme

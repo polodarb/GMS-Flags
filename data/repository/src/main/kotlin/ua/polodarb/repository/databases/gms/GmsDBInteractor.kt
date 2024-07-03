@@ -10,7 +10,7 @@ interface GmsDBInteractor {
         boolVal: String? = null,
         floatVal: String? = null,
         stringVal: String? = null,
-        extensionVal: String? = null,
+        extensionVal: ByteArray? = null,
         committed: Int = 0,
         clearData: Boolean = true,
         usersList: List<String>

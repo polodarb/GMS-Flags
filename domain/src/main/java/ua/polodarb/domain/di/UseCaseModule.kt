@@ -5,6 +5,6 @@ import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
 
 val useCaseModule = module {
-    single { OverrideFlagsUseCase(repository = get(), interactor = get()) }
+    single { OverrideFlagsUseCase(repository = get(), interactor = get(), byteUtils = get()) }
     single { SuggestedFlagsUseCase(repository = get(), appsRepository = get()) }
 }

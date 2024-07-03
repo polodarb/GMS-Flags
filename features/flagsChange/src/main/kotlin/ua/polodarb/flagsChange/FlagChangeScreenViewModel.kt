@@ -1,6 +1,7 @@
 package ua.polodarb.flagsChange
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,8 @@ import ua.polodarb.common.Extensions.filterByDisabled
 import ua.polodarb.common.Extensions.filterByEnabled
 import ua.polodarb.common.Extensions.toSortMap
 import ua.polodarb.common.FlagsTypes
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.flagsChange.mappers.mapToExtractBoolData
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
@@ -41,11 +44,11 @@ class FlagChangeScreenViewModel(
     private val repository: GmsDBRepository,
     private val roomRepository: LocalDBRepository,
     private val gmsDBInteractor: GmsDBInteractor,
-    private val flagsFromFileRepository: FlagsFromFileRepository
+    private val flagsFromFileRepository: FlagsFromFileRepository,
+    private val overrideFlagsUseCase: OverrideFlagsUseCase
 ) : ViewModel() {
 
     init {
-        initUsers()
         getAndroidPackage(pkgName)
     }
 
@@ -92,8 +95,7 @@ class FlagChangeScreenViewModel(
     private val listIntFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listFloatFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
     private val listStringFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
-
-    private val usersList = Collections.synchronizedList(mutableListOf<String>())
+    private val listExtValsFiltered = Collections.synchronizedMap(mutableMapOf<String, String>())
 
     // Initialization of flags of all types
     private fun initBoolValues(delay: Boolean = true) {
@@ -126,6 +128,7 @@ class FlagChangeScreenViewModel(
                     fileName = fileName
                 )
             }
+
             else -> Uri.EMPTY
         }
     }
@@ -447,17 +450,16 @@ class FlagChangeScreenViewModel(
     fun enableSelectedFlag() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                listBoolFiltered.forEach { (key, value) ->
-                    if (selectedItems.contains(key) && value == "0") {
-                        overrideFlag(
-                            packageName = pkgName,
-                            key,
-                            boolVal = "1",
-                            clearData = false
-                        )
-                    }
-                }
-                clearPhenotypeCache(pkgName)
+                overrideFlagsUseCase.invoke(
+                    packageName = pkgName,
+                    OverriddenFlagsContainer(
+                        boolValues = listBoolFiltered.filter { selectedItems.contains(it.key) && it.value == "0" }.map { (key, _) -> key to "1" }.toMap(),
+                        intValues = listIntFiltered.filter { selectedItems.contains(it.key) },
+                        floatValues = listFloatFiltered.filter { selectedItems.contains(it.key) },
+                        stringValues = listStringFiltered.filter { selectedItems.contains(it.key) },
+                        extValues = listExtValsFiltered.filter { selectedItems.contains(it.key) }
+                    )
+                )
                 if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                     turnOnAllBoolFlags()
                 } else {
@@ -469,17 +471,15 @@ class FlagChangeScreenViewModel(
 
     fun disableSelectedFlag() {
         viewModelScope.launch(Dispatchers.IO) {
-            listBoolFiltered.forEach { (key, value) ->
-                if (selectedItems.contains(key) && value == "1") {
-                    overrideFlag(
-                        packageName = pkgName,
-                        key,
-                        boolVal = "0",
-                        clearData = false
-                    )
-                }
-            }
-            clearPhenotypeCache(pkgName)
+            overrideFlagsUseCase.invoke(
+                packageName = pkgName,
+                OverriddenFlagsContainer(
+                    boolValues = listBoolFiltered.filter { selectedItems.contains(it.key) && it.value == "1" }.map { (key, _) -> key to "0" }.toMap(),
+                    intValues = listIntFiltered.filter { selectedItems.contains(it.key) },
+                    floatValues = listFloatFiltered.filter { selectedItems.contains(it.key) },
+                    stringValues = listStringFiltered.filter { selectedItems.contains(it.key) }
+                )
+            )
             if ((stateBoolean.value as UiStates.Success<Map<String, String>>).data.keys.size == selectedItems.size) {
                 turnOffAllBoolFlags()
             } else {
@@ -488,18 +488,8 @@ class FlagChangeScreenViewModel(
         }
     }
 
-    // Init users
-    private fun initUsers() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getUsers().collect {
-                usersList.addAll(it)
-            }
-        }
-    }
-
-
     // Get original Android package
-    fun getAndroidPackage(pkgName: String) {
+    private fun getAndroidPackage(pkgName: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getAndroidPackage(pkgName).collect {
@@ -509,6 +499,17 @@ class FlagChangeScreenViewModel(
         }
     }
 
+    suspend fun overrideFlag(
+        packageName: String,
+        flags: OverriddenFlagsContainer
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            overrideFlagsUseCase(
+                packageName = packageName,
+                flags = flags
+            )
+        }
+    }
 
     // Override Flag
     fun overrideFlag(
@@ -519,30 +520,31 @@ class FlagChangeScreenViewModel(
         boolVal: String? = null,
         floatVal: String? = null,
         stringVal: String? = null,
-        extensionVal: String? = null,
+        extensionVal: ByteArray? = null,
         committed: Int = 0,
         clearData: Boolean = true
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            gmsDBInteractor.overrideFlag(
-                packageName = packageName,
-                name = name,
-                flagType = flagType,
-                intVal = intVal,
-                boolVal = boolVal,
-                floatVal = floatVal,
-                stringVal = stringVal,
-                extensionVal = extensionVal,
-                committed = committed,
-                clearData = clearData,
-                usersList = usersList
+            val overriddenFlags = OverriddenFlagsContainer(
+                intValues = if (intVal != null) mapOf(name to intVal) else null,
+                boolValues = if (boolVal != null) mapOf(name to boolVal) else null,
+                floatValues = if (floatVal != null) mapOf(name to floatVal) else null,
+                stringValues = if (stringVal != null) mapOf(name to stringVal) else null,
+                extValues = if (extensionVal != null) mapOf(name to extensionVal.toString(Charsets.UTF_8)) else null // конвертируем ByteArray в строку
             )
+
+            overrideFlagsUseCase.invoke(
+                packageName = packageName,
+                flags = overriddenFlags
+            )
+
+            changedFilterBoolList[name] = boolVal
+            changedFilterIntList[name] = intVal
+            changedFilterFloatList[name] = floatVal
+            changedFilterStringList[name] = stringVal
         }
-        changedFilterBoolList[name] = boolVal
-        changedFilterIntList[name] = intVal
-        changedFilterFloatList[name] = floatVal
-        changedFilterStringList[name] = stringVal
     }
+
 
     fun clearPhenotypeCache(pkgName: String) {
         viewModelScope.launch(Dispatchers.IO) {

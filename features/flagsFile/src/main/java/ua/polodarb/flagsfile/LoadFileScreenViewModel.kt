@@ -11,9 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.flagsfile.model.LoadedFlagsUI
 import ua.polodarb.flagsfile.model.toLoadedFlagsUIList
-import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.flagsFile.FlagsFromFileRepository
 import ua.polodarb.repository.uiStates.UiStates
@@ -23,7 +24,7 @@ class LoadFileScreenViewModel(
     private val fileUri: Uri?,
     private val repository: FlagsFromFileRepository,
     private val gmsDBRepository: GmsDBRepository,
-    private val gmsDBInteractor: GmsDBInteractor
+    private val overrideFlagsUseCase: OverrideFlagsUseCase
 ) : ViewModel() {
 
     private val _flagsData = MutableStateFlow<UiStates<LoadedFlagsUI>>(UiStates.Loading())
@@ -96,60 +97,40 @@ class LoadFileScreenViewModel(
                     var flagsProcessed = 0
 
                     data.data.flags.forEach { flag ->
-                        when (flag.type) {
-                            "Boolean" -> {
-                                if (flag.override) {
-                                    gmsDBInteractor.overrideFlag(
-                                        packageName = data.data.packageName,
-                                        name = flag.name,
-                                        boolVal = if (flag.value == true) "1" else "0",
-                                        usersList = usersList
-                                    )
-                                }
+                        if (flag.override) {
+                            val overriddenFlags = when (flag.type) {
+                                "Boolean" -> OverriddenFlagsContainer(
+                                    boolValues = mapOf(flag.name to if (flag.value == true) "1" else "0")
+                                )
+
+                                "Int" -> OverriddenFlagsContainer(
+                                    intValues = mapOf(flag.name to flag.value.toString())
+                                )
+
+                                "Float" -> OverriddenFlagsContainer(
+                                    floatValues = mapOf(flag.name to flag.value.toString())
+                                )
+
+                                "String" -> OverriddenFlagsContainer(
+                                    stringValues = mapOf(flag.name to flag.value.toString())
+                                )
+
+                                "ExtensionVal" -> OverriddenFlagsContainer(
+                                    extValues = mapOf(flag.name to flag.value.toString())
+                                )
+
+                                else -> null
                             }
-                            "Int" -> {
-                                if (flag.override) {
-                                    gmsDBInteractor.overrideFlag(
-                                        packageName = data.data.packageName,
-                                        name = flag.name,
-                                        intVal = flag.value.toString(),
-                                        usersList = usersList
-                                    )
-                                }
-                            }
-                            "Float" -> {
-                                if (flag.override) {
-                                    gmsDBInteractor.overrideFlag(
-                                        packageName = data.data.packageName,
-                                        name = flag.name,
-                                        floatVal = flag.value.toString(),
-                                        usersList = usersList
-                                    )
-                                }
-                            }
-                            "String" -> {
-                                if (flag.override) {
-                                    gmsDBInteractor.overrideFlag(
-                                        packageName = data.data.packageName,
-                                        name = flag.name,
-                                        stringVal = flag.value.toString(),
-                                        usersList = usersList
-                                    )
-                                }
-                            }
-                            "ExtensionVal" -> {
-                                if (flag.override) {
-                                    gmsDBInteractor.overrideFlag(
-                                        packageName = data.data.packageName,
-                                        name = flag.name,
-                                        extensionVal = flag.value.toString(),
-                                        usersList = usersList
-                                    )
-                                }
+
+                            overriddenFlags?.let {
+                                overrideFlagsUseCase.invoke(
+                                    packageName = data.data.packageName,
+                                    flags = it
+                                )
                             }
                         }
 
-                        flagsProcessed++
+                    flagsProcessed++
                         val progressResult = (flagsProcessed.toFloat() / totalFlags.toFloat())
                         progress(progressResult)
                     }

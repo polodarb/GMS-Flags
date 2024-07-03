@@ -30,7 +30,8 @@ val viewModelsModule = module {
             repository = get(),
             roomRepository = get(),
             gmsDBInteractor = get(),
-            flagsFromFileRepository = get()
+            flagsFromFileRepository = get(),
+            overrideFlagsUseCase = get()
         )
     }
 
@@ -56,8 +57,8 @@ val viewModelsModule = module {
         SuggestionScreenViewModel(
             repository = get(),
             appsRepository = get(),
-            interactor = get(),
-            flagsUseCase = get()
+            flagsUseCase = get(),
+            overrideFlagsUseCase = get()
         )
     }
 
@@ -77,14 +78,14 @@ val viewModelsModule = module {
         AddMultipleFlagsViewModel(
             pkgName = get(),
             repository = get(),
-            gmsDBInteractor = get()
+            overrideFlagsUseCase = get()
         )
     }
 
     viewModel {
         LoadFileScreenViewModel(
             fileUri = get(),
-            gmsDBInteractor = get(),
+            overrideFlagsUseCase = get(),
             gmsDBRepository = get(),
             repository = get(),
         )

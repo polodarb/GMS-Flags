@@ -1,20 +1,22 @@
 package ua.polodarb.domain.override
 
-import android.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import tw.ktrssreader.utils.convertToByteArray
+import ua.polodarb.byteUtils.ByteUtils
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import java.util.Collections
 
 class OverrideFlagsUseCase(
     private val repository: GmsDBRepository,
-    private val interactor: GmsDBInteractor
+    private val interactor: GmsDBInteractor,
+    private val byteUtils: ByteUtils,
 ) {
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
+    // TODO: Rewrite to OverriddenFlagsContainer
     suspend operator fun invoke(
         packageName: String,
         name: String,
@@ -41,17 +43,75 @@ class OverrideFlagsUseCase(
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("GMS Flags", "Flag override error: ${e.message}")
         }
     }
 
-    private suspend fun initUsers() {
-        withContext(Dispatchers.IO) {
-            withContext(Dispatchers.IO) {
-                repository.getUsers().collect {
-                    usersList.addAll(it)
+    suspend operator fun invoke(
+        packageName: String,
+        flags: OverriddenFlagsContainer
+    ) {
+        try {
+            usersList.addAll(repository.getUsers().first())
+            with(flags) {
+                boolValues?.let {
+                    boolValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            boolVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
                 }
+                intValues?.let {
+                    intValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            intVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                floatValues?.let {
+                    floatValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            floatVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                stringValues?.let {
+                    stringValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            stringVal = it.value,
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                extValues?.let {
+                    extValues.forEach {
+                        interactor.overrideFlag(
+                            packageName = packageName,
+                            name = it.key,
+                            extensionVal = byteUtils.convertToByteArray(it.value),
+                            usersList = usersList,
+                            clearData = false,
+                        )
+                    }
+                }
+                interactor.clearPhenotypeCache(packageName)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

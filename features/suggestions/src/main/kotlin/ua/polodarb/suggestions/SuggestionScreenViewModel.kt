@@ -1,6 +1,5 @@
 package ua.polodarb.suggestions
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,13 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
 import ua.polodarb.domain.suggestedFlags.models.SuggestedFlagsModel
 import ua.polodarb.repository.appsList.AppsListRepository
-import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
 import ua.polodarb.repository.suggestedFlags.models.FlagTypeRepoModel
@@ -29,8 +28,8 @@ typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlagsModel>>
 class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
     private val appsRepository: AppsListRepository,
-    private val interactor: GmsDBInteractor,
     private val flagsUseCase: SuggestedFlagsUseCase,
+    private val overrideFlagsUseCase: OverrideFlagsUseCase,
 ) : ViewModel() {
 
     private val _stateSuggestionsFlags =
@@ -102,33 +101,6 @@ class SuggestionScreenViewModel(
         }
     }
 
-    suspend fun overrideFlag(
-        packageName: String,
-        name: String,
-        flagType: Int = 0,
-        intVal: String? = null,
-        boolVal: String? = null,
-        floatVal: String? = null,
-        stringVal: String? = null,
-        extensionVal: String? = null,
-        committed: Int = 0,
-        clearData: Boolean = true
-    ) {
-        interactor.overrideFlag(
-            packageName = packageName,
-            name = name,
-            flagType = flagType,
-            intVal = intVal,
-            boolVal = boolVal,
-            floatVal = floatVal,
-            stringVal = stringVal,
-            extensionVal = extensionVal,
-            committed = committed,
-            clearData = clearData,
-            usersList = usersList
-        )
-    }
-
     fun overrideSuggestedFlags(
         flags: List<FlagInfoRepoModel>,
         packageName: String,
@@ -139,44 +111,33 @@ class SuggestionScreenViewModel(
             withContext(Dispatchers.IO) {
                 updateFlagValue(newBoolValue, index)
                 flags.forEach { flag ->
-                    when (flag.type) {
-                        FlagTypeRepoModel.BOOL -> {
-                            overrideFlag(
-                                packageName = packageName,
-                                name = flag.name,
-                                boolVal = if (newBoolValue) flag.value else "0"
-                            )
-                        }
+                    val overriddenFlags = when (flag.type) {
+                        FlagTypeRepoModel.BOOL -> OverriddenFlagsContainer(
+                            boolValues = mapOf(flag.name to if (newBoolValue) flag.value else "0") // or null?
+                        )
+                        FlagTypeRepoModel.INTEGER -> OverriddenFlagsContainer(
+                            intValues = mapOf(flag.name to if (newBoolValue) flag.value else null)
+                        )
+                        FlagTypeRepoModel.FLOAT -> OverriddenFlagsContainer(
+                            floatValues = mapOf(flag.name to if (newBoolValue) flag.value else null)
+                        )
+                        FlagTypeRepoModel.STRING -> OverriddenFlagsContainer(
+                            stringValues = mapOf(flag.name to if (newBoolValue) flag.value else null)
+                        )
+                        FlagTypeRepoModel.EXTVAL -> OverriddenFlagsContainer(
+                            extValues = mapOf(flag.name to if (newBoolValue) flag.value else null)
+                        )
+                        else -> null
+                    }
 
-                        FlagTypeRepoModel.INTEGER -> {
-                            overrideFlag(
-                                packageName = packageName,
-                                name = flag.name,
-                                intVal = if (newBoolValue) flag.value else "0"
-                            )
-                        }
-
-                        FlagTypeRepoModel.FLOAT -> {
-                            overrideFlag(
-                                packageName = packageName,
-                                name = flag.name,
-                                floatVal = if (newBoolValue) flag.value else "0"
-                            )
-                        }
-
-                        FlagTypeRepoModel.STRING -> {
-                            overrideFlag(
-                                packageName = packageName,
-                                name = flag.name,
-                                stringVal = if (newBoolValue) flag.value else ""
-                            )
-                        }
-
-                        FlagTypeRepoModel.EXTVAL -> {
-                            // TODO
-                        }
+                    overriddenFlags?.let {
+                        overrideFlagsUseCase.invoke(
+                            packageName = packageName,
+                            flags = it
+                        )
                     }
                 }
+
             }
         }
     }

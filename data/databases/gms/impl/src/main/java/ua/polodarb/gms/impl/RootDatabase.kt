@@ -3,7 +3,6 @@ package ua.polodarb.gms.impl
 import android.content.ContentValues
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
@@ -113,7 +112,7 @@ class RootDatabase : RootService() {
                 boolVal: String?,
                 floatVal: String?,
                 stringVal: String?,
-                extensionVal: String?,
+                extensionVal: ByteArray?,
                 committed: Int
             ) {
                 return this@RootDatabase.overrideFlag(
@@ -246,7 +245,7 @@ class RootDatabase : RootService() {
         boolVal: String?,
         floatVal: String?,
         stringVal: String?,
-        extensionVal: String?,
+        extensionVal: ByteArray?,
         committed: Int
     ) {
         val values = ContentValues().apply {
@@ -268,6 +267,7 @@ class RootDatabase : RootService() {
             vendingDB.insertWithOnConflict("FlagOverrides", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         }
     }
+
 
     private fun getBoolFlags(pkgName: String): Map<String, String> {
         val cursor = gmsDB.rawQuery(

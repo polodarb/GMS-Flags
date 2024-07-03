@@ -171,6 +171,7 @@ dependencies {
     implementation(project(":core:platform"))
     implementation(project(":core:ui"))
     implementation(project(":core:common"))
+    implementation(project(":core:byteUtils"))
 
     implementation(project(":data:repository"))
     implementation(project(":data:repository:impl"))

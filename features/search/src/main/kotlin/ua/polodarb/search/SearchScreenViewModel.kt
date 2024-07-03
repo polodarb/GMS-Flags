@@ -13,9 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ua.polodarb.domain.override.OverrideFlagsUseCase
+import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.repository.appsList.AppInfo
 import ua.polodarb.repository.appsList.AppsListRepository
-import ua.polodarb.repository.databases.gms.GmsDBInteractor
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.databases.local.LocalDBRepository
 import ua.polodarb.repository.suggestedFlags.SuggestedFlagsRepository
@@ -37,7 +38,7 @@ class SearchScreenViewModel(
     private val gmsRepository: GmsDBRepository,
     private val roomRepository: LocalDBRepository,
     private val mergedFlags: SuggestedFlagsRepository,
-    private val gmsDBInteractor: GmsDBInteractor
+    private val overrideFlagsUseCase: OverrideFlagsUseCase
 ) : ViewModel() {
 
     // Apps List
@@ -261,31 +262,13 @@ class SearchScreenViewModel(
         }
     }
 
-    fun overrideFlag(
-        packageName: String,
-        name: String,
-        flagType: Int = 0,
-        intVal: String? = null,
-        boolVal: String? = null,
-        floatVal: String? = null,
-        stringVal: String? = null,
-        extensionVal: String? = null,
-        committed: Int = 0,
-        clearData: Boolean = true
+    fun addPackageToDB(
+        packageName: String
     ) {
         viewModelScope.launch {
-            gmsDBInteractor.overrideFlag(
+            overrideFlagsUseCase.invoke(
                 packageName = packageName,
-                name = name,
-                flagType = flagType,
-                intVal = intVal,
-                boolVal = boolVal,
-                floatVal = floatVal,
-                stringVal = stringVal,
-                extensionVal = extensionVal,
-                committed = committed,
-                clearData = clearData,
-                usersList = emptyList()
+                flags = OverriddenFlagsContainer()
             )
         }
     }
