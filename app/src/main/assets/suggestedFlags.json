@@ -81,7 +81,7 @@
   {
     "isPrimary": true,
     "title": "Enable call recording",
-    "flagPackage": "com.google.android.dialer.directboot",
+    "flagPackage": "com.google.android.dialer",
     "appPackage": "com.google.android.dialer",
     "flags": [
       {
