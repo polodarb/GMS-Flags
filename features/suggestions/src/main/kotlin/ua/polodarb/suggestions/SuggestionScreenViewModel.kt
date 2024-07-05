@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import ua.polodarb.domain.countryIso.SimCountryIsoUseCase
 import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.domain.override.models.OverriddenFlagsContainer
@@ -247,14 +248,9 @@ class SuggestionScreenViewModel(
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun convertToHexByteString(config: CallScreenI18nConfig): String {
-        val byteArray = serializeToByteArray(config)
-        return "0x" + byteArray.joinToString("") { it.toString(16).padStart(2, '0') }
+        val byteArray = ProtoBuf.encodeToByteArray(config)
+        return "0x" + byteArray.joinToString("") { "%02X".format(it) }
     }
-
-    private fun serializeToByteArray(config: CallScreenI18nConfig): ByteArray {
-        val json = Json.encodeToString(config)
-        return json.toByteArray()
-    }
-
 }

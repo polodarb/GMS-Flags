@@ -79,6 +79,8 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
 
+    implementation(libs.kotlinx.serialization.protobuf)
+
     implementation(libs.core.ktx)
     implementation(libs.google.material)
     testImplementation(libs.junit)
