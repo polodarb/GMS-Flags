@@ -1,9 +1,6 @@
-import com.google.protobuf.gradle.id
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("com.google.protobuf") version "0.9.4"
 }
 
 android {
@@ -42,28 +39,10 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.work.manager)
 
-    implementation(libs.protobuf.java)
-
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso.core)
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.19.4"
-    }
-
-    generateProtoTasks {
-        all().configureEach {
-            builtins {
-                id("java") {
-                    option("lite")
-                }
-            }
-        }
-    }
 }
