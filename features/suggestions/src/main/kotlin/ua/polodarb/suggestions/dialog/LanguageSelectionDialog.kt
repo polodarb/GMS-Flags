@@ -37,37 +37,17 @@ fun LanguageSelectionDialog(
     var customLocale by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
 
-    val locales = listOf(
-        "English (en-US)",
-        "Spanish (es-ES)",
-        "Ukrainian (uk-UA)",
-        "Hindi (hi-IN)",
-        "Chinese (zh-CN)",
-        "French (fr-FR)",
-        "German (de-DE)",
-        "Italian (it-IT)",
-        "Portuguese (pt-BR)",
-        "Japanese (ja-JP)",
-        "Korean (ko-KR)",
-        "Arabic (ar-SA)",
-        "Turkish (tr-TR)",
-        "Dutch (nl-NL)",
-        "Polish (pl-PL)",
-        "Swedish (sv-SE)",
-        "Russian (ru-RU)",
-        "Danish (da-DK)",
-        "Finnish (fi-FI)",
-        "Norwegian (no-NO)",
-        "Greek (el-GR)",
-        "Hebrew (he-IL)",
-        "Thai (th-TH)",
-        "Indonesian (id-ID)",
-        "Vietnamese (vi-VN)",
-        "Czech (cs-CZ)",
-        "Hungarian (hu-HU)",
-        "Romanian (ro-RO)",
-        "Bulgarian (bg-BG)",
-        "Croatian (hr-HR)"
+    val locales = mapOf(
+        "en" to "English",
+        "en-AU" to "English (Australia)",
+        "en-GB" to "English (United Kingdom)",
+        "en-HI" to "English (India)",
+        "ja-JP" to "Japanese (Japan)",
+        "fr-FR" to "French (France)",
+        "hi-IN" to "Hindi (India)",
+        "de-DE" to "German (Germany)",
+        "it-IT" to "Italian (Italy)",
+        "es-ES" to "Spanish (Spain)"
     )
 
     if (showDialog) {
@@ -82,7 +62,7 @@ fun LanguageSelectionDialog(
                     LazyColumn(
                         modifier = Modifier.height(286.dp)
                     ) {
-                        items(locales) { locale ->
+                        items(locales.keys.toList()) { locale ->
                             Row(
                                 Modifier
                                     .fillMaxWidth()
@@ -100,7 +80,7 @@ fun LanguageSelectionDialog(
                                     onClick = null
                                 )
                                 Text(
-                                    text = locale,
+                                    text = locales[locale] ?: locale,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
                             }
