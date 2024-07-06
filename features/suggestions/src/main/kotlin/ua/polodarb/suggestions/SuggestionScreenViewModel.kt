@@ -211,38 +211,34 @@ class SuggestionScreenViewModel(
 
     @OptIn(ExperimentalSerializationApi::class)
     suspend fun overrideCallScreenI18nConfig(locale: String) {
-        val result = simCountryIsoUseCase.invoke()
-
-        if (result.isSuccess) {
-            val simCountryIso = result.getOrNull() ?: return
-
-            val callScreenI18nConfig = CallScreenI18nConfig(
-                countryConfigs = listOf(
-                    CountryConfig(
-                        country = simCountryIso,
-                        languageConfig = LanguageConfig(
-                            languages = listOf(
-                                Language(
-                                    languageCode = locale,
-                                    a6 = A6(a7 = byteArrayOf(2))
-                                )
+        val callScreenI18nConfig = CallScreenI18nConfig(
+            countryConfigs = listOf(
+                CountryConfig(
+                    country = extractCountryIso(locale),
+                    languageConfig = LanguageConfig(
+                        languages = listOf(
+                            Language(
+                                languageCode = locale,
+                                a6 = A6(a7 = byteArrayOf(2))
                             )
                         )
                     )
                 )
             )
+        )
 
-            val byteString = ProtoBuf.encodeToHexString(callScreenI18nConfig)
-            val overriddenFlags = OverriddenFlagsContainer(
-                extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
-            )
+        val byteString = ProtoBuf.encodeToHexString(callScreenI18nConfig)
+        val overriddenFlags = OverriddenFlagsContainer(
+            extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
+        )
 
 //            Log.e("callscreen", overriddenFlags.toString())
 
-            overrideFlagsUseCase.invoke("com.google.android.dialer", overriddenFlags)
-        } else if (result.isFailure) {
-            val exception = result.exceptionOrNull()
-            exception?.printStackTrace()
-        }
+        overrideFlagsUseCase.invoke("com.google.android.dialer", overriddenFlags)
+    }
+
+    private fun extractCountryIso(languageCode: String): String {
+        val parts = languageCode.split("-")
+        return if (parts.size > 1) parts[1].lowercase() else parts[0]
     }
 }
