@@ -239,6 +239,10 @@ class SuggestionScreenViewModel(
 
     private fun extractCountryIso(languageCode: String): String {
         val parts = languageCode.split("-")
-        return if (parts.size > 1) parts[1].lowercase() else parts[0]
+        if (parts.size > 1) return parts[1].lowercase()
+
+        val result = simCountryIsoUseCase.invoke()
+        if (result.isSuccess) return result.getOrThrow()
+        throw result.exceptionOrNull() ?: Exception()
     }
 }
