@@ -209,6 +209,7 @@ class SuggestionScreenViewModel(
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     suspend fun overrideCallScreenI18nConfig(locale: String) {
         val result = simCountryIsoUseCase.invoke()
 
@@ -231,8 +232,7 @@ class SuggestionScreenViewModel(
                 )
             )
 
-            val byteString = convertToSQLiteHex(callScreenI18nConfig)
-
+            val byteString = ProtoBuf.encodeToHexString(callScreenI18nConfig)
             val overriddenFlags = OverriddenFlagsContainer(
                 extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
             )
@@ -244,10 +244,5 @@ class SuggestionScreenViewModel(
             val exception = result.exceptionOrNull()
             exception?.printStackTrace()
         }
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun convertToSQLiteHex(config: CallScreenI18nConfig): String {
-        return "x'${ProtoBuf.encodeToHexString(config)}'"
     }
 }
