@@ -1,6 +1,5 @@
 package ua.polodarb.suggestions
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -12,14 +11,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.encodeToHexString
 import kotlinx.serialization.protobuf.ProtoBuf
 import ua.polodarb.domain.countryIso.SimCountryIsoUseCase
 import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
 import ua.polodarb.domain.suggestedFlags.models.GroupedSuggestedFlagsModel
-import ua.polodarb.domain.suggestedFlags.models.SuggestedFlagsModel
 import ua.polodarb.repository.appsList.AppsListRepository
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
@@ -233,7 +231,7 @@ class SuggestionScreenViewModel(
                 )
             )
 
-            val byteString = convertToHexByteString(callScreenI18nConfig)
+            val byteString = convertToSQLiteHex(callScreenI18nConfig)
 
             val overriddenFlags = OverriddenFlagsContainer(
                 extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
@@ -249,8 +247,7 @@ class SuggestionScreenViewModel(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private fun convertToHexByteString(config: CallScreenI18nConfig): String {
-        val byteArray = ProtoBuf.encodeToByteArray(config)
-        return "0x" + byteArray.joinToString("") { "%02X".format(it) }
+    private fun convertToSQLiteHex(config: CallScreenI18nConfig): String {
+        return "x'${ProtoBuf.encodeToHexString(config)}'"
     }
 }
