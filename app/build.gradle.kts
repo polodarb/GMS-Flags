@@ -166,8 +166,6 @@ dependencies {
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
-
     implementation(project(":core:platform"))
     implementation(project(":core:ui"))
     implementation(project(":core:common"))

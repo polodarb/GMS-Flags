@@ -1,5 +1,6 @@
 package ua.polodarb.repository.impl.databases.gms
 
+import android.util.Log
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -58,22 +59,41 @@ class GmsDBInteractorImpl(
 
     override suspend fun clearPhenotypeCache(pkgName: String) {
         val androidPkgName = repository.getAndroidPackage(pkgName).first()
-        Shell.cmd("am force-stop $androidPkgName").exec()
-        Shell.cmd("rm -rf /data/data/$androidPkgName/files/phenotype").exec()
-        if (pkgName.contains("finsky") || pkgName.contains("vending")) {
-            Shell.cmd("rm -rf /data/data/com.android.vending/files/experiment*").exec()
-            Shell.cmd("am force-stop com.android.vending").exec()
+
+        // Function to execute shell commands and log errors if any
+        fun execShellCommand(command: String) {
+            try {
+                Shell.cmd(command).exec()
+            } catch (e: Exception) {
+                Log.e("ClearPhenotypeCache", "Error executing command: $command", e)
+            }
         }
-        if (pkgName.contains("com.google.android.apps.photos")) {
-            Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*")
-                .exec()
-            Shell.cmd("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml")
-                .exec()
-            Shell.cmd("am force-stop com.google.android.apps.photos").exec()
+
+        // General cleanup for the given package
+        execShellCommand("am force-stop $androidPkgName")
+        execShellCommand("rm -rf /data/data/$androidPkgName/files/phenotype")
+
+        // Specific cleanup for certain packages
+        when {
+            pkgName.contains("finsky") || pkgName.contains("vending") -> {
+                execShellCommand("rm -rf /data/data/com.android.vending/files/experiment*")
+                execShellCommand("am force-stop com.android.vending")
+            }
+            pkgName.contains("com.google.android.dialer") -> {
+                execShellCommand("rm -rf /data/data/com.google.android.dialer/files/phenotype*")
+                execShellCommand("rm -rf /data/data/com.google.android.dialer/shared_prefs/dialer_phenotype_flags.xml")
+            }
+            pkgName.contains("com.google.android.apps.photos") -> {
+                execShellCommand("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/phenotype*")
+                execShellCommand("rm -rf /data/data/com.google.android.apps.photos/shared_prefs/com.google.android.apps.photos.phenotype.xml")
+                execShellCommand("am force-stop com.google.android.apps.photos")
+            }
         }
+
+        // Restart the application 3 times
         repeat(3) {
-            Shell.cmd("am start -a android.intent.action.MAIN -n $androidPkgName &").exec()
-            Shell.cmd("am force-stop $androidPkgName").exec()
+            execShellCommand("am force-stop $androidPkgName")
+            execShellCommand("am start -a android.intent.action.MAIN -n $androidPkgName &")
         }
     }
 

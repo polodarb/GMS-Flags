@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToHexString
+import kotlinx.serialization.protobuf.ProtoBuf
+import ua.polodarb.domain.countryIso.SimCountryIsoUseCase
 import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
@@ -19,6 +23,12 @@ import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
 import ua.polodarb.repository.suggestedFlags.models.FlagTypeRepoModel
 import ua.polodarb.repository.uiStates.UiStates
+import ua.polodarb.suggestions.specialFlags.callScreen.A6
+import ua.polodarb.suggestions.specialFlags.callScreen.CallScreenDialogData
+import ua.polodarb.suggestions.specialFlags.callScreen.CallScreenI18nConfig
+import ua.polodarb.suggestions.specialFlags.callScreen.CountryConfig
+import ua.polodarb.suggestions.specialFlags.callScreen.Language
+import ua.polodarb.suggestions.specialFlags.callScreen.LanguageConfig
 import java.util.Collections
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -30,6 +40,7 @@ class SuggestionScreenViewModel(
     private val appsRepository: AppsListRepository,
     private val flagsUseCase: SuggestedFlagsUseCase,
     private val overrideFlagsUseCase: OverrideFlagsUseCase,
+    private val simCountryIsoUseCase: SimCountryIsoUseCase,
 ) : ViewModel() {
 
     private val _stateSuggestionsFlags =
@@ -38,6 +49,8 @@ class SuggestionScreenViewModel(
         _stateSuggestionsFlags.asStateFlow()
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
+
+    var callScreenDialogData: CallScreenDialogData? = null
 
     init {
         initUsers()
@@ -52,7 +65,7 @@ class SuggestionScreenViewModel(
         }
     }
 
-    private fun updateFlagValue(newValue: Boolean, index: Int) {
+    fun updateFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
         if (currentState is UiStates.Success) {
             val updatedData = currentState.data.toMutableList()
@@ -65,7 +78,7 @@ class SuggestionScreenViewModel(
                                 it.flag,
                                 it.enabled
                             )
-                        }
+                        }.sortedByDescending { it.flag.isPrimary }
                     )
             }
         }
@@ -104,12 +117,10 @@ class SuggestionScreenViewModel(
     fun overrideSuggestedFlags(
         flags: List<FlagInfoRepoModel>,
         packageName: String,
-        index: Int,
         newBoolValue: Boolean
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                updateFlagValue(newBoolValue, index)
                 flags.forEach { flag ->
                     val overriddenFlags = when (flag.type) {
                         FlagTypeRepoModel.BOOL -> OverriddenFlagsContainer(
@@ -187,4 +198,38 @@ class SuggestionScreenViewModel(
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    suspend fun overrideCallScreenI18nConfig(locale: String) {
+        val callScreenI18nConfig = CallScreenI18nConfig(
+            countryConfigs = listOf(
+                CountryConfig(
+                    country = extractCountryIso(locale),
+                    languageConfig = LanguageConfig(
+                        languages = listOf(
+                            Language(
+                                languageCode = locale,
+                                a6 = A6(a7 = byteArrayOf(2))
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val byteString = ProtoBuf.encodeToHexString(callScreenI18nConfig)
+        val overriddenFlags = OverriddenFlagsContainer(
+            extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
+        )
+
+        overrideFlagsUseCase.invoke("com.google.android.dialer", overriddenFlags)
+    }
+
+    private fun extractCountryIso(languageCode: String): String {
+        val parts = languageCode.split("-")
+        if (parts.size > 1) return parts[1].lowercase()
+
+        val result = simCountryIsoUseCase.invoke()
+        if (result.isSuccess) return result.getOrThrow()
+        throw result.exceptionOrNull() ?: Exception()
+    }
 }
