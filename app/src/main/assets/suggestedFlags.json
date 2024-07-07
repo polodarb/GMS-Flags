@@ -6,6 +6,7 @@
     "title": "Enable Call Screen feature",
     "flagPackage": "com.google.android.dialer",
     "appPackage": "com.google.android.dialer",
+    "group": "Phone",
     "flags": [
       {
         "name": "G__enable_embedding_spam_manual_call_screen",
@@ -110,6 +111,7 @@
     "title": "Enable call recording",
     "flagPackage": "com.google.android.dialer",
     "appPackage": "com.google.android.dialer",
+    "group": "Phone",
     "flags": [
       {
         "name": "G__enable_call_recording",
@@ -154,6 +156,7 @@
     "appPackage": "com.google.android.apps.tasks",
     "source": "AssembleDebug",
     "minAppVersionCode": 1704481,
+    "group": "Tasks",
     "flags": [
       {
         "name": "JadwalPhaseOne__date_and_recurrence_chip_changes_enabled",
@@ -173,6 +176,7 @@
     "flagPackage": "com.google.android.keep#com.google.android.keep",
     "appPackage": "com.google.android.keep",
     "detailsLink": "https://t.me/gmsflags_content/43",
+    "group": "Keep",
     "flags": [
       {
         "name": "45618251",
@@ -189,6 +193,7 @@
     "flagPackage": "com.google.android.libraries.search.googleapp.user#com.google.android.googlequicksearchbox",
     "appPackage": "com.google.android.googlequicksearchbox",
     "detailsLink": "https://t.me/gmsflags_content/33",
+    "group": "Google",
     "flags": [
       {
         "name": "45478044",
@@ -214,6 +219,7 @@
     "appPackage": "com.google.android.apps.photos",
     "minAppVersionCode": 48792594,
     "detailsLink": "https://t.me/gmsflags_content/39",
+    "group": "Photos",
     "flags": [
       {
         "name": "45617367",
@@ -228,6 +234,7 @@
     "flagPackage": "com.google.android.apps.tasks",
     "appPackage": "com.google.android.apps.tasks",
     "detailsLink": "https://t.me/gmsflags_content/19",
+    "group": "Tasks",
     "flags": [
       {
         "name": "DateShortcuts__enabled",
@@ -240,6 +247,10 @@
     "title": "\"G\" on space in GBoard",
     "source": "RBoard Themes",
     "note": "If you want G not to disappear but to be displayed permanently, change this flag:\nInteger - branding_fadeout_delay_ms (Value: 600)",
+    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "appPackage": "com.google.android.inputmethod.latin",
+    "detailsLink": "https://t.me/gmsflags_content/16",
+    "group": "GBoard",
     "flags": [
       {
         "name": "show_branding_interval_seconds",
@@ -251,23 +262,21 @@
         "type": "bool",
         "value": "1"
       }
-    ],
-    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
-    "appPackage": "com.google.android.inputmethod.latin",
-    "detailsLink": "https://t.me/gmsflags_content/16"
+    ]
   },
   {
     "title": "Floating NavBar in Google Photos",
     "source": "Danyil Kobzar",
+    "group": "Photos",
+    "flagPackage": "com.google.android.apps.photos",
+    "appPackage": "com.google.android.apps.photos",
+    "detailsLink": "https://t.me/gmsflags_content/12",
     "flags": [
       {
         "name": "45415956",
         "type": "int",
         "value": "1"
       }
-    ],
-    "flagPackage": "com.google.android.apps.photos",
-    "appPackage": "com.google.android.apps.photos",
-    "detailsLink": "https://t.me/gmsflags_content/12"
+    ]
   }
 ]
