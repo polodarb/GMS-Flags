@@ -14,6 +14,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +44,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -52,6 +56,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -67,6 +72,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -107,7 +114,13 @@ fun SuggestionsScreen(
         viewModel.getSuggestedFlags()
     }
 
-    val flagsData = viewModel.stateSuggestionsFlags.collectAsState()
+    val isFirstStartState by rememberSaveable {
+        mutableStateOf(isFirstStart)
+    }
+
+    val suggestionsState by viewModel.stateSuggestionsFlags.collectAsState()
+    val groups by viewModel.groups.collectAsState()
+    val selectedGroup by viewModel.selectedGroup.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val haptic = LocalHapticFeedback.current
@@ -181,17 +194,17 @@ fun SuggestionsScreen(
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
-            when (val result = flagsData.value) {
+            when (val result = suggestionsState) {
                 is ua.polodarb.repository.uiStates.UiStates.Success -> {
                     val data = result.data
+                    FilterChips(groups) { select ->
+                        viewModel.setSelectedGroup(select)
+                    }
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        item {
-                            WarningBanner(isFirstStart)
+                            WarningBanner(isFirstStartState)
                         }
                         itemsIndexed(data) { index, item ->
 
@@ -200,6 +213,7 @@ fun SuggestionsScreen(
                             val isLastInGroup = index == data.size - 1 || (isPrimary != data[index + 1].flag.isPrimary)
 
                             SuggestedFlagItem(
+                                modifier = Modifier,
                                 flagTitle = item.flag.title,
                                 note = item.flag.note,
                                 warning = item.flag.warning,
@@ -375,7 +389,84 @@ fun SuggestionsScreen(
 }
 
 @Composable
+fun FilterChips(data: List<String>, onChipSelected: (String) -> Unit) {
+    val selectedChip = remember { mutableStateOf("All") }
+
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        FilterChip(
+            selected = selectedChip.value == "All",
+            onClick = {
+                selectedChip.value = "All"
+                onChipSelected("All")
+            },
+            modifier = Modifier.padding(end = 8.dp, start = 16.dp),
+            label = { Text(text = "All") }
+        )
+        Row(
+            modifier = Modifier
+                .height(28.dp)
+        ) {
+            VerticalDivider()
+            Box {
+                LazyRow {
+                    item {
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }
+                    items(data) { group ->
+                        FilterChip(
+                            selected = selectedChip.value == group,
+                            onClick = {
+                                selectedChip.value = group
+                                onChipSelected(group)
+                            },
+                            modifier = Modifier.padding(end = 8.dp),
+                            label = { Text(text = group) }
+                        )
+                    }
+                }
+                ShadowGradientBox(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background,
+                        Color.Transparent
+                    )
+                )
+                ShadowGradientBox(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    colors = listOf(
+                        Color.Transparent,
+                        MaterialTheme.colorScheme.background
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShadowGradientBox(
+    modifier: Modifier = Modifier,
+    colors: List<Color>
+) {
+    Box(
+        modifier = modifier
+            .width(10.dp)
+            .height(48.dp)
+            .background(
+                Brush.horizontalGradient(
+                    colors = colors,
+                    startX = 8f
+                )
+            )
+    )
+}
+
+@Composable
 fun SuggestedFlagItem(
+    modifier: Modifier = Modifier,
     flagTitle: String,
     flagValue: Boolean,
     note: String?,
@@ -417,6 +508,7 @@ fun SuggestedFlagItem(
 
     if (appIcon != null && appInfoName != null) {
         NewSuggestedFlagItem(
+            modifier = modifier,
             titleText = flagTitle,
             switchValue = flagValue,
             onSwitchChanged = flagOnCheckedChange,
@@ -441,6 +533,7 @@ fun SuggestedFlagItem(
 
 @Composable
 private fun NewSuggestedFlagItem(
+    modifier: Modifier = Modifier,
     titleText: String,
     switchValue: Boolean,
     onSwitchChanged: (Boolean) -> Unit,
@@ -462,7 +555,7 @@ private fun NewSuggestedFlagItem(
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
             .clip(
