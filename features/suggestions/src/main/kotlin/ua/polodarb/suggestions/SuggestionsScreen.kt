@@ -90,6 +90,7 @@ import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
 import ua.polodarb.suggestions.dialog.LanguageSelectionDialog
 import ua.polodarb.suggestions.dialog.ResetFlagToDefaultDialog
 import ua.polodarb.suggestions.specialFlags.SpecialFlags
+import ua.polodarb.suggestions.specialFlags.callScreen.CallScreenDialogData
 import ua.polodarb.ui.components.dialogs.ReportFlagsDialog
 import ua.polodarb.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.ui.components.inserts.LoadingProgressBar
@@ -141,10 +142,6 @@ fun SuggestionsScreen(
     var callScreenPackage by rememberSaveable {
         mutableStateOf("")
     }
-    var callScreenFlags: List<FlagInfoRepoModel> by rememberSaveable {
-        mutableStateOf(listOf())
-    }
-
 
     // Reset dialog
     var showResetDialog by rememberSaveable {
@@ -196,7 +193,12 @@ fun SuggestionsScreen(
                         item {
                             WarningBanner(isFirstStart)
                         }
-                        itemsIndexed(data.primary) { index, item -> // TODO: Fix duplication
+                        itemsIndexed(data) { index, item ->
+
+                            val isPrimary = item.flag.isPrimary == true
+                            val isFirstInGroup = index == 0 || (isPrimary != data[index - 1].flag.isPrimary)
+                            val isLastInGroup = index == data.size - 1 || (isPrimary != data[index + 1].flag.isPrimary)
+
                             SuggestedFlagItem(
                                 flagTitle = item.flag.title,
                                 note = item.flag.note,
@@ -205,16 +207,28 @@ fun SuggestionsScreen(
                                 appInfoPackageName = item.flag.appPackage,
                                 flagValue = item.enabled,
                                 flagDetails = item.flag.detailsLink,
-                                listStart = index == 0,
-                                listEnd = index == data.primary.size - 1,
+                                listStart = isFirstInGroup,
+                                listEnd = isLastInGroup,
                                 flagOnCheckedChange = { bool ->
                                     when (item.flag.tag) {
                                         SpecialFlags.CALL_SCREEN.name -> {
-                                            callScreenIndex = data.primary.indexOf(item)
+                                            viewModel.callScreenDialogData = CallScreenDialogData(
+                                                flags = item.flag.flags,
+                                                callScreenPackage = item.flag.flagPackage
+                                            )
+                                            callScreenIndex = data.indexOf(item)
                                             callScreenNewValue = bool
-                                            callScreenFlags = item.flag.flags
-                                            callScreenPackage = item.flag.flagPackage
-                                            localeSelectorDialog = true
+                                            if (bool) {
+                                                localeSelectorDialog = true
+                                            } else {
+                                                viewModel.updateFlagValue(false, callScreenIndex)
+                                                viewModel.overrideSuggestedFlags(
+                                                    flags = item.flag.flags,
+                                                    packageName = item.flag.flagPackage,
+                                                    newBoolValue = callScreenNewValue
+                                                )
+                                                Toast.makeText(context, "Please wait 10 seconds", Toast.LENGTH_SHORT).show()
+                                            }
                                         }
 
                                         else -> {
@@ -223,7 +237,7 @@ fun SuggestionsScreen(
                                                 packageName = item.flag.flagPackage,
                                                 newBoolValue = bool
                                             )
-                                            viewModel.updateFlagValue(bool, data.primary.indexOf(item))
+                                            viewModel.updateFlagValue(bool, data.indexOf(item))
                                         }
                                     }
                                 },
@@ -272,156 +286,7 @@ fun SuggestionsScreen(
                                 packageManager = packageManager
                             )
                         }
-                        item {
-                            Spacer(modifier = Modifier.padding(6.dp))
-                        }
-                        itemsIndexed(data.secondary) { index, item -> // TODO: Fix duplication
-                            SuggestedFlagItem(
-                                flagTitle = item.flag.title,
-                                note = item.flag.note,
-                                warning = item.flag.warning,
-                                source = item.flag.source,
-                                appInfoPackageName = item.flag.appPackage,
-                                flagValue = item.enabled,
-                                flagDetails = item.flag.detailsLink,
-                                listStart = index == 0,
-                                listEnd = index == data.secondary.size - 1,
-                                flagOnCheckedChange = { bool ->
-                                    when (item.flag.tag) {
-                                        SpecialFlags.CALL_SCREEN.name -> {
-                                            callScreenIndex = data.secondary.indexOf(item)
-                                            callScreenNewValue = bool
-                                            callScreenFlags = item.flag.flags
-                                            callScreenPackage = item.flag.flagPackage
-                                            localeSelectorDialog = true
-                                        }
-
-                                        else -> {
-                                            viewModel.overrideSuggestedFlags(
-                                                flags = item.flag.flags,
-                                                packageName = item.flag.flagPackage,
-                                                newBoolValue = bool
-                                            )
-                                            viewModel.updateFlagValue(bool, data.secondary.indexOf(item))
-                                        }
-                                    }
-                                },
-                                onOpenAppClick = {
-                                    val intent =
-                                        packageManager.getLaunchIntentForPackage(item.flag.appPackage)
-                                    if (intent != null) {
-                                        context.startActivity(intent)
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Couldn't open app",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                onOpenSettingsClick = {
-                                    val intent = Intent(
-                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.fromParts("package", item.flag.appPackage, null)
-                                    )
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    startActivity(context, intent, null)
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                onViewDetailsClick = {
-                                    val intent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(item.flag.detailsLink)
-                                    )
-                                    startActivity(context, intent, null)
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                onReportClick = {
-                                    showReportDialog = true
-                                    reportFlagName = item.flag.title
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                onResetClick = {
-                                    resetFlagPackage = item.flag.flagPackage
-                                    resetFlagsList.addAll(item.flag.flags)
-                                    showResetDialog = true
-                                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                },
-                                packageManager = packageManager
-                            )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(44.dp))
-                        }
                     }
-                    LanguageSelectionDialog(
-                        showDialog = localeSelectorDialog,
-                        onDismiss = { localeSelectorDialog = false }
-                    ) { locale ->
-                        localeSelectorDialog = false
-                        selectedLocale = locale
-                        coroutineScope.launch {
-                            with(viewModel) {
-                                updateFlagValue(callScreenNewValue, callScreenIndex)
-                                overrideCallScreenI18nConfig(
-                                    locale = locale
-                                )
-                                overrideSuggestedFlags(
-                                    flags = callScreenFlags,
-                                    packageName = callScreenPackage,
-                                    newBoolValue = callScreenNewValue
-                                )
-                            }
-                        }
-                    }
-                    ResetFlagToDefaultDialog(
-                        showDialog = showResetDialog,
-                        onDismiss = { showResetDialog = false }
-                    ) {
-                        showResetDialog = false
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
-                        coroutineScope.launch(Dispatchers.IO) {
-                            viewModel.getSuggestedFlags()
-                        }
-                    }
-                    ReportFlagsDialog(
-                        showDialog = showReportDialog,
-                        flagDesc = reportFlagDesc,
-                        onFlagDescChange = { newValue ->
-                            reportFlagDesc = newValue
-                        },
-                        onSend = {
-                            showReportDialog = false
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                this.data = Uri.parse("mailto:")
-                                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
-                                putExtra(
-                                    Intent.EXTRA_SUBJECT,
-                                    "Report on suggested flag"
-                                )
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
-                                            "Manufacturer: ${Build.MANUFACTURER}\n" +
-                                            "Android: ${Build.VERSION.RELEASE}\n" +
-                                            "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
-                                            "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
-
-                                            "Flag name: $reportFlagName\n\n" +
-                                            "Description: $reportFlagDesc"
-                                )
-                            }
-                            startActivity(context, intent, null)
-                            reportFlagDesc = ""
-                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        },
-                        onDismiss = {
-                            showReportDialog = false
-                            reportFlagDesc = ""
-                        }
-                    )
                 }
 
                 is ua.polodarb.repository.uiStates.UiStates.Loading -> {
@@ -434,6 +299,79 @@ fun SuggestionsScreen(
             }
         }
     }
+
+    LanguageSelectionDialog(
+        showDialog = localeSelectorDialog,
+        onDismiss = { localeSelectorDialog = false }
+    ) { locale ->
+        localeSelectorDialog = false
+        selectedLocale = locale
+        coroutineScope.launch {
+            with(viewModel) {
+                updateFlagValue(callScreenNewValue, callScreenIndex)
+                callScreenDialogData?.let { flag ->
+                    overrideSuggestedFlags(
+                        flags = flag.flags,
+                        packageName = flag.callScreenPackage,
+                        newBoolValue = callScreenNewValue
+                    )
+                }
+                overrideCallScreenI18nConfig(
+                    locale = locale
+                )
+            }
+            Toast.makeText(context, "Please wait 10 seconds", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    ResetFlagToDefaultDialog(
+        showDialog = showResetDialog,
+        onDismiss = { showResetDialog = false }
+    ) {
+        showResetDialog = false
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        viewModel.resetSuggestedFlagValue(resetFlagPackage, resetFlagsList)
+        coroutineScope.launch(Dispatchers.IO) {
+            viewModel.getSuggestedFlags()
+        }
+    }
+
+    ReportFlagsDialog(
+        showDialog = showReportDialog,
+        flagDesc = reportFlagDesc,
+        onFlagDescChange = { newValue ->
+            reportFlagDesc = newValue
+        },
+        onSend = {
+            showReportDialog = false
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                this.data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("gmsflags@gmail.com"))
+                putExtra(
+                    Intent.EXTRA_SUBJECT,
+                    "Report on suggested flag"
+                )
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Model: ${Build.DEVICE} (${Build.BOARD})\n" +
+                            "Manufacturer: ${Build.MANUFACTURER}\n" +
+                            "Android: ${Build.VERSION.RELEASE}\n" +
+                            "Manufacturer OS: ${OSUtils.sName} (${OSUtils.sVersion})\n" +
+                            "GMS flag: ${BuildConfig.VERSION_CODE} (${BuildConfig.VERSION_NAME})\n\n" +
+
+                            "Flag name: $reportFlagName\n\n" +
+                            "Description: $reportFlagDesc"
+                )
+            }
+            startActivity(context, intent, null)
+            reportFlagDesc = ""
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        },
+        onDismiss = {
+            showReportDialog = false
+            reportFlagDesc = ""
+        }
+    )
 }
 
 @Composable
@@ -763,6 +701,7 @@ private fun NewSuggestedFlagItem(
             }
         }
     }
+    if (listEnd) Spacer(modifier = Modifier.padding(6.dp))
 }
 
 @Stable

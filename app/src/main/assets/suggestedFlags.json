@@ -2,10 +2,36 @@
   {
     "tag": "CALL_SCREEN",
     "isPrimary": true,
+    "warning": "Activation of the locale will fail if you are not in the selected country, except for the en locale (English)",
     "title": "Enable Call Screen feature",
     "flagPackage": "com.google.android.dialer",
     "appPackage": "com.google.android.dialer",
     "flags": [
+      {
+        "name": "G__enable_embedding_spam_manual_call_screen",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_data_donation",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_hats",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_soda_availability_cache_check",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__call_screen_audio_listener_enabled",
+        "type": "bool",
+        "value": "1"
+      },
       {
         "name": "G__speak_easy_enabled",
         "type": "bool",
@@ -26,6 +52,7 @@
         "type": "bool",
         "value": "1"
       },
+
       {
         "name": "G__speak_easy_enable_listen_in_button",
         "type": "bool",

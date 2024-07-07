@@ -17,13 +17,14 @@ import ua.polodarb.domain.countryIso.SimCountryIsoUseCase
 import ua.polodarb.domain.override.OverrideFlagsUseCase
 import ua.polodarb.domain.override.models.OverriddenFlagsContainer
 import ua.polodarb.domain.suggestedFlags.SuggestedFlagsUseCase
-import ua.polodarb.domain.suggestedFlags.models.GroupedSuggestedFlagsModel
+import ua.polodarb.domain.suggestedFlags.models.SuggestedFlagsModel
 import ua.polodarb.repository.appsList.AppsListRepository
 import ua.polodarb.repository.databases.gms.GmsDBRepository
 import ua.polodarb.repository.suggestedFlags.models.FlagInfoRepoModel
 import ua.polodarb.repository.suggestedFlags.models.FlagTypeRepoModel
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.suggestions.specialFlags.callScreen.A6
+import ua.polodarb.suggestions.specialFlags.callScreen.CallScreenDialogData
 import ua.polodarb.suggestions.specialFlags.callScreen.CallScreenI18nConfig
 import ua.polodarb.suggestions.specialFlags.callScreen.CountryConfig
 import ua.polodarb.suggestions.specialFlags.callScreen.Language
@@ -32,7 +33,7 @@ import java.util.Collections
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-typealias SuggestionsScreenUiState = UiStates<GroupedSuggestedFlagsModel>
+typealias SuggestionsScreenUiState = UiStates<List<SuggestedFlagsModel>>
 
 class SuggestionScreenViewModel(
     private val repository: GmsDBRepository,
@@ -49,6 +50,8 @@ class SuggestionScreenViewModel(
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
+    var callScreenDialogData: CallScreenDialogData? = null
+
     init {
         initUsers()
         initGmsPackages()
@@ -64,33 +67,22 @@ class SuggestionScreenViewModel(
 
     fun updateFlagValue(newValue: Boolean, index: Int) {
         val currentState = _stateSuggestionsFlags.value
-        if (currentState is UiStates.Success<GroupedSuggestedFlagsModel>) {
-            val updatedPrimary = currentState.data.primary.toMutableList()
-            val updatedSecondary = currentState.data.secondary.toMutableList()
-
+        if (currentState is UiStates.Success) {
+            val updatedData = currentState.data.toMutableList()
             if (index != -1) {
-                if (index < updatedPrimary.size) {
-                    updatedPrimary[index] = updatedPrimary[index].copy(enabled = newValue)
-                } else if (index < updatedPrimary.size + updatedSecondary.size) {
-                    val secondaryIndex = index - updatedPrimary.size
-                    updatedSecondary[secondaryIndex] = updatedSecondary[secondaryIndex].copy(enabled = newValue)
-                }
-
-                val newData = currentState.data.copy(
-                    primary = updatedPrimary,
-                    secondary = updatedSecondary
-                )
-
-                _stateSuggestionsFlags.value = UiStates.Success(
-                    newData.copy(
-                        primary = newData.primary.sortedByDescending { it.flag.isPrimary },
-                        secondary = newData.secondary.sortedByDescending { it.flag.isPrimary }
+                updatedData[index] = updatedData[index].copy(enabled = newValue)
+                _stateSuggestionsFlags.value =
+                    currentState.copy(
+                        data = updatedData.map {
+                            SuggestedFlagsModel(
+                                it.flag,
+                                it.enabled
+                            )
+                        }.sortedByDescending { it.flag.isPrimary }
                     )
-                )
             }
         }
     }
-
 
     private fun initUsers() {
         usersList.clear()
@@ -109,10 +101,7 @@ class SuggestionScreenViewModel(
                 val flags = flagsUseCase.invoke()
                 withContext(Dispatchers.Main) {
                     if (!flags.isNullOrEmpty()) {
-                        _stateSuggestionsFlags.value = UiStates.Success(GroupedSuggestedFlagsModel(
-                            primary = flags.sortedByDescending { it.flag.isPrimary }.filter { it.flag.isPrimary == true },
-                            secondary = flags.sortedByDescending { it.flag.isPrimary }.filter { it.flag.isPrimary != true }
-                        ))
+                        _stateSuggestionsFlags.value = UiStates.Success(flags)
                     } else {
                         _stateSuggestionsFlags.value = UiStates.Error()
                     }
@@ -231,8 +220,6 @@ class SuggestionScreenViewModel(
         val overriddenFlags = OverriddenFlagsContainer(
             extValues = mapOf("CallScreenI18n__call_screen_i18n_config" to byteString)
         )
-
-//            Log.e("callscreen", overriddenFlags.toString())
 
         overrideFlagsUseCase.invoke("com.google.android.dialer", overriddenFlags)
     }

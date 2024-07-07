@@ -6,11 +6,11 @@ import ua.polodarb.network.suggestedFlags.model.FlagTypeNetModel
 
 @Serializable
 enum class FlagTypeRepoModel {
-    @SerialName("bool") BOOL,
-    @SerialName("int") INTEGER,
-    @SerialName("float") FLOAT,
-    @SerialName("string") STRING,
-    @SerialName("extVal") EXTVAL;
+    BOOL,
+    INTEGER,
+    FLOAT,
+    STRING,
+    EXTVAL;
 
    companion object {
        fun FlagTypeNetModel.toRepoModel(): FlagTypeRepoModel {

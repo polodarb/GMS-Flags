@@ -55,48 +55,30 @@ fun LanguageSelectionDialog(
             onDismissRequest = onDismiss,
             title = { Text("Select Locale") },
             text = {
-                Column(
-                    modifier = Modifier
-                        .imePadding()
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.height(286.dp)
-                    ) {
-                        items(locales.keys.toList()) { locale ->
-                            Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .selectable(
-                                        interactionSource = interactionSource,
-                                        indication = null,
-                                        selected = (locale == selectedLocale),
-                                        onClick = { selectedLocale = locale }
-                                    )
-                                    .padding(vertical = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
+                LazyColumn {
+                    items(locales.keys.toList()) { locale ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
                                     selected = (locale == selectedLocale),
-                                    onClick = null
+                                    onClick = { selectedLocale = locale }
                                 )
-                                Text(
-                                    text = locales[locale] ?: locale,
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
-                            }
+                                .padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (locale == selectedLocale),
+                                onClick = null
+                            )
+                            Text(
+                                text = locales[locale] ?: locale,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = customLocale,
-                        onValueChange = {
-                            customLocale = it
-                            selectedLocale = null
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        label = { Text("Custom Locale") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
             },
             confirmButton = {

@@ -24,7 +24,8 @@ import ua.polodarb.repository.uiStates.UiStates
 
 class SuggestedFlagsRepositoryImpl(
     private val rootDB: InitRootDB,
-    private val localFilesProvider: LocalFilesProvider
+    private val localFilesProvider: LocalFilesProvider,
+    private val flagsApiService: SuggestedFlagsApiService
 ) : SuggestedFlagsRepository {
 
     private val rootDatabase by lazy {
@@ -35,28 +36,22 @@ class SuggestedFlagsRepositoryImpl(
         return withContext(Dispatchers.IO) {
             try {
                 val localFlagsFile = localFilesProvider.getLocalSuggestedFlagsFile()
-
-                if (localFlagsFile.exists() && localFlagsFile.length() > 0) {
-                    val pkgContent = localFilesProvider.getSuggestedFlagsData()
-                    val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent)
-                        .map { it.toRepoModel() }
-                    return@withContext result
-                } else {
-                    val pkgContent = localFilesProvider.getSuggestedFlagsDataFromAssets()
-
-                    localFlagsFile.writeText(pkgContent)
-
-                    val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent)
-                        .map { it.toRepoModel() }
-                    return@withContext result
+                val flags = flagsApiService.getSuggestedFlags()
+                if (flags is Resource.Success && flags.data != null) {
+                    val flagsJson = Json.encodeToString(flags.data)
+                    localFlagsFile.writeText(flagsJson)
                 }
+
+                val pkgContent = localFilesProvider.getSuggestedFlagsData()
+                val result = Json.decodeFromString<List<SuggestedFlagsNetModel>>(pkgContent)
+                    .map { it.toRepoModel() }
+                result
             } catch (e: Exception) {
-                Log.e("gmsf", "Error loading suggested flags: ${e.message}")
-                return@withContext null
+                Log.e("gmsf", "Error assets loading: ${e.message}")
+                null
             }
         }
     }
-
 
     override suspend fun getMergedOverriddenFlagsByPackage(pkg: String): Flow<MergedAllTypesOverriddenFlags> =
         flow {

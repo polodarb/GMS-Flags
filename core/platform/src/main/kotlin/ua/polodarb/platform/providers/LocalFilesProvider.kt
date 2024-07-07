@@ -20,7 +20,7 @@ class LocalFilesProvider(
             val assetManager = context.assets
             val inputStream = assetManager.open("suggestedFlags.json")
             inputStream.bufferedReader().use { it.readText() }
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             ""
         }

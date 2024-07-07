@@ -65,7 +65,8 @@ val repositoryBindsModule = module {
     single {
         SuggestedFlagsRepositoryImpl(
             rootDB = get(),
-            localFilesProvider = get()
+            localFilesProvider = get(),
+            flagsApiService = get()
         )
     } bind SuggestedFlagsRepository::class
 
