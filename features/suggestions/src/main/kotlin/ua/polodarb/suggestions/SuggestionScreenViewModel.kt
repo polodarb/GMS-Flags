@@ -43,10 +43,16 @@ class SuggestionScreenViewModel(
     private val simCountryIsoUseCase: SimCountryIsoUseCase,
 ) : ViewModel() {
 
-    private val _stateSuggestionsFlags =
-        MutableStateFlow<SuggestionsScreenUiState>(UiStates.Loading())
-    val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiState> =
-        _stateSuggestionsFlags.asStateFlow()
+    private val _stateSuggestionsFlags = MutableStateFlow<SuggestionsScreenUiState>(UiStates.Loading())
+    val stateSuggestionsFlags: StateFlow<SuggestionsScreenUiState> = _stateSuggestionsFlags.asStateFlow()
+
+    private val _groups = MutableStateFlow<List<String>>(emptyList())
+    val groups: StateFlow<List<String>> = _groups.asStateFlow()
+
+    private val _selectedGroup = MutableStateFlow("All")
+    val selectedGroup: StateFlow<String> = _selectedGroup.asStateFlow()
+
+    private var allFlags: List<SuggestedFlagsModel> = emptyList()
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 
@@ -71,15 +77,16 @@ class SuggestionScreenViewModel(
             val updatedData = currentState.data.toMutableList()
             if (index != -1) {
                 updatedData[index] = updatedData[index].copy(enabled = newValue)
-                _stateSuggestionsFlags.value =
-                    currentState.copy(
-                        data = updatedData.map {
-                            SuggestedFlagsModel(
-                                it.flag,
-                                it.enabled
-                            )
-                        }.sortedByDescending { it.flag.isPrimary }
-                    )
+                _stateSuggestionsFlags.value = currentState.copy(data = updatedData)
+
+                val flagToUpdate = updatedData[index].flag
+                allFlags = allFlags.map {
+                    if (it.flag == flagToUpdate) {
+                        it.copy(enabled = newValue)
+                    } else {
+                        it
+                    }
+                }
             }
         }
     }
@@ -95,13 +102,15 @@ class SuggestionScreenViewModel(
         }
     }
 
-    suspend fun getSuggestedFlags() {
+    fun getSuggestedFlags() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val flags = flagsUseCase.invoke()
                 withContext(Dispatchers.Main) {
                     if (!flags.isNullOrEmpty()) {
-                        _stateSuggestionsFlags.value = UiStates.Success(flags)
+                        allFlags = flags
+                        updateGroups()
+                        updateFilteredFlags()
                     } else {
                         _stateSuggestionsFlags.value = UiStates.Error()
                     }
@@ -112,6 +121,26 @@ class SuggestionScreenViewModel(
                 }
             }
         }
+    }
+
+    private fun updateGroups() {
+        _groups.value = allFlags
+            .mapNotNull { it.flag.group }
+            .distinct()
+    }
+
+    fun setSelectedGroup(group: String) {
+        _selectedGroup.value = group
+        updateFilteredFlags()
+    }
+
+    private fun updateFilteredFlags() {
+        val filteredFlags = when (_selectedGroup.value) {
+            "All" -> allFlags
+            in _groups.value -> allFlags.filter { it.flag.group == _selectedGroup.value }
+            else -> emptyList()
+        }
+        _stateSuggestionsFlags.value = UiStates.Success(filteredFlags)
     }
 
     fun overrideSuggestedFlags(
