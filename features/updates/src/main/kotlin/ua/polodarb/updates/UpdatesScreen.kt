@@ -19,7 +19,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.EditNotifications
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.EditNotifications
+import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -33,6 +36,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +59,7 @@ import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.ui.components.inserts.LoadingProgressBar
+import ua.polodarb.updates.dialogs.AppsFilterDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +69,7 @@ fun UpdatesScreen(
 
     val viewModel = koinViewModel<UpdatesScreenViewModel>()
     val state = viewModel.uiState.collectAsState()
+    val getFilteredAppDataFlow = viewModel.getFilteredAppData().collectAsState("")
 
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
@@ -69,6 +78,10 @@ fun UpdatesScreen(
 
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topBarState)
+
+    var showFilteredAppsDialog by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -82,6 +95,22 @@ fun UpdatesScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = {
+                        showFilteredAppsDialog = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.FilterList,
+                            contentDescription = "Filter"
+                        )
+                    }
+                    IconButton(onClick = {
+                        // todo
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.EditNotifications,
+                            contentDescription = "WorkerSyncTime"
+                        )
+                    }
                     IconButton(onClick = onSettingsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
@@ -145,6 +174,19 @@ fun UpdatesScreen(
             }
         }
     }
+
+    AppsFilterDialog(
+        showDialog = showFilteredAppsDialog,
+        currentData = getFilteredAppDataFlow.value,
+        onDataChanges = {
+            viewModel.setFilteredAppData(it)
+            viewModel.loadArticles()
+        },
+        onDismissRequest = {
+            showFilteredAppsDialog = false
+        },
+    )
+
 }
 
 @Composable

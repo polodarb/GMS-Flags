@@ -35,7 +35,7 @@ fun AppsFilterDialog(
         var isValid by remember { mutableStateOf(true) }
 
         fun validate(input: String): Boolean {
-            val regex = Regex("^([A-Za-z]+(, )?)*[A-Za-z]*$")
+            val regex = Regex("""^([A-Za-z\s]+(, [A-Za-z\s]+)*)?${'$'}""")
             return regex.matches(input)
         }
 
@@ -50,7 +50,7 @@ fun AppsFilterDialog(
                         value = text,
                         onValueChange = {
                             text = it
-                            isValid = validate(it)
+                            isValid = validate(it) && it.isNotEmpty()
                         },
                         shape = MaterialTheme.shapes.medium,
                         label = { Text("Apps") },
@@ -70,7 +70,7 @@ fun AppsFilterDialog(
                     )
                     if (!isValid) {
                         Text(
-                            text = "Input must be words separated by comma and space.",
+                            text = "Input must be words separated by comma and space",
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(start = 8.dp)
                         )
@@ -92,7 +92,8 @@ fun AppsFilterDialog(
                                 onDataChanges(text)
                                 onDismissRequest()
                             }
-                        }
+                        },
+                        enabled = isValid
                     ) {
                         Text("Save")
                     }

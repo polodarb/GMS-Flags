@@ -17,4 +17,8 @@ interface DatastoreManager {
 
    suspend fun getLastUpdatedGoogleApp(): LastUpdatesAppModel
 
+   suspend fun getFilteredGoogleApps(): String
+
+   suspend fun setFilteredGoogleApps(data: String )
+
 }
