@@ -27,6 +27,8 @@ class DatastoreManagerImpl(
         intPreferencesKey("phixit_worker_execution_count")
     private val prefKeyLastUpdatedGoogleApp =
         stringPreferencesKey("last_updated_google_app")
+    private val prefKeyFilteredGoogleApps =
+        stringPreferencesKey("filtered_google_apps")
 
     override val isOpenGmsSettingsBtnClicked: Flow<Boolean> =
         context.dataStore.data.map { prefs -> prefs[prefKeyOpenGmsSettings] ?: false }
@@ -61,5 +63,19 @@ class DatastoreManagerImpl(
         val savedData = prefs[prefKeyLastUpdatedGoogleApp] ?: ""
         val (appName, date) = savedData.split("|")
         return LastUpdatesAppModel(appName, date)
+    }
+
+    override suspend fun getFilteredGoogleApps(): String {
+        val prefs = context.dataStore.data.first()
+        val savedData = prefs[prefKeyFilteredGoogleApps] ?: "Wear OS, Android TV, Trichrome"
+        return savedData
+    }
+
+    override suspend fun setFilteredGoogleApps(data: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { prefs ->
+                prefs[prefKeyFilteredGoogleApps] = data
+            }
+        }
     }
 }

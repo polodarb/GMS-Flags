@@ -2,20 +2,26 @@ package ua.polodarb.repository.googleUpdates.mapper
 
 import tw.ktrssreader.kotlin.model.channel.RssStandardChannel
 import tw.ktrssreader.kotlin.model.item.RssStandardItem
+import ua.polodarb.preferences.datastore.DatastoreManager
 import ua.polodarb.repository.googleUpdates.model.MainRssArticle
 import ua.polodarb.repository.googleUpdates.model.MainRssModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class GoogleUpdatesMapper {
+class GoogleUpdatesMapper(
+    val datastoreManager: DatastoreManager
+) {
 
-    fun map(response: RssStandardChannel): MainRssModel {
+    suspend fun map(response: RssStandardChannel): MainRssModel {
         return MainRssModel(
             articles = mapArticle(response.items.orEmpty())
         )
     }
 
-    private fun mapArticle(response: List<RssStandardItem>): List<MainRssArticle> {
+    suspend fun mapArticle(response: List<RssStandardItem>): List<MainRssArticle> {
+        val filteredAppsString = datastoreManager.getFilteredGoogleApps()
+        val filteredApps = filteredAppsString.split(", ").map { it.trim() }
+
         return response.mapNotNull { article ->
             val regex = Regex("""(.+?)\s(\d+\.\d+\.\d+)""")
             val matchResult = regex.find(article.title.orEmpty())
@@ -31,12 +37,10 @@ class GoogleUpdatesMapper {
                     link = article.link.orEmpty()
                 )
             }
-        }.filter {
-            !(it.title.contains("Wear OS", ignoreCase = true) ||
-                    it.title.contains("Android TV", ignoreCase = true) ||
-                    it.title.contains("Trichrome", ignoreCase = true))
-
-
+        }.filter { mainRssArticle ->
+            filteredApps.none { app ->
+                mainRssArticle.title.contains(app, ignoreCase = true)
+            }
         }
     }
 
