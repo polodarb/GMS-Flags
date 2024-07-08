@@ -26,6 +26,7 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ua.polodarb.common.Constants
+import ua.polodarb.gms.impl.DatabaseNotFoundException
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
@@ -55,18 +56,11 @@ class MainActivity : BaseActivity() {
 
     private var isFirstStart = !configuredFile.exists()
 
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
-        .build()
-
     private val viewModel by viewModel<MainActivityViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        if (!BuildConfig.DEBUG)
-//            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
 

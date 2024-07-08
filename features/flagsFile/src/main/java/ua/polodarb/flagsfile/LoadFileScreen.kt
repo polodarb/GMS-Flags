@@ -106,6 +106,7 @@ fun LoadFileScreen(
                         title = {
                             Text(
                                 text = result.data.packageName,
+                                modifier = Modifier.padding(end = 8.dp)
                             )
                         },
                         scrollBehavior = scrollBehavior

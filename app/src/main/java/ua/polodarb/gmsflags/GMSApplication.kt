@@ -18,6 +18,8 @@ import ua.polodarb.network.impl.di.networkBindsModule
 import ua.polodarb.platform.di.platformModule
 import ua.polodarb.preferences.impl.di.prefsModule
 import ua.polodarb.byteUtils.di.byteUtilsModule
+import ua.polodarb.gmsflags.errors.general.CrashActivity
+import ua.polodarb.gmsflags.errors.general.ExceptionHandler
 import ua.polodarb.repository.impl.di.repositoryBindsModule
 import ua.polodarb.updates.di.workerModule
 
@@ -26,8 +28,8 @@ class GMSApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-//        if (!BuildConfig.DEBUG)
-//            ExceptionHandler.initialize(this, CrashActivity::class.java)
+        if (!BuildConfig.DEBUG)
+            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         DynamicColors.applyToActivitiesIfAvailable(this)
 
