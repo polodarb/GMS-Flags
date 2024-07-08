@@ -34,7 +34,7 @@ fun LanguageSelectionDialog(
     onLocaleSelected: (String) -> Unit
 ) {
     var selectedLocale by remember { mutableStateOf<String?>(null) }
-    var customLocale by remember { mutableStateOf("") }
+    val customLocale by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
 
     val locales = mapOf(
