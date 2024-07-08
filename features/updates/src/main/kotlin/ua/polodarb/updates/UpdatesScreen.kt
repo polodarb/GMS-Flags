@@ -1,5 +1,6 @@
 package ua.polodarb.updates
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,10 +36,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,11 +58,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ua.polodarb.repository.uiStates.UiStates
 import ua.polodarb.ui.components.inserts.ErrorLoadScreen
 import ua.polodarb.ui.components.inserts.LoadingProgressBar
 import ua.polodarb.updates.dialogs.AppsFilterDialog
+import ua.polodarb.updates.dialogs.SyncTime
+import ua.polodarb.updates.dialogs.WorkerSyncTimeSelectDialog
+import ua.polodarb.updates.worker.GOOGLE_UPDATES_WORKER_TAG
+import ua.polodarb.updates.worker.GoogleUpdatesCheckWorker
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,6 +86,8 @@ fun UpdatesScreen(
     val state = viewModel.uiState.collectAsState()
     val getFilteredAppDataFlow = viewModel.getFilteredAppData().collectAsState("")
 
+    val coroutineScope = rememberCoroutineScope()
+
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
 
@@ -81,6 +98,15 @@ fun UpdatesScreen(
 
     var showFilteredAppsDialog by remember {
         mutableStateOf(false)
+    }
+
+    var workSyncShowDialog by remember {
+        mutableStateOf(false)
+    }
+    var syncTime by remember { mutableStateOf(SyncTime(15, TimeUnit.MINUTES)) }
+
+    LaunchedEffect(Unit) {
+        syncTime = viewModel.getSyncTime()
     }
 
     Scaffold(
@@ -104,7 +130,7 @@ fun UpdatesScreen(
                         )
                     }
                     IconButton(onClick = {
-                        // todo
+                        workSyncShowDialog = true
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.EditNotifications,
@@ -187,7 +213,40 @@ fun UpdatesScreen(
         },
     )
 
+    WorkerSyncTimeSelectDialog(
+        showDialog = workSyncShowDialog,
+        initialSyncTime = syncTime,
+        onDataChanges = { newSyncTime ->
+            syncTime = newSyncTime
+            createAndEnqueueWorker(context, syncTime)
+            coroutineScope.launch(Dispatchers.IO) {
+                viewModel.setSyncTime(newSyncTime)
+            }
+        },
+        onDismissRequest = { workSyncShowDialog = false }
+    )
+
 }
+
+fun createAndEnqueueWorker(context: Context, syncTime: SyncTime) {
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+        .build()
+
+    val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(
+        syncTime.value, syncTime.unit
+    )
+        .setConstraints(constraints)
+        .addTag(GOOGLE_UPDATES_WORKER_TAG)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        GOOGLE_UPDATES_WORKER_TAG,
+        ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+        workerRequester
+    )
+}
+
 
 @Composable
 private fun UpdatesAppItem(

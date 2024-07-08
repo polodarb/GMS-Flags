@@ -2,4 +2,11 @@
 <resources>
     <string name="nav_bar_updates">Updates</string>
     <string name="button_fab_refresh">Refresh</string>
+    <string name="dialog_select_time_title">Choose a time</string>
+    <string name="dialog_select_time_subtitle">Select how often you want to receive notifications</string>
+    <string name="dialog_select_time_cancel">Cancel</string>
+    <string name="dialog_select_time_save">Save</string>
+    <string name="dialog_select_time_item_minutes">minutes</string>
+    <string name="dialog_select_time_item_hour">hour</string>
+    <string name="dialog_select_time_item_hours">hours</string>
 </resources>
