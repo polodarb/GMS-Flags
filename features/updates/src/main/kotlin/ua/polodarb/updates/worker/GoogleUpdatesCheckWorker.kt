@@ -70,10 +70,12 @@ class GoogleUpdatesCheckWorker(
 
         val resultStringBuilder = StringBuilder()
 
-        if (indexOfLocalArticle >= 0) {
+        if (indexOfLocalArticle >= 0 && indexOfLocalArticle <= newArticles.lastIndex) {
             for (i in 0 until indexOfLocalArticle) {
-                val article = newArticles[i]
-                resultStringBuilder.append("${article.title} (${article.version})\n")
+                val article = newArticles.getOrNull(i)
+                if (article != null) {
+                    resultStringBuilder.append("${article.title} (${article.version})\n")
+                }
             }
         } else {
             newArticles.forEach { article ->
