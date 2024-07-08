@@ -35,14 +35,17 @@ class InitRootDBImpl(
         val intent = Intent(context, RootDatabase::class.java)
         val service = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                Log.e("InitRootDBImpl", "onServiceConnected")
-                rootDatabase = IRootDatabase.Stub.asInterface(service)
-                isRootDatabaseInitialized = true
-                setDatabaseInitialized(true)
+                try {
+                    rootDatabase = IRootDatabase.Stub.asInterface(service)
+                    isRootDatabaseInitialized = true
+                    setDatabaseInitialized(true)
+                } catch (e: Exception) {
+                    Log.e("InitRootDBImpl", "Error connecting to database", e)
+                    throw e
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                Log.e("InitRootDBImpl", "onServiceDisconnected")
                 isRootDatabaseInitialized = false
                 setDatabaseInitialized(false)
             }

@@ -2,7 +2,9 @@ package ua.polodarb.gms.impl
 
 import android.content.ContentValues
 import android.content.Intent
+import android.database.sqlite.SQLiteException
 import android.os.IBinder
+import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
 import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
@@ -17,8 +19,13 @@ class RootDatabase : RootService() {
     private lateinit var vendingDB: SQLiteDatabase
 
     override fun onBind(intent: Intent): IBinder {
-        gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
-        vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
+        try {
+            gmsDB = openDatabase(DB_PATH_GMS, null, OPEN_READWRITE)
+            vendingDB = openDatabase(DB_PATH_VENDING, null, OPEN_READWRITE)
+        } catch (e: SQLiteException) {
+            Log.e("RootDatabase", "Database not found", e)
+            throw DatabaseNotFoundException("Database not found")
+        }
         return object : IRootDatabase.Stub() {
 
             override fun getGmsPackages(): Map<String, String> = this@RootDatabase.getGmsPackages()
@@ -839,3 +846,5 @@ class RootDatabase : RootService() {
     }
 
 }
+
+class DatabaseNotFoundException(message: String) : Exception(message)
