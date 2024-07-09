@@ -1,5 +1,35 @@
 [
   {
+    "title": "Note creation AI tool in Keep",
+    "flagPackage": "com.google.android.keep#com.google.android.keep",
+    "appPackage": "com.google.android.keep#com.google.android.keep",
+    "group": "Keep",
+    "minAppVersionCode": 220569458,
+    "detailsLink": "https://t.me/gmsflags_content/44",
+    "files": [
+      {
+        "name": "45628843",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "QuickShare in Google Files FAB",
+    "flagPackage": "com.google.android.apps.nbu.files.device#com.google.android.apps.nbu.files",
+    "appPackage": "com.google.android.apps.nbu.files",
+    "group": "Files",
+    "minAppVersionCode": 917695,
+    "detailsLink": "https://t.me/gmsflags_content/45",
+    "files": [
+      {
+        "name": "45640187",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
     "tag": "CALL_SCREEN",
     "isPrimary": true,
     "warning": "Activation of the locale will fail if you are not in the selected country, except for the en locale (English)",
