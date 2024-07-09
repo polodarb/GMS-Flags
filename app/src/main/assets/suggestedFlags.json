@@ -2,7 +2,8 @@
   {
     "tag": "CALL_SCREEN",
     "isPrimary": true,
-    "warning": "Activation of the locale will fail if you are not in the selected country, except for the en locale (English)",
+    "warning": "To activate you need to go to the Phone app -> click on the menu in the top right corner -> select \"Options\" -> Call Screen -> Click on \"See how Call Screen works\" and click on the \"Turn on\" button",
+    "note": "Activation of the locale will fail if you are not in the selected country, except for the en locale (English)",
     "title": "Enable Call Screen feature",
     "flagPackage": "com.google.android.dialer",
     "appPackage": "com.google.android.dialer",
