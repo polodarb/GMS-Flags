@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -77,6 +78,8 @@ dependencies {
     androidTestImplementation(libs.compose.test.juni4)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
+
+    implementation(libs.kotlinx.serialization.protobuf)
 
     implementation(libs.core.ktx)
     implementation(libs.google.material)

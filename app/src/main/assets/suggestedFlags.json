@@ -1,10 +1,193 @@
 [
   {
+    "tag": "CALL_SCREEN",
+    "isPrimary": true,
+    "warning": "To activate you need to go to the Phone app -> click on the menu in the top right corner -> select \"Options\" -> Call Screen -> Click on \"See how Call Screen works\" and click on the \"Turn on\" button",
+    "note": "Activation of the locale will fail if you are not in the selected country, except for the en locale (English)",
+    "title": "Enable Call Screen feature",
+    "flagPackage": "com.google.android.dialer",
+    "appPackage": "com.google.android.dialer",
+    "group": "Phone",
+    "flags": [
+      {
+        "name": "G__enable_embedding_spam_manual_call_screen",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_data_donation",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_hats",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_soda_availability_cache_check",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__call_screen_audio_listener_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__speak_easy_enabled",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_video_calling_screen",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__speak_easy_bypass_locale_check",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_i18n_tidepods",
+        "type": "bool",
+        "value": "1"
+      },
+
+      {
+        "name": "G__speak_easy_enable_listen_in_button",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_screen_demo",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_speakeasy_details",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_revelio",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_revelio_on_bluetooth",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_revelio_on_wired_headset",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__bypass_revelio_roaming_check",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_tidepods_revelio",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__enable_call_screen_saving_audio",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_revelio_transcript",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "isPrimary": true,
+    "title": "Enable call recording",
+    "flagPackage": "com.google.android.dialer",
+    "appPackage": "com.google.android.dialer",
+    "group": "Phone",
+    "flags": [
+      {
+        "name": "G__enable_call_recording",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_call_recording_system_feature",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "enable_tidepods_call_recording",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "CallRecording__enable_call_recording_for_fi",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__force_within_call_recording_geofence_value",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__force_within_crosby_geofence_value",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "G__use_call_recording_geofence_overrides",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "Note creation AI tool in Keep",
+    "flagPackage": "com.google.android.keep#com.google.android.keep",
+    "appPackage": "com.google.android.keep",
+    "minAppVersionCode": 220569458,
+    "group": "Keep",
+    "detailsLink": "https://t.me/gmsflags_content/44",
+    "flags": [
+      {
+        "name": "45628843",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
+    "title": "QuickShare in Google Files FAB",
+    "flagPackage": "com.google.android.apps.nbu.files.device#com.google.android.apps.nbu.files",
+    "appPackage": "com.google.android.apps.nbu.files",
+    "group": "Files",
+    "minAppVersionCode": 917695,
+    "detailsLink": "https://t.me/gmsflags_content/45",
+    "flags": [
+      {
+        "name": "45640187",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
     "title": "Google Tasks pages redesign",
     "flagPackage": "com.google.android.apps.tasks",
     "appPackage": "com.google.android.apps.tasks",
     "source": "AssembleDebug",
     "minAppVersionCode": 1704481,
+    "group": "Tasks",
     "flags": [
       {
         "name": "JadwalPhaseOne__date_and_recurrence_chip_changes_enabled",
@@ -19,20 +202,6 @@
     ]
   },
   {
-    "title": "New Bottom bar in Google Keep",
-    "source": "Danyil Kobzar",
-    "flagPackage": "com.google.android.keep#com.google.android.keep",
-    "appPackage": "com.google.android.keep",
-    "detailsLink": "https://t.me/gmsflags_content/43",
-    "flags": [
-      {
-        "name": "45618251",
-        "type": "bool",
-        "value": "1"
-      }
-    ]
-  },
-  {
     "title": "New search box in Google app",
     "source": "Danyil Kobzar",
     "note": "Requires Google app data reset!",
@@ -40,6 +209,7 @@
     "flagPackage": "com.google.android.libraries.search.googleapp.user#com.google.android.googlequicksearchbox",
     "appPackage": "com.google.android.googlequicksearchbox",
     "detailsLink": "https://t.me/gmsflags_content/33",
+    "group": "Google",
     "flags": [
       {
         "name": "45478044",
@@ -65,6 +235,7 @@
     "appPackage": "com.google.android.apps.photos",
     "minAppVersionCode": 48792594,
     "detailsLink": "https://t.me/gmsflags_content/39",
+    "group": "Photos",
     "flags": [
       {
         "name": "45617367",
@@ -79,6 +250,7 @@
     "flagPackage": "com.google.android.apps.tasks",
     "appPackage": "com.google.android.apps.tasks",
     "detailsLink": "https://t.me/gmsflags_content/19",
+    "group": "Tasks",
     "flags": [
       {
         "name": "DateShortcuts__enabled",
@@ -91,6 +263,10 @@
     "title": "\"G\" on space in GBoard",
     "source": "RBoard Themes",
     "note": "If you want G not to disappear but to be displayed permanently, change this flag:\nInteger - branding_fadeout_delay_ms (Value: 600)",
+    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "appPackage": "com.google.android.inputmethod.latin",
+    "detailsLink": "https://t.me/gmsflags_content/16",
+    "group": "GBoard",
     "flags": [
       {
         "name": "show_branding_interval_seconds",
@@ -102,23 +278,21 @@
         "type": "bool",
         "value": "1"
       }
-    ],
-    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
-    "appPackage": "com.google.android.inputmethod.latin",
-    "detailsLink": "https://t.me/gmsflags_content/16"
+    ]
   },
   {
     "title": "Floating NavBar in Google Photos",
     "source": "Danyil Kobzar",
+    "group": "Photos",
+    "flagPackage": "com.google.android.apps.photos",
+    "appPackage": "com.google.android.apps.photos",
+    "detailsLink": "https://t.me/gmsflags_content/12",
     "flags": [
       {
         "name": "45415956",
         "type": "int",
         "value": "1"
       }
-    ],
-    "flagPackage": "com.google.android.apps.photos",
-    "appPackage": "com.google.android.apps.photos",
-    "detailsLink": "https://t.me/gmsflags_content/12"
+    ]
   }
 ]

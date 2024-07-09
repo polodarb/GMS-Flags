@@ -45,4 +45,7 @@
     <string name="phixit_button_open_settings">Open GMS settings</string>
     <string name="phixit_detect_notification_desc">Notifications for GMS crashes and critical states</string>
     <string name="phixit_detect_notification_title">Setup is complete, GMS Flags is ready for use</string>
+    <string name="error_missing_db_title">Database not found</string>
+    <string name="error_missing_db_desc_1">The application cannot connect to the GMS database because it does not exist.</string>
+    <string name="error_missing_db_desc_2">You may be using a custom GMS or custom software, which may causing problems.</string>
 </resources>

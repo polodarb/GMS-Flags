@@ -26,6 +26,7 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ua.polodarb.common.Constants
+import ua.polodarb.gms.impl.DatabaseNotFoundException
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
@@ -35,6 +36,8 @@ import ua.polodarb.gmsflags.navigation.RootAppNavigation
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.network.impl.appUpdates.AppUpdatesApiServiceImpl
 import ua.polodarb.platform.init.InitShell
+import ua.polodarb.preferences.datastore.DatastoreManager
+import ua.polodarb.updates.dialogs.SyncTime
 import ua.polodarb.updates.worker.GOOGLE_UPDATES_WORKER_TAG
 import ua.polodarb.updates.worker.GoogleUpdatesCheckWorker
 import java.io.File
@@ -46,25 +49,18 @@ class MainActivity : BaseActivity() {
     private val appContext = get<Context>() as GMSApplication
 
     val rootDBInitializer: InitRootDB by inject()
-
+    private val datastoreManager: DatastoreManager by inject()
     private val githubApiService by inject<AppUpdatesApiServiceImpl>()
 
     private val configuredFile = File(appContext.filesDir, "configured")
 
     private var isFirstStart = !configuredFile.exists()
 
-    private val constraints = Constraints.Builder()
-        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
-        .build()
-
     private val viewModel by viewModel<MainActivityViewModel>()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        if (!BuildConfig.DEBUG)
-//            ExceptionHandler.initialize(this, CrashActivity::class.java)
 
         analytics = Firebase.analytics
 
@@ -94,17 +90,15 @@ class MainActivity : BaseActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        // TODO: Refactor using initWorker()
-        val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(15, TimeUnit.MINUTES)
-            .setConstraints(constraints)
-            .addTag(GOOGLE_UPDATES_WORKER_TAG)
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            GOOGLE_UPDATES_WORKER_TAG,
-            ExistingPeriodicWorkPolicy.KEEP,
-            workerRequester
-        )
+        lifecycleScope.launch {
+            val syncTime = datastoreManager.getWorkerSyncTime()
+            createAndEnqueueUpdateAppsWorker(
+                context = this@MainActivity, SyncTime(
+                    value = syncTime.value,
+                    unit = syncTime.unit
+                )
+            )
+        }
 
         setContent {
             GMSFlagsTheme {
@@ -129,4 +123,23 @@ class MainActivity : BaseActivity() {
     }
 
     fun setFirstLaunch() = configuredFile.createNewFile()
+}
+
+fun createAndEnqueueUpdateAppsWorker(context: Context, syncTime: SyncTime) {
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+        .build()
+
+    val workerRequester = PeriodicWorkRequestBuilder<GoogleUpdatesCheckWorker>(
+        syncTime.value, syncTime.unit
+    )
+        .setConstraints(constraints)
+        .addTag(GOOGLE_UPDATES_WORKER_TAG)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        GOOGLE_UPDATES_WORKER_TAG,
+        ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+        workerRequester
+    )
 }

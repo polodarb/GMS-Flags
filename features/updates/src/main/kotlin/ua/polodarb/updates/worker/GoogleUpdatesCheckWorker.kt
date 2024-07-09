@@ -53,7 +53,7 @@ class GoogleUpdatesCheckWorker(
                     )
                 )
             }
-             Result.success()
+            Result.success()
         } catch (err: Throwable) {
             err.printStackTrace()
             Log.e("GMS Flags", "GoogleUpdatesCheckWorker - ${err.message}")
@@ -70,9 +70,15 @@ class GoogleUpdatesCheckWorker(
 
         val resultStringBuilder = StringBuilder()
 
-        if (indexOfLocalArticle >= 0) {
+        if (indexOfLocalArticle >= 0 && indexOfLocalArticle <= newArticles.lastIndex) {
             for (i in 0 until indexOfLocalArticle) {
-                val article = newArticles[i]
+                val article = newArticles.getOrNull(i)
+                if (article != null) {
+                    resultStringBuilder.append("${article.title} (${article.version})\n")
+                }
+            }
+        } else {
+            newArticles.forEach { article ->
                 resultStringBuilder.append("${article.title} (${article.version})\n")
             }
         }
@@ -81,15 +87,30 @@ class GoogleUpdatesCheckWorker(
     }
 
     private fun sendNotification(title: String, message: String) {
+        val notificationId = getRandomNotifyID()
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notify_logo)
             .setContentTitle(title)
-//            .setContentText(message)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(message))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(message)
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         with(NotificationManagerCompat.from(context)) {
+            val existingNotification = activeNotifications.find { it.id == notificationId }
+
+            if (existingNotification != null) {
+                builder.setContentText(
+                    "$message\n" +
+                    existingNotification.notification?.extras?.getString(
+                        NotificationCompat.EXTRA_TEXT,
+                        ""
+                    )
+                )
+            }
+
             if (ActivityCompat.checkSelfPermission(
                     context,
                     Manifest.permission.POST_NOTIFICATIONS
@@ -97,9 +118,10 @@ class GoogleUpdatesCheckWorker(
             ) {
                 return
             }
-            notify(getRandomNotifyID(), builder.build())
+            notify(notificationId, builder.build())
         }
     }
+
 
     private fun getRandomNotifyID(): Int {
         return System.currentTimeMillis().toInt()

@@ -1,7 +1,9 @@
 package ua.polodarb.network.suggestedFlags.model
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class FlagTypeNetModel {
     @SerialName("bool") BOOL,
     @SerialName("int") INTEGER,

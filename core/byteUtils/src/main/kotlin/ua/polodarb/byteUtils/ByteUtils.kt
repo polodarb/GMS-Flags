@@ -1,7 +1,6 @@
 package ua.polodarb.byteUtils
 
 import java.io.ByteArrayOutputStream
-import java.io.ObjectOutputStream
 
 class ByteUtils {
 
@@ -15,10 +14,13 @@ class ByteUtils {
         }
     }
 
-    fun convertToByteArray(hexText: String?): ByteArray? {
-        if (hexText.isNullOrEmpty()) return null
+    fun convertToByteArray(hexString: String?): ByteArray? {
+        if (hexString.isNullOrEmpty()) return null
         return ByteArrayOutputStream().use { bytes ->
-            ObjectOutputStream(bytes).writeObject(hexText)
+            for (i in hexString.indices step 2) {
+                val byte = hexString.substring(i, i + 2).toInt(16)
+                bytes.write(byte)
+            }
             bytes.toByteArray()
         }
     }

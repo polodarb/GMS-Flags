@@ -40,8 +40,8 @@ val viewModelsModule = module {
             repository = get(),
             gmsRepository = get(),
             roomRepository = get(),
-            gmsDBInteractor = get(),
-            mergedFlags = get()
+            mergedFlags = get(),
+            overrideFlagsUseCase = get()
         )
     }
 
@@ -58,7 +58,8 @@ val viewModelsModule = module {
             repository = get(),
             appsRepository = get(),
             flagsUseCase = get(),
-            overrideFlagsUseCase = get()
+            overrideFlagsUseCase = get(),
+            simCountryIsoUseCase = get()
         )
     }
 

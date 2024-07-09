@@ -26,7 +26,9 @@ val repositoryBindsModule = module {
     single {
         GoogleUpdatesRepositoryImpl(
             network = get(),
-            mapper = GoogleUpdatesMapper()
+            mapper = GoogleUpdatesMapper(
+                datastoreManager = get()
+            )
         )
     } bind GoogleUpdatesRepository::class
 

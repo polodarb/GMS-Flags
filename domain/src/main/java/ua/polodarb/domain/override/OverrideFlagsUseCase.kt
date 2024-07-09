@@ -108,8 +108,8 @@ class OverrideFlagsUseCase(
                         )
                     }
                 }
-                interactor.clearPhenotypeCache(packageName)
             }
+            interactor.clearPhenotypeCache(packageName)
         } catch (e: Exception) {
             e.printStackTrace()
         }
