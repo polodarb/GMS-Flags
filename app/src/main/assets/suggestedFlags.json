@@ -6,7 +6,7 @@
     "group": "Keep",
     "minAppVersionCode": 220569458,
     "detailsLink": "https://t.me/gmsflags_content/44",
-    "files": [
+    "flags": [
       {
         "name": "45628843",
         "type": "bool",
@@ -21,7 +21,7 @@
     "group": "Files",
     "minAppVersionCode": 917695,
     "detailsLink": "https://t.me/gmsflags_content/45",
-    "files": [
+    "flags": [
       {
         "name": "45640187",
         "type": "bool",
@@ -195,21 +195,6 @@
       },
       {
         "name": "JadwalPhaseOne__toolbar_removal_and_task_list_bubble_enabled",
-        "type": "bool",
-        "value": "1"
-      }
-    ]
-  },
-  {
-    "title": "New Bottom bar in Google Keep",
-    "source": "Danyil Kobzar",
-    "flagPackage": "com.google.android.keep#com.google.android.keep",
-    "appPackage": "com.google.android.keep",
-    "detailsLink": "https://t.me/gmsflags_content/43",
-    "group": "Keep",
-    "flags": [
-      {
-        "name": "45618251",
         "type": "bool",
         "value": "1"
       }
