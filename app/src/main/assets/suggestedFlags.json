@@ -201,6 +201,32 @@
     ]
   },
   {
+    "title": "Proofreading mode in GBoard",
+    "source": "AssembleDebug",
+    "warning": "Works only with en-US locale",
+    "flagPackage": "com.google.android.inputmethod.latin#com.google.android.inputmethod.latin",
+    "appPackage": "com.google.android.inputmethod.latin",
+    "detailsLink": "https://t.me/gmsflags_content/8",
+    "group": "GBoard",
+    "flags": [
+      {
+        "name": "writing_helper_chip_shown_as_candidate",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "writing_helper_enable_free_chat",
+        "type": "bool",
+        "value": "1"
+      },
+      {
+        "name": "writing_helper",
+        "type": "bool",
+        "value": "1"
+      }
+    ]
+  },
+  {
     "title": "New search box in Google app",
     "source": "Danyil Kobzar",
     "note": "Requires Google app data reset!",
