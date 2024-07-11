@@ -1,5 +1,6 @@
 package ua.polodarb.gmsflags.errors.gms.phixit
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -51,7 +52,6 @@ import ua.polodarb.flagsfile.LoadFileScreenViewModel
 import ua.polodarb.gmsflags.R
 import ua.polodarb.gmsflags.errors.gms.sharedUI.HeaderDescription
 import ua.polodarb.gmsflags.errors.gms.sharedUI.HeaderIcon
-import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.suggestions.SuggestedFlagItemArrow
 
@@ -69,7 +69,7 @@ fun PhixitDetectScreen() {
         bottomBar = {
             BottomBar(
                 onExitClick = {
-                    (context as MainActivity).finish()
+                    (context as Activity).finish()
                 },
                 isVisible = !isExpandedAction1 && !isExpandedAction2
             )
