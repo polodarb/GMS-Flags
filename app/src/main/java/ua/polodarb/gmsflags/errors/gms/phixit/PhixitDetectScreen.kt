@@ -136,18 +136,18 @@ fun PhixitDetectScreen() {
                 }
                 Button(
                     onClick = {
-                        viewModel.setOpenGmsSettingsBtnClicked(true)
-                        WorkManager.getInstance(context).apply {
-                            enqueueUniquePeriodicWork(
-                                PhixitDetectWorker.TAG,
-                                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                                PhixitDetectWorker.initWorker(),
-                            )
-                        }
-                        val intent = Intent().apply {
-                            setClassName("com.google.android.gms", "co.g.Space")
-                        }
-                        context.startActivity(intent)
+//                        viewModel.setOpenGmsSettingsBtnClicked(true)
+//                        WorkManager.getInstance(context).apply {
+//                            enqueueUniquePeriodicWork(
+//                                PhixitDetectWorker.TAG,
+//                                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+//                                PhixitDetectWorker.initWorker(),
+//                            )
+//                        }
+//                        val intent = Intent().apply {
+//                            setClassName("com.google.android.gms", "co.g.Space")
+//                        }
+//                        context.startActivity(intent)
                     },
                     modifier = Modifier
                         .padding(top = 16.dp)

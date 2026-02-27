@@ -39,9 +39,9 @@ class CrashActivity : ComponentActivity() {
         setContent {
             GMSFlagsTheme {
                 when {
-                    stackTraceKey?.contains(Constants.GMS_DB_CRASH_MSG_PHIXIT) == true -> {
-                        PhixitDetectScreen()
-                    }
+//                    stackTraceKey?.contains(Constants.GMS_DB_CRASH_MSG_PHIXIT) == true -> {
+//                        PhixitDetectScreen()
+//                    }
 
                     stackTraceKey?.contains("Database not found") == true -> {
                         MissingDbScreen()

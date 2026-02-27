@@ -75,13 +75,13 @@ class MainActivity : BaseActivity() {
             )
         }
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            rootDBInitializer.databaseInitializationStateFlow.collect {
-                if (it.isInitialized) {
-                    check(!rootDBInitializer.getRootDatabase().isPhixitSchemaUsed) { Constants.GMS_DB_CRASH_MSG_PHIXIT }
-                }
-            }
-        }
+//        lifecycleScope.launch(Dispatchers.Main) {
+//            rootDBInitializer.databaseInitializationStateFlow.collect {
+//                if (it.isInitialized) {
+//                     check(!rootDBInitializer.getRootDatabase().isPhixitSchemaUsed) { Constants.GMS_DB_CRASH_MSG_PHIXIT }
+//                }
+//            }
+//        }
 
         installSplashScreen().apply {
             // TODO: Navigation to ErrorRootPermissionScreen
