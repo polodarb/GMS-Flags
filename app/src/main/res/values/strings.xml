@@ -1,4 +1,7 @@
 <resources>
+    <!-- Xposed -->
+    <string name="xposed_description" translatable="false">GMS Flags Phixit Module</string>
+
     <!-- Common -->
     <string name="app_name" translatable="false">GMS Flags</string>
     <string name="toast_done">Done!</string>

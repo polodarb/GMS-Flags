@@ -45,7 +45,18 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        ndk {
+            abiFilters += setOf("armeabi-v7a", "arm64-v8a")
+        }
     }
+
+    externalNativeBuild {
+        ndkBuild {
+            path("src/main/jni/Android.mk")
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -195,6 +206,8 @@ dependencies {
     implementation(project(":features:flagsFile"))
 
     implementation(project(":domain"))
+
+    compileOnly("de.robv.android.xposed:api:82")
 }
 
 tasks.withType<KotlinCompile> {
