@@ -17,7 +17,7 @@ interface GmsDBRepository {
         committed: Int
     )
 
-    suspend fun getGmsPackages(): Flow<UiStates<Map<String, String>>>
+    suspend fun getGmsPackages(): Flow<UiStates<Map<String, String?>>>
 
     fun getBoolFlags(packageName: String, delay: Boolean): Flow<UiStates<Map<String, String>>>
 
@@ -38,12 +38,6 @@ interface GmsDBRepository {
     fun getAllOverriddenBoolFlags(): Flow<UiStates<Map<String, String>>>
 
     fun getUsers(): Flow<MutableList<String>>
-
-    suspend fun isPhixitSchemaUsed(): Flow<Boolean>
-
-    suspend fun isDbFullyRecreated(): Flow<Boolean>
-
-    suspend fun isFlagOverridesTableEmpty(): Flow<Boolean>
 
     suspend fun getAndroidPackage(pkgName: String): Flow<String>
 

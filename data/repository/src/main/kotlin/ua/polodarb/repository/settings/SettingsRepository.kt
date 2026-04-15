@@ -6,6 +6,10 @@ interface SettingsRepository {
 
     fun deleteAllOverriddenFlagsFromPlayStore()
 
+    fun getPhenotypeVersions(): Map<String, String>
+
+    fun getXposedHookStates(): Map<String, String>
+
     suspend fun deleteAllSavedFlags()
 
     suspend fun deleteAllSavedPackages()

@@ -21,6 +21,14 @@ class SettingsRepositoryImpl(
         rootDatabase.deleteAllOverriddenFlagsFromPlayStore()
     }
 
+    override fun getPhenotypeVersions(): Map<String, String> {
+        return rootDatabase.phenotypeVersions
+    }
+
+    override fun getXposedHookStates(): Map<String, String> {
+        return rootDatabase.xposedHookStates
+    }
+
     override suspend fun deleteAllSavedFlags() {
         localDB.deleteAllSavedFlags()
     }

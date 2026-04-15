@@ -3,6 +3,8 @@ package ua.polodarb.gms;
 interface IRootDatabase {
     Map<String, String> getGmsPackages();
     List<String> getGooglePackages();
+    Map<String, String> getPhenotypeVersions();
+    Map<String, String> getXposedHookStates();
 
     Map<String, String> getBoolFlags(String pkgName);
     Map<String, String> getIntFlags(String pkgName);
@@ -46,8 +48,4 @@ interface IRootDatabase {
         in byte[] extensionVal,
         int committed
     );
-
-    boolean isPhixitSchemaUsed();
-    boolean isDbFullyRecreated();
-    boolean isFlagOverridesTableEmpty();
 }

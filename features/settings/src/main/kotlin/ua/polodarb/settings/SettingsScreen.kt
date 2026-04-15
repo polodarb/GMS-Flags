@@ -5,13 +5,15 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +23,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -31,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,10 +43,11 @@ fun SettingsScreen(
     onResetFlagsClick: () -> Unit,
     onResetSavedClick: () -> Unit,
     onChangeNavigationClick: () -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    viewModel: SettingsViewModel = koinViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val coroutineScope = rememberCoroutineScope()
+    val xposedTargetStatuses by viewModel.xposedTargetStatuses.collectAsState()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -98,9 +101,41 @@ fun SettingsScreen(
                     description = R.string.settings_item_about_description,
                     onAboutClick
                 )
+                SettingsItem(
+                    icon = R.drawable.ic_phishing,
+                    headline = R.string.settings_item_xposed_headline
+                ) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    xposedTargetStatuses.forEach { status ->
+                        Text(
+                            text = "${status.label}: ${stringResource(id = status.state.stringRes())}" +
+                                    status.version?.let { " ($it)" }.orEmpty(),
+                            color = status.state.color(),
+                            fontSize = 15.sp,
+                            lineHeight = 17.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
             }
         }
     }
+}
+
+@StringRes
+private fun XposedTargetState.stringRes(): Int = when (this) {
+    XposedTargetState.UNKNOWN -> R.string.settings_item_xposed_unknown
+    XposedTargetState.LEGACY_SCHEMA -> R.string.settings_item_xposed_legacy_schema
+    XposedTargetState.PHIXIT_RUNNING -> R.string.settings_item_xposed_phixit_running
+    XposedTargetState.PHIXIT_NOT_RUNNING -> R.string.settings_item_xposed_phixit_not_running
+}
+
+@Composable
+private fun XposedTargetState.color() = when (this) {
+    XposedTargetState.PHIXIT_RUNNING -> MaterialTheme.colorScheme.primary
+    XposedTargetState.LEGACY_SCHEMA -> MaterialTheme.colorScheme.outline
+    else -> MaterialTheme.colorScheme.error
 }
 
 @Composable
@@ -110,10 +145,38 @@ fun SettingsItem(
     @StringRes description: Int,
     onItemClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
+    SettingsItem(
+        icon = icon,
+        headline = headline,
+        onItemClick = onItemClick
+    ) {
+        Text(
+            text = stringResource(id = description),
+            color = MaterialTheme.colorScheme.outline,
+            fontSize = 15.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+fun SettingsItem(
+    @DrawableRes icon: Int,
+    @StringRes headline: Int,
+    onItemClick: (() -> Unit)? = null,
+    descriptionContent: @Composable ColumnScope.() -> Unit
+) {
+    val itemModifier = if (onItemClick == null) {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier
             .fillMaxWidth()
-            .clickable { onItemClick() },
+            .clickable { onItemClick() }
+    }
+
+    Row(
+        modifier = itemModifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -127,12 +190,13 @@ fun SettingsItem(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(text = stringResource(id = headline), fontSize = 20.sp)
             Text(
-                text = stringResource(id = description),
-                color = MaterialTheme.colorScheme.outline,
-                fontSize = 15.sp
+                text = stringResource(id = headline),
+                fontSize = 20.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+            descriptionContent()
         }
     }
 }

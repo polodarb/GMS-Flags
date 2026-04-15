@@ -10,6 +10,11 @@
     <string name="nav_bar_history">History</string>
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_item_xposed_headline">Xposed module</string>
+    <string name="settings_item_xposed_unknown">unknown schema</string>
+    <string name="settings_item_xposed_legacy_schema">legacy schema</string>
+    <string name="settings_item_xposed_phixit_running">Phixit, hook running</string>
+    <string name="settings_item_xposed_phixit_not_running">Phixit, hook is not running</string>
     <string name="settings_item_reset_flags_headline">Reset flags</string>
     <string name="settings_item_reset_flags_description">Reset all overridden flags</string>
     <string name="settings_item_reset_saved_headline">Reset saved</string>

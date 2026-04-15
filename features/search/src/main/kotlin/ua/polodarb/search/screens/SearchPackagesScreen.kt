@@ -37,7 +37,7 @@ fun SearchPackagesScreen(
     savedPackagesList: List<String>,
     lazyListState: LazyListState,
     onPackageClick: (packageName: String) -> Unit,
-    onSavePackageClick: (value: Boolean, item: Pair<String, String>) -> Unit,
+    onSavePackageClick: (value: Boolean, item: Pair<String, String?>) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (uiState.value) {
@@ -63,11 +63,11 @@ fun SearchPackagesScreen(
 
 @Composable
 private fun SuccessListItems(
-    list: Map<String, String>,
+    list: Map<String, String?>,
     listState: LazyListState,
     savedPackagesList: List<String>,
     onPackageClick: (packageName: String) -> Unit,
-    onSavePackageClick: (value: Boolean, item: Pair<String, String>) -> Unit
+    onSavePackageClick: (value: Boolean, item: Pair<String, String?>) -> Unit
 ) {
 
     ListScrollbar(
@@ -82,7 +82,7 @@ private fun SuccessListItems(
             itemsIndexed(list.toList()) { index, item ->
                 PackagesLazyItem(
                     packageName = item.first,
-                    packagesCount = item.second.toInt(),
+                    packagesCount = item.second?.toIntOrNull(),
                     checked = savedPackagesList.contains(item.first),
                     onCheckedChange = {
                         onSavePackageClick(it, item)
@@ -104,7 +104,7 @@ private fun SuccessListItems(
 fun PackagesLazyItem(
     modifier: Modifier = Modifier,
     packageName: String,
-    packagesCount: Int,
+    packagesCount: Int?,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     lastItem: Boolean,
@@ -130,11 +130,13 @@ fun PackagesLazyItem(
             }
             Column(Modifier.weight(0.9f)) {
                 Text(text = packageName, style = Typography.bodyMedium)
-                Text(
-                    text = "Flags: $packagesCount",
-                    style = Typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline
-                )
+                if (packagesCount != null) {
+                    Text(
+                        text = "Flags: $packagesCount",
+                        style = Typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
             }
             Icon(
                 modifier = Modifier

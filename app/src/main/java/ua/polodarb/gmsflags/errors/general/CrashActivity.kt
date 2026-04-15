@@ -16,7 +16,6 @@ import ua.polodarb.gmsflags.R
 import ua.polodarb.common.Constants
 import ua.polodarb.gmsflags.errors.general.ExceptionHandler.Companion.STACK_TRACE_KEY
 import ua.polodarb.gmsflags.errors.gms.missingDB.MissingDbScreen
-import ua.polodarb.gmsflags.errors.gms.phixit.PhixitDetectScreen
 import ua.polodarb.gmsflags.ui.MainActivity
 import ua.polodarb.gmsflags.ui.theme.GMSFlagsTheme
 import ua.polodarb.platform.utils.OSUtils
@@ -39,10 +38,6 @@ class CrashActivity : ComponentActivity() {
         setContent {
             GMSFlagsTheme {
                 when {
-//                    stackTraceKey?.contains(Constants.GMS_DB_CRASH_MSG_PHIXIT) == true -> {
-//                        PhixitDetectScreen()
-//                    }
-
                     stackTraceKey?.contains("Database not found") == true -> {
                         MissingDbScreen()
                     }

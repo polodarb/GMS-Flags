@@ -2,5 +2,6 @@
 <resources>
     <string-array name="scope">
         <item>com.google.android.gms</item>
+        <item>com.android.vending</item>
     </string-array>
 </resources>

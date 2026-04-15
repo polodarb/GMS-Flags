@@ -44,7 +44,7 @@ class GmsDBRepositoryImpl(
         )
     }
 
-    override suspend fun getGmsPackages() = flow<UiStates<Map<String, String>>> {
+    override suspend fun getGmsPackages() = flow<UiStates<Map<String, String?>>> {
         delay(150)
 
         rootDB.databaseInitializationStateFlow.collect { isInitialized ->
@@ -176,33 +176,6 @@ class GmsDBRepositoryImpl(
         rootDB.databaseInitializationStateFlow.collect { isInitialized ->
             if (isInitialized.isInitialized) {
                 emit(Dispatchers.IO { rootDatabase.users })
-            }
-        }
-    }
-
-    override suspend fun isPhixitSchemaUsed(): Flow<Boolean> = flow {
-        Log.e("repo", "init method")
-        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
-            Log.e("repo", "isInitialized - ${isInitialized.isInitialized}")
-            if (isInitialized.isInitialized) {
-                Log.e("repo", "data - ${rootDatabase.isPhixitSchemaUsed()}")
-                emit(rootDatabase.isPhixitSchemaUsed())
-            }
-        }
-    }
-
-    override suspend fun isDbFullyRecreated(): Flow<Boolean> = flow {
-        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
-            if (isInitialized.isInitialized) {
-                emit(rootDatabase.isDbFullyRecreated())
-            }
-        }
-    }
-
-    override suspend fun isFlagOverridesTableEmpty(): Flow<Boolean> = flow {
-        rootDB.databaseInitializationStateFlow.collect { isInitialized ->
-            if (isInitialized.isInitialized) {
-                emit(rootDatabase.isFlagOverridesTableEmpty())
             }
         }
     }

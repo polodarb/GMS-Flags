@@ -20,13 +20,9 @@ import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import ua.polodarb.common.Constants
-import ua.polodarb.gms.impl.DatabaseNotFoundException
 import ua.polodarb.gms.init.InitRootDB
 import ua.polodarb.gmsflags.GMSApplication
 import ua.polodarb.gmsflags.core.platform.activity.BaseActivity
@@ -56,8 +52,6 @@ class MainActivity : BaseActivity() {
 
     private var isFirstStart = !configuredFile.exists()
 
-    private val viewModel by viewModel<MainActivityViewModel>()
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,14 +68,6 @@ class MainActivity : BaseActivity() {
                 GmsCrashesDetectWorker.initWorker(),
             )
         }
-
-//        lifecycleScope.launch(Dispatchers.Main) {
-//            rootDBInitializer.databaseInitializationStateFlow.collect {
-//                if (it.isInitialized) {
-//                     check(!rootDBInitializer.getRootDatabase().isPhixitSchemaUsed) { Constants.GMS_DB_CRASH_MSG_PHIXIT }
-//                }
-//            }
-//        }
 
         installSplashScreen().apply {
             // TODO: Navigation to ErrorRootPermissionScreen

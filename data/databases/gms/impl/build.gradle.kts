@@ -41,6 +41,7 @@ dependencies {
 
     // SQLite
     implementation(libs.requery.sqlite)
+    implementation(libs.protobuf.java)
 
     // libsu
     implementation(libs.libsu.core)

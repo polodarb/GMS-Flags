@@ -208,6 +208,7 @@ dependencies {
     implementation(project(":domain"))
 
     compileOnly("de.robv.android.xposed:api:82")
+    implementation(libs.dexkit)
 }
 
 tasks.withType<KotlinCompile> {

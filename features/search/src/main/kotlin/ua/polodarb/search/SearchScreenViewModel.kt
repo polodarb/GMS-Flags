@@ -30,7 +30,7 @@ import java.util.Collections
 
 typealias AppInfoList = UiStates<PersistentList<AppInfo>>
 typealias AppDialogList = UiStates<PersistentList<String>>
-typealias PackagesScreenUiStates = UiStates<Map<String, String>>
+typealias PackagesScreenUiStates = UiStates<Map<String, String?>>
 typealias AllFlagsScreenUiStates = UiStates<List<FlagDetails>>
 
 class SearchScreenViewModel(
@@ -67,7 +67,7 @@ class SearchScreenViewModel(
     private val appsListFiltered: MutableList<AppInfo> = mutableListOf()
 
     var packagesSearchQuery = mutableStateOf("")
-    private val packagesListFiltered: MutableMap<String, String> = mutableMapOf()
+    private val packagesListFiltered: MutableMap<String, String?> = mutableMapOf()
 
     private val usersList = Collections.synchronizedList(mutableListOf<String>())
 

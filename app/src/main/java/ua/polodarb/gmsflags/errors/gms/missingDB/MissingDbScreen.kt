@@ -83,7 +83,7 @@ fun BottomBar(
                 onClick = onExitClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.phixit_button_title))
+                Text(stringResource(R.string.error_exit_app))
             }
         }
     }
