@@ -725,7 +725,7 @@ fun FlagChangeScreen(
                             if (file.exists()) {
                                 val uri = FileProvider.getUriForFile(
                                     context,
-                                    "ua.polodarb.gmsflags.fileprovider",
+                                    "${context.packageName}.fileprovider",
                                     file
                                 )
                                 val intent = Intent(Intent.ACTION_SEND).apply {

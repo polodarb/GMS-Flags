@@ -75,7 +75,7 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.test.manifest)
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    // debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     implementation(libs.core.ktx)
     implementation(libs.google.material)

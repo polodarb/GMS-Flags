@@ -72,6 +72,7 @@ android {
         }
         getByName("debug") {
             isMinifyEnabled = false
+            applicationIdSuffix = ".indev"
         }
     }
     compileOptions {

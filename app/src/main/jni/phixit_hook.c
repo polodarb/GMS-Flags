@@ -8,11 +8,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include <time.h>
 #include <zlib.h>
 
 #define LOG_TAG "PhixitHook"
-#define LOGI(...) phixit_log_write(ANDROID_LOG_INFO, "I", __VA_ARGS__)
+#define LOGI(...) phixit_log_write(ANDROID_LOG_INFO,  "I", __VA_ARGS__)
+#define LOGD(...) phixit_log_write(ANDROID_LOG_DEBUG, "D", __VA_ARGS__)
+#define LOGW(...) phixit_log_write(ANDROID_LOG_WARN,  "W", __VA_ARGS__)
 #define LOGE(...) phixit_log_write(ANDROID_LOG_ERROR, "E", __VA_ARGS__)
 
 static void phixit_log_write(int priority, const char *level, const char *format, ...);
@@ -22,9 +25,12 @@ static void phixit_log_write(int priority, const char *level, const char *format
 #define SQLITE_UTF8 1
 #define SQLITE_DETERMINISTIC 0x800
 #define SQLITE_TRANSIENT ((void (*)(void *))-1)
+#define SQLITE_OK 0
 #define SQLITE_ROW 100
 #define SQLITE_DBCONFIG_ENABLE_TRIGGER 1003
 #define SQLITE_DBCONFIG_DEFENSIVE 1010
+
+#define MINIMAL_PHENOTYPE_VERSION 1033
 
 #define PHIXIT_FLAG_FALSE 0
 #define PHIXIT_FLAG_TRUE 1
@@ -33,8 +39,8 @@ static void phixit_log_write(int priority, const char *level, const char *format
 #define PHIXIT_FLAG_STRING 4
 #define PHIXIT_FLAG_EXTENSION 5
 
-static const char *MERGE_FUNCTION_NAME = "gmsflags_phixit_merge_flags";
-static const char *CREATE_OVERRIDES_TABLE_SQL =
+static const char MERGE_FUNCTION_NAME[] = "gmsflags_phixit_merge_flags";
+static const char CREATE_OVERRIDES_TABLE_SQL[] =
         "CREATE TABLE IF NOT EXISTS GmsFlagsOverrides ("
         "packageName TEXT NOT NULL,"
         "user TEXT,"
@@ -48,9 +54,9 @@ static const char *CREATE_OVERRIDES_TABLE_SQL =
         "committed INTEGER NOT NULL DEFAULT 1,"
         "PRIMARY KEY(packageName, user, name)"
         ");";
-static const char *DISABLE_RECURSIVE_TRIGGERS_SQL =
+static const char DISABLE_RECURSIVE_TRIGGERS_SQL[] =
         "PRAGMA recursive_triggers = OFF;";
-static const char *CREATE_INSERT_TRIGGER_SQL =
+static const char CREATE_INSERT_TRIGGER_SQL[] =
         "CREATE TEMP TRIGGER IF NOT EXISTS gmsflags_phixit_merge_insert "
         "AFTER INSERT ON main.param_partitions "
         "WHEN NEW.flags_content IS NOT NULL "
@@ -59,7 +65,7 @@ static const char *CREATE_INSERT_TRIGGER_SQL =
         "SET flags_content = gmsflags_phixit_merge_flags(NEW.static_config_package_id, NEW.flags_content) "
         "WHERE rowid = NEW.rowid; "
         "END;";
-static const char *CREATE_UPDATE_TRIGGER_SQL =
+static const char CREATE_UPDATE_TRIGGER_SQL[] =
         "CREATE TEMP TRIGGER IF NOT EXISTS gmsflags_phixit_merge_update "
         "AFTER UPDATE OF flags_content ON main.param_partitions "
         "WHEN NEW.flags_content IS NOT NULL "
@@ -130,7 +136,8 @@ typedef struct {
 } elf_symbols;
 
 static elf_symbols g_sqlite_elf = {0};
-static char *g_debug_log_path = 0;
+static FILE *g_log_file = NULL;
+static pthread_mutex_t g_log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void phixit_log_write(int priority, const char *level, const char *format, ...) {
     char message[LOG_MESSAGE_SIZE];
@@ -142,13 +149,19 @@ static void phixit_log_write(int priority, const char *level, const char *format
 
     __android_log_print(priority, LOG_TAG, "%s", message);
 
-    if (!g_debug_log_path) return;
-
-    FILE *file = fopen(g_debug_log_path, "a");
-    if (!file) return;
-
-    fprintf(file, "%ld %s [native] %s\n", (long)time(0), level, message);
-    fclose(file);
+    pthread_mutex_lock(&g_log_mutex);
+    if (g_log_file) {
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        struct tm utc_tm;
+        gmtime_r(&ts.tv_sec, &utc_tm);
+        char timebuf[24];
+        strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", &utc_tm);
+        fprintf(g_log_file, "%s.%03ld %s [native] %s\n",
+                timebuf, ts.tv_nsec / 1000000L, level, message);
+        fflush(g_log_file);
+    }
+    pthread_mutex_unlock(&g_log_mutex);
 }
 
 typedef struct {
@@ -191,8 +204,9 @@ static uint32_t gnu_hash_symbol_count(const uint32_t *gnu_hash) {
     }
     if (max_symbol < symoffset) return symoffset;
 
+    uint32_t limit = max_symbol + 65536;
     while ((chains[max_symbol - symoffset] & 1) == 0) {
-        max_symbol++;
+        if (++max_symbol > limit) return max_symbol;
     }
 
     return max_symbol + 1;
@@ -202,11 +216,14 @@ static int find_sqlite_callback(struct dl_phdr_info *info, size_t size, void *da
     (void)size;
     elf_symbols *symbols = (elf_symbols *)data;
     const char *name = info->dlpi_name;
-    const ElfW(Phdr) *dynamic_phdr = 0;
-    const ElfW(Dyn) *dynamic = 0;
-    const uint32_t *gnu_hash = 0;
+    const ElfW(Phdr) *dynamic_phdr = NULL;
+    const ElfW(Dyn) *dynamic = NULL;
+    const uint32_t *gnu_hash = NULL;
 
-    if (!name || !strstr(name, "libsqlite.so")) return 0;
+    if (!name) return 0;
+    const char *base = strrchr(name, '/');
+    base = base ? base + 1 : name;
+    if (strcmp(base, "libsqlite.so") != 0) return 0;
 
     for (ElfW(Half) i = 0; i < info->dlpi_phnum; i++) {
         if (info->dlpi_phdr[i].p_type == PT_DYNAMIC) {
@@ -257,7 +274,7 @@ static void *load_sqlite_symbol(const char *name) {
     if (!symbol && g_sqlite_elf.symtab && g_sqlite_elf.strtab) {
         for (uint32_t i = 0; i < g_sqlite_elf.sym_count; i++) {
             const ElfW(Sym) *sym = &g_sqlite_elf.symtab[i];
-            if (sym->st_name == 0 || sym->st_shndx == SHN_UNDEF) continue;
+            if (sym->st_name == 0 || sym->st_value == 0 || sym->st_shndx == SHN_UNDEF) continue;
             if (strcmp(g_sqlite_elf.strtab + sym->st_name, name) == 0) {
                 symbol = (void *)(g_sqlite_elf.base + sym->st_value);
                 break;
@@ -297,7 +314,7 @@ static int bytes_write_byte(bytes *b, unsigned char value) {
 
 static void bytes_free(bytes *b) {
     free(b->data);
-    b->data = 0;
+    b->data = NULL;
     b->size = 0;
     b->cap = 0;
 }
@@ -380,7 +397,7 @@ static int write_varint(bytes *out, uint64_t value) {
 
 static char *copy_string(const unsigned char *data, size_t len) {
     char *out = (char *)malloc(len + 1);
-    if (!out) return 0;
+    if (!out) return NULL;
     memcpy(out, data, len);
     out[len] = 0;
     return out;
@@ -419,7 +436,7 @@ static void flag_free(flag *item) {
 static void flags_free(flag_list *list) {
     for (size_t i = 0; i < list->size; i++) flag_free(&list->items[i]);
     free(list->items);
-    list->items = 0;
+    list->items = NULL;
     list->size = 0;
     list->cap = 0;
 }
@@ -442,7 +459,7 @@ static int decode_flags(const unsigned char *compressed, size_t compressed_size,
         uint64_t shift = theory >> 3;
         int type = (int)(theory & 7);
         char name_buf[32];
-        char *name = 0;
+        char *name = NULL;
         if (shift == 0) {
             uint64_t len = 0;
             if (!read_varint(plain.data, plain.size, &pos, &len) ||
@@ -514,7 +531,7 @@ out:
 }
 
 static int name_to_u64(const char *name, uint64_t *value) {
-    char *end = 0;
+    char *end = NULL;
     uint64_t parsed = strtoull(name, &end, 10);
     if (!name[0] || !end || *end != 0) return 0;
     *value = parsed;
@@ -542,7 +559,7 @@ static int encode_flags(flag_list *flags, bytes *compressed) {
     for (size_t i = 0; i < flags->size; i++) {
         flag *f = &flags->items[i];
         uint64_t name_value = 0;
-        if (name_to_u64(f->name, &name_value) && name_value >= next) {
+        if (name_to_u64(f->name, &name_value) && name_value > next) {
             if (!write_varint(&plain, ((name_value - next) << 3) | (uint64_t)f->type)) goto fail;
             next = name_value;
         } else {
@@ -596,52 +613,62 @@ static int find_flag(flag_list *list, const char *name) {
     return -1;
 }
 
+#define COL_OVR_NAME      0
+#define COL_OVR_FLAG_TYPE 1
+#define COL_OVR_INT_VAL   2
+#define COL_OVR_BOOL_VAL  3
+#define COL_OVR_FLOAT_VAL 4
+#define COL_OVR_STR_VAL   5
+#define COL_OVR_EXT_VAL   6
+
+static const char READ_OVERRIDES_SQL[] =
+        "SELECT o.name, o.flagType, o.intVal, o.boolVal, o.floatVal, o.stringVal, o.extensionVal "
+        "FROM GmsFlagsOverrides o "
+        "JOIN static_config_packages p ON p.name = o.packageName "
+        "WHERE p.static_config_package_id = ?;";
+
 static int read_overrides(sqlite3 *db, int package_id, flag_list *overrides) {
-    const char *sql =
-            "SELECT o.name, o.flagType, o.intVal, o.boolVal, o.floatVal, o.stringVal, o.extensionVal "
-            "FROM GmsFlagsOverrides o "
-            "JOIN static_config_packages p ON p.name = o.packageName "
-            "WHERE p.static_config_package_id = ?;";
-    sqlite3_stmt *stmt = 0;
-    if (g_sqlite.prepare_v2(db, sql, -1, &stmt, 0) != 0) return 0;
+    sqlite3_stmt *stmt = NULL;
+    if (g_sqlite.prepare_v2(db, READ_OVERRIDES_SQL, -1, &stmt, NULL) != 0) return 0;
     g_sqlite.bind_int(stmt, 1, package_id);
 
     while (g_sqlite.step(stmt) == SQLITE_ROW) {
-        const unsigned char *name_text = g_sqlite.column_text(stmt, 0);
+        const unsigned char *name_text = g_sqlite.column_text(stmt, COL_OVR_NAME);
         if (!name_text) continue;
 
         flag f;
         memset(&f, 0, sizeof(f));
         f.name = copy_string(name_text, strlen((const char *)name_text));
 
-        int flag_type = g_sqlite.column_int(stmt, 1);
+        int flag_type = g_sqlite.column_int(stmt, COL_OVR_FLAG_TYPE);
         if (flag_type == 0) {
-            const unsigned char *bool_text = g_sqlite.column_text(stmt, 3);
+            const unsigned char *bool_text = g_sqlite.column_text(stmt, COL_OVR_BOOL_VAL);
             int bool_value = bool_text &&
                     (strcmp((const char *)bool_text, "1") == 0 ||
                      strcmp((const char *)bool_text, "true") == 0);
             f.type = bool_value ? PHIXIT_FLAG_TRUE : PHIXIT_FLAG_FALSE;
             f.value = (uint64_t)f.type;
         } else if (flag_type == 1 || flag_type == 2) {
-            const unsigned char *value_text = g_sqlite.column_text(stmt, flag_type == 1 ? 2 : 4);
+            const unsigned char *value_text = g_sqlite.column_text(
+                    stmt, flag_type == 1 ? COL_OVR_INT_VAL : COL_OVR_FLOAT_VAL);
             if (!value_text) { flag_free(&f); continue; }
             if (flag_type == 1) {
                 f.type = PHIXIT_FLAG_INT;
-                f.value = strtoull((const char *)value_text, 0, 10);
+                f.value = strtoull((const char *)value_text, NULL, 10);
             } else {
-                double parsed = strtod((const char *)value_text, 0);
+                double parsed = strtod((const char *)value_text, NULL);
                 f.type = PHIXIT_FLAG_FLOAT;
                 memcpy(&f.value, &parsed, sizeof(parsed));
             }
         } else if (flag_type == 3) {
-            const unsigned char *value_text = g_sqlite.column_text(stmt, 5);
+            const unsigned char *value_text = g_sqlite.column_text(stmt, COL_OVR_STR_VAL);
             if (!value_text) { flag_free(&f); continue; }
             f.type = PHIXIT_FLAG_STRING;
             f.blob_size = strlen((const char *)value_text);
             f.blob = (unsigned char *)copy_string(value_text, f.blob_size);
         } else if (flag_type == 4) {
-            const void *blob = g_sqlite.column_blob(stmt, 6);
-            int blob_size = g_sqlite.column_bytes(stmt, 6);
+            const void *blob = g_sqlite.column_blob(stmt, COL_OVR_EXT_VAL);
+            int blob_size = g_sqlite.column_bytes(stmt, COL_OVR_EXT_VAL);
             if (!blob || blob_size <= 0) { flag_free(&f); continue; }
             f.type = PHIXIT_FLAG_EXTENSION;
             f.blob_size = (size_t)blob_size;
@@ -664,7 +691,7 @@ static int read_overrides(sqlite3 *db, int package_id, flag_list *overrides) {
 }
 
 static int exec_sql(sqlite3 *db, const char *label, const char *sql) {
-    int rc = g_sqlite.exec(db, sql, 0, 0, 0);
+    int rc = g_sqlite.exec(db, sql, NULL, NULL, NULL);
     if (rc != 0) {
         LOGE("%s failed: %d, %s", label, rc, g_sqlite.errmsg(db));
         return 0;
@@ -672,32 +699,23 @@ static int exec_sql(sqlite3 *db, const char *label, const char *sql) {
     return 1;
 }
 
-static int table_exists(sqlite3 *db, const char *schema, const char *table) {
-    char sql[160];
-    sqlite3_stmt *stmt = 0;
-    int exists = 0;
+static const char CHECK_PARAM_PARTITIONS_SQL[] =
+        "SELECT 1 FROM main.sqlite_master WHERE type='table' AND name='param_partitions' LIMIT 1";
 
-    snprintf(
-            sql,
-            sizeof(sql),
-            "SELECT 1 FROM %s.sqlite_master WHERE type='table' AND name='%s' LIMIT 1",
-            schema,
-            table
-    );
-
-    int rc = g_sqlite.prepare_v2(db, sql, -1, &stmt, 0);
+static int table_exists(sqlite3 *db) {
+    sqlite3_stmt *stmt = NULL;
+    int rc = g_sqlite.prepare_v2(db, CHECK_PARAM_PARTITIONS_SQL, -1, &stmt, NULL);
     if (rc != 0) {
-        LOGE("Table check failed for %s.%s: %d, %s", schema, table, rc, g_sqlite.errmsg(db));
+        LOGE("Table check failed: %d, %s", rc, g_sqlite.errmsg(db));
         return 0;
     }
-
-    exists = g_sqlite.step(stmt) == SQLITE_ROW;
+    int exists = g_sqlite.step(stmt) == SQLITE_ROW;
     g_sqlite.finalize(stmt);
     return exists;
 }
 
 static int register_triggers(sqlite3 *db) {
-    if (!table_exists(db, "main", "param_partitions"))  {
+    if (!table_exists(db)) {
         LOGI("Skipping Phixit trigger registration: param_partitions is not visible");
         return 0;
     }
@@ -705,6 +723,29 @@ static int register_triggers(sqlite3 *db) {
     return exec_sql(db, "Disable recursive triggers", DISABLE_RECURSIVE_TRIGGERS_SQL) &&
             exec_sql(db, "Insert trigger registration", CREATE_INSERT_TRIGGER_SQL) &&
             exec_sql(db, "Update trigger registration", CREATE_UPDATE_TRIGGER_SQL);
+}
+
+static void format_flag_value(const flag *f, char *buf, size_t buf_size) {
+    switch (f->type) {
+        case PHIXIT_FLAG_FALSE:   snprintf(buf, buf_size, "false"); break;
+        case PHIXIT_FLAG_TRUE:    snprintf(buf, buf_size, "true");  break;
+        case PHIXIT_FLAG_INT:     snprintf(buf, buf_size, "%llu", (unsigned long long)f->value); break;
+        case PHIXIT_FLAG_FLOAT: {
+            double d;
+            memcpy(&d, &f->value, sizeof(d));
+            snprintf(buf, buf_size, "%g", d);
+            break;
+        }
+        case PHIXIT_FLAG_STRING:
+            snprintf(buf, buf_size, "\"%.*s\"", (int)f->blob_size, (const char *)f->blob);
+            break;
+        case PHIXIT_FLAG_EXTENSION:
+            snprintf(buf, buf_size, "<ext %zu bytes>", f->blob_size);
+            break;
+        default:
+            snprintf(buf, buf_size, "<?>");
+            break;
+    }
 }
 
 static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_value **argv) {
@@ -716,9 +757,9 @@ static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_va
     int package_id = g_sqlite.value_int(argv[0]);
     const void *content = g_sqlite.value_blob(argv[1]);
     int content_size = g_sqlite.value_bytes(argv[1]);
-    LOGI("Phixit trigger merge called: packageId=%d, contentBytes=%d", package_id, content_size);
+    LOGD("Phixit trigger merge called: packageId=%d, contentBytes=%d", package_id, content_size);
     if (!content || content_size <= 0) {
-        LOGI("Phixit trigger merge skipped: empty flags_content for packageId=%d", package_id);
+        LOGD("Phixit trigger merge skipped: empty flags_content for packageId=%d", package_id);
         g_sqlite.result_value(sqlite_ctx, argv[1]);
         return;
     }
@@ -726,44 +767,58 @@ static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_va
     sqlite3 *db = g_sqlite.context_db_handle(sqlite_ctx);
     flag_list overrides = {0};
     if (!read_overrides(db, package_id, &overrides) || overrides.size == 0) {
-        LOGI("Phixit trigger merge skipped: no overrides for packageId=%d", package_id);
+        LOGD("Phixit trigger merge skipped: no overrides for packageId=%d", package_id);
         flags_free(&overrides);
         g_sqlite.result_value(sqlite_ctx, argv[1]);
         return;
     }
-    LOGI("Phixit trigger merge applying %zu overrides for packageId=%d", overrides.size, package_id);
+    LOGD("Phixit trigger merge applying %zu overrides for packageId=%d", overrides.size, package_id);
 
     flag_list flags = {0};
     bytes output = {0};
     if (!decode_flags((const unsigned char *)content, (size_t)content_size, &flags)) {
-        LOGE("Failed to decode flags_content");
+        LOGE("Failed to decode flags_content for packageId=%d", package_id);
         flags_free(&overrides);
         g_sqlite.result_value(sqlite_ctx, argv[1]);
         return;
     }
+    LOGD("Phixit trigger merge: decoded %zu flags, applying %zu overrides for packageId=%d",
+            flags.size, overrides.size, package_id);
 
     for (size_t i = 0; i < overrides.size; i++) {
-        int index = find_flag(&flags, overrides.items[i].name);
-        flag copy = clone_flag(&overrides.items[i]);
+        flag *ovr = &overrides.items[i];
+        int index = find_flag(&flags, ovr->name);
+        flag copy = clone_flag(ovr);
         if (!copy.name ||
                 ((copy.type == PHIXIT_FLAG_STRING || copy.type == PHIXIT_FLAG_EXTENSION) && !copy.blob)) {
+            LOGW("Override '%s': clone failed (OOM)", ovr->name);
             flag_free(&copy);
             continue;
         }
 
         if (index >= 0) {
+            char prev_buf[256], new_buf[256];
+            format_flag_value(&flags.items[index], prev_buf, sizeof(prev_buf));
+            format_flag_value(&copy, new_buf, sizeof(new_buf));
+            LOGD("  Override '%s': %s -> %s", ovr->name, prev_buf, new_buf);
             flag_free(&flags.items[index]);
             flags.items[index] = copy;
-        } else if (!flags_add(&flags, copy)) {
-            flag_free(&copy);
+        } else {
+            if (flags_add(&flags, copy)) {
+                LOGD("  Override '%s' (type=%d): added new", ovr->name, ovr->type);
+            } else {
+                LOGW("  Override '%s': failed to add (OOM)", ovr->name);
+                flag_free(&copy);
+            }
         }
     }
 
     if (encode_flags(&flags, &output)) {
         g_sqlite.result_blob(sqlite_ctx, output.data, (int)output.size, SQLITE_TRANSIENT);
-        LOGI("Phixit trigger merge completed: packageId=%d, outputBytes=%zu", package_id, output.size);
+        LOGD("Phixit trigger merge completed: packageId=%d, %d -> %zu bytes",
+                package_id, content_size, output.size);
     } else {
-        LOGE("Failed to encode merged flags_content");
+        LOGE("Failed to encode merged flags_content for packageId=%d", package_id);
         g_sqlite.result_value(sqlite_ctx, argv[1]);
     }
 
@@ -823,19 +878,11 @@ static int sqlite_symbols_ready(void) {
 }
 
 static void configure_sqlite_for_triggers(sqlite3 *db) {
-    int previous = 0;
-    int rc = g_sqlite.db_config(db, SQLITE_DBCONFIG_DEFENSIVE, 0, &previous);
+    int rc = g_sqlite.db_config(db, SQLITE_DBCONFIG_DEFENSIVE, 0, NULL);
     if (rc != 0) LOGE("Failed to disable SQLite defensive mode: %d", rc);
 
-    rc = g_sqlite.db_config(db, SQLITE_DBCONFIG_ENABLE_TRIGGER, 1, &previous);
+    rc = g_sqlite.db_config(db, SQLITE_DBCONFIG_ENABLE_TRIGGER, 1, NULL);
     if (rc != 0) LOGE("Failed to enable SQLite triggers: %d", rc);
-}
-
-jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    (void)vm;
-    (void)reserved;
-
-    return JNI_VERSION_1_6;
 }
 
 JNIEXPORT void JNICALL
@@ -844,23 +891,25 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeSetDebugLogPath(
         jobject thiz,
         jstring path
 ) {
-    (void)thiz;
+    pthread_mutex_lock(&g_log_mutex);
+    if (g_log_file) {
+        fclose(g_log_file);
+        g_log_file = NULL;
+    }
+    if (path) {
+        const char *chars = (*env)->GetStringUTFChars(env, path, NULL);
+        if (chars) {
+            g_log_file = fopen(chars, "a");
+            (*env)->ReleaseStringUTFChars(env, path, chars);
+        }
+    }
+    pthread_mutex_unlock(&g_log_mutex);
 
-    free(g_debug_log_path);
-    g_debug_log_path = 0;
-
-    if (!path) return;
-
-    const char *chars = (*env)->GetStringUTFChars(env, path, 0);
-    if (!chars) return;
-
-    g_debug_log_path = strdup(chars);
-    (*env)->ReleaseStringUTFChars(env, path, chars);
-
-    if (g_debug_log_path) {
-        LOGI("Native debug file logging enabled: %s", g_debug_log_path);
+    if (g_log_file) {
+        LOGI("Native debug file logging enabled");
     }
 }
+
 
 JNIEXPORT void JNICALL
 Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
@@ -888,6 +937,22 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
     const char *filename = g_sqlite.db_filename(db, "main");
     if (filename) LOGI("SQLite DB file: %s", filename);
 
+    sqlite3_stmt *ver_stmt = NULL;
+    if (g_sqlite.prepare_v2(db, "PRAGMA user_version", -1, &ver_stmt, NULL) != SQLITE_OK) {
+        LOGE("Failed to query user_version");
+        return;
+    }
+    int version = 0;
+    if (g_sqlite.step(ver_stmt) == SQLITE_ROW) {
+        version = g_sqlite.column_int(ver_stmt, 0);
+    }
+    g_sqlite.finalize(ver_stmt);
+
+    if (version < MINIMAL_PHENOTYPE_VERSION) {
+        LOGW("Phenotype version %d is too low for Phixit (need >= %d)", version, MINIMAL_PHENOTYPE_VERSION);
+        return;
+    }
+
     configure_sqlite_for_triggers(db);
 
     if (!exec_sql(db, "Overrides table creation", CREATE_OVERRIDES_TABLE_SQL)) {
@@ -899,11 +964,11 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
             MERGE_FUNCTION_NAME,
             2,
             SQLITE_UTF8 | SQLITE_DETERMINISTIC,
-            0,
+            NULL,
             phixit_merge_flags,
-            0,
-            0,
-            0
+            NULL,
+            NULL,
+            NULL
     );
     if (rc != 0) {
         LOGE("sqlite3_create_function_v2 failed: %d, %s", rc, g_sqlite.errmsg(db));
@@ -915,4 +980,17 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
     }
 
     LOGI("Phixit merge function and triggers registered");
+
+#ifndef NDEBUG
+    {
+        static int self_test_done = 0;
+        if (!self_test_done) {
+            self_test_done = 1;
+            static const char SELF_UPDATE_SQL[] =
+                    "UPDATE param_partitions SET flags_content = flags_content WHERE flags_content IS NOT NULL";
+            LOGD("Running trigger self-test");
+            exec_sql(db, "Trigger self-test", SELF_UPDATE_SQL);
+        }
+    }
+#endif
 }

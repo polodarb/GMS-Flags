@@ -954,7 +954,7 @@ class RootDatabase : RootService() {
             return false
         }
 
-        val expectedStartTime = values["processStartTime"]
+        val expectedStartTime = values["time"]
         val cmdline = runCatching {
             File("/proc/$pid/cmdline").readText().replace('\u0000', ' ').trim()
         }.getOrNull()

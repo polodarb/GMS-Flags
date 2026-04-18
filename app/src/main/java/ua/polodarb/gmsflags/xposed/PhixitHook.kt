@@ -3,14 +3,8 @@ package ua.polodarb.gmsflags.xposed
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.ContextWrapper
-import android.database.DatabaseErrorHandler
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteDatabase.OpenParams
-import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import android.os.Process
-import android.util.Log
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
@@ -20,12 +14,11 @@ import org.luckypray.dexkit.DexKitBridge
 import ua.polodarb.gmsflags.BuildConfig
 import java.io.File
 import java.io.FileInputStream
+import java.lang.ref.WeakReference
 import java.lang.reflect.Modifier
 import java.security.DigestInputStream
 import java.security.MessageDigest
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -34,19 +27,13 @@ import java.util.zip.ZipFile
 class PhixitHook : IXposedHookLoadPackage {
 
     companion object {
-        private const val TAG = "PhixitHook"
-
         private const val TARGET_DATABASE_NAME = "phenotype.db"
-        private const val MINIMAL_PHENOTYPE_VERSION = 1034
-
         private const val DEXKIT_LIB = "dexkit"
         private const val PHIXIT_HOOK_LIB = "phixit_hook"
 
         private const val HASH_FILE = "apk_hash"
 
         private const val LIBS_DIR = "libs"
-        private const val LOGS_DIR = "logs"
-        private const val LOG_FILE_SUFFIX = "_xposed.log"
         private const val XPOSED_DIR = "gmsflags_xposed"
         private const val XPOSED_STATUS_FILE = "hook_status"
         private const val PROC_STAT_START_TIME_INDEX = 19
@@ -55,101 +42,155 @@ class PhixitHook : IXposedHookLoadPackage {
             "com.google.android.gms" to "com.google.android.gms.persistent",
             "com.android.vending" to "com.android.vending",
         )
-
-        private val LOG_START_TIME = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-
-        private val LOG_LOCK = Any()
-        private val PENDING_LOGS = mutableListOf<String>()
-        private val STARTED_TARGETS = mutableSetOf<String>() // TODO: ужас какой-то
-        private var debugLogFile: File? = null
     }
 
     init {
-        logD("Module initialized")
+        XposedLogger.logD("Module initialized")
     }
 
     external fun nativeHandlePhenotype(connectionPtr: Long)
     external fun nativeSetDebugLogPath(path: String?)
 
-    private fun logD(message: String) {
-        Log.d(TAG, message)
-        writeDebugLog("D", message)
-    }
+    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam?) {
+        if (lpparam == null) return
 
-    private fun logI(message: String) {
-        Log.i(TAG, message)
-        writeDebugLog("I", message)
-    }
+        XposedLogger.logD("Received ${lpparam.packageName} (${lpparam.processName})")
 
-    private fun logW(message: String) {
-        Log.w(TAG, message)
-        writeDebugLog("W", message)
-    }
+        if (lpparam.packageName to lpparam.processName !in TARGET_PACKAGES) return
 
-    private fun logE(message: String, throwable: Throwable? = null) {
-        if (throwable == null) {
-            Log.e(TAG, message)
-        } else {
-            Log.e(TAG, message, throwable)
-        }
-        writeDebugLog("E", message, throwable)
-    }
+        XposedLogger.logI("Required package has been found, installing hooks")
 
-    // TODO: Move to other class all logs or I am killing myself
-    private fun writeDebugLog(level: String, message: String, throwable: Throwable? = null) {
-        if (!BuildConfig.DEBUG) return
+        val nativeReady = AtomicBoolean(false)
+        val pendingConnections = mutableListOf<WeakReference<Any>>()
+        val processedPtrs = HashSet<Long>()
 
-        val line = buildString {
-            append(System.currentTimeMillis())
-            append(' ')
-            append(level)
-            append(' ')
-            append('[')
-            append(Thread.currentThread().name)
-            append("] ")
-            append(message)
-            if (throwable != null) {
-                append('\n')
-                append(Log.getStackTraceString(throwable))
+        val connectionClass = XposedHelpers.findClass(
+            "android.database.sqlite.SQLiteConnection", null
+        )
+        val poolClass = XposedHelpers.findClass(
+            "android.database.sqlite.SQLiteConnectionPool", null
+        )
+        val configClass = XposedHelpers.findClass(
+            "android.database.sqlite.SQLiteDatabaseConfiguration", null
+        )
+
+        val ptrField = connectionClass.getDeclaredField("mConnectionPtr")
+            .apply { isAccessible = true }
+        val configField = connectionClass.getDeclaredField("mConfiguration")
+            .apply { isAccessible = true }
+        val pathField = configClass.getDeclaredField("path")
+            .apply { isAccessible = true }
+
+        fun handleConnection(connection: Any, source: String) {
+            val config = configField.get(connection) ?: return
+            val path = pathField.get(config) as? String ?: return
+            if (File(path).name != TARGET_DATABASE_NAME) return
+
+            val ptr = ptrField.getLong(connection)
+            if (ptr == 0L) return
+
+            synchronized(pendingConnections) {
+                if (!processedPtrs.add(ptr)) return
+
+                if (nativeReady.get()) {
+                    XposedLogger.logI("Phenotype connection via $source, ptr=$ptr")
+                    nativeHandlePhenotype(connectionPtr = ptr)
+                } else {
+                    XposedLogger.logI("Buffering phenotype connection via $source")
+                    pendingConnections.add(WeakReference(connection))
+                }
             }
         }
 
-        synchronized(LOG_LOCK) {
-            val file = debugLogFile
-            if (file == null) {
-                PENDING_LOGS += line
-                return
+        safeHookMethod(connectionClass.getDeclaredMethod("open"), object : XC_MethodHook() {
+            override fun afterHookedMethod(param: MethodHookParam) {
+                handleConnection(param.thisObject, "open()")
             }
+        })
 
-            if (PENDING_LOGS.isNotEmpty()) {
-                file.appendText(PENDING_LOGS.joinToString(separator = "\n", postfix = "\n"))
-                PENDING_LOGS.clear()
+        val cancelClass = XposedHelpers.findClass("android.os.CancellationSignal", null)
+        safeFindAndHookMethod(
+            poolClass, "acquireConnection",
+            String::class.java, Integer.TYPE, cancelClass,
+            object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    handleConnection(param.result ?: return, "acquireConnection()")
+                }
             }
-            file.appendText("$line\n")
-        }
+        )
+
+        hookApplication(
+            lpparam = lpparam,
+            onCreate = { context, classLoader ->
+                XposedLogger.initFileLogging(xposedDir(context), lpparam)
+                XposedLogger.logI("Context received, starting extracting libraries")
+
+                try {
+                    extractAndLoadNativeLibrary(context, DEXKIT_LIB)
+                    hookConflictingFlags(lpparam, classLoader)
+                } catch (t: Throwable) {
+                    XposedLogger.logE("Failed to set up conflicting flags hook", t)
+                }
+
+                try {
+                    extractAndLoadNativeLibrary(context, PHIXIT_HOOK_LIB)
+                    if (BuildConfig.DEBUG) {
+                        nativeSetDebugLogPath(XposedLogger.logFilePath)
+                    }
+                } catch (t: Throwable) {
+                    XposedLogger.logE("Failed to prepare native library", t)
+                    return@hookApplication
+                }
+
+                XposedLogger.logI("Native library loaded, processing pending connections")
+
+                synchronized(pendingConnections) {
+                    nativeReady.set(true)
+                    for (ref in pendingConnections) {
+                        val connection = ref.get() ?: continue
+                        val ptr = ptrField.getLong(connection)
+                        if (ptr == 0L) continue
+                        XposedLogger.logI("Processing buffered phenotype connection, ptr=$ptr")
+                        nativeHandlePhenotype(connectionPtr = ptr)
+                    }
+                    pendingConnections.clear()
+                }
+
+                writeHookStatus(context, lpparam)
+                XposedLogger.logI("All done for ${lpparam.packageName} (${lpparam.processName})")
+            }
+        )
     }
 
-    private fun initDebugFileLogging(context: Context, lpparam: XC_LoadPackage.LoadPackageParam) {
-        if (!BuildConfig.DEBUG) return
+    private fun hookApplication(
+        lpparam: XC_LoadPackage.LoadPackageParam,
+        onCreate: (context: Context, classLoader: ClassLoader) -> Unit,
+    ) {
+        val application = XposedHelpers.findClass("android.app.Application", lpparam.classLoader)
+        val isLaunched = AtomicBoolean(false)
 
-        val logDir = File(xposedDir(context), LOGS_DIR)
-        if (!logDir.exists() && !logDir.mkdirs()) {
-            logE("Failed to create debug log directory: ${logDir.path}")
-            return
-        }
+        safeFindAndHookMethod(
+            application,
+            "onCreate",
+            object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    if (!isLaunched.compareAndSet(false, true)) return
 
-        val logFile = File(logDir, "$LOG_START_TIME$LOG_FILE_SUFFIX")
-        synchronized(LOG_LOCK) {
-            debugLogFile = logFile
-        }
-        logI("Debug file logging enabled: ${logFile.path} for ${lpparam.packageName} (${lpparam.processName})")
+                    val application = param.thisObject as Application
+                    val context = application.applicationContext
+                    val classLoader = application.javaClass.classLoader ?: lpparam.classLoader
+
+                    onCreate(context, classLoader)
+                }
+            }
+        )
     }
 
     private fun writeHookStatus(context: Context, lpparam: XC_LoadPackage.LoadPackageParam) {
         runCatching {
             val xposedDir = xposedDir(context)
             if (!xposedDir.exists() && !xposedDir.mkdirs()) {
-                logE("Failed to create Xposed directory: ${xposedDir.path}")
+                XposedLogger.logE("Failed to create Xposed directory: ${xposedDir.path}")
                 return
             }
 
@@ -158,13 +199,12 @@ class PhixitHook : IXposedHookLoadPackage {
                     append("package=${lpparam.packageName}\n")
                     append("process=${lpparam.processName}\n")
                     append("pid=${Process.myPid()}\n")
-                    append("processStartTime=${currentProcessStartTime()}\n")
-                    append("time=${System.currentTimeMillis()}\n")
+                    append("time=${currentProcessStartTime()}\n")
                 }
             )
-            logI("Xposed hook status written for ${lpparam.packageName} (${lpparam.processName})")
+            XposedLogger.logI("Xposed hook status written for ${lpparam.packageName} (${lpparam.processName})")
         }.onFailure {
-            logE("Failed to write Xposed hook status", it)
+            XposedLogger.logE("Failed to write Xposed hook status", it)
         }
     }
 
@@ -174,151 +214,20 @@ class PhixitHook : IXposedHookLoadPackage {
         }.getOrDefault("")
     }
 
+    private fun xposedDirCandidates(context: Context): List<File> =
+        listOf(
+            File(context.dataDir, XPOSED_DIR),
+            File(context.dataDir.path.replace("/user/", "/user_de/"), XPOSED_DIR),
+        ).distinctBy { it.absolutePath }
+
     private fun xposedDir(context: Context): File {
         return try {
-            listOf(
-                File(context.dataDir, XPOSED_DIR),
-                File(context.dataDir.path.replace("/user/", "/user_de/"), XPOSED_DIR),
-            )
-                .distinctBy { it.absolutePath }
-                .firstOrNull { dir ->
-                    runCatching {
-                        (dir.exists() || dir.mkdirs()) && dir.canWrite()
-                    }.getOrDefault(false)
-                }
+            xposedDirCandidates(context).firstOrNull { dir ->
+                runCatching { (dir.exists() || dir.mkdirs()) && dir.canWrite() }.getOrDefault(false)
+            }
         } catch (e: Exception) {
             null
         } ?: File(context.dataDir, XPOSED_DIR)
-    }
-
-    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam?) {
-        if (lpparam == null) return
-
-        logD("Received ${lpparam.packageName} (${lpparam.processName})")
-
-        if (lpparam.packageName to lpparam.processName !in TARGET_PACKAGES) return
-
-        val targetKey = "${lpparam.packageName}:${lpparam.processName}"
-        synchronized(STARTED_TARGETS) {
-            if (!STARTED_TARGETS.add(targetKey)) {
-                logD("Skipping duplicate setup for ${lpparam.packageName} (${lpparam.processName})")
-                return
-            }
-        }
-
-        logI("Required package has been found, waiting for context")
-
-        hookApplication(
-            lpparam = lpparam,
-            onCreate = { context ->
-                initDebugFileLogging(context, lpparam)
-                logI("Context received, starting extracting libraries")
-
-                try {
-                    extractAndLoadNativeLibrary(context, DEXKIT_LIB)
-                    hookConflictingFlags(lpparam)
-                } catch (t: Throwable) {
-                    logE("Failed to set up conflicting flags hook", t)
-                }
-
-                try {
-                    extractAndLoadNativeLibrary(context, PHIXIT_HOOK_LIB)
-                    if (BuildConfig.DEBUG) {
-                        nativeSetDebugLogPath(debugLogFile?.absolutePath)
-                    }
-                } catch (t: Throwable) {
-                    logE("Failed to prepare native library", t)
-                    return@hookApplication
-                }
-
-                logI("Native libraries extracted, installing hooks")
-
-                hookOpenDatabase(
-                    lpparam = lpparam,
-                    onOpenDatabase = { db ->
-                        if (File(db.path).name != TARGET_DATABASE_NAME)
-                            return@hookOpenDatabase
-
-                        handlePhenotype(db)
-                    }
-                )
-
-                writeHookStatus(context, lpparam)
-                logI("All done for ${lpparam.packageName} (${lpparam.processName})")
-            }
-        )
-    }
-
-    private fun hookApplication(
-        lpparam: XC_LoadPackage.LoadPackageParam,
-        onCreate: (context: Context) -> Unit,
-    ) {
-        val application = XposedHelpers.findClass("android.app.Application", lpparam.classLoader)
-        var isLaunched = false
-
-        safeFindAndHookMethod(
-            application,
-            "onCreate",
-            object : XC_MethodHook() {
-                override fun afterHookedMethod(param: MethodHookParam) {
-                    if (isLaunched) return
-
-                    val application = param.thisObject as Application
-                    val context = application.applicationContext
-
-                    @Suppress("AssignedValueIsNeverRead")
-                    isLaunched = true
-
-                    onCreate(context)
-                }
-            }
-        )
-    }
-
-    private fun handlePhenotype(db: SQLiteDatabase) {
-        if (!db.isPhixit) {
-            logE("Phenotype version is too low for Phixit (${db.version})")
-            return
-        }
-
-        logI("Phenotype contains Phixit schema, trying to create survival trigger")
-
-        val ptr = getConnectionPtr(db)
-
-        if (ptr == null || ptr == 0L) {
-            logE("Failed to obtain native connection pointer")
-            return
-        }
-
-        logI("SQLite native connectionPtr = $ptr")
-
-        nativeHandlePhenotype(connectionPtr = ptr)
-    }
-
-    private fun getConnectionPtr(db: SQLiteDatabase): Long? {
-        return try {
-            // SQLiteDatabase -> mConnectionPoolLocked
-            val dbClass = SQLiteDatabase::class.java
-            val poolField = dbClass.getDeclaredField("mConnectionPoolLocked")
-            poolField.isAccessible = true
-            val pool = poolField.get(db) ?: return null
-
-            // SQLiteConnectionPool -> mAvailablePrimaryConnection
-            val poolClass = pool.javaClass
-            val primaryConnField = poolClass.getDeclaredField("mAvailablePrimaryConnection")
-            primaryConnField.isAccessible = true
-            val connection = primaryConnField.get(pool) ?: return null
-
-            // SQLiteConnection -> mConnectionPtr
-            val connClass = connection.javaClass
-            val ptrField = connClass.getDeclaredField("mConnectionPtr")
-            ptrField.isAccessible = true
-
-            ptrField.getLong(connection)
-        } catch (t: Throwable) {
-            logE("Reflection failed", t)
-            null
-        }
     }
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
@@ -328,33 +237,36 @@ class PhixitHook : IXposedHookLoadPackage {
         packageName: String = BuildConfig.APPLICATION_ID
     ) {
         val nativeDir = findWritableNativeDir(context)
-        val hashFile = File(nativeDir, HASH_FILE)
+        val hashFile = File(nativeDir, "${HASH_FILE}_$libName")
         val apkFile = context.getApkFile(packageName)
-        val deviceAbi = requireNotNull(getBestMatchingAbi(apkFile.path)) {
-            "No compatible ABI found for APK: ${apkFile.path}"
-        }
-
-        logI("Preparing native libraries for $packageName ($deviceAbi)")
-
-        val currentHash = "${calculateApkHash(apkFile.path)}:$deviceAbi:$libName"
-        if (!nativeDir.exists() || !hashFile.exists() ||
-            hashFile.bufferedReader().use { it.readLine() } != currentHash
-        ) {
-            nativeDir.deleteRecursively()
-            require(nativeDir.mkdirs()) { "Failed to create lib directory" }
-            extractLibraryFromApk(apkFile, deviceAbi, libName, nativeDir)
-            hashFile.writeText(currentHash)
-        } else {
-            logI("Native libs already up-to-date")
-        }
-
         val libFile = nativeLibraryFile(nativeDir, libName)
-        if (!libFile.exists()) {
-            throw UnsatisfiedLinkError("Native library not found: $libFile")
+
+        val apkHash = calculateApkHash(apkFile.path)
+
+        val storedLine = hashFile.takeIf { it.exists() }?.bufferedReader()?.use { it.readLine() }
+        val colonIdx = storedLine?.lastIndexOf(':') ?: -1
+        val storedAbi = storedLine?.substring(colonIdx + 1)?.takeIf { it.isNotEmpty() }
+
+        if (storedLine?.substring(0, colonIdx) == apkHash && storedAbi != null && libFile.exists()) {
+            XposedLogger.logI("Native lib $libName already up-to-date")
+        } else {
+            if (!nativeDir.exists()) require(nativeDir.mkdirs()) { "Failed to create lib directory" }
+
+            val deviceAbi = ZipFile(apkFile).use { zip ->
+                val abi = requireNotNull(getBestMatchingAbi(zip)) {
+                    "No compatible ABI found for APK: ${apkFile.path}"
+                }
+                XposedLogger.logI("Preparing $libName for $packageName ($abi)")
+                extractLibraryFromApk(zip, abi, libName, nativeDir)
+                abi
+            }
+
+            hashFile.writeText("$apkHash:$deviceAbi")
         }
 
+        if (!libFile.exists()) throw UnsatisfiedLinkError("Native library not found: $libFile")
         System.load(libFile.absolutePath)
-        logI("Loaded library: $libName")
+        XposedLogger.logI("Loaded library: $libName")
     }
 
     private fun nativeLibraryFile(nativeDir: File, libName: String): File {
@@ -363,18 +275,16 @@ class PhixitHook : IXposedHookLoadPackage {
     }
 
     private fun extractLibraryFromApk(
-        apkFile: File,
+        apkZip: ZipFile,
         deviceAbi: String,
         libName: String,
         nativeDir: File
     ) {
-        ZipFile(apkFile).use { apkZip ->
-            val entryName = "lib/$deviceAbi/${nativeLibraryFile(nativeDir, libName).name}"
-            val entry = requireNotNull(apkZip.getEntry(entryName)) {
-                "Native library not found in APK: $entryName"
-            }
-            extractLibrary(apkZip, entry, nativeDir)
+        val entryName = "lib/$deviceAbi/${nativeLibraryFile(nativeDir, libName).name}"
+        val entry = requireNotNull(apkZip.getEntry(entryName)) {
+            "Native library not found in APK: $entryName"
         }
+        extractLibrary(apkZip, entry, nativeDir)
     }
 
     @SuppressLint("SetWorldReadable")
@@ -384,9 +294,10 @@ class PhixitHook : IXposedHookLoadPackage {
         nativeDir: File
     ) {
         val output = File(nativeDir, entry.name.substringAfterLast('/'))
+        output.delete()
         apkZip.getInputStream(entry).use { input ->
             output.outputStream().use { outputStream ->
-                input.copyTo(outputStream, bufferSize = 1024)
+                input.copyTo(outputStream, bufferSize = 64 * 1024)
             }
         }
 
@@ -396,57 +307,46 @@ class PhixitHook : IXposedHookLoadPackage {
             setWritable(false, false)
         }
 
-        logI("Extracted: ${output.name} (${output.path})")
+        XposedLogger.logI("Extracted: ${output.name} (${output.path})")
     }
 
     private fun Context.getApkFile(packageName: String): File {
         return File(packageManager.getApplicationInfo(packageName, 0).sourceDir)
     }
 
-    private fun getBestMatchingAbi(apkPath: String): String? {
+    private fun getBestMatchingAbi(apkZip: ZipFile): String? {
         val deviceAbis = Build.SUPPORTED_64_BIT_ABIS + Build.SUPPORTED_32_BIT_ABIS
-        val apkAbis = getAbisFromApk(apkPath)
+        val apkAbis = apkZip.entries().asSequence()
+            .filter { it.name.startsWith("lib/") && it.name.endsWith(".so") }
+            .mapNotNull { it.name.split('/').getOrNull(1) }
+            .toSet()
         return deviceAbis.firstOrNull { it in apkAbis }
     }
 
-    private fun getAbisFromApk(apkPath: String): Set<String> {
-        return ZipFile(apkPath).use { apkZip ->
-            apkZip.entries().asSequence()
-                .filter { it.name.startsWith("lib/") && it.name.endsWith(".so") }
-                .mapNotNull { entry ->
-                    entry.name.split('/').getOrNull(1)
-                }
-                .toSet()
-        }
-    }
+    private val apkHashCache = HashMap<String, String>()
 
     private fun calculateApkHash(apkPath: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        FileInputStream(apkPath).use { fis ->
-            DigestInputStream(fis, md).use { dis ->
-                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                while (dis.read(buffer) != -1) { /* Unit */ }
+        return apkHashCache.getOrPut(apkPath) {
+            val md = MessageDigest.getInstance("SHA-256")
+            FileInputStream(apkPath).use { fis ->
+                DigestInputStream(fis, md).use { dis ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    while (dis.read(buffer) != -1) { /* drain */ }
+                }
             }
+            md.digest().joinToString("") { "%02x".format(it) }
         }
-        return md.digest().joinToString("") { "%02x".format(it) }
     }
 
     private fun String.processStartTime(): String {
-        val fieldsAfterName = substringAfterLast(") ")
-            .split(' ')
+        val fieldsAfterName = substringAfterLast(") ").split(' ')
         return fieldsAfterName.getOrNull(PROC_STAT_START_TIME_INDEX).orEmpty()
     }
 
     private fun findWritableNativeDir(context: Context): File {
-        // TODO: Refactor me
-        val pathsToTry = listOf(
-            { File(File(context.dataDir, XPOSED_DIR), LIBS_DIR) },
-            { File(File(context.dataDir.path.replace("/user/", "/user_de/"), XPOSED_DIR), LIBS_DIR) },
-        )
-
-        for (pathProvider in pathsToTry) {
+        for (candidate in xposedDirCandidates(context)) {
             try {
-                val dir = pathProvider()
+                val dir = File(candidate, LIBS_DIR)
                 if (!dir.exists()) {
                     if (dir.mkdirs()) return dir
                 } else if (dir.canWrite()) {
@@ -454,117 +354,15 @@ class PhixitHook : IXposedHookLoadPackage {
                 }
             } catch (_: Exception) {}
         }
-
         return File(xposedDir(context), LIBS_DIR).apply { mkdirs() }
     }
 
-    // TODO: Do I even need this many? It looks like complete crap, but sometimes some hooks don't work?
-    private fun hookOpenDatabase(
+    private fun hookConflictingFlags(
         lpparam: XC_LoadPackage.LoadPackageParam,
-        onOpenDatabase: (SQLiteDatabase) -> Unit,
+        runtimeClassLoader: ClassLoader,
     ) {
-        fun handle(param: XC_MethodHook.MethodHookParam) {
-            var result = param.result
-            if (result !is SQLiteDatabase) {
-                try {
-                    result = param.args[0]
-                    if (result !is SQLiteDatabase)
-                        return
-                } catch (_: Throwable) { return }
-            }
-            onOpenDatabase(result)
-        }
-
-        val hook = object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) = handle(param)
-        }
-
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openDatabase",
-            String::class.java, SQLiteDatabase.CursorFactory::class.java, Int::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openDatabase",
-            String::class.java, SQLiteDatabase.CursorFactory::class.java, Int::class.java, DatabaseErrorHandler::class.java,
-            hook
-        )
-
-        // True hook for phenotype, other hooks are for safety
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openDatabase",
-            File::class.java, OpenParams::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openOrCreateDatabase",
-            String::class.java, SQLiteDatabase.CursorFactory::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openOrCreateDatabase",
-            File::class.java, SQLiteDatabase.CursorFactory::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            SQLiteDatabase::class.java,
-            "openOrCreateDatabase",
-            String::class.java, SQLiteDatabase.CursorFactory::class.java, DatabaseErrorHandler::class.java,
-            hook
-        )
-
-        val contextImpl = XposedHelpers.findClass("android.app.ContextImpl", null)
-
-        safeFindAndHookMethod(
-            contextImpl,
-            "openOrCreateDatabase",
-            String::class.java, Int::class.java, SQLiteDatabase.CursorFactory::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            contextImpl,
-            "openOrCreateDatabase",
-            String::class.java, Int::class.java, SQLiteDatabase.CursorFactory::class.java, DatabaseErrorHandler::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            ContextWrapper::class.java,
-            "openOrCreateDatabase",
-            String::class.java, Int::class.java, SQLiteDatabase.CursorFactory::class.java,
-            hook
-        )
-
-        safeFindAndHookMethod(
-            ContextWrapper::class.java,
-            "openOrCreateDatabase",
-            String::class.java, Int::class.java, SQLiteDatabase.CursorFactory::class.java, DatabaseErrorHandler::class.java,
-            hook
-        )
-
-        // onOpen is called rarer than getDatabaseLocked, so for SQLiteOpenHelper hook only this
-        // TODO: Maybe also remove this??
-        safeFindAndHookMethod(
-            SQLiteOpenHelper::class.java,
-            "onOpen",
-            SQLiteDatabase::class.java,
-            hook
-        )
-    }
-
-    private fun hookConflictingFlags(lpparam: XC_LoadPackage.LoadPackageParam) {
         val apkPath = lpparam.appInfo.sourceDir ?: run {
-            logE("No sourceDir for ${lpparam.packageName}")
+            XposedLogger.logE("No sourceDir for ${lpparam.packageName}")
             return
         }
 
@@ -574,13 +372,21 @@ class PhixitHook : IXposedHookLoadPackage {
                     usingStrings("Encountered conflicting flags. Expected flag count ")
                 }
             }.singleOrNull() ?: run {
-                logW("Conflicting flags merge method not found")
+                XposedLogger.logW("Conflicting flags merge method not found")
                 return@use
             }
 
-            logI("Found merge method: ${mergeFlagSetsMethodData.className}#${mergeFlagSetsMethodData.name}")
+            XposedLogger.logI("Found merge method: ${mergeFlagSetsMethodData.className}#${mergeFlagSetsMethodData.name}")
 
-            val mergeFlagSetsMethod = mergeFlagSetsMethodData.getMethodInstance(lpparam.classLoader)
+            val className = mergeFlagSetsMethodData.className.replace('/', '.')
+            val effectiveLoader = sequenceOf(runtimeClassLoader, lpparam.classLoader)
+                .firstOrNull { cl -> runCatching { Class.forName(className, false, cl) }.isSuccess }
+                ?: run {
+                    XposedLogger.logW("Conflicting flags class not loadable in any classloader, skipping")
+                    return@use
+                }
+
+            val mergeFlagSetsMethod = mergeFlagSetsMethodData.getMethodInstance(effectiveLoader)
             val flagSetClass = mergeFlagSetsMethod.declaringClass
 
             val flagListField = flagSetClass.declaredFields
@@ -604,7 +410,7 @@ class PhixitHook : IXposedHookLoadPackage {
             }
             var flagListBuilderClass: Class<*>? = null
             for (candidate in flagListBuilderCandidates) {
-                val cls = runCatching { Class.forName(candidate.name, false, lpparam.classLoader) }.getOrNull() ?: continue
+                val cls = runCatching { Class.forName(candidate.name, false, effectiveLoader) }.getOrNull() ?: continue
                 val isFlagListBuilder = cls.declaredMethods.any { m ->
                     m.parameterCount == 0 && m.returnType != Void.TYPE
                 } && cls.declaredMethods.any { m ->
@@ -615,11 +421,11 @@ class PhixitHook : IXposedHookLoadPackage {
                 if (isFlagListBuilder) { flagListBuilderClass = cls; break }
             }
             flagListBuilderClass ?: run {
-                logW("Flag list builder class not found")
+                XposedLogger.logW("Flag list builder class not found")
                 return@use
             }
 
-            logI("Found flag list builder class: ${flagListBuilderClass.name}")
+            XposedLogger.logI("Found flag list builder class: ${flagListBuilderClass.name}")
 
             val flagListBuilderConstructor = flagListBuilderClass.declaredConstructors
                 .first { it.parameterCount == 1 }
@@ -642,7 +448,7 @@ class PhixitHook : IXposedHookLoadPackage {
             comparatorCaptureHook = XposedBridge.hookMethod(flagListBuilderConstructor, object : XC_MethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     if (flagComparator.compareAndSet(null, param.args[0])) {
-                        logD("Flag comparator captured: ${param.args[0]?.javaClass?.name}")
+                        XposedLogger.logD("Flag comparator captured: ${param.args[0]?.javaClass?.name}")
                     }
                 }
             })
@@ -667,18 +473,18 @@ class PhixitHook : IXposedHookLoadPackage {
                         @Suppress("AssignedValueIsNeverRead")
                         comparatorCaptureHook = null
 
-                        logD("Conflicting flags merged successfully")
+                        XposedLogger.logD("Conflicting flags merged successfully")
                     } catch (t: Throwable) {
-                        logE("Error in conflicting flags hook, letting original run", t)
+                        XposedLogger.logE("Error in conflicting flags hook, letting original run", t)
                     }
                 }
             })
 
-            logI("Conflicting flags hook installed")
+            XposedLogger.logI("Conflicting flags hook installed")
         }
     }
 
-    fun safeFindAndHookMethod(
+    private fun safeFindAndHookMethod(
         clazz: Class<*>,
         methodName: String,
         vararg parameterTypesAndCallback: Any
@@ -686,12 +492,20 @@ class PhixitHook : IXposedHookLoadPackage {
         return try {
             XposedHelpers.findAndHookMethod(clazz, methodName, *parameterTypesAndCallback)
         } catch (t: Throwable) {
-            logE("Failed to hook $methodName in ${clazz.name}: ${t.message}", t)
+            XposedLogger.logE("Failed to hook $methodName in ${clazz.name}: ${t.message}", t)
             null
         }
     }
 
-    // Minimum known version is 1034, the current one is 1035, I think this check is enough
-    private val SQLiteDatabase.isPhixit
-            get() = this.version >= MINIMAL_PHENOTYPE_VERSION
+    private fun safeHookMethod(
+        method: java.lang.reflect.Member,
+        callback: XC_MethodHook
+    ): XC_MethodHook.Unhook? {
+        return try {
+            XposedBridge.hookMethod(method, callback)
+        } catch (t: Throwable) {
+            XposedLogger.logE("Failed to hook ${method}: ${t.message}", t)
+            null
+        }
+    }
 }
