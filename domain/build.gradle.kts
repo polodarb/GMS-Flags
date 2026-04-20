@@ -21,6 +21,6 @@ dependencies {
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
 
-    implementation(projects.core.byteUtils)
+    implementation(projects.core.common)
     implementation(projects.data.repository)
 }

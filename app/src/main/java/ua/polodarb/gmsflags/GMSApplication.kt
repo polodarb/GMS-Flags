@@ -17,7 +17,6 @@ import ua.polodarb.local.impl.di.localDatabaseModule
 import ua.polodarb.network.impl.di.networkBindsModule
 import ua.polodarb.platform.di.platformModule
 import ua.polodarb.preferences.impl.di.prefsModule
-import ua.polodarb.byteUtils.di.byteUtilsModule
 import ua.polodarb.gmsflags.errors.general.CrashActivity
 import ua.polodarb.gmsflags.errors.general.ExceptionHandler
 import ua.polodarb.repository.impl.di.repositoryBindsModule
@@ -49,7 +48,6 @@ class GMSApplication : Application() {
                     workerModule,
                     stateCheckWorkerModule,
                     prefsModule,
-                    byteUtilsModule,
                     networkBindsModule,
                     repositoryBindsModule
                 )

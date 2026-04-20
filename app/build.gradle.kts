@@ -130,7 +130,6 @@ dependencies {
     implementation(projects.core.platform)
     implementation(projects.core.ui)
     implementation(projects.core.common)
-    implementation(projects.core.byteUtils)
 
     implementation(projects.data.repository)
     implementation(projects.data.repository.impl)
