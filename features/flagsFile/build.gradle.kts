@@ -1,50 +1,17 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.gmsflags.android.library)
+    alias(libs.plugins.gmsflags.android.compose)
+    alias(libs.plugins.gmsflags.android.koin)
 }
 
 android {
     namespace = "ua.polodarb.flagsfile"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
     buildFeatures {
-        compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
 dependencies {
-
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.compose)
-    implementation(libs.koin.work.manager)
 
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
@@ -52,28 +19,10 @@ dependencies {
     // Navigation
     implementation(libs.navigation.compose)
 
-    // Jetpack Compose
-    platform(libs.compose.bom).let { bom ->
-        implementation(bom)
-        androidTestImplementation(bom)
-        debugImplementation(bom)
-    }
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.animation)
-    implementation(libs.compose.icons)
+    // Compose extras
     implementation(libs.work.runtime.ktx)
-    androidTestImplementation(libs.compose.test.juni4)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.test.manifest)
 
-    implementation(libs.core.ktx)
-    implementation(libs.google.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.android.junit)
-
-    implementation(project(":core:ui"))
-    implementation(project(":data:repository"))
-    implementation(project(":domain"))
+    implementation(projects.core.ui)
+    implementation(projects.data.repository)
+    implementation(projects.domain)
 }

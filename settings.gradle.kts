@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -14,7 +15,8 @@ dependencyResolutionManagement {
         maven { url = uri("https://api.xposed.info") }
     }
 }
-rootProject.name = "GMS Flags"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+rootProject.name = "GMS-Flags"
 include(":app")
 include(":core:platform")
 include(":core:ui")

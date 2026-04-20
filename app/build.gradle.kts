@@ -1,11 +1,12 @@
 import java.io.FileInputStream
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.gmsflags.android.application)
+    alias(libs.plugins.gmsflags.android.compose)
+    alias(libs.plugins.gmsflags.android.serialization)
+    alias(libs.plugins.gmsflags.android.koin)
+    alias(libs.plugins.gmsflags.android.root)
     alias(libs.plugins.ksp)
     alias(libs.plugins.gms)
     alias(libs.plugins.firebase.crashlytics)
@@ -18,7 +19,6 @@ val requiresSigning = keystorePropertiesFile.exists()
 
 android {
     namespace = "ua.polodarb.gmsflags"
-    compileSdk = 34
 
     signingConfigs {
         if (requiresSigning) {
@@ -36,12 +36,9 @@ android {
 
     defaultConfig {
         applicationId = "ua.polodarb.gmsflags"
-        minSdk = 29
-        targetSdk = 34
         versionCode = libs.versions.version.code.get().toInt()
         versionName = libs.versions.version.name.get()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -75,16 +72,8 @@ android {
             applicationIdSuffix = ".indev"
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -94,9 +83,6 @@ android {
 }
 
 dependencies {
-
-    // Core
-    implementation(libs.core.ktx)
 
     // Splash Screen
     implementation(libs.core.splashscreen)
@@ -113,21 +99,8 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
-    // Jetpack Compose
-    platform(libs.compose.bom).let { bom ->
-        implementation(bom)
-        androidTestImplementation(bom)
-        debugImplementation(bom)
-    }
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.animation)
-    implementation(libs.compose.icons)
+    // Compose extras
     implementation(libs.work.runtime.ktx)
-    androidTestImplementation(libs.compose.test.juni4)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.test.manifest)
 
     // Scrollbar library for Jetpack Compose
     implementation(libs.lazyColumnScrollbar)
@@ -141,12 +114,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.perf)
     implementation(libs.firebase.messaging)
-
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.compose)
-    implementation(libs.koin.core)
-    implementation(libs.koin.work.manager)
 
     // Ktor
     implementation(platform(libs.ktor.bom))
@@ -162,68 +129,50 @@ dependencies {
     // SQLite
     implementation(libs.requery.sqlite)
 
-    // libsu
-    implementation(libs.libsu.core)
-    implementation(libs.libsu.service)
-    implementation(libs.libsu.nio)
-
     // Coil
     implementation(platform(libs.coil.bom))
     implementation(libs.coil.compose)
 
-    // Tests
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.android.junit)
-
     // Kotlin immutable collections
     implementation(libs.kotlin.collections.immutable)
 
-    implementation(project(":core:platform"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:common"))
-    implementation(project(":core:byteUtils"))
+    implementation(projects.core.platform)
+    implementation(projects.core.ui)
+    implementation(projects.core.common)
+    implementation(projects.core.byteUtils)
 
-    implementation(project(":data:repository"))
-    implementation(project(":data:repository:impl"))
+    implementation(projects.data.repository)
+    implementation(projects.data.repository.impl)
 
-    implementation(project(":data:preferences"))
-    implementation(project(":data:preferences:impl"))
+    implementation(projects.data.preferences)
+    implementation(projects.data.preferences.impl)
 
-    implementation(project(":data:network"))
-    implementation(project(":data:network:impl"))
+    implementation(projects.data.network)
+    implementation(projects.data.network.impl)
 
-    implementation(project(":data:databases:local"))
-    implementation(project(":data:databases:local:impl"))
-    implementation(project(":data:databases:gms"))
-    implementation(project(":data:databases:gms:impl"))
+    implementation(projects.data.databases.local)
+    implementation(projects.data.databases.local.impl)
+    implementation(projects.data.databases.gms)
+    implementation(projects.data.databases.gms.impl)
 
-    implementation(project(":features:updates"))
-    implementation(project(":features:saved"))
-    implementation(project(":features:settings"))
-    implementation(project(":features:onboarding"))
-    implementation(project(":features:search"))
-    implementation(project(":features:suggestions"))
-    implementation(project(":features:flagsChange"))
-    implementation(project(":features:flagsFile"))
+    implementation(projects.features.updates)
+    implementation(projects.features.saved)
+    implementation(projects.features.settings)
+    implementation(projects.features.onboarding)
+    implementation(projects.features.search)
+    implementation(projects.features.suggestions)
+    implementation(projects.features.flagsChange)
+    implementation(projects.features.flagsFile)
 
-    implementation(project(":domain"))
+    implementation(projects.domain)
 
     compileOnly("de.robv.android.xposed:api:82")
     implementation(libs.dexkit)
 }
 
-tasks.withType<KotlinCompile> {
-    if (this.name.contains(other = "Release")) {
-        kotlinOptions {
-            val buildDir = project.layout.buildDirectory.asFile.get().absolutePath
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/compose_reports",
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/compose_metrics"
-            )
-        }
-    }
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_reports")
+    metricsDestination = layout.buildDirectory.dir("compose_metrics")
 }
 
 detekt {

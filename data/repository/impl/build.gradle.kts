@@ -1,35 +1,11 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.gmsflags.android.library)
+    alias(libs.plugins.gmsflags.android.koin)
+    alias(libs.plugins.gmsflags.android.root)
 }
 
 android {
     namespace = "ua.polodarb.repository.impl"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 dependencies {
@@ -39,23 +15,11 @@ dependencies {
     implementation(libs.jackson.annotations)
     implementation(libs.jackson.databind)
     implementation(libs.javax.xml.stream)
+    implementation(libs.woodstox)
+    implementation(libs.documentfile)
 
-    // libsu
-    implementation(libs.libsu.core)
-    implementation(libs.libsu.service)
-    implementation(libs.libsu.nio)
+    implementation(projects.core.platform)
 
-    // Koin
-    implementation(platform(libs.koin.bom))
-    implementation(libs.koin.compose)
-    implementation(libs.koin.work.manager)
-
-    implementation(libs.core.ktx)
-    implementation(libs.google.material)
-    implementation(project(":core:platform"))
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.android.junit)
-
-    implementation(project(":data:repository"))
-    implementation(project(":data:databases:gms"))
+    implementation(projects.data.repository)
+    implementation(projects.data.databases.gms)
 }
