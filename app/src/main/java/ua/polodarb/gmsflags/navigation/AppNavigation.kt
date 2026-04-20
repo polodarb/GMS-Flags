@@ -69,6 +69,7 @@ internal sealed class ScreensDestination(var screenRoute: String) {
     data object SettingsResetFlags : ScreensDestination("settingsResetFlags")
     data object SettingsResetSaved : ScreensDestination("settingsResetSaved")
     data object SettingsChangeNavigation : ScreensDestination("changeNavigation")
+    data object SettingsXposedStatus : ScreensDestination("settingsXposedStatus")
 
     data object Packages : ScreensDestination("packages")
     data object Welcome : ScreensDestination("welcome")

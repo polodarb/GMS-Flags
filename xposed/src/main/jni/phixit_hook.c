@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <stdatomic.h>
 #include <time.h>
 #include <zlib.h>
 
@@ -23,7 +24,6 @@ static void phixit_log_write(int priority, const char *level, const char *format
 #define LOG_MESSAGE_SIZE 2048
 
 #define SQLITE_UTF8 1
-#define SQLITE_DETERMINISTIC 0x800
 #define SQLITE_TRANSIENT ((void (*)(void *))-1)
 #define SQLITE_OK 0
 #define SQLITE_ROW 100
@@ -138,6 +138,13 @@ typedef struct {
 static elf_symbols g_sqlite_elf = {0};
 static FILE *g_log_file = NULL;
 static pthread_mutex_t g_log_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static atomic_long g_stats_started_at = 0;
+static atomic_long g_stats_connections = 0;
+static atomic_long g_stats_trigger_calls = 0;
+static atomic_long g_stats_trigger_merges = 0;
+
+static pthread_once_t g_sqlite_init_once = PTHREAD_ONCE_INIT;
 
 static void phixit_log_write(int priority, const char *level, const char *format, ...) {
     char message[LOG_MESSAGE_SIZE];
@@ -754,6 +761,8 @@ static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_va
         return;
     }
 
+    atomic_fetch_add(&g_stats_trigger_calls, 1);
+
     int package_id = g_sqlite.value_int(argv[0]);
     const void *content = g_sqlite.value_blob(argv[1]);
     int content_size = g_sqlite.value_bytes(argv[1]);
@@ -814,6 +823,7 @@ static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_va
     }
 
     if (encode_flags(&flags, &output)) {
+        atomic_fetch_add(&g_stats_trigger_merges, 1);
         g_sqlite.result_blob(sqlite_ctx, output.data, (int)output.size, SQLITE_TRANSIENT);
         LOGD("Phixit trigger merge completed: packageId=%d, %d -> %zu bytes",
                 package_id, content_size, output.size);
@@ -886,7 +896,7 @@ static void configure_sqlite_for_triggers(sqlite3 *db) {
 }
 
 JNIEXPORT void JNICALL
-Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeSetDebugLogPath(
+Java_ua_polodarb_xposed_PhixitHook_nativeSetDebugLogPath(
         JNIEnv *env,
         jobject thiz,
         jstring path
@@ -911,21 +921,30 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeSetDebugLogPath(
 }
 
 
+static void init_sqlite_symbols_once(void) {
+    dl_iterate_phdr(find_sqlite_callback, &g_sqlite_elf);
+    load_sqlite_symbols();
+}
+
 JNIEXPORT void JNICALL
-Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
+Java_ua_polodarb_xposed_PhixitHook_nativeHandlePhenotype(
         JNIEnv *env,
         jobject thiz,
         jlong connection_ptr
 ) {
-    if (!g_sqlite_elf.symtab) {
-        dl_iterate_phdr(find_sqlite_callback, &g_sqlite_elf);
-    }
-
-    load_sqlite_symbols();
+    pthread_once(&g_sqlite_init_once, init_sqlite_symbols_once);
 
     if (!sqlite_symbols_ready()) {
         LOGE("SQLite symbols are not fully loaded");
         return;
+    }
+
+    atomic_fetch_add(&g_stats_connections, 1);
+    if (atomic_load(&g_stats_started_at) == 0) {
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        long expected = 0;
+        atomic_compare_exchange_strong(&g_stats_started_at, &expected, (long)ts.tv_sec);
     }
 
     sqlite3 *db = *(sqlite3 **)(intptr_t)connection_ptr;
@@ -963,7 +982,7 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
             db,
             MERGE_FUNCTION_NAME,
             2,
-            SQLITE_UTF8 | SQLITE_DETERMINISTIC,
+            SQLITE_UTF8,
             NULL,
             phixit_merge_flags,
             NULL,
@@ -993,4 +1012,24 @@ Java_ua_polodarb_gmsflags_xposed_PhixitHook_nativeHandlePhenotype(
         }
     }
 #endif
+}
+
+JNIEXPORT jlong JNICALL
+Java_ua_polodarb_xposed_PhixitHook_nativeGetStartedAt(JNIEnv *env, jobject thiz) {
+    return (jlong)atomic_load(&g_stats_started_at);
+}
+
+JNIEXPORT jlong JNICALL
+Java_ua_polodarb_xposed_PhixitHook_nativeGetConnections(JNIEnv *env, jobject thiz) {
+    return (jlong)atomic_load(&g_stats_connections);
+}
+
+JNIEXPORT jlong JNICALL
+Java_ua_polodarb_xposed_PhixitHook_nativeGetTriggerCalls(JNIEnv *env, jobject thiz) {
+    return (jlong)atomic_load(&g_stats_trigger_calls);
+}
+
+JNIEXPORT jlong JNICALL
+Java_ua_polodarb_xposed_PhixitHook_nativeGetTriggerMerges(JNIEnv *env, jobject thiz) {
+    return (jlong)atomic_load(&g_stats_trigger_merges);
 }

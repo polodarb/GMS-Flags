@@ -1,9 +1,8 @@
-package ua.polodarb.gmsflags.xposed
+package ua.polodarb.xposed
 
 import android.os.StrictMode
 import android.util.Log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import ua.polodarb.gmsflags.BuildConfig
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date

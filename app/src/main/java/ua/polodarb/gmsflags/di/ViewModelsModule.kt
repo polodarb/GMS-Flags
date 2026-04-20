@@ -10,6 +10,7 @@ import ua.polodarb.network.impl.suggestedFlags.SuggestedFlagsApiServiceImpl
 import ua.polodarb.saved.SavedScreenViewModel
 import ua.polodarb.search.SearchScreenViewModel
 import ua.polodarb.settings.SettingsViewModel
+import ua.polodarb.settings.screens.xposedStatus.XposedStatusViewModel
 import ua.polodarb.suggestions.SuggestionScreenViewModel
 import ua.polodarb.updates.UpdatesScreenViewModel
 
@@ -62,6 +63,12 @@ val viewModelsModule = module {
 
     viewModel {
         SettingsViewModel(
+            settingsRepository = get()
+        )
+    }
+
+    viewModel {
+        XposedStatusViewModel(
             settingsRepository = get()
         )
     }

@@ -14,6 +14,7 @@
     <string name="settings_item_xposed_unknown">unknown schema</string>
     <string name="settings_item_xposed_legacy_schema">legacy schema</string>
     <string name="settings_item_xposed_phixit_running">Phixit, hook running</string>
+    <string name="settings_item_xposed_phixit_stopped">Phixit, hook stopped</string>
     <string name="settings_item_xposed_phixit_not_running">Phixit, hook is not running</string>
     <string name="settings_item_reset_flags_headline">Reset flags</string>
     <string name="settings_item_reset_flags_description">Reset all overridden flags</string>
@@ -54,4 +55,31 @@
     <string name="settings_confirmation_dialog_close">Close</string>
 
     <string name="settings_about_project_source_code" translatable="false">GitHub</string>
+
+    <!-- Xposed Status Screen -->
+    <string name="xposed_status_title">Xposed Status</string>
+    <string name="xposed_status_back">Back</string>
+    <string name="xposed_status_refresh">Refresh</string>
+    <string name="xposed_status_badge_running">Running</string>
+    <string name="xposed_status_badge_stopped">Stopped</string>
+    <string name="xposed_status_badge_not_running">Not Running</string>
+    <string name="xposed_status_badge_legacy">Legacy</string>
+    <string name="xposed_status_badge_unknown">Unknown</string>
+    <string name="xposed_status_phenotype_version">Phenotype v%d</string>
+    <string name="xposed_status_last_known_stats">Last known stats</string>
+    <string name="xposed_status_stat_pid">PID</string>
+    <string name="xposed_status_stat_started">Started</string>
+    <string name="xposed_status_stat_connections">DB Connections</string>
+    <string name="xposed_status_stat_trigger_calls">Trigger Calls</string>
+    <string name="xposed_status_stat_trigger_merges">Trigger Merges</string>
+    <string name="xposed_status_timestamp_na">N/A</string>
+    <string name="xposed_status_wallet_title">Wallet Attestation Fix</string>
+    <string name="xposed_status_wallet_description">Resets the fails_attestation flag in the android_pay database. Requires full Play Integrity pass to actually work.</string>
+    <string name="xposed_status_wallet_button_fix">Fix Attestation</string>
+    <string name="xposed_status_wallet_button_fixing">Fixing…</string>
+    <string name="xposed_status_wallet_success">Attestation fixed successfully</string>
+    <string name="xposed_status_wallet_dialog_title">Fix Wallet Attestation</string>
+    <string name="xposed_status_wallet_dialog_text">This will reset the fails_attestation flag in the android_pay database.</string>
+    <string name="xposed_status_wallet_dialog_confirm">Fix</string>
+    <string name="xposed_status_wallet_dialog_dismiss">Cancel</string>
 </resources>

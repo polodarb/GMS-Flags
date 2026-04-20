@@ -13,6 +13,9 @@ import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase as openSQL
 import ua.polodarb.common.Constants.DB_PATH_GMS
 import ua.polodarb.common.Constants.DB_PATH_VENDING
 import ua.polodarb.gms.IRootDatabase
+import android.net.LocalSocket
+import android.net.LocalSocketAddress
+import ua.polodarb.xposed.info.HookInfo
 import java.io.File
 
 class RootDatabase : RootService() {
@@ -194,14 +197,8 @@ class RootDatabase : RootService() {
 
     fun getXposedHookStates(): Map<String, String> {
         return mapOf(
-            TARGET_GMS_PACKAGE_NAME to xposedHookState(
-                packageName = TARGET_GMS_PACKAGE_NAME,
-                processName = TARGET_GMS_PROCESS_NAME
-            ),
-            TARGET_VENDING_PACKAGE_NAME to xposedHookState(
-                packageName = TARGET_VENDING_PACKAGE_NAME,
-                processName = TARGET_VENDING_PROCESS_NAME
-            )
+            TARGET_GMS_PACKAGE_NAME to xposedHookState(TARGET_GMS_PROCESS_NAME),
+            TARGET_VENDING_PACKAGE_NAME to xposedHookState(TARGET_VENDING_PROCESS_NAME)
         )
     }
 
@@ -924,51 +921,23 @@ class RootDatabase : RootService() {
         return packageName.contains("finsky") || packageName.contains("vending")
     }
 
-    @SuppressLint("SdCardPath")
-    private fun xposedHookState(packageName: String, processName: String): String {
-        val markers = listOf(
-            File("/data/data/$packageName/$XPOSED_DIR/$XPOSED_STATUS_FILE"),
-            File("/data/user_de/0/$packageName/$XPOSED_DIR/$XPOSED_STATUS_FILE"),
-        )
-
-        return if (markers.any { it.isValidXposedMarker(packageName, processName) }) {
-            XPOSED_STATE_RUNNING
-        } else {
-            XPOSED_STATE_NOT_RUNNING
-        }
-    }
-
-    private fun File.isValidXposedMarker(packageName: String, processName: String): Boolean {
-        if (!exists()) return false
-
-        val values = readLines()
-            .mapNotNull { line ->
-                val separator = line.indexOf('=')
-                if (separator <= 0) return@mapNotNull null
-                line.substring(0, separator) to line.substring(separator + 1)
+    private fun xposedHookState(processName: String): String {
+        val socketName = "${HookInfo.SOCKET_PREFIX}$processName"
+        return try {
+            LocalSocket().use { socket ->
+                socket.connect(LocalSocketAddress(socketName, LocalSocketAddress.Namespace.ABSTRACT))
+                socket.soTimeout = SOCKET_TIMEOUT_MS
+                try {
+                    socket.inputStream.bufferedReader().readText()
+                } catch (_: Throwable) {
+                    // Connection succeeded — hook IS running, but read failed (broken pipe).
+                    // Return a minimal marker so the UI still shows "running".
+                    HookInfo(processName = processName).serialize()
+                }
             }
-            .toMap()
-
-        val pid = values["pid"]?.toIntOrNull() ?: return false
-        if (values["package"] != packageName || values["process"] != processName) {
-            return false
+        } catch (_: Throwable) {
+            ""
         }
-
-        val expectedStartTime = values["time"]
-        val cmdline = runCatching {
-            File("/proc/$pid/cmdline").readText().replace('\u0000', ' ').trim()
-        }.getOrNull()
-        val actualStartTime = runCatching {
-            File("/proc/$pid/stat").readText().processStartTime()
-        }.getOrNull()
-
-        return cmdline?.contains(processName) == true && expectedStartTime == actualStartTime
-    }
-
-    private fun String.processStartTime(): String {
-        val fieldsAfterName = substringAfterLast(") ")
-            .split(' ')
-        return fieldsAfterName.getOrNull(PROC_STAT_START_TIME_INDEX).orEmpty()
     }
 
     private fun getPhixitPackages(filter: String? = null): List<String> {
@@ -1148,7 +1117,6 @@ class RootDatabase : RootService() {
 
     companion object {
         private const val MINIMAL_PHENOTYPE_VERSION = 1034
-        private const val PROC_STAT_START_TIME_INDEX = 19
 
         private const val LEGACY_OVERRIDE_TABLE = "FlagOverrides"
         private const val PHIXIT_OVERRIDE_TABLE = "GmsFlagsOverrides"
@@ -1158,10 +1126,7 @@ class RootDatabase : RootService() {
         private const val TARGET_VENDING_PACKAGE_NAME = "com.android.vending"
         private const val TARGET_VENDING_PROCESS_NAME = "com.android.vending"
 
-        private const val XPOSED_DIR = "gmsflags_xposed"
-        private const val XPOSED_STATUS_FILE = "hook_status"
-        private const val XPOSED_STATE_NOT_RUNNING = "not_running"
-        private const val XPOSED_STATE_RUNNING = "running"
+        private const val SOCKET_TIMEOUT_MS = 2000
 
         private const val CREATE_PHIXIT_OVERRIDE_TABLE_SQL = """
             CREATE TABLE IF NOT EXISTS $PHIXIT_OVERRIDE_TABLE (

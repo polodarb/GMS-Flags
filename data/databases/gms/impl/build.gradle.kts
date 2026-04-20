@@ -16,4 +16,5 @@ dependencies {
 
     implementation(projects.data.databases.gms)
     implementation(projects.core.common)
+    implementation(projects.core.xposedInfo)
 }

@@ -45,6 +45,7 @@ espressoCore = "3.5.1"
 appcompat = "1.6.1"
 documentfile = "1.0.1"
 dexkit = "2.2.0"
+xposedApi = "82"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -116,6 +117,7 @@ work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 dexkit = { group = "org.luckypray", name = "dexkit", version.ref = "dexkit" }
+xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposedApi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

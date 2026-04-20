@@ -44,6 +44,7 @@ import ua.polodarb.settings.navigation.settingsChangeNavigationComposable
 import ua.polodarb.settings.navigation.settingsComposable
 import ua.polodarb.settings.navigation.settingsResetFlagsComposable
 import ua.polodarb.settings.navigation.settingsResetSavedComposable
+import ua.polodarb.settings.navigation.settingsXposedStatusComposable
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -172,6 +173,9 @@ internal fun RootAppNavigation(
             },
             onAboutClick = {
                 navController.navigate(ScreensDestination.SettingsAbout.screenRoute)
+            },
+            onXposedStatusClick = {
+                navController.navigate(ScreensDestination.SettingsXposedStatus.screenRoute)
             }
         )
 
@@ -193,6 +197,11 @@ internal fun RootAppNavigation(
 
         settingsAboutComposable(
             route = ScreensDestination.SettingsAbout.screenRoute,
+            onBackPressed = navController::navigateUp
+        )
+
+        settingsXposedStatusComposable(
+            route = ScreensDestination.SettingsXposedStatus.screenRoute,
             onBackPressed = navController::navigateUp
         )
 

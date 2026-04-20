@@ -1,23 +1,23 @@
-package ua.polodarb.gmsflags.xposed
+package ua.polodarb.xposed
 
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Build
-import android.os.Process
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import org.luckypray.dexkit.DexKitBridge
-import ua.polodarb.gmsflags.BuildConfig
 import java.io.File
 import java.io.FileInputStream
 import java.lang.ref.WeakReference
 import java.lang.reflect.Modifier
 import java.security.DigestInputStream
 import java.security.MessageDigest
+import ua.polodarb.xposed.info.HookInfo
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import java.util.zip.ZipEntry
@@ -35,8 +35,6 @@ class PhixitHook : IXposedHookLoadPackage {
 
         private const val LIBS_DIR = "libs"
         private const val XPOSED_DIR = "gmsflags_xposed"
-        private const val XPOSED_STATUS_FILE = "hook_status"
-        private const val PROC_STAT_START_TIME_INDEX = 19
 
         private val TARGET_PACKAGES = setOf(
             "com.google.android.gms" to "com.google.android.gms.persistent",
@@ -50,6 +48,10 @@ class PhixitHook : IXposedHookLoadPackage {
 
     external fun nativeHandlePhenotype(connectionPtr: Long)
     external fun nativeSetDebugLogPath(path: String?)
+    external fun nativeGetStartedAt(): Long
+    external fun nativeGetConnections(): Long
+    external fun nativeGetTriggerCalls(): Long
+    external fun nativeGetTriggerMerges(): Long
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam?) {
         if (lpparam == null) return
@@ -156,7 +158,17 @@ class PhixitHook : IXposedHookLoadPackage {
                     pendingConnections.clear()
                 }
 
-                writeHookStatus(context, lpparam)
+                HookSocketServer {
+                    HookInfo(
+                        packageName = lpparam.packageName,
+                        processName = lpparam.processName,
+                        pid = android.os.Process.myPid(),
+                        startedAt = nativeGetStartedAt(),
+                        connections = nativeGetConnections(),
+                        triggerCalls = nativeGetTriggerCalls(),
+                        triggerMerges = nativeGetTriggerMerges(),
+                    )
+                }.start()
                 XposedLogger.logI("All done for ${lpparam.packageName} (${lpparam.processName})")
             }
         )
@@ -186,34 +198,6 @@ class PhixitHook : IXposedHookLoadPackage {
         )
     }
 
-    private fun writeHookStatus(context: Context, lpparam: XC_LoadPackage.LoadPackageParam) {
-        runCatching {
-            val xposedDir = xposedDir(context)
-            if (!xposedDir.exists() && !xposedDir.mkdirs()) {
-                XposedLogger.logE("Failed to create Xposed directory: ${xposedDir.path}")
-                return
-            }
-
-            File(xposedDir, XPOSED_STATUS_FILE).writeText(
-                buildString {
-                    append("package=${lpparam.packageName}\n")
-                    append("process=${lpparam.processName}\n")
-                    append("pid=${Process.myPid()}\n")
-                    append("time=${currentProcessStartTime()}\n")
-                }
-            )
-            XposedLogger.logI("Xposed hook status written for ${lpparam.packageName} (${lpparam.processName})")
-        }.onFailure {
-            XposedLogger.logE("Failed to write Xposed hook status", it)
-        }
-    }
-
-    private fun currentProcessStartTime(): String {
-        return runCatching {
-            File("/proc/self/stat").readText().processStartTime()
-        }.getOrDefault("")
-    }
-
     private fun xposedDirCandidates(context: Context): List<File> =
         listOf(
             File(context.dataDir, XPOSED_DIR),
@@ -234,7 +218,7 @@ class PhixitHook : IXposedHookLoadPackage {
     private fun extractAndLoadNativeLibrary(
         context: Context,
         libName: String,
-        packageName: String = BuildConfig.APPLICATION_ID
+        packageName: String = BuildConfig.MAIN_APPLICATION_ID
     ) {
         val nativeDir = findWritableNativeDir(context)
         val hashFile = File(nativeDir, "${HASH_FILE}_$libName")
@@ -323,7 +307,7 @@ class PhixitHook : IXposedHookLoadPackage {
         return deviceAbis.firstOrNull { it in apkAbis }
     }
 
-    private val apkHashCache = HashMap<String, String>()
+    private val apkHashCache = ConcurrentHashMap<String, String>()
 
     private fun calculateApkHash(apkPath: String): String {
         return apkHashCache.getOrPut(apkPath) {
@@ -336,11 +320,6 @@ class PhixitHook : IXposedHookLoadPackage {
             }
             md.digest().joinToString("") { "%02x".format(it) }
         }
-    }
-
-    private fun String.processStartTime(): String {
-        val fieldsAfterName = substringAfterLast(") ").split(' ')
-        return fieldsAfterName.getOrNull(PROC_STAT_START_TIME_INDEX).orEmpty()
     }
 
     private fun findWritableNativeDir(context: Context): File {

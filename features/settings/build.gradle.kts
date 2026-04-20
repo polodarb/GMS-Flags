@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         buildConfigField("long", "VERSION_CODE", libs.versions.version.code.get())
-        buildConfigField("String","VERSION_NAME","\"${libs.versions.version.name.get()}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${libs.versions.version.name.get()}\"")
     }
 
     buildFeatures {
@@ -32,4 +32,5 @@ dependencies {
     implementation(projects.data.repository)
     implementation(projects.data.preferences)
     implementation(projects.core.ui)
+    implementation(projects.core.xposedInfo)
 }

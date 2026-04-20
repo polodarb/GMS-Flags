@@ -44,6 +44,7 @@ fun SettingsScreen(
     onResetSavedClick: () -> Unit,
     onChangeNavigationClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onXposedStatusClick: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -103,7 +104,8 @@ fun SettingsScreen(
                 )
                 SettingsItem(
                     icon = R.drawable.ic_phishing,
-                    headline = R.string.settings_item_xposed_headline
+                    headline = R.string.settings_item_xposed_headline,
+                    onItemClick = onXposedStatusClick,
                 ) {
                     Spacer(modifier = Modifier.height(2.dp))
                     xposedTargetStatuses.forEach { status ->
@@ -128,12 +130,14 @@ private fun XposedTargetState.stringRes(): Int = when (this) {
     XposedTargetState.UNKNOWN -> R.string.settings_item_xposed_unknown
     XposedTargetState.LEGACY_SCHEMA -> R.string.settings_item_xposed_legacy_schema
     XposedTargetState.PHIXIT_RUNNING -> R.string.settings_item_xposed_phixit_running
+    XposedTargetState.PHIXIT_STOPPED -> R.string.settings_item_xposed_phixit_stopped
     XposedTargetState.PHIXIT_NOT_RUNNING -> R.string.settings_item_xposed_phixit_not_running
 }
 
 @Composable
 private fun XposedTargetState.color() = when (this) {
     XposedTargetState.PHIXIT_RUNNING -> MaterialTheme.colorScheme.primary
+    XposedTargetState.PHIXIT_STOPPED -> MaterialTheme.colorScheme.tertiary
     XposedTargetState.LEGACY_SCHEMA -> MaterialTheme.colorScheme.outline
     else -> MaterialTheme.colorScheme.error
 }

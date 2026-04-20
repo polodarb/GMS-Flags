@@ -43,15 +43,6 @@ android {
             useSupportLibrary = true
         }
 
-        ndk {
-            abiFilters += setOf("armeabi-v7a", "arm64-v8a")
-        }
-    }
-
-    externalNativeBuild {
-        ndkBuild {
-            path("src/main/jni/Android.mk")
-        }
     }
 
     buildTypes {
@@ -166,8 +157,7 @@ dependencies {
 
     implementation(projects.domain)
 
-    compileOnly("de.robv.android.xposed:api:82")
-    implementation(libs.dexkit)
+    implementation(projects.xposed)
 }
 
 composeCompiler {

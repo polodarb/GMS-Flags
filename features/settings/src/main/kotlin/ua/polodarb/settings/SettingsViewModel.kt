@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ua.polodarb.repository.settings.SettingsRepository
+import ua.polodarb.xposed.info.HookInfo
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
+
+    private val lastKnownHookInfo = mutableMapOf<String, HookInfo>()
 
     private val _xposedTargetStatuses = MutableStateFlow(defaultXposedTargetStatuses())
     val xposedTargetStatuses: StateFlow<List<XposedTargetStatus>> = _xposedTargetStatuses.asStateFlow()
@@ -98,11 +101,21 @@ class SettingsViewModel(
         hookStates: Map<String, String>
     ): XposedTargetStatus {
         val version = versions[packageName]?.toIntOrNull()
+        val hookInfo = hookStates[packageName]
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { HookInfo.deserialize(it) }
+
+        if (hookInfo != null) {
+            lastKnownHookInfo[packageName] = hookInfo
+        }
+        val lastInfo = if (hookInfo == null) lastKnownHookInfo[packageName] else null
+
         return XposedTargetStatus(
             packageName = packageName,
             label = label,
             version = version,
-            state = XposedModuleStatus.resolveState(version, hookStates[packageName])
+            state = XposedModuleStatus.resolveState(version, hookInfo, lastInfo),
+            hookInfo = hookInfo ?: lastInfo,
         )
     }
 

@@ -9,6 +9,7 @@ import ua.polodarb.settings.screens.about.AboutScreen
 import ua.polodarb.settings.screens.resetFlags.ResetFlagsScreen
 import ua.polodarb.settings.screens.resetSaved.ResetSavedScreen
 import ua.polodarb.settings.screens.startRoute.ChangeNavigationScreen
+import ua.polodarb.settings.screens.xposedStatus.XposedStatusScreen
 import ua.polodarb.ui.animations.enterAnim
 import ua.polodarb.ui.animations.exitAnim
 
@@ -19,7 +20,8 @@ fun NavGraphBuilder.settingsComposable(
     onResetFlagsClick: () -> Unit,
     onResetSavedClick: () -> Unit,
     onChangeNavigationClick: () -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    onXposedStatusClick: () -> Unit,
 ) {
     composable(
         route = route,
@@ -33,7 +35,8 @@ fun NavGraphBuilder.settingsComposable(
             onResetFlagsClick = onResetFlagsClick,
             onResetSavedClick = onResetSavedClick,
             onChangeNavigationClick = onChangeNavigationClick,
-            onAboutClick = onAboutClick
+            onAboutClick = onAboutClick,
+            onXposedStatusClick = onXposedStatusClick,
         )
     }
 }
@@ -99,6 +102,22 @@ fun NavGraphBuilder.settingsAboutComposable(
         exitTransition = { exitAnim(toLeft = false) },
     ) {
         AboutScreen(
+            onBackPressed = onBackPressed
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.settingsXposedStatusComposable(
+    route: String,
+    onBackPressed: () -> Unit
+) {
+    composable(
+        route = route,
+        enterTransition = { enterAnim(toLeft = true) },
+        exitTransition = { exitAnim(toLeft = false) },
+    ) {
+        XposedStatusScreen(
             onBackPressed = onBackPressed
         )
     }
