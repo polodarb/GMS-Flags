@@ -1,5 +1,7 @@
 package ua.polodarb.settings.screens.about
 
+import android.widget.Toast
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -25,8 +27,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import ua.polodarb.settings.BuildConfig
 import ua.polodarb.settings.R
 
@@ -99,14 +105,31 @@ fun AboutSettingsContent(
 
 @Composable
 fun AboutHeader() {
+    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     var rotationState by remember { mutableFloatStateOf(0f) }
+    var clickCount by remember { mutableIntStateOf(0) }
+    var easterEggActive by remember { mutableStateOf(false) }
+    var lastClickTime by remember { mutableStateOf(0L) }
 
     val rotationDegrees by animateFloatAsState(
         targetValue = rotationState,
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = if (easterEggActive) {
+            tween(durationMillis = 2000, easing = LinearEasing)
+        } else {
+            tween(durationMillis = 300)
+        },
         label = "rotation"
     )
+
+    LaunchedEffect(easterEggActive) {
+        if (easterEggActive) {
+            rotationState += 720f
+            delay(2000)
+            easterEggActive = false
+            clickCount = 0
+        }
+    }
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -121,8 +144,19 @@ fun AboutHeader() {
                     interactionSource = interactionSource,
                     indication = null
                 ) {
+                    if (easterEggActive) return@clickable
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     rotationState += 30f
+                    val now = System.currentTimeMillis()
+                    if (now - lastClickTime > 1500) clickCount = 0
+                    lastClickTime = now
+                    clickCount++
+                    if (clickCount >= 7) {
+                        easterEggActive = true
+                        Toast
+                            .makeText(context, "Co-authored-by: transaero21", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
         ) {
             Box(
