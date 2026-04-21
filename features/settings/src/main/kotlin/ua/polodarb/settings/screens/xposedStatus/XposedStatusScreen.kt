@@ -316,7 +316,7 @@ private fun WalletFixCard(
                 is FixState.Success -> {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = stringResource(R.string.xposed_status_wallet_success),
+                        text = stringResource(R.string.xposed_status_wallet_success, fixState.updatedRows),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )

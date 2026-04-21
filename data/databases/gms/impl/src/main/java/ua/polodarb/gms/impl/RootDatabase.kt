@@ -12,6 +12,7 @@ import io.requery.android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
 import io.requery.android.database.sqlite.SQLiteDatabase.openDatabase as openSQLiteDatabase
 import ua.polodarb.common.Constants.DB_PATH_GMS
 import ua.polodarb.common.Constants.DB_PATH_VENDING
+import ua.polodarb.common.Constants.DB_PATH_WALLET
 import ua.polodarb.gms.IRootDatabase
 import android.net.LocalSocket
 import android.net.LocalSocketAddress
@@ -137,6 +138,9 @@ class RootDatabase : RootService() {
                     committed
                 )
             }
+
+            override fun fixWalletAttestation(): Int =
+                this@RootDatabase.fixWalletAttestation()
         }
     }
 
@@ -1113,6 +1117,19 @@ class RootDatabase : RootService() {
         is PhixitFlag.Float -> java.lang.Double.longBitsToDouble(value).toString()
         is PhixitFlag.StringValue -> value
         is PhixitFlag.Extension -> value.contentToString()
+    }
+
+    fun fixWalletAttestation(): Int {
+        var db: SQLiteDatabase? = null
+        return try {
+            val dbFile = File(DB_PATH_WALLET)
+            if (!dbFile.exists()) throw IllegalStateException("Wallet database not found")
+            db = openSQLiteDatabase(dbFile.path, null, OPEN_READWRITE)
+            db.execSQL("UPDATE Wallets SET fails_attestation = 0 WHERE fails_attestation != 0;")
+            db.compileStatement("SELECT changes()").use { it.simpleQueryForLong().toInt() }
+        } finally {
+            db?.close()
+        }
     }
 
     companion object {

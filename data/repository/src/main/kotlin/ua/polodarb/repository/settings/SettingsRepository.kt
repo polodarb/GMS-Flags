@@ -10,6 +10,8 @@ interface SettingsRepository {
 
     fun getXposedHookStates(): Map<String, String>
 
+    fun fixWalletAttestation(): Int
+
     suspend fun deleteAllSavedFlags()
 
     suspend fun deleteAllSavedPackages()

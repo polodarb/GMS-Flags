@@ -77,7 +77,7 @@
     <string name="xposed_status_wallet_description">Resets the fails_attestation flag in the android_pay database. Requires full Play Integrity pass to actually work.</string>
     <string name="xposed_status_wallet_button_fix">Fix Attestation</string>
     <string name="xposed_status_wallet_button_fixing">Fixing…</string>
-    <string name="xposed_status_wallet_success">Attestation fixed successfully</string>
+    <string name="xposed_status_wallet_success">Attestation fixed successfully (%d rows updated)</string>
     <string name="xposed_status_wallet_dialog_title">Fix Wallet Attestation</string>
     <string name="xposed_status_wallet_dialog_text">This will reset the fails_attestation flag in the android_pay database.</string>
     <string name="xposed_status_wallet_dialog_confirm">Fix</string>

@@ -6,5 +6,6 @@ import android.annotation.SuppressLint
 object Constants {
     const val DB_PATH_GMS = "/data/data/com.google.android.gms/databases/phenotype.db"
     const val DB_PATH_VENDING = "/data/data/com.android.vending/databases/phenotype.db"
+    const val DB_PATH_WALLET = "/data/data/com.google.android.gms/databases/android_pay"
     const val GMS_DB_CRASH_MSG = "RootDatabase is not initialized yet."
 }

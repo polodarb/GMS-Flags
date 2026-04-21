@@ -3,7 +3,6 @@ package ua.polodarb.settings.screens.xposedStatus
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,13 +49,8 @@ class XposedStatusViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             _fixState.value = FixState.Loading
             try {
-                val result = Shell.cmd(FIX_ATTESTATION_CMD).exec()
-                if (result.isSuccess) {
-                    _fixState.value = FixState.Success
-                } else {
-                    val err = result.err.joinToString("\n").ifEmpty { "Command failed" }
-                    _fixState.value = FixState.Error(err)
-                }
+                val updated = settingsRepository.fixWalletAttestation()
+                _fixState.value = FixState.Success(updated)
             } catch (e: Exception) {
                 _fixState.value = FixState.Error(e.message ?: "Failed to execute fix")
             }
@@ -97,14 +91,12 @@ class XposedStatusViewModel(
         private const val TAG = "XposedStatusVM"
         private const val GMS_PACKAGE = XposedModuleStatus.GMS_PACKAGE_NAME
         private const val VENDING_PACKAGE = XposedModuleStatus.VENDING_PACKAGE_NAME
-        private const val FIX_ATTESTATION_CMD =
-            """sqlite3 /data/data/com.google.android.gms/databases/android_pay "UPDATE Wallets SET fails_attestation = 0 WHERE fails_attestation != 0;" """
     }
 }
 
 sealed class FixState {
     data object Idle : FixState()
     data object Loading : FixState()
-    data object Success : FixState()
+    data class Success(val updatedRows: Int) : FixState()
     data class Error(val message: String) : FixState()
 }

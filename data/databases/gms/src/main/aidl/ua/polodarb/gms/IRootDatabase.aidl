@@ -48,4 +48,6 @@ interface IRootDatabase {
         in byte[] extensionVal,
         int committed
     );
+
+    int fixWalletAttestation();
 }

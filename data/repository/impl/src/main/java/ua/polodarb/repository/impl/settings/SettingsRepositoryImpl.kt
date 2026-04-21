@@ -29,6 +29,10 @@ class SettingsRepositoryImpl(
         return rootDatabase.xposedHookStates
     }
 
+    override fun fixWalletAttestation(): Int {
+        return rootDatabase.fixWalletAttestation()
+    }
+
     override suspend fun deleteAllSavedFlags() {
         localDB.deleteAllSavedFlags()
     }
