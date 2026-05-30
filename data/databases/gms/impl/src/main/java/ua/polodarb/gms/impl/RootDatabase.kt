@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.os.IBinder
+import android.os.SystemClock
 import android.util.Log
 import com.topjohnwu.superuser.ipc.RootService
 import io.requery.android.database.sqlite.SQLiteDatabase
@@ -14,9 +15,9 @@ import ua.polodarb.common.Constants.DB_PATH_GMS
 import ua.polodarb.common.Constants.DB_PATH_VENDING
 import ua.polodarb.common.Constants.DB_PATH_WALLET
 import ua.polodarb.gms.IRootDatabase
-import android.net.LocalSocket
-import android.net.LocalSocketAddress
 import ua.polodarb.xposed.info.HookInfo
+import ua.polodarb.xposed.info.XposedConstants
+import ua.polodarb.xposed.info.XposedTargets
 import java.io.File
 
 class RootDatabase : RootService() {
@@ -194,15 +195,21 @@ class RootDatabase : RootService() {
 
     fun getPhenotypeVersions(): Map<String, String> {
         return mapOf(
-            TARGET_GMS_PACKAGE_NAME to gmsDB.version.toString(),
-            TARGET_VENDING_PACKAGE_NAME to vendingDB.version.toString()
+            XposedTargets.GMS_PACKAGE_NAME to gmsDB.version.toString(),
+            XposedTargets.VENDING_PACKAGE_NAME to vendingDB.version.toString()
         )
     }
 
     fun getXposedHookStates(): Map<String, String> {
         return mapOf(
-            TARGET_GMS_PACKAGE_NAME to xposedHookState(TARGET_GMS_PROCESS_NAME),
-            TARGET_VENDING_PACKAGE_NAME to xposedHookState(TARGET_VENDING_PROCESS_NAME)
+            XposedTargets.GMS_PACKAGE_NAME to xposedHookState(
+                XposedTargets.GMS_PACKAGE_NAME,
+                XposedTargets.GMS_PROCESS_NAME
+            ),
+            XposedTargets.VENDING_PACKAGE_NAME to xposedHookState(
+                XposedTargets.VENDING_PACKAGE_NAME,
+                XposedTargets.VENDING_PROCESS_NAME
+            )
         )
     }
 
@@ -235,15 +242,11 @@ class RootDatabase : RootService() {
     }
 
     fun deleteAllOverriddenFlagsFromGMS() {
-        gmsDB.execSQL(
-            "DELETE FROM ${overrideTable(gmsDB)};"
-        )
+        gmsDB.execSQL("DELETE FROM ${overrideTable(gmsDB)};")
     }
 
     fun deleteAllOverriddenFlagsFromPlayStore() {
-        vendingDB.execSQL(
-            "DELETE FROM ${overrideTable(vendingDB)};"
-        )
+        vendingDB.execSQL("DELETE FROM ${overrideTable(vendingDB)};")
     }
 
     fun deleteRowByFlagName(
@@ -313,7 +316,6 @@ class RootDatabase : RootService() {
             applyPhixitOverridesToPackage(vendingDB, packageName)
         }
     }
-
 
     private fun getBoolFlags(pkgName: String): Map<String, String> {
         val list = mutableMapOf<String, String>()
@@ -681,7 +683,6 @@ class RootDatabase : RootService() {
         return list
     }
 
-
     private fun getOverriddenIntFlagsByPackage(pkgName: String): Map<String?, String?> {
         val cursor = gmsDB.rawQuery(
             "SELECT DISTINCT name, intVal FROM ${overrideTable(gmsDB)} WHERE packageName = '$pkgName' AND intVal IS NOT NULL;",
@@ -925,23 +926,51 @@ class RootDatabase : RootService() {
         return packageName.contains("finsky") || packageName.contains("vending")
     }
 
-    private fun xposedHookState(processName: String): String {
-        val socketName = "${HookInfo.SOCKET_PREFIX}$processName"
-        return try {
-            LocalSocket().use { socket ->
-                socket.connect(LocalSocketAddress(socketName, LocalSocketAddress.Namespace.ABSTRACT))
-                socket.soTimeout = SOCKET_TIMEOUT_MS
-                try {
-                    socket.inputStream.bufferedReader().readText()
-                } catch (_: Throwable) {
-                    // Connection succeeded — hook IS running, but read failed (broken pipe).
-                    // Return a minimal marker so the UI still shows "running".
-                    HookInfo(processName = processName).serialize()
-                }
-            }
-        } catch (_: Throwable) {
-            ""
+    private fun xposedHookState(packageName: String, processName: String): String {
+        val now = SystemClock.elapsedRealtime()
+        val bootId = currentBootId()
+
+        for (statusFile in xposedStatusFiles(packageName)) {
+            val rawStatus = runCatching {
+                statusFile.takeIf { it.isFile }?.readText()
+            }.getOrNull()?.takeIf { it.isNotBlank() } ?: continue
+
+            val info = HookInfo.deserialize(rawStatus) ?: continue
+            if (info.packageName != packageName) continue
+            if (info.processName != processName) continue
+            if (!info.isFromCurrentBoot(bootId)) continue
+            if (!info.isFresh(now)) continue
+            if (info.pid <= 0 || !File("/proc/${info.pid}").exists()) continue
+
+            return rawStatus
         }
+
+        return ""
+    }
+
+    private fun xposedStatusFiles(packageName: String): List<File> {
+        return listOf(
+            File("/data/user_de/0/$packageName/${XposedConstants.XPOSED_DIR}/${XposedConstants.HOOK_STATUS_FILE_NAME}"),
+            File("/data/user/0/$packageName/${XposedConstants.XPOSED_DIR}/${XposedConstants.HOOK_STATUS_FILE_NAME}"),
+            File("/data/data/$packageName/${XposedConstants.XPOSED_DIR}/${XposedConstants.HOOK_STATUS_FILE_NAME}"),
+        ).distinctBy { it.absolutePath }
+    }
+
+    private fun currentBootId(): String {
+        return runCatching {
+            File(XposedConstants.BOOT_ID_PATH).readText().trim()
+        }.getOrDefault("")
+    }
+
+    private fun HookInfo.isFromCurrentBoot(currentBootId: String): Boolean {
+        if (bootId.isEmpty() || currentBootId.isEmpty()) return true
+        return bootId == currentBootId
+    }
+
+    private fun HookInfo.isFresh(now: Long): Boolean {
+        if (updatedAt <= 0L) return false
+        val ageMs = now - updatedAt
+        return ageMs in 0..XposedConstants.HOOK_STATUS_STALE_AFTER_MS
     }
 
     private fun getPhixitPackages(filter: String? = null): List<String> {
@@ -1090,23 +1119,22 @@ class RootDatabase : RootService() {
             arrayOf(packageName)
         ).use { cursor ->
             while (cursor.moveToNext()) {
-                val partitionId = cursor.getInt(0)
+                val partitionId = cursor.getLong(0)
                 val current = try {
                     PhixitFlagsCodec.decode(cursor.getBlob(1))
                 } catch (e: Exception) {
-                    Log.e("RootDatabase", "Failed to decode Phixit partition $partitionId", e)
+                    Log.e("RootDatabase", "Failed to decode flags for $packageName (partition=$partitionId)", e)
                     null
-                }
-                if (current != null) {
-                    val merged = current.map { overridesByName[it.name] ?: it }.toMutableList()
-                    val existingNames = merged.mapTo(mutableSetOf()) { it.name }
-                    merged += overrides.filter { it.name !in existingNames }
+                } ?: continue
 
-                    db.execSQL(
-                        "UPDATE param_partitions SET flags_content = ? WHERE param_partition_id = ?",
-                        arrayOf(PhixitFlagsCodec.encode(merged.sortedBy { it.name.toLongOrNull() ?: Long.MAX_VALUE }), partitionId)
-                    )
-                }
+                val merged = current.map { overridesByName[it.name] ?: it }.toMutableList()
+                val existingNames = merged.mapTo(mutableSetOf()) { it.name }
+                merged += overrides.filter { it.name !in existingNames }
+
+                db.execSQL(
+                    "UPDATE param_partitions SET flags_content = ? WHERE param_partition_id = ?",
+                    arrayOf(PhixitFlagsCodec.encode(merged.sortedBy { it.name.toLongOrNull() ?: Long.MAX_VALUE }), partitionId)
+                )
             }
         }
     }
@@ -1133,17 +1161,10 @@ class RootDatabase : RootService() {
     }
 
     companion object {
-        private const val MINIMAL_PHENOTYPE_VERSION = 1034
+        private const val MINIMAL_PHENOTYPE_VERSION = 1001
 
         private const val LEGACY_OVERRIDE_TABLE = "FlagOverrides"
         private const val PHIXIT_OVERRIDE_TABLE = "GmsFlagsOverrides"
-
-        private const val TARGET_GMS_PACKAGE_NAME = "com.google.android.gms"
-        private const val TARGET_GMS_PROCESS_NAME = "com.google.android.gms.persistent"
-        private const val TARGET_VENDING_PACKAGE_NAME = "com.android.vending"
-        private const val TARGET_VENDING_PROCESS_NAME = "com.android.vending"
-
-        private const val SOCKET_TIMEOUT_MS = 2000
 
         private const val CREATE_PHIXIT_OVERRIDE_TABLE_SQL = """
             CREATE TABLE IF NOT EXISTS $PHIXIT_OVERRIDE_TABLE (

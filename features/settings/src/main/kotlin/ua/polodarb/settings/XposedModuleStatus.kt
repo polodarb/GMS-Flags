@@ -1,10 +1,11 @@
 package ua.polodarb.settings
 
 import ua.polodarb.xposed.info.HookInfo
+import ua.polodarb.xposed.info.XposedTargets
 
 object XposedModuleStatus {
-    const val GMS_PACKAGE_NAME = "com.google.android.gms"
-    const val VENDING_PACKAGE_NAME = "com.android.vending"
+    val GMS_PACKAGE_NAME = XposedTargets.GMS_PACKAGE_NAME
+    val VENDING_PACKAGE_NAME = XposedTargets.VENDING_PACKAGE_NAME
 
     fun resolveState(
         version: Int?,
@@ -20,7 +21,7 @@ object XposedModuleStatus {
         }
     }
 
-    private const val MINIMAL_PHENOTYPE_VERSION = 1034
+    private const val MINIMAL_PHENOTYPE_VERSION = 1001
 }
 
 enum class XposedTargetState {

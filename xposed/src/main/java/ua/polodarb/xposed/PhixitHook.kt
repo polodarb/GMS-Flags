@@ -17,6 +17,8 @@ import java.lang.reflect.Modifier
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import ua.polodarb.xposed.info.HookInfo
+import ua.polodarb.xposed.info.XposedConstants
+import ua.polodarb.xposed.info.XposedTargets
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -28,18 +30,13 @@ class PhixitHook : IXposedHookLoadPackage {
 
     companion object {
         private const val TARGET_DATABASE_NAME = "phenotype.db"
+        private const val TARGET_WALLET_DATABASE_NAME = "android_pay"
         private const val DEXKIT_LIB = "dexkit"
         private const val PHIXIT_HOOK_LIB = "phixit_hook"
 
         private const val HASH_FILE = "apk_hash"
 
         private const val LIBS_DIR = "libs"
-        private const val XPOSED_DIR = "gmsflags_xposed"
-
-        private val TARGET_PACKAGES = setOf(
-            "com.google.android.gms" to "com.google.android.gms.persistent",
-            "com.android.vending" to "com.android.vending",
-        )
     }
 
     init {
@@ -47,6 +44,7 @@ class PhixitHook : IXposedHookLoadPackage {
     }
 
     external fun nativeHandlePhenotype(connectionPtr: Long)
+    external fun nativeHandleWallet(connectionPtr: Long)
     external fun nativeSetDebugLogPath(path: String?)
     external fun nativeGetStartedAt(): Long
     external fun nativeGetConnections(): Long
@@ -58,13 +56,13 @@ class PhixitHook : IXposedHookLoadPackage {
 
         XposedLogger.logD("Received ${lpparam.packageName} (${lpparam.processName})")
 
-        if (lpparam.packageName to lpparam.processName !in TARGET_PACKAGES) return
+        if (lpparam.packageName to lpparam.processName !in XposedTargets.TARGET_PACKAGES) return
 
         XposedLogger.logI("Required package has been found, installing hooks")
 
         val nativeReady = AtomicBoolean(false)
         val pendingConnections = mutableListOf<WeakReference<Any>>()
-        val processedPtrs = HashSet<Long>()
+        val processedConnections = HashSet<Pair<String, Long>>()
 
         val connectionClass = XposedHelpers.findClass(
             "android.database.sqlite.SQLiteConnection", null
@@ -86,19 +84,24 @@ class PhixitHook : IXposedHookLoadPackage {
         fun handleConnection(connection: Any, source: String) {
             val config = configField.get(connection) ?: return
             val path = pathField.get(config) as? String ?: return
-            if (File(path).name != TARGET_DATABASE_NAME) return
+            val fileName = File(path).name
+            val handler: (Long) -> Unit = when (fileName) {
+                TARGET_DATABASE_NAME -> ::nativeHandlePhenotype
+                TARGET_WALLET_DATABASE_NAME -> ::hookWalletAttestation
+                else -> return
+            }
 
             val ptr = ptrField.getLong(connection)
             if (ptr == 0L) return
 
             synchronized(pendingConnections) {
-                if (!processedPtrs.add(ptr)) return
+                if (!processedConnections.add(fileName to ptr)) return
 
                 if (nativeReady.get()) {
-                    XposedLogger.logI("Phenotype connection via $source, ptr=$ptr")
-                    nativeHandlePhenotype(connectionPtr = ptr)
+                    XposedLogger.logI("$fileName connection via $source, ptr=$ptr")
+                    handler(ptr)
                 } else {
-                    XposedLogger.logI("Buffering phenotype connection via $source")
+                    XposedLogger.logI("Buffering $fileName connection via $source")
                     pendingConnections.add(WeakReference(connection))
                 }
             }
@@ -124,7 +127,8 @@ class PhixitHook : IXposedHookLoadPackage {
         hookApplication(
             lpparam = lpparam,
             onCreate = { context, classLoader ->
-                XposedLogger.initFileLogging(xposedDir(context), lpparam)
+                val moduleDir = xposedDir(context)
+                XposedLogger.initFileLogging(moduleDir, lpparam)
                 XposedLogger.logI("Context received, starting extracting libraries")
 
                 try {
@@ -152,13 +156,19 @@ class PhixitHook : IXposedHookLoadPackage {
                         val connection = ref.get() ?: continue
                         val ptr = ptrField.getLong(connection)
                         if (ptr == 0L) continue
-                        XposedLogger.logI("Processing buffered phenotype connection, ptr=$ptr")
-                        nativeHandlePhenotype(connectionPtr = ptr)
+                        val config = configField.get(connection) ?: continue
+                        val path = pathField.get(config) as? String ?: continue
+                        val fileName = File(path).name
+                        XposedLogger.logI("Processing buffered $fileName connection, ptr=$ptr")
+                        when (fileName) {
+                            TARGET_DATABASE_NAME -> nativeHandlePhenotype(connectionPtr = ptr)
+                            TARGET_WALLET_DATABASE_NAME -> hookWalletAttestation(connectionPtr = ptr)
+                        }
                     }
                     pendingConnections.clear()
                 }
 
-                HookSocketServer {
+                HookStatusWriter(File(moduleDir, XposedConstants.HOOK_STATUS_FILE_NAME)) {
                     HookInfo(
                         packageName = lpparam.packageName,
                         processName = lpparam.processName,
@@ -198,10 +208,18 @@ class PhixitHook : IXposedHookLoadPackage {
         )
     }
 
+    private fun hookWalletAttestation(connectionPtr: Long) {
+        runCatching {
+            nativeHandleWallet(connectionPtr = connectionPtr)
+        }.onFailure {
+            XposedLogger.logE("Failed to install wallet attestation hook", it)
+        }
+    }
+
     private fun xposedDirCandidates(context: Context): List<File> =
         listOf(
-            File(context.dataDir, XPOSED_DIR),
-            File(context.dataDir.path.replace("/user/", "/user_de/"), XPOSED_DIR),
+            File(context.dataDir, XposedConstants.XPOSED_DIR),
+            File(context.dataDir.path.replace("/user/", "/user_de/"), XposedConstants.XPOSED_DIR),
         ).distinctBy { it.absolutePath }
 
     private fun xposedDir(context: Context): File {
@@ -211,7 +229,7 @@ class PhixitHook : IXposedHookLoadPackage {
             }
         } catch (e: Exception) {
             null
-        } ?: File(context.dataDir, XPOSED_DIR)
+        } ?: File(context.dataDir, XposedConstants.XPOSED_DIR)
     }
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")

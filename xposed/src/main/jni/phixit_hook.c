@@ -25,12 +25,11 @@ static void phixit_log_write(int priority, const char *level, const char *format
 
 #define SQLITE_UTF8 1
 #define SQLITE_TRANSIENT ((void (*)(void *))-1)
-#define SQLITE_OK 0
 #define SQLITE_ROW 100
 #define SQLITE_DBCONFIG_ENABLE_TRIGGER 1003
 #define SQLITE_DBCONFIG_DEFENSIVE 1010
 
-#define MINIMAL_PHENOTYPE_VERSION 1033
+#define MINIMAL_PHENOTYPE_VERSION 1001
 
 #define PHIXIT_FLAG_FALSE 0
 #define PHIXIT_FLAG_TRUE 1
@@ -103,27 +102,32 @@ typedef const void *(*sqlite3_column_blob_t)(sqlite3_stmt *, int);
 typedef int (*sqlite3_column_bytes_t)(sqlite3_stmt *, int);
 typedef const char *(*sqlite3_errmsg_t)(sqlite3 *);
 
+#define SQLITE_SYMBOLS(X) \
+    X(db_filename)        \
+    X(db_config)          \
+    X(create_function_v2) \
+    X(exec)               \
+    X(context_db_handle)  \
+    X(value_int)          \
+    X(value_blob)         \
+    X(value_bytes)        \
+    X(result_blob)        \
+    X(result_value)       \
+    X(result_error)       \
+    X(prepare_v2)         \
+    X(bind_int)           \
+    X(step)               \
+    X(finalize)           \
+    X(column_int)         \
+    X(column_text)        \
+    X(column_blob)        \
+    X(column_bytes)       \
+    X(errmsg)
+
 typedef struct {
-    sqlite3_db_filename_t db_filename;
-    sqlite3_db_config_t db_config;
-    sqlite3_create_function_v2_t create_function_v2;
-    sqlite3_exec_t exec;
-    sqlite3_context_db_handle_t context_db_handle;
-    sqlite3_value_int_t value_int;
-    sqlite3_value_blob_t value_blob;
-    sqlite3_value_bytes_t value_bytes;
-    sqlite3_result_blob_t result_blob;
-    sqlite3_result_value_t result_value;
-    sqlite3_result_error_t result_error;
-    sqlite3_prepare_v2_t prepare_v2;
-    sqlite3_bind_int_t bind_int;
-    sqlite3_step_t step;
-    sqlite3_finalize_t finalize;
-    sqlite3_column_int_t column_int;
-    sqlite3_column_text_t column_text;
-    sqlite3_column_blob_t column_blob;
-    sqlite3_column_bytes_t column_bytes;
-    sqlite3_errmsg_t errmsg;
+#define DECLARE_FIELD(name) sqlite3_##name##_t name;
+    SQLITE_SYMBOLS(DECLARE_FIELD)
+#undef DECLARE_FIELD
 } sqlite_api;
 
 static sqlite_api g_sqlite = {0};
@@ -482,8 +486,7 @@ static int decode_flags(const unsigned char *compressed, size_t compressed_size,
         }
         if (!name) goto out;
 
-        flag f;
-        memset(&f, 0, sizeof(f));
+        flag f = {0};
         f.name = name;
         f.type = type;
 
@@ -595,8 +598,7 @@ fail:
 }
 
 static flag clone_flag(const flag *source) {
-    flag copy;
-    memset(&copy, 0, sizeof(copy));
+    flag copy = {0};
     copy.name = copy_string((const unsigned char *)source->name, strlen(source->name));
     copy.type = source->type;
     copy.value = source->value;
@@ -643,8 +645,7 @@ static int read_overrides(sqlite3 *db, int package_id, flag_list *overrides) {
         const unsigned char *name_text = g_sqlite.column_text(stmt, COL_OVR_NAME);
         if (!name_text) continue;
 
-        flag f;
-        memset(&f, 0, sizeof(f));
+        flag f = {0};
         f.name = copy_string(name_text, strlen((const char *)name_text));
 
         int flag_type = g_sqlite.column_int(stmt, COL_OVR_FLAG_TYPE);
@@ -708,10 +709,27 @@ static int exec_sql(sqlite3 *db, const char *label, const char *sql) {
 
 static const char CHECK_PARAM_PARTITIONS_SQL[] =
         "SELECT 1 FROM main.sqlite_master WHERE type='table' AND name='param_partitions' LIMIT 1";
+static const char CHECK_WALLETS_TABLE_SQL[] =
+        "SELECT 1 FROM main.sqlite_master WHERE type='table' AND name='Wallets' LIMIT 1";
 
-static int table_exists(sqlite3 *db) {
+static const char CREATE_WALLET_INSERT_TRIGGER_SQL[] =
+        "CREATE TEMP TRIGGER IF NOT EXISTS gmsflags_wallet_attest_insert "
+        "AFTER INSERT ON main.Wallets "
+        "WHEN NEW.fails_attestation != 0 "
+        "BEGIN "
+        "UPDATE Wallets SET fails_attestation = 0 WHERE rowid = NEW.rowid; "
+        "END;";
+static const char CREATE_WALLET_UPDATE_TRIGGER_SQL[] =
+        "CREATE TEMP TRIGGER IF NOT EXISTS gmsflags_wallet_attest_update "
+        "AFTER UPDATE OF fails_attestation ON main.Wallets "
+        "WHEN NEW.fails_attestation != 0 "
+        "BEGIN "
+        "UPDATE Wallets SET fails_attestation = 0 WHERE rowid = NEW.rowid; "
+        "END;";
+
+static int check_table(sqlite3 *db, const char *sql) {
     sqlite3_stmt *stmt = NULL;
-    int rc = g_sqlite.prepare_v2(db, CHECK_PARAM_PARTITIONS_SQL, -1, &stmt, NULL);
+    int rc = g_sqlite.prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != 0) {
         LOGE("Table check failed: %d, %s", rc, g_sqlite.errmsg(db));
         return 0;
@@ -722,7 +740,7 @@ static int table_exists(sqlite3 *db) {
 }
 
 static int register_triggers(sqlite3 *db) {
-    if (!table_exists(db)) {
+    if (!check_table(db, CHECK_PARAM_PARTITIONS_SQL)) {
         LOGI("Skipping Phixit trigger registration: param_partitions is not visible");
         return 0;
     }
@@ -730,6 +748,17 @@ static int register_triggers(sqlite3 *db) {
     return exec_sql(db, "Disable recursive triggers", DISABLE_RECURSIVE_TRIGGERS_SQL) &&
             exec_sql(db, "Insert trigger registration", CREATE_INSERT_TRIGGER_SQL) &&
             exec_sql(db, "Update trigger registration", CREATE_UPDATE_TRIGGER_SQL);
+}
+
+static int register_wallet_triggers(sqlite3 *db) {
+    if (!check_table(db, CHECK_WALLETS_TABLE_SQL)) {
+        LOGI("Skipping wallet trigger registration: Wallets table is not visible");
+        return 0;
+    }
+
+    return exec_sql(db, "Disable recursive triggers", DISABLE_RECURSIVE_TRIGGERS_SQL) &&
+            exec_sql(db, "Wallet insert trigger registration", CREATE_WALLET_INSERT_TRIGGER_SQL) &&
+            exec_sql(db, "Wallet update trigger registration", CREATE_WALLET_UPDATE_TRIGGER_SQL);
 }
 
 static void format_flag_value(const flag *f, char *buf, size_t buf_size) {
@@ -837,54 +866,19 @@ static void phixit_merge_flags(sqlite3_context *sqlite_ctx, int argc, sqlite3_va
     flags_free(&overrides);
 }
 
-static int sqlite_symbols_ready(void);
+static int sqlite_symbols_ready(void) {
+    int ok = 1;
+#define CHECK_SYM(name) ok = ok && g_sqlite.name != NULL;
+    SQLITE_SYMBOLS(CHECK_SYM)
+#undef CHECK_SYM
+    return ok;
+}
 
 static void load_sqlite_symbols(void) {
     if (sqlite_symbols_ready()) return;
-
-    g_sqlite.db_filename = (sqlite3_db_filename_t)load_sqlite_symbol("sqlite3_db_filename");
-    g_sqlite.db_config = (sqlite3_db_config_t)load_sqlite_symbol("sqlite3_db_config");
-    g_sqlite.create_function_v2 = (sqlite3_create_function_v2_t)load_sqlite_symbol("sqlite3_create_function_v2");
-    g_sqlite.exec = (sqlite3_exec_t)load_sqlite_symbol("sqlite3_exec");
-    g_sqlite.context_db_handle = (sqlite3_context_db_handle_t)load_sqlite_symbol("sqlite3_context_db_handle");
-    g_sqlite.value_int = (sqlite3_value_int_t)load_sqlite_symbol("sqlite3_value_int");
-    g_sqlite.value_blob = (sqlite3_value_blob_t)load_sqlite_symbol("sqlite3_value_blob");
-    g_sqlite.value_bytes = (sqlite3_value_bytes_t)load_sqlite_symbol("sqlite3_value_bytes");
-    g_sqlite.result_blob = (sqlite3_result_blob_t)load_sqlite_symbol("sqlite3_result_blob");
-    g_sqlite.result_value = (sqlite3_result_value_t)load_sqlite_symbol("sqlite3_result_value");
-    g_sqlite.result_error = (sqlite3_result_error_t)load_sqlite_symbol("sqlite3_result_error");
-    g_sqlite.prepare_v2 = (sqlite3_prepare_v2_t)load_sqlite_symbol("sqlite3_prepare_v2");
-    g_sqlite.bind_int = (sqlite3_bind_int_t)load_sqlite_symbol("sqlite3_bind_int");
-    g_sqlite.step = (sqlite3_step_t)load_sqlite_symbol("sqlite3_step");
-    g_sqlite.finalize = (sqlite3_finalize_t)load_sqlite_symbol("sqlite3_finalize");
-    g_sqlite.column_int = (sqlite3_column_int_t)load_sqlite_symbol("sqlite3_column_int");
-    g_sqlite.column_text = (sqlite3_column_text_t)load_sqlite_symbol("sqlite3_column_text");
-    g_sqlite.column_blob = (sqlite3_column_blob_t)load_sqlite_symbol("sqlite3_column_blob");
-    g_sqlite.column_bytes = (sqlite3_column_bytes_t)load_sqlite_symbol("sqlite3_column_bytes");
-    g_sqlite.errmsg = (sqlite3_errmsg_t)load_sqlite_symbol("sqlite3_errmsg");
-}
-
-static int sqlite_symbols_ready(void) {
-    return g_sqlite.db_filename &&
-            g_sqlite.db_config &&
-            g_sqlite.create_function_v2 &&
-            g_sqlite.exec &&
-            g_sqlite.context_db_handle &&
-            g_sqlite.value_int &&
-            g_sqlite.value_blob &&
-            g_sqlite.value_bytes &&
-            g_sqlite.result_blob &&
-            g_sqlite.result_value &&
-            g_sqlite.result_error &&
-            g_sqlite.prepare_v2 &&
-            g_sqlite.bind_int &&
-            g_sqlite.step &&
-            g_sqlite.finalize &&
-            g_sqlite.column_int &&
-            g_sqlite.column_text &&
-            g_sqlite.column_blob &&
-            g_sqlite.column_bytes &&
-            g_sqlite.errmsg;
+#define LOAD_SYM(name) g_sqlite.name = (sqlite3_##name##_t)load_sqlite_symbol("sqlite3_" #name);
+    SQLITE_SYMBOLS(LOAD_SYM)
+#undef LOAD_SYM
 }
 
 static void configure_sqlite_for_triggers(sqlite3 *db) {
@@ -920,10 +914,19 @@ Java_ua_polodarb_xposed_PhixitHook_nativeSetDebugLogPath(
     }
 }
 
-
 static void init_sqlite_symbols_once(void) {
     dl_iterate_phdr(find_sqlite_callback, &g_sqlite_elf);
     load_sqlite_symbols();
+}
+
+static void mark_connection_seen(void) {
+    atomic_fetch_add(&g_stats_connections, 1);
+    if (atomic_load(&g_stats_started_at) == 0) {
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        long expected = 0;
+        atomic_compare_exchange_strong(&g_stats_started_at, &expected, (long)ts.tv_sec);
+    }
 }
 
 JNIEXPORT void JNICALL
@@ -939,13 +942,7 @@ Java_ua_polodarb_xposed_PhixitHook_nativeHandlePhenotype(
         return;
     }
 
-    atomic_fetch_add(&g_stats_connections, 1);
-    if (atomic_load(&g_stats_started_at) == 0) {
-        struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);
-        long expected = 0;
-        atomic_compare_exchange_strong(&g_stats_started_at, &expected, (long)ts.tv_sec);
-    }
+    mark_connection_seen();
 
     sqlite3 *db = *(sqlite3 **)(intptr_t)connection_ptr;
     if (!db) {
@@ -957,7 +954,7 @@ Java_ua_polodarb_xposed_PhixitHook_nativeHandlePhenotype(
     if (filename) LOGI("SQLite DB file: %s", filename);
 
     sqlite3_stmt *ver_stmt = NULL;
-    if (g_sqlite.prepare_v2(db, "PRAGMA user_version", -1, &ver_stmt, NULL) != SQLITE_OK) {
+    if (g_sqlite.prepare_v2(db, "PRAGMA user_version", -1, &ver_stmt, NULL) != 0) {
         LOGE("Failed to query user_version");
         return;
     }
@@ -1007,8 +1004,54 @@ Java_ua_polodarb_xposed_PhixitHook_nativeHandlePhenotype(
             self_test_done = 1;
             static const char SELF_UPDATE_SQL[] =
                     "UPDATE param_partitions SET flags_content = flags_content WHERE flags_content IS NOT NULL";
-            LOGD("Running trigger self-test");
-            exec_sql(db, "Trigger self-test", SELF_UPDATE_SQL);
+            LOGD("Running trigger self-test for param_partitions");
+            exec_sql(db, "Trigger self-test for param_partitions", SELF_UPDATE_SQL);
+        }
+    }
+#endif
+}
+
+JNIEXPORT void JNICALL
+Java_ua_polodarb_xposed_PhixitHook_nativeHandleWallet(
+        JNIEnv *env,
+        jobject thiz,
+        jlong connection_ptr
+) {
+    pthread_once(&g_sqlite_init_once, init_sqlite_symbols_once);
+
+    if (!sqlite_symbols_ready()) {
+        LOGE("SQLite symbols are not fully loaded (wallet)");
+        return;
+    }
+
+    mark_connection_seen();
+
+    sqlite3 *db = *(sqlite3 **)(intptr_t)connection_ptr;
+    if (!db) {
+        LOGE("Wallet DB is null");
+        return;
+    }
+
+    const char *filename = g_sqlite.db_filename(db, "main");
+    if (filename) LOGI("Wallet SQLite DB file: %s", filename);
+
+    configure_sqlite_for_triggers(db);
+
+    if (!register_wallet_triggers(db)) {
+        return;
+    }
+
+    LOGI("Wallet attestation triggers registered");
+
+#ifndef NDEBUG
+    {
+        static int self_test_done = 0;
+        if (!self_test_done) {
+            self_test_done = 1;
+            static const char SELF_UPDATE_SQL[] =
+                    "UPDATE Wallet SET fails_attestation = fails_attestation";
+            LOGD("Running trigger self-test for Wallet");
+            exec_sql(db, "Trigger self-test for Wallet", SELF_UPDATE_SQL);
         }
     }
 #endif

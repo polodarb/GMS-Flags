@@ -89,8 +89,8 @@ class XposedStatusViewModel(
 
     companion object {
         private const val TAG = "XposedStatusVM"
-        private const val GMS_PACKAGE = XposedModuleStatus.GMS_PACKAGE_NAME
-        private const val VENDING_PACKAGE = XposedModuleStatus.VENDING_PACKAGE_NAME
+        private val GMS_PACKAGE = XposedModuleStatus.GMS_PACKAGE_NAME
+        private val VENDING_PACKAGE = XposedModuleStatus.VENDING_PACKAGE_NAME
     }
 }
 
