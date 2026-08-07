@@ -4,10 +4,15 @@
 ![License](https://img.shields.io/github/license/polodarb/GMS-Flags?style=for-the-badge) 
 [![Telegram](https://img.shields.io/badge/telegram-telegram?style=for-the-badge&logo=telegram&logoColor=white&label=GMS%20Flags&color=%23229ED9)](https://t.me/gmsflags)
 
-> [!IMPORTANT]
-> **This project is no longer maintained. Its successor is [GMS Flags 2.0](https://github.com/polodarb/GMS-Flags-Reborn).**
->
-> Same idea, rebuilt from scratch — go there instead.
+---
+
+## 🏳️ This project is no longer maintained
+
+### Its successor is [GMS Flags 2.0 →](https://github.com/polodarb/GMS-Flags-Reborn)
+
+Same idea, rebuilt from scratch — go there instead.
+
+---
 
 ![Banner](img/gf_banner.png)
 ![Root](img/gf_root.png)
